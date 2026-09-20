@@ -1,71 +1,1186 @@
 {
-  "testedAt": "2026-09-20T13:32:09.896Z",
-  "url": "http://localhost:5173",
-  "browser": "/opt/google/chrome/chrome (headless)",
-  "desktop": "1440×1100",
-  "mobile": "390×844",
   "results": [
     {
-      "name": "桌面首页 1440×1100 无横向溢出",
-      "status": "passed",
-      "detail": "{\"viewport\":1440,\"page\":1440,\"body\":1440}"
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "home",
+      "overflow": false,
+      "content": 1348,
+      "largeClass": false,
+      "langClass": false
     },
     {
-      "name": "空投稿提示标题、正文与版权必填",
-      "status": "passed",
-      "detail": ""
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "news",
+      "overflow": false,
+      "content": 921,
+      "largeClass": false,
+      "langClass": false
     },
     {
-      "name": "草稿填写后离开再返回恢复",
-      "status": "passed",
-      "detail": ""
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "classroom",
+      "overflow": false,
+      "content": 391,
+      "largeClass": false,
+      "langClass": false
     },
     {
-      "name": "版权勾选投稿生成 DEMO 编号，个人中心可见且刷新保留",
-      "status": "passed",
-      "detail": "DEMO-MU9UVAFN-0001"
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "venues",
+      "overflow": false,
+      "content": 401,
+      "largeClass": false,
+      "langClass": false
     },
     {
-      "name": "按投稿编号查询待初审与当前节点",
-      "status": "passed",
-      "detail": ""
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "media",
+      "overflow": false,
+      "content": 353,
+      "largeClass": false,
+      "langClass": false
     },
     {
-      "name": "典籍收藏/取消，横竖排和大字阅读切换",
-      "status": "passed",
-      "detail": ""
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "hall",
+      "overflow": false,
+      "content": 361,
+      "largeClass": false,
+      "langClass": false
     },
     {
-      "name": "活动预约与取消即时更新人数与预约总数",
-      "status": "passed",
-      "detail": "24 → 25 → 24"
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "shop",
+      "overflow": false,
+      "content": 345,
+      "largeClass": false,
+      "langClass": false
     },
     {
-      "name": "地区切换筛选浙江活动与作品",
-      "status": "passed",
-      "detail": ""
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "learning",
+      "overflow": false,
+      "content": 414,
+      "largeClass": false,
+      "langClass": false
     },
     {
-      "name": "桌面全部主要页面无横向溢出",
-      "status": "passed",
-      "detail": ""
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "submit",
+      "overflow": false,
+      "content": 723,
+      "largeClass": false,
+      "langClass": false
     },
     {
-      "name": "手机 390×844 首页与主要页面无横向溢出",
-      "status": "passed",
-      "detail": ""
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "profile",
+      "overflow": false,
+      "content": 302,
+      "largeClass": false,
+      "langClass": false
     },
     {
-      "name": "手机典籍阅读弹窗横竖排和大字切换无页面溢出",
-      "status": "passed",
-      "detail": ""
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "review",
+      "overflow": false,
+      "content": 615,
+      "largeClass": false,
+      "langClass": false
     },
     {
-      "name": "浏览器无未捕获异常和 console.error",
-      "status": "passed",
-      "detail": ""
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "admin",
+      "overflow": false,
+      "content": 268,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "library",
+      "overflow": false,
+      "content": 674,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 320,
+      "lang": "zh",
+      "large": false,
+      "screen": "assistant",
+      "overflow": false,
+      "content": 369,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "home",
+      "overflow": false,
+      "content": 3652,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "news",
+      "overflow": false,
+      "content": 2357,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "classroom",
+      "overflow": false,
+      "content": 1091,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "venues",
+      "overflow": false,
+      "content": 1186,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "media",
+      "overflow": false,
+      "content": 937,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "hall",
+      "overflow": false,
+      "content": 1013,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "shop",
+      "overflow": false,
+      "content": 1047,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "learning",
+      "overflow": false,
+      "content": 1095,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "submit",
+      "overflow": false,
+      "content": 2035,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "profile",
+      "overflow": false,
+      "content": 869,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "review",
+      "overflow": false,
+      "content": 1917,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "admin",
+      "overflow": false,
+      "content": 636,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "library",
+      "overflow": false,
+      "content": 2156,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": false,
+      "screen": "assistant",
+      "overflow": false,
+      "content": 1100,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "home",
+      "overflow": false,
+      "content": 1348,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "news",
+      "overflow": false,
+      "content": 921,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "classroom",
+      "overflow": false,
+      "content": 391,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "venues",
+      "overflow": false,
+      "content": 401,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "media",
+      "overflow": false,
+      "content": 353,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "hall",
+      "overflow": false,
+      "content": 361,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "shop",
+      "overflow": false,
+      "content": 345,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "learning",
+      "overflow": false,
+      "content": 414,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "submit",
+      "overflow": false,
+      "content": 723,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "profile",
+      "overflow": false,
+      "content": 302,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "review",
+      "overflow": false,
+      "content": 615,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "admin",
+      "overflow": false,
+      "content": 268,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "library",
+      "overflow": false,
+      "content": 674,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "zh",
+      "large": false,
+      "screen": "assistant",
+      "overflow": false,
+      "content": 369,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "home",
+      "overflow": false,
+      "content": 3652,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "news",
+      "overflow": false,
+      "content": 2357,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "classroom",
+      "overflow": false,
+      "content": 1091,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "venues",
+      "overflow": false,
+      "content": 1186,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "media",
+      "overflow": false,
+      "content": 937,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "hall",
+      "overflow": false,
+      "content": 1013,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "shop",
+      "overflow": false,
+      "content": 1047,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "learning",
+      "overflow": false,
+      "content": 1095,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "submit",
+      "overflow": false,
+      "content": 2035,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "profile",
+      "overflow": false,
+      "content": 869,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "review",
+      "overflow": false,
+      "content": 1917,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "admin",
+      "overflow": false,
+      "content": 636,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "library",
+      "overflow": false,
+      "content": 2156,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": false,
+      "screen": "assistant",
+      "overflow": false,
+      "content": 1100,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "home",
+      "overflow": false,
+      "content": 1348,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "news",
+      "overflow": false,
+      "content": 921,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "classroom",
+      "overflow": false,
+      "content": 391,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "venues",
+      "overflow": false,
+      "content": 401,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "media",
+      "overflow": false,
+      "content": 353,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "hall",
+      "overflow": false,
+      "content": 361,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "shop",
+      "overflow": false,
+      "content": 345,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "learning",
+      "overflow": false,
+      "content": 414,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "submit",
+      "overflow": false,
+      "content": 723,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "profile",
+      "overflow": false,
+      "content": 302,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "review",
+      "overflow": false,
+      "content": 615,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "admin",
+      "overflow": false,
+      "content": 268,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "library",
+      "overflow": false,
+      "content": 674,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "zh",
+      "large": false,
+      "screen": "assistant",
+      "overflow": false,
+      "content": 369,
+      "largeClass": false,
+      "langClass": false
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "home",
+      "overflow": false,
+      "content": 3652,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "news",
+      "overflow": false,
+      "content": 2357,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "classroom",
+      "overflow": false,
+      "content": 1091,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "venues",
+      "overflow": false,
+      "content": 1186,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "media",
+      "overflow": false,
+      "content": 937,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "hall",
+      "overflow": false,
+      "content": 1013,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "shop",
+      "overflow": false,
+      "content": 1047,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "learning",
+      "overflow": false,
+      "content": 1095,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "submit",
+      "overflow": false,
+      "content": 2035,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "profile",
+      "overflow": false,
+      "content": 869,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "review",
+      "overflow": false,
+      "content": 1917,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "admin",
+      "overflow": false,
+      "content": 636,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "library",
+      "overflow": false,
+      "content": 2156,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 1440,
+      "lang": "en",
+      "large": false,
+      "screen": "assistant",
+      "overflow": false,
+      "content": 1100,
+      "largeClass": false,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "home",
+      "overflow": false,
+      "content": 3652,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "news",
+      "overflow": false,
+      "content": 2357,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "classroom",
+      "overflow": false,
+      "content": 1091,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "venues",
+      "overflow": false,
+      "content": 1186,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "media",
+      "overflow": false,
+      "content": 937,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "hall",
+      "overflow": false,
+      "content": 1013,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "shop",
+      "overflow": false,
+      "content": 1047,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "learning",
+      "overflow": false,
+      "content": 1095,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "submit",
+      "overflow": false,
+      "content": 2035,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "profile",
+      "overflow": false,
+      "content": 869,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "review",
+      "overflow": false,
+      "content": 1917,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "admin",
+      "overflow": false,
+      "content": 636,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "library",
+      "overflow": false,
+      "content": 2156,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 320,
+      "lang": "en",
+      "large": true,
+      "screen": "assistant",
+      "overflow": false,
+      "content": 1100,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "home",
+      "overflow": false,
+      "content": 3652,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "news",
+      "overflow": false,
+      "content": 2357,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "classroom",
+      "overflow": false,
+      "content": 1091,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "venues",
+      "overflow": false,
+      "content": 1186,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "media",
+      "overflow": false,
+      "content": 937,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "hall",
+      "overflow": false,
+      "content": 1013,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "shop",
+      "overflow": false,
+      "content": 1047,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "learning",
+      "overflow": false,
+      "content": 1095,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "submit",
+      "overflow": false,
+      "content": 2035,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "profile",
+      "overflow": false,
+      "content": 869,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "review",
+      "overflow": false,
+      "content": 1917,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "admin",
+      "overflow": false,
+      "content": 636,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "library",
+      "overflow": false,
+      "content": 2156,
+      "largeClass": true,
+      "langClass": true
+    },
+    {
+      "width": 390,
+      "lang": "en",
+      "large": true,
+      "screen": "assistant",
+      "overflow": false,
+      "content": 1100,
+      "largeClass": true,
+      "langClass": true
     }
   ],
   "errors": [],
-  "consoleErrors": []
+  "productionSubdirectory": {
+    "kind": "production-subdirectory",
+    "base": "http://localhost:5190/demo/",
+    "fonts": [
+      {
+        "url": "http://localhost:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "status": 200
+      },
+      {
+        "url": "http://localhost:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "status": 200
+      }
+    ],
+    "loaded": [
+      {
+        "family": "JiafengSans",
+        "status": "loaded"
+      },
+      {
+        "family": "JiafengSerif",
+        "status": "loaded"
+      }
+    ],
+    "errors": [],
+    "failed": [],
+    "video": true
+  },
+  "date": "2026-09-21",
+  "scope": "H5 browser viewport simulation; not WeChat device verification"
 }

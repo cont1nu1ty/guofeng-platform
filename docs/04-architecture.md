@@ -1,6 +1,6 @@
 # 架构与后端衔接方案
 
-版本：0.3 · 2026-09-21。本文区分当前项目结构与未来方案，不表示后端、鉴权、多租户或外部服务已经实现。
+版本：0.4 · 2026-09-21。本文区分当前项目结构与未来方案，不表示后端、鉴权、多租户或外部服务已经实现。
 
 ## 1. 当前实现范围
 
@@ -25,6 +25,9 @@ Wot UI 提供界面组件，并不自带本项目投稿、评审、报名、权�
 | `apps/miniapp` | Uni-app 应用工程；页面、样式、平台配置与运行脚本 |
 | `apps/miniapp/src/domain/types.ts` | `Work`、`SubmissionDraft`、`Classic`、`Activity` 等领域类型 |
 | `apps/miniapp/src/domain/fixtures.ts` | 体裁/通道/地区字典、待定评审节点及虚构内容 |
+| `apps/miniapp/src/domain/libraryCatalog.ts` | 典籍章节、作品译文、原创释义等演示阅读内容 |
+| `apps/miniapp/src/domain/assistantExamples.ts` | 五类双语预设与草稿转入保护，未调用模型 |
+| `apps/miniapp/src/domain/personalArchive.ts` | 摘抄批注、助手存档与注入式本机存储 |
 | `apps/miniapp/src/domain/repository.ts` | 稿件查询、草稿、提交、收藏、预约等 Mock 行为与状态保存 |
 | `contracts/openapi.yaml` | 未来 HTTP API 的讨论草案，不是已部署接口 |
 | `docs` | 需求、迭代、开源复用、架构与演示说明 |
@@ -43,7 +46,7 @@ Wot UI 提供界面组件，并不自带本项目投稿、评审、报名、权�
 
 当前页面由 `pages/index/index` 和 `pages/explore/index` 挂载 AppShell。一级栏目用 reLaunch，详情用 navigateTo / navigateBack，并通过每页提供的 route 参数读取内容；正常返回保留上一页筛选和滚动。后续可以将业务视图迁入独立页面/分包。
 
-当前 Repository 为同步方法。未来 HTTP 访问是异步操作，因此切换到后端时仍需将页面调用与反馈改为异步，并增加加载、取消、重试、会话失效和网络错误处理；不是无改动替换。
+未来 HTTP 访问是异步操作，因此切换到后端时仍需将页面调用与反馈改为异步，并增加加载、取消、重试、会话失效和网络错误处理；不是无改动替换。
 
 建议先定义异步 `PlatformRepository` 接口，将现有 Mock Repository 包装为 Promise 实现，再新增 HTTP 实现。UI 通过应用初始化处选择实现，页面不直接拼接请求 URL。DTO 与领域模型之间设适配层，避免将后端租户、审计或内部存储字段直接暴露给界面。
 

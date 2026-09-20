@@ -785,7 +785,13 @@ function openInformation(kind: 'privacy' | 'about') {
         </text>
       </view>
     </view>
-    <wd-popup v-model="showCertificate" position="center" closable custom-class="content-popup">
+    <wd-popup
+      v-model="showCertificate"
+      :z-index="100"
+      position="center"
+      closable
+      custom-class="content-popup"
+    >
       <view v-if="selectedCertificate" class="profile-dialog">
         <view class="profile-certificate-sheet">
           <text class="profile-certificate-brand">{{ t('家风中华行', 'Family Heritage') }}</text>
@@ -809,7 +815,13 @@ function openInformation(kind: 'privacy' | 'about') {
         </text>
       </view>
     </wd-popup>
-    <wd-popup v-model="showInformation" position="center" closable custom-class="content-popup">
+    <wd-popup
+      v-model="showInformation"
+      :z-index="100"
+      position="center"
+      closable
+      custom-class="content-popup"
+    >
       <view class="profile-dialog">
         <text class="section-title">
           {{

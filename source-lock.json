@@ -31,7 +31,7 @@
   "dependencyLock": "apps/miniapp/package-lock.json",
   "backendStatus": "Not integrated. Candidate evaluation and sources in docs/03-open-source.md and docs/06-backend-roadmap.md",
   "fonts": {
-    "manifest": "apps/miniapp/src/static/fonts/manifest.json",
+    "manifest": "scripts/font-data/manifest.json",
     "families": [
       "JiafengSans (Source Han Sans SC 2.005R subset)",
       "JiafengSerif (Source Han Serif SC 2.003R subset)"

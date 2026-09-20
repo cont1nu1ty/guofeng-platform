@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { readInputValue } from '../composables/readInputValue'
 import { computed, reactive, ref } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import {
@@ -202,6 +203,8 @@ function perform(action: ReviewAction) {
       <view v-if="!['returned', 'collected'].includes(selected.status)">
         <text class="field-label">{{ t('评审员署名（模拟）', 'Reviewer name (demo)') }}</text>
         <input
+          @blur="reviewer = readInputValue($event, reviewer)"
+          @confirm="reviewer = readInputValue($event, reviewer)"
           v-model="reviewer"
           class="form-input"
           :placeholder="t('不填则使用虚构演示评审员', 'Leave blank for fictional demo reviewer')"
@@ -210,15 +213,33 @@ function perform(action: ReviewAction) {
         <view class="score-grid">
           <view>
             <text class="field-label">{{ t('主题表达', 'Theme') }}</text>
-            <input v-model="scores.theme" class="form-input" type="number" />
+            <input
+              @blur="scores.theme = readInputValue($event, scores.theme)"
+              @confirm="scores.theme = readInputValue($event, scores.theme)"
+              v-model="scores.theme"
+              class="form-input"
+              type="number"
+            />
           </view>
           <view>
             <text class="field-label">{{ t('文字表达', 'Writing') }}</text>
-            <input v-model="scores.writing" class="form-input" type="number" />
+            <input
+              @blur="scores.writing = readInputValue($event, scores.writing)"
+              @confirm="scores.writing = readInputValue($event, scores.writing)"
+              v-model="scores.writing"
+              class="form-input"
+              type="number"
+            />
           </view>
           <view>
             <text class="field-label">{{ t('原创与材料', 'Originality') }}</text>
-            <input v-model="scores.originality" class="form-input" type="number" />
+            <input
+              @blur="scores.originality = readInputValue($event, scores.originality)"
+              @confirm="scores.originality = readInputValue($event, scores.originality)"
+              v-model="scores.originality"
+              class="form-input"
+              type="number"
+            />
           </view>
         </view>
         <text class="muted">
@@ -233,7 +254,10 @@ function perform(action: ReviewAction) {
           {{ t('评审意见（5–1000字）', 'Review comment (5–1000 characters)') }}
         </text>
         <textarea
+          @blur="comment = readInputValue($event, comment)"
+          @confirm="comment = readInputValue($event, comment)"
           v-model="comment"
+          :key="selectedId"
           class="writing-area review-comment"
           :maxlength="1000"
           :placeholder="

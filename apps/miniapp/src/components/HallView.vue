@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { readInputValue } from '../composables/readInputValue'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import { hallPeople, type BilingualText } from '../domain/showcaseCatalog'
@@ -12,6 +13,14 @@ const activeScene = ref(0)
 const selectedHotspot = ref(0)
 const reflection = ref('')
 const reflectionSaved = ref(false)
+const reflectionEditorVersion = ref(0)
+watch(
+  reflection,
+  () => {
+    reflectionSaved.value = false
+  },
+  { flush: 'sync' },
+)
 const guideOpen = ref(true)
 const visiblePeople = computed(() =>
   hallPeople.filter(
@@ -79,7 +88,11 @@ function saveReflection() {
 function restoreReflection() {
   try {
     const saved = uni.getStorageSync(`jiafeng:reflection:${current.value?.id}`)
-    if (typeof saved === 'string') reflection.value = saved
+    if (typeof saved === 'string') {
+      reflection.value = saved
+      reflectionEditorVersion.value++
+      reflectionSaved.value = true
+    }
   } catch {
     uni.showToast({
       title: t('无法读取本机约定', 'Could not load the saved promise.'),
@@ -105,7 +118,7 @@ function copySource() {
   <view class="showcase-view">
     <template v-if="current">
       <view class="showcase-breadcrumb">
-        <wd-button size="small" plain @click="goBack()">
+        <wd-button size="small" variant="plain" @click="goBack()">
           {{ t('返回名人馆', 'Back to galleries') }}
         </wd-button>
         <text>{{ lt(current.regionName) }}</text>
@@ -147,7 +160,7 @@ function copySource() {
                 v-for="(scene, index) in scenes"
                 :key="index"
                 size="small"
-                :plain="activeScene !== index"
+                :variant="activeScene !== index ? 'plain' : 'base'"
                 @click="selectScene(index)"
               >
                 {{ scene }}
@@ -204,7 +217,7 @@ function copySource() {
             <view class="showcase-actions">
               <wd-button
                 size="small"
-                plain
+                variant="plain"
                 :disabled="activeScene === 0"
                 @click="selectScene(activeScene - 1)"
               >
@@ -217,7 +230,7 @@ function copySource() {
               >
                 {{ t('下一展区', 'Next') }}
               </wd-button>
-              <wd-button size="small" plain @click="guideOpen = !guideOpen">
+              <wd-button size="small" variant="plain" @click="guideOpen = !guideOpen">
                 {{ guideOpen ? t('收起展签', 'Hide label') : t('展开讲解', 'Read label') }}
               </wd-button>
             </view>
@@ -244,7 +257,10 @@ function copySource() {
               }}
             </text>
             <textarea
+              @blur="reflection = readInputValue($event, reflection)"
+              @confirm="reflection = readInputValue($event, reflection)"
               v-model="reflection"
+              :key="reflectionEditorVersion"
               class="showcase-textarea"
               :maxlength="180"
               :placeholder="
@@ -253,7 +269,6 @@ function copySource() {
                   'For example: read a family letter together one evening a week.',
                 )
               "
-              @input="reflectionSaved = false"
             />
             <view class="showcase-actions">
               <wd-button size="small" @click="saveReflection">
@@ -263,7 +278,7 @@ function copySource() {
                     : t('保存我的约定', 'Save my promise')
                 }}
               </wd-button>
-              <wd-button size="small" plain @click="restoreReflection">
+              <wd-button size="small" variant="plain" @click="restoreReflection">
                 {{ t('读取已存约定', 'Load saved promise') }}
               </wd-button>
             </view>
@@ -286,7 +301,7 @@ function copySource() {
               }}
             </text>
             <text class="showcase-note" selectable>{{ current.sourceTitle }}</text>
-            <wd-button size="small" plain @click="copySource">
+            <wd-button size="small" variant="plain" @click="copySource">
               {{ t('复制资料来源链接', 'Copy source link') }}
             </wd-button>
           </view>
@@ -341,7 +356,7 @@ function copySource() {
           ]"
           :key="item.id"
           size="small"
-          :plain="regionFilter !== item.id"
+          :variant="regionFilter !== item.id ? 'plain' : 'base'"
           @click="regionFilter = item.id"
         >
           {{ item.label }}

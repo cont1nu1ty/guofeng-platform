@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { readInputValue } from '../composables/readInputValue'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import { reviewStages, reviewStandards } from '../domain/fixtures'
@@ -115,11 +116,12 @@ watch(
     <text class="section-title">{{ t('作品进度查询', 'Track a submission') }}</text>
     <view class="query-row">
       <input
+        @blur="query = readInputValue($event, query)"
         v-model="query"
         class="form-input"
         :placeholder="t('输入 DEMO- 开头的演示作品编号', 'Enter a demo ID beginning with DEMO-')"
         :aria-label="t('作品编号', 'Work ID')"
-        @confirm="search()"
+        @confirm="search(readInputValue($event, query))"
       />
       <wd-button @click="search()">{{ t('查询进度', 'Track progress') }}</wd-button>
     </view>
@@ -299,7 +301,13 @@ watch(
       )
     }}
   </view>
-  <wd-popup v-model="certificateVisible" position="center" closable custom-class="content-popup">
+  <wd-popup
+    :z-index="100"
+    v-model="certificateVisible"
+    position="center"
+    closable
+    custom-class="content-popup"
+  >
     <view v-if="certificate" class="dialog-body certificate-demo">
       <text class="eyebrow">
         {{ t('模拟证书 · 无正式效力', 'DEMO CERTIFICATE · NO OFFICIAL VALIDITY') }}

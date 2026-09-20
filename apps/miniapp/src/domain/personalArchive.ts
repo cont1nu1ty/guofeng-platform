@@ -60,7 +60,15 @@ export function createPersonalArchive(storage: DemoStorage) {
       const existing = state.excerpts.find(
         (x) => x.sourceId === value.sourceId && x.text === value.text,
       )
-      if (existing) return { ...existing }
+      if (existing) {
+        if (existing.note === value.note) return { ...existing }
+        const updated = { ...existing, note: value.note }
+        write({
+          ...state,
+          excerpts: state.excerpts.map((item) => (item.id === existing.id ? updated : item)),
+        })
+        return { ...updated }
+      }
       if (state.excerpts.length >= 100) throw new Error('摘抄最多保存 100 条，请先整理已有记录')
       const record = { ...value, id: identity(), createdAt: new Date().toISOString() }
       write({ ...state, excerpts: [...state.excerpts, record] })

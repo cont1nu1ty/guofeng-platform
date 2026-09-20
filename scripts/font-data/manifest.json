@@ -10,30 +10,30 @@
       "style": "Regular",
       "weight": 400,
       "file": "JiafengSans-Regular.woff",
-      "bytes": 403716,
-      "sha256": "80f2ea206f20b1217226871dbc88b7d7b3cc679f9b43724416bcfa53a88b954d",
+      "bytes": 409012,
+      "sha256": "b6c64c0a00201fad404ce73fb905a6cdcb13bcdea45d35ee1bd0dec089855566",
       "source_file": "SourceHanSansSC-Regular.otf",
       "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-han-sans/a4f7cf94edfb9d7ffbdfc4841de276358bd7e0f2/OTF/SimplifiedChinese/SourceHanSansSC-Regular.otf",
       "source_release": "2.005R",
       "source_version": "Version 2.005;addfeatures 5.0.0b21",
       "source_sha256": "f1d8611151880c6c336aabeac4640ef434fa13cbfbf1ffe82d0a71b2a5637256",
-      "glyph_count": 2321,
-      "codepoint_count": 2272
+      "glyph_count": 2348,
+      "codepoint_count": 2300
     },
     {
       "family": "JiafengSerif",
       "style": "SemiBold",
       "weight": 600,
       "file": "JiafengSerif-SemiBold.woff",
-      "bytes": 547928,
-      "sha256": "eebf6546771a4c224aebafecd7738735fc744644391187ac3e5d217c56c9bb28",
+      "bytes": 555424,
+      "sha256": "da47b9e36889675426a845057d3820159c2b3a3ea54aa7870b18b40a3535a827",
       "source_file": "SourceHanSerifSC-SemiBold.otf",
       "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-han-serif/7889f11bf31170b5d092a083b357c8c8130f89e0/OTF/SimplifiedChinese/SourceHanSerifSC-SemiBold.otf",
       "source_release": "2.003R",
       "source_version": "Version 2.003;hotconv 1.1.1;makeotfexe 2.6.0",
       "source_sha256": "faf16caeaf207e1926e01af8d9f1a8e71b0e9d8f51bf3b5d9a78f9f30e7e3e31",
-      "glyph_count": 2322,
-      "codepoint_count": 2272
+      "glyph_count": 2349,
+      "codepoint_count": 2300
     }
   ]
 }

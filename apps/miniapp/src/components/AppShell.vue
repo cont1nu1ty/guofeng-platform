@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, provide } from 'vue'
+import { getMiniAppHeaderStyle } from '../composables/useMiniAppInsets'
+const miniappHeaderStyle = getMiniAppHeaderStyle()
 import HomeView from './HomeView.vue'
 import SubmitView from './SubmitView.vue'
 import LibraryView from './LibraryView.vue'
@@ -8,17 +10,7 @@ import ReviewView from './ReviewView.vue'
 import ProfileView from './ProfileView.vue'
 import AssistantView from './AssistantView.vue'
 import AdminView from './AdminView.vue'
-import {
-  region,
-  regionLabel,
-  navigate,
-  largeText,
-  reader,
-  verticalReading,
-  favorite,
-  isFavorite,
-  storageError,
-} from '../composables/useDemo'
+import { region, regionLabel, navigate, largeText, storageError } from '../composables/useDemo'
 import type { Screen } from '../composables/useDemo'
 import { routeKey, goBack } from '../composables/useNavigation'
 import { t, locale, toggleLocale } from '../composables/useLocale'
@@ -39,17 +31,13 @@ provide(
 const canBack = computed(
   () =>
     Object.keys(props.params).length > 0 &&
-    !['news', 'classroom', 'venues', 'learning', 'media', 'hall', 'shop'].includes(props.screen),
+    !['news', 'classroom', 'venues', 'learning', 'media', 'hall', 'shop', 'library'].includes(
+      props.screen,
+    ),
 )
 import { regions } from '../domain/fixtures'
 import type { RegionId } from '../domain/types'
 const regionPopup = ref(false)
-const readerVisible = computed({
-  get: () => !!reader.value,
-  set: (value: boolean) => {
-    if (!value) reader.value = null
-  },
-})
 const nav: { id: Screen; label: string; icon: string }[] = [
   { id: 'home', label: '首页', icon: 'home' },
   { id: 'library', label: '家风典藏', icon: 'book' },
@@ -66,6 +54,11 @@ function selectRegion(id: RegionId) {
 </script>
 <template>
   <view :class="['app-shell', { 'large-text': largeText, 'locale-en': locale === 'en' }]">
+    <!-- #ifdef MP-WEIXIN -->
+    <view class="miniapp-safe-top" :style="miniappHeaderStyle">
+      <text>{{ t('家风文化 · 界面演示', 'Family culture · Demo') }}</text>
+    </view>
+    <!-- #endif -->
     <view v-if="storageError" class="storage-alert">{{ storageError }}</view>
     <view class="utility-bar">
       <view class="container utility-inner">
@@ -103,7 +96,7 @@ function selectRegion(id: RegionId) {
           <button class="assistant-link" @click="navigate('assistant')">
             ✦ {{ t('家风助手', 'Assistant') }}
           </button>
-          <button class="avatar-button" aria-label="个人中心" @click="navigate('profile')">
+          <button class="avatar-button" :aria-label="t('个人中心')" @click="navigate('profile')">
             家
           </button>
         </view>
@@ -215,49 +208,22 @@ function selectRegion(id: RegionId) {
         </text>
       </view>
     </wd-popup>
-    <wd-popup
-      :z-index="100"
-      v-model="readerVisible"
-      position="center"
-      closable
-      custom-class="reader-popup"
-    >
-      <view v-if="reader" class="reader-body">
-        <view class="reader-toolbar">
-          <text class="tag">演示原创篇章</text>
-          <view>
-            <button class="text-button" @click="verticalReading = !verticalReading">
-              {{ verticalReading ? '横排阅读' : '竖排阅读' }}
-            </button>
-            <button class="text-button" @click="largeText = !largeText">
-              {{ largeText ? '标准字号' : '大字阅读' }}
-            </button>
-          </view>
-        </view>
-        <text class="reader-title">{{ reader.title }}</text>
-        <text class="reader-author">{{ reader.author }}</text>
-        <scroll-view
-          scroll-y
-          scroll-x
-          :class="['reader-scroll', { vertical: verticalReading, 'reader-large': largeText }]"
-        >
-          <view class="reader-content">
-            <text
-              v-for="(paragraph, index) in reader.content.split('\n\n')"
-              :key="index"
-              class="reader-paragraph"
-            >
-              {{ paragraph }}
-            </text>
-          </view>
-        </scroll-view>
-        <view class="reader-actions">
-          <wd-button variant="plain" size="small" @click="favorite(reader!.id)">
-            {{ isFavorite(reader.id) ? '★ 已收藏' : '☆ 收藏篇章' }}
-          </wd-button>
-          <button class="text-button" @click="reader = null">结束阅读 →</button>
-        </view>
-      </view>
-    </wd-popup>
   </view>
 </template>
+
+<style scoped>
+/* #ifdef MP-WEIXIN */
+.miniapp-safe-top {
+  display: flex;
+  align-items: center;
+  padding-left: 18px;
+  background: var(--jf-paper);
+  color: var(--jf-ink);
+  font-size: 12px;
+  box-sizing: border-box;
+}
+.utility-bar {
+  display: none;
+}
+/* #endif */
+</style>

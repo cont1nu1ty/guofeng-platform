@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { readInputValue } from '../composables/readInputValue'
 import { computed, reactive, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import {
@@ -22,6 +23,7 @@ const current = computed(() => culturalProducts.find((product) => product.id ===
 const filter = ref('all')
 const mode = ref<CommerceKind>('public')
 const formOpen = ref(false)
+const formEditorVersion = ref(0)
 const result = ref<CommerceRequest | null>(null)
 const validationError = ref('')
 const submitting = ref(false)
@@ -98,6 +100,7 @@ function cancel(id: string) {
   }
 }
 function fillExample() {
+  formEditorVersion.value++
   form.organization = t('向阳社区（示例）', 'Sunshine community (sample)')
   form.quantity = '20'
   form.purpose =
@@ -117,7 +120,9 @@ function fillExample() {
   <view class="showcase-view">
     <template v-if="recordsMode">
       <view class="showcase-breadcrumb">
-        <wd-button size="small" plain @click="goBack()">{{ t('返回', 'Back') }}</wd-button>
+        <wd-button size="small" variant="plain" @click="goBack()">
+          {{ t('返回', 'Back') }}
+        </wd-button>
         <text>{{ t('文创商城 / 我的记录', 'Cultural gifts / My records') }}</text>
       </view>
       <SectionHeading
@@ -174,13 +179,17 @@ function fillExample() {
           {{ request.id }} · {{ request.createdAt.slice(0, 10) }}
         </text>
         <view class="showcase-actions">
-          <wd-button size="small" plain @click="navigate('shop', { id: request.productId })">
+          <wd-button
+            size="small"
+            variant="plain"
+            @click="navigate('shop', { id: request.productId })"
+          >
             {{ t('查看商品', 'View product') }}
           </wd-button>
           <wd-button
             v-if="request.status === 'recorded'"
             size="small"
-            plain
+            variant="plain"
             @click="cancel(request.id)"
           >
             {{ t('取消演示记录', 'Cancel demo request') }}
@@ -190,7 +199,7 @@ function fillExample() {
     </template>
     <template v-else-if="current">
       <view class="showcase-breadcrumb">
-        <wd-button size="small" plain @click="goBack()">
+        <wd-button size="small" variant="plain" @click="goBack()">
           {{ t('返回文创', 'Back to gifts') }}
         </wd-button>
         <text>{{ lt(current.category) }}</text>
@@ -219,7 +228,7 @@ function fillExample() {
             </wd-button>
             <wd-button
               v-if="current.kind !== 'public'"
-              :plain="current.kind === 'both'"
+              :variant="current.kind === 'both' ? 'plain' : 'base'"
               @click="openForm('custom')"
             >
               {{ t('商业定制咨询', 'Custom inquiry') }}
@@ -254,7 +263,7 @@ function fillExample() {
               }}
             </text>
           </view>
-          <wd-button size="small" plain @click="fillExample">
+          <wd-button size="small" variant="plain" @click="fillExample">
             {{ t('填入示例', 'Fill example') }}
           </wd-button>
         </view>
@@ -264,7 +273,10 @@ function fillExample() {
               {{ t('学校 / 社区 / 机构名称', 'School / community / organisation') }}
             </text>
             <input
+              @blur="form.organization = readInputValue($event, form.organization)"
+              @confirm="form.organization = readInputValue($event, form.organization)"
               v-model="form.organization"
+              :key="formEditorVersion"
               class="showcase-input"
               :maxlength="60"
               :placeholder="t('请输入示例机构名称', 'Example organisation name')"
@@ -274,7 +286,15 @@ function fillExample() {
             <text class="showcase-field-label">
               {{ t('意向数量（1–500 份）', 'Quantity (1–500 copies)') }}
             </text>
-            <input v-model="form.quantity" class="showcase-input" type="number" :maxlength="3" />
+            <input
+              @blur="form.quantity = readInputValue($event, form.quantity)"
+              @confirm="form.quantity = readInputValue($event, form.quantity)"
+              v-model="form.quantity"
+              :key="formEditorVersion"
+              class="showcase-input"
+              type="number"
+              :maxlength="3"
+            />
           </view>
         </view>
         <text class="showcase-field-label">
@@ -285,7 +305,10 @@ function fillExample() {
           }}
         </text>
         <textarea
+          @blur="form.purpose = readInputValue($event, form.purpose)"
+          @confirm="form.purpose = readInputValue($event, form.purpose)"
           v-model="form.purpose"
+          :key="formEditorVersion"
           class="showcase-textarea"
           :maxlength="300"
           :placeholder="
@@ -314,7 +337,9 @@ function fillExample() {
                 : t('提交演示咨询', 'Save demo inquiry')
             }}
           </wd-button>
-          <wd-button plain @click="formOpen = false">{{ t('收起表单', 'Close form') }}</wd-button>
+          <wd-button variant="plain" @click="formOpen = false">
+            {{ t('收起表单', 'Close form') }}
+          </wd-button>
         </view>
       </view>
       <view v-if="result" class="showcase-panel shop-result">
@@ -367,7 +392,7 @@ function fillExample() {
           )
         "
       >
-        <wd-button plain size="small" @click="navigate('shop', { view: 'records' })">
+        <wd-button variant="plain" size="small" @click="navigate('shop', { view: 'records' })">
           {{ t('我的记录', 'My records') }} · {{ commerceRequests.length }}
         </wd-button>
       </SectionHeading>
@@ -385,7 +410,7 @@ function fillExample() {
               )
             }}
           </text>
-          <wd-button size="small" plain @click="filter = 'public'">
+          <wd-button size="small" variant="plain" @click="filter = 'public'">
             {{ t('查看公益文创', 'View community gifts') }}
           </wd-button>
         </view>
@@ -402,7 +427,7 @@ function fillExample() {
               )
             }}
           </text>
-          <wd-button size="small" plain @click="filter = 'custom'">
+          <wd-button size="small" variant="plain" @click="filter = 'custom'">
             {{ t('了解定制咨询', 'Explore custom editions') }}
           </wd-button>
         </view>
@@ -416,7 +441,7 @@ function fillExample() {
           ]"
           :key="item.id"
           size="small"
-          :plain="filter !== item.id"
+          :variant="filter !== item.id ? 'plain' : 'base'"
           @click="filter = item.id"
         >
           {{ item.label }}

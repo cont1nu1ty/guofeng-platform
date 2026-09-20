@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { readInputValue } from '../composables/readInputValue'
 import { computed, reactive, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import { genres, channels, regions, themes } from '../domain/fixtures'
@@ -437,6 +438,8 @@ function continueWriting() {
           <view>
             <text class="field-label">{{ t('作者署名（可选）', 'Author name (optional)') }}</text>
             <input
+              @blur="form.author = readInputValue($event, form.author)"
+              @confirm="form.author = readInputValue($event, form.author)"
               v-model="form.author"
               class="form-input"
               :placeholder="t('仅填写演示署名', 'Use a fictional demo name')"
@@ -454,6 +457,8 @@ function continueWriting() {
           <text class="required">*</text>
         </text>
         <input
+          @blur="form.title = readInputValue($event, form.title)"
+          @confirm="form.title = readInputValue($event, form.title)"
           v-model="form.title"
           :class="['form-input', { invalid: errors.title }]"
           :placeholder="
@@ -495,6 +500,8 @@ function continueWriting() {
           </wd-button>
         </view>
         <textarea
+          @blur="form.content = readInputValue($event, form.content)"
+          @confirm="form.content = readInputValue($event, form.content)"
           :key="editorKey"
           v-model="form.content"
           :class="['writing-area', { invalid: errors.content }]"

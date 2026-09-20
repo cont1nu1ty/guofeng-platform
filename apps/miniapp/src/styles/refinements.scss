@@ -209,3 +209,83 @@ uni-button.locale-toggle {
     font-size: 11px;
   }
 }
+
+/* Retain the original cultural illustrations with the shared red/gold palette. */
+.story-art::after {
+  background: rgba(201, 169, 110, 0.24);
+}
+.feature-bottom {
+  border-top-color: rgba(201, 169, 110, 0.35);
+}
+.arch-inner {
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(201, 169, 110, 0.3) 0,
+    rgba(201, 169, 110, 0.3) 3px,
+    transparent 3px,
+    transparent 18px
+  );
+  border-color: var(--jf-gold);
+}
+.profile-hero {
+  border-top-color: var(--jf-red);
+}
+.locale-en .section-title,
+.locale-en .story-title,
+.locale-en .content-card-title,
+.locale-en .profile-panel-title {
+  overflow-wrap: anywhere;
+}
+.locale-en .timeline-heading,
+.locale-en .query-row,
+.locale-en .content-between {
+  flex-wrap: wrap;
+}
+@media (max-width: 700px) {
+  .large-text .story-title,
+  .large-text .content-card-title,
+  .large-text .profile-panel-title {
+    font-size: 21px;
+    line-height: 1.7;
+  }
+  .large-text .content-description,
+  .large-text .content-prose,
+  .large-text .showcase-description {
+    font-size: 17px;
+    line-height: 1.9;
+  }
+  .locale-en .section-heading,
+  .locale-en .card-bottom {
+    flex-wrap: wrap;
+  }
+}
+
+/* Long English text and larger type remain scrollable within phone viewports. */
+.content-popup {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Cover tone is attached to the item, so filtering never changes text contrast. */
+.classic-cover .cover-seal {
+  color: var(--jf-paper);
+}
+.classic-cover.classic-cover-light,
+.classic-cover-light .cover-seal {
+  color: var(--jf-ink);
+}
+.classic-cover-light .cover-seal,
+.classic-cover-light .cover-thread {
+  border-color: var(--jf-ink);
+}
+.classic-cover-light .cover-thread {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0,
+    transparent 40px,
+    rgba(44, 44, 44, 0.5) 40px,
+    rgba(44, 44, 44, 0.5) 41px,
+    transparent 41px,
+    transparent 58px
+  );
+}

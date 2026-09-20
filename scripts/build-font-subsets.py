@@ -11,8 +11,9 @@ from pathlib import Path
 from fontTools import subset, version
 from fontTools.ttLib import TTFont
 
-ROOT = Path(__file__).resolve().parents[5]
+ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / 'apps/miniapp/src/static/fonts'
+METADATA = ROOT / 'scripts/font-data'
 FONT_SOURCES = [
     {
         'repo': 'source-han-sans',
@@ -53,6 +54,8 @@ def main():
     parser.add_argument('--common-count', type=int, default=1800)
     args = parser.parse_args()
     args.cache.mkdir(parents=True, exist_ok=True)
+    METADATA.mkdir(parents=True, exist_ok=True)
+    OUTPUT.mkdir(parents=True, exist_ok=True)
     archive = args.cache / 'Unihan.zip'
     download(UNIHAN_URL, archive, UNIHAN_SHA256)
     frequencies = {}
@@ -102,20 +105,23 @@ def main():
         font.flavor = 'woff'
         name = family+'-'+style+'.woff'
         font.save(OUTPUT / name)
+        # Layout closure may retain additional cmap aliases; report the file as saved.
+        saved_font = TTFont(OUTPUT / name)
         report.append({
             'family': family, 'style': style, 'weight': source['weight'], 'file': name,
             'bytes': (OUTPUT / name).stat().st_size, 'sha256': sha256(OUTPUT / name),
             'source_file': source['filename'], 'source_url': url,
             'source_release': source['release'], 'source_version': source_version,
-            'source_sha256': source['sha256'], 'glyph_count': len(font.getGlyphOrder()),
-            'codepoint_count': len(codepoints),
+            'source_sha256': source['sha256'], 'glyph_count': len(saved_font.getGlyphOrder()),
+            'codepoint_count': len(saved_font.getBestCmap()),
         })
+        saved_font.close()
     manifest = {'fonttools': version, 'common_character_source': UNIHAN_URL,
                 'common_character_source_sha256': UNIHAN_SHA256,
                 'common_character_method': 'sum kHanyuPinlu frequencies; descending; code point tie-break',
                 'common_character_count': args.common_count, 'fonts': report}
-    (OUTPUT / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+'\n')
-    (OUTPUT / 'charset.txt').write_text(''.join(sorted(chars)))
+    (METADATA / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+'\n')
+    (METADATA / 'charset.txt').write_text(''.join(sorted(chars)))
     print(json.dumps(report, ensure_ascii=False, indent=2))
     print('Total font bytes:', sum(item['bytes'] for item in report))
 

@@ -13,6 +13,9 @@ describe('personal archives', () => {
     const value = { sourceId: 'book', sourceTitle: '书', text: '守信', note: '从日常开始' }
     const first = store.saveExcerpt(value)
     expect(store.saveExcerpt(value).id).toBe(first.id)
+    store.saveExcerpt({ ...value, note: '重读后的感想' })
+    expect(createPersonalArchive(storage).listExcerpts()[0].note).toBe('重读后的感想')
+    expect(store.listExcerpts()).toHaveLength(1)
     store.saveAiArchive({ mode: 'rules', prompt: '诚信', result: '答应的事认真完成。' })
     expect(createPersonalArchive(storage).listAiArchives()).toHaveLength(1)
     store.removeExcerpt(first.id)
@@ -29,5 +32,17 @@ describe('personal archives', () => {
       store.saveExcerpt({ sourceId: 'book', sourceTitle: '书', text: '守信', note: '' }),
     ).toThrow('quota')
     expect(store.listExcerpts()).toHaveLength(0)
+  })
+  it('rejects corrupted records without overwriting saved data', () => {
+    let writes = 0
+    expect(() =>
+      createPersonalArchive({
+        getItem: () => JSON.stringify({ excerpts: [{ id: 'broken' }], aiArchives: [] }),
+        setItem: () => {
+          writes++
+        },
+      }),
+    ).toThrow('存档格式无法读取')
+    expect(writes).toBe(0)
   })
 })

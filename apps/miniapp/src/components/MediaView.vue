@@ -11,11 +11,13 @@ import {
 } from '../composables/useShowcase'
 import { navigate, goBack, useRouteParams } from '../composables/useNavigation'
 import { t } from '../composables/useLocale'
+import { assetUrl } from '../composables/useAssetUrl'
 const params = useRouteParams()
 const current = computed(() => mediaCatalog.find((item) => item.id === params.value.id))
 const filter = ref('all')
 const shareOpen = ref(false)
 const playerError = ref(false)
+const playerLoading = ref(false)
 const copied = ref(false)
 const lt = (value: BilingualText) => t(value.zh, value.en)
 const filters = computed(() => [
@@ -76,7 +78,7 @@ function copyShare() {
   <view class="showcase-view">
     <template v-if="current">
       <view class="showcase-breadcrumb">
-        <wd-button size="small" plain @click="goBack()">
+        <wd-button size="small" variant="plain" @click="goBack()">
           {{ t('返回展播', 'Back to gallery') }}
         </wd-button>
         <text>{{ lt(current.collection) }}</text>
@@ -88,13 +90,16 @@ function copyShare() {
               v-if="!playerError"
               :key="current.id"
               class="media-player"
-              :src="current.source"
-              :poster="current.poster"
+              :src="assetUrl(current.source)"
+              :poster="assetUrl(current.poster)"
               :controls="true"
               :show-center-play-btn="true"
               :show-fullscreen-btn="true"
               :enable-progress-gesture="true"
               :autoplay="false"
+              @waiting="playerLoading = true"
+              @loadedmetadata="playerLoading = false"
+              @timeupdate="playerLoading = false"
               @error="playerError = true"
             />
             <view v-else class="media-player-fallback">
@@ -108,11 +113,14 @@ function copyShare() {
                   )
                 }}
               </text>
-              <wd-button plain size="small" @click="playerError = false">
+              <wd-button variant="plain" size="small" @click="playerError = false">
                 {{ t('重新加载', 'Reload') }}
               </wd-button>
             </view>
           </view>
+          <text v-if="playerLoading && !playerError" class="showcase-note" role="status">
+            {{ t('正在缓冲样片…', 'Buffering the sample…') }}
+          </text>
           <view class="media-detail-copy showcase-panel">
             <view class="showcase-meta">
               <text>
@@ -129,7 +137,7 @@ function copyShare() {
             <view class="showcase-actions">
               <wd-button
                 size="small"
-                :plain="!mediaLikes.includes(current.id)"
+                :variant="!mediaLikes.includes(current.id) ? 'plain' : 'base'"
                 @click="toggleAction('like')"
               >
                 {{ mediaLikes.includes(current.id) ? t('已点赞', 'Liked') : t('点赞', 'Like') }} ·
@@ -137,7 +145,7 @@ function copyShare() {
               </wd-button>
               <wd-button
                 size="small"
-                :plain="!mediaFavorites.includes(current.id)"
+                :variant="!mediaFavorites.includes(current.id) ? 'plain' : 'base'"
                 @click="toggleAction('favorite')"
               >
                 {{
@@ -146,7 +154,7 @@ function copyShare() {
                     : t('收藏短片', 'Save video')
                 }}
               </wd-button>
-              <wd-button size="small" plain @click="shareOpen = !shareOpen">
+              <wd-button size="small" variant="plain" @click="shareOpen = !shareOpen">
                 {{ t('分享卡片', 'Share card') }}
               </wd-button>
             </view>
@@ -191,7 +199,7 @@ function copyShare() {
             class="media-related"
             @click="navigate('media', { id: item.id })"
           >
-            <image :src="item.poster" mode="aspectFill" />
+            <image :src="assetUrl(item.poster)" mode="aspectFill" />
             <view>
               <text class="showcase-card-title">{{ lt(item.title) }}</text>
               <text class="showcase-note">
@@ -233,7 +241,7 @@ function copyShare() {
         "
       />
       <view class="media-feature" @click="navigate('media', { id: mediaCatalog[0].id })">
-        <image :src="mediaCatalog[0].poster" mode="aspectFill" />
+        <image :src="assetUrl(mediaCatalog[0].poster)" mode="aspectFill" />
         <view class="media-feature-copy">
           <text class="showcase-kicker">
             {{ t('本期推荐 · 原创样片', 'Featured · original sample') }}
@@ -251,7 +259,7 @@ function copyShare() {
           v-for="item in filters"
           :key="item.id"
           size="small"
-          :plain="filter !== item.id"
+          :variant="filter !== item.id ? 'plain' : 'base'"
           @click="filter = item.id"
         >
           {{ item.label }}
@@ -265,7 +273,7 @@ function copyShare() {
           @click="navigate('media', { id: item.id })"
         >
           <view class="media-card-cover">
-            <image :src="item.poster" mode="aspectFill" />
+            <image :src="assetUrl(item.poster)" mode="aspectFill" />
             <view class="media-play-disc"><wd-icon name="play" size="25px" /></view>
             <text class="media-duration">{{ item.duration }}</text>
           </view>
@@ -306,7 +314,7 @@ function copyShare() {
             }}
           </text>
         </view>
-        <wd-button plain size="small" @click="navigate('media', { id: 'lecture-01' })">
+        <wd-button variant="plain" size="small" @click="navigate('media', { id: 'lecture-01' })">
           {{ t('查看回放', 'View replay') }}
         </wd-button>
       </view>

@@ -1,4 +1,5 @@
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { navigate } from './useNavigation'
 import { createDemoRepository } from '../domain/repository'
 import type { DemoRepository } from '../domain/repository'
 import { regions } from '../domain/fixtures'
@@ -7,10 +8,22 @@ import type { RegionId, Work, Classic } from '../domain/types'
 export { navigate, goBack } from './useNavigation'
 export type { Screen } from './useNavigation'
 export const region = ref<RegionId>('all')
-export const largeText = ref(false)
+function initialLargeText() {
+  try {
+    return uni.getStorageSync('jiafeng:largeText') === true
+  } catch {
+    return false
+  }
+}
+export const largeText = ref(initialLargeText())
+watch(largeText, (value) => {
+  try {
+    uni.setStorageSync('jiafeng:largeText', value)
+  } catch {
+    notify('字号已调整，但本机设置未能保存')
+  }
+})
 export const revision = ref(0)
-export const reader = ref<Work | Classic | null>(null)
-export const verticalReading = ref(false)
 export const reviewQuery = ref('')
 export const storageError = ref<string | null>(null)
 export const storageUnavailable = computed(() => storageError.value !== null)
@@ -91,8 +104,7 @@ export function safely<T>(action: () => T): T | undefined {
   }
 }
 export function openReader(item: Work | Classic) {
-  reader.value = item
-  verticalReading.value = false
+  navigate('library', { id: item.id })
 }
 export function favorite(id: string) {
   safely(() => repo.toggleFavorite(id))
