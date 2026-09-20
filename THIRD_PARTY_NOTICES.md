@@ -9,7 +9,9 @@
 | Wot UI 图标字体 | npm 包内 51KB 字体转换为本地 CSS data URI，避免演示依赖外部字体请求，原字体不修改 | 同上 |
 | Uni-app 4.85 对应编译包、Vue、Vite、TypeScript、Vitest 等 | npm 依赖；准确版本、下载来源、完整性哈希由 package-lock.json 锁定 | 以安装版本自带 LICENSE/NOTICE 为准；Uni-app 仓库含 Apache-2.0 及额外许可文件，应在正式发布时核对运行时与 SDK 适用范围 |
 | 书卷、山形、拱门等插画 | 项目原创 CSS 图形，无外部图片下载 | 本项目原创 |
-| 人物、篇章、活动样例 | 为沟通而编写的虚构演示文本；不是官方资讯、出版物或真实活动 | 在界面和数据内标示 |
-| 中文字体 | 使用设备已有字体及系统后备字体，不打包字体文件 | 不附带第三方中文字体；后续若内置思源字体，需保留对应 OFL 文件并控制包体 |
+| 篇章、资讯、活动样例 | 为沟通编写的原创演示文本；不是官方资讯、出版物或真实活动 | 在界面和数据内标示；历史人物馆使用注明公开来源的简短介绍与公版古文短句 |
+| 思源黑体 / 思源宋体 | 随项目附带 WOFF 子集，已重命名 JiafengSans / JiafengSerif，保留竖排特性 | [Adobe 黑体](https://github.com/adobe-fonts/source-han-sans) / [Adobe 宋体](https://github.com/adobe-fonts/source-han-serif)，SIL OFL 1.1；原始许可位于 `licenses/`，固定来源、哈希与构建方法见 `docs/09-fonts.md` |
+| Unihan 常用字数据 | 构建时选取字形子集，不运行时联网 | Unicode 17.0.0；原始许可 `licenses/Unicode-LICENSE.txt` |
+| 三条视频及封面 | 原创 12 秒静音文字动画，H.264，不含外部影像/录音 | 素材说明与人物馆公开资料出处见 `apps/miniapp/src/static/media/README.md`；渲染用系统 Noto CJK，字体文件未嵌入视频 |
 
 准确来源见 `source-lock.json`。若依、芋道、流程引擎、OCR、全景、AI 平台仅为选型研究，当前源码没有导入这些后端项目。未来每次引入都应记录对应提交与许可证，不能把一个项目的许可套用于其素材、模型或所有依赖。

@@ -28,9 +28,19 @@ import VenuesView from './VenuesView.vue'
 import MediaView from './MediaView.vue'
 import HallView from './HallView.vue'
 import ShopView from './ShopView.vue'
-const props = withDefaults(defineProps<{ screen?: Screen; params?:Record<string,string> }>(),{screen:'home',params:()=>({})})
-provide(routeKey,computed(()=>props.params))
-const canBack = computed(()=>Object.keys(props.params).length>0 && !['news','classroom','venues','learning','media','hall','shop'].includes(props.screen))
+const props = withDefaults(defineProps<{ screen?: Screen; params?: Record<string, string> }>(), {
+  screen: 'home',
+  params: () => ({}),
+})
+provide(
+  routeKey,
+  computed(() => props.params),
+)
+const canBack = computed(
+  () =>
+    Object.keys(props.params).length > 0 &&
+    !['news', 'classroom', 'venues', 'learning', 'media', 'hall', 'shop'].includes(props.screen),
+)
 import { regions } from '../domain/fixtures'
 import type { RegionId } from '../domain/types'
 const regionPopup = ref(false)
@@ -55,14 +65,16 @@ function selectRegion(id: RegionId) {
 }
 </script>
 <template>
-  <view :class="['app-shell', { 'large-text': largeText, 'locale-en':locale==='en' }]">
+  <view :class="['app-shell', { 'large-text': largeText, 'locale-en': locale === 'en' }]">
     <view v-if="storageError" class="storage-alert">{{ storageError }}</view>
     <view class="utility-bar">
       <view class="container utility-inner">
-        <text>{{ t('全国家风文化共建共享平台','Family culture · A shared national platform') }}</text>
+        <text>
+          {{ t('全国家风文化共建共享平台', 'Family culture · A shared national platform') }}
+        </text>
         <view>
           <text class="demo-dot" />
-          <text>{{ t('交互演示 · 数据为样例','Interactive demo · Sample data') }}</text>
+          <text>{{ t('交互演示 · 数据为样例', 'Interactive demo · Sample data') }}</text>
         </view>
       </view>
     </view>
@@ -76,17 +88,21 @@ function selectRegion(id: RegionId) {
           </view>
           <view>
             <text class="brand-name">{{ t('家风中华行') }}</text>
-            <text class="brand-en">{{ t('家风文化 · 共建共享','FAMILY VALUES · CHINA') }}</text>
+            <text class="brand-en">{{ t('家风文化 · 共建共享', 'FAMILY VALUES · CHINA') }}</text>
           </view>
         </button>
         <view class="header-actions">
-<button class="locale-toggle" @click="toggleLocale">{{ locale==='zh'?'EN':'中文' }}</button>
+          <button class="locale-toggle" @click="toggleLocale">
+            {{ locale === 'zh' ? 'EN' : '中文' }}
+          </button>
           <button class="region-button" @click="regionPopup = true">
             <wd-icon name="location" size="16px" />
-            <text>{{ t(regionLabel) }}{{ t('站','') }}</text>
+            <text>{{ t(regionLabel) }}{{ t('站', '') }}</text>
             <wd-icon name="arrow-down" size="12px" />
           </button>
-          <button class="assistant-link" @click="navigate('assistant')">✦ {{ t('家风助手','Assistant') }}</button>
+          <button class="assistant-link" @click="navigate('assistant')">
+            ✦ {{ t('家风助手', 'Assistant') }}
+          </button>
           <button class="avatar-button" aria-label="个人中心" @click="navigate('profile')">
             家
           </button>
@@ -107,12 +123,14 @@ function selectRegion(id: RegionId) {
           :class="['nav-item', 'nav-admin', { active: screen === 'admin' }]"
           @click="navigate('admin')"
         >
-          {{ t('运营视图','Operations') }} ↗
+          {{ t('运营视图', 'Operations') }} ↗
         </button>
       </view>
     </view>
     <view class="container main-content">
-<view v-if="canBack" class="back-bar"><button class="text-button" @click="goBack">← {{ t('返回上一页','Back') }}</button></view>
+      <view v-if="canBack" class="back-bar">
+        <button class="text-button" @click="goBack">← {{ t('返回上一页', 'Back') }}</button>
+      </view>
       <HomeView v-if="screen === 'home'" />
       <SubmitView v-else-if="screen === 'submit'" />
       <LibraryView v-else-if="screen === 'library'" />
@@ -121,16 +139,23 @@ function selectRegion(id: RegionId) {
       <ProfileView v-else-if="screen === 'profile'" />
       <AssistantView v-else-if="screen === 'assistant'" />
       <AdminView v-else-if="screen === 'admin'" />
-<NewsView v-else-if="screen==='news'"/><ClassroomView v-else-if="screen==='classroom'"/><VenuesView v-else-if="screen==='venues'"/><MediaView v-else-if="screen==='media'"/><HallView v-else-if="screen==='hall'"/><ShopView v-else-if="screen==='shop'"/>
+      <NewsView v-else-if="screen === 'news'" />
+      <ClassroomView v-else-if="screen === 'classroom'" />
+      <VenuesView v-else-if="screen === 'venues'" />
+      <MediaView v-else-if="screen === 'media'" />
+      <HallView v-else-if="screen === 'hall'" />
+      <ShopView v-else-if="screen === 'shop'" />
     </view>
     <view class="site-footer container">
       <view class="footer-brand">
         <text>{{ t('家风中华行') }}</text>
-        <text>小家有温度，大家有力量。</text>
+        <text>{{ t('小家有温度，大家有力量。', 'Strong families, shared values.') }}</text>
       </view>
       <view class="footer-note">
-        <text>文化共建 · 数字传承</text>
-        <text>需求沟通原型 v0.1 · 非正式运营平台</text>
+        <text>{{ t('文化共建 · 数字传承', 'Culture shared · Heritage continued') }}</text>
+        <text>
+          {{ t('需求沟通原型 · 非正式运营平台', 'Discussion prototype · Sample content') }}
+        </text>
       </view>
     </view>
     <view class="mobile-nav">
@@ -146,17 +171,29 @@ function selectRegion(id: RegionId) {
             item.label === '首页'
               ? t('首页')
               : item.label === '个人中心'
-                ? t('我的','Me')
-                : locale==='en' ? ({library:'Library',submit:'Write',learning:'Learn'}[item.id as 'library'|'submit'|'learning'] ?? t(item.label)) : item.label.slice(2)
+                ? t('我的', 'Me')
+                : locale === 'en'
+                  ? ({ library: 'Library', submit: 'Write', learning: 'Learn' }[
+                      item.id as 'library' | 'submit' | 'learning'
+                    ] ?? t(item.label))
+                  : item.label.slice(2)
           }}
         </text>
       </button>
     </view>
-    <wd-popup v-model="regionPopup" position="center" closable custom-class="content-popup">
+    <wd-popup
+      :z-index="100"
+      v-model="regionPopup"
+      position="center"
+      closable
+      custom-class="content-popup"
+    >
       <view class="dialog-body">
-        <text class="eyebrow">REGIONAL STATIONS</text>
-        <text class="section-title">选择你的家风分站</text>
-        <text class="section-subtitle">当前开放三个地区的样例内容</text>
+        <text class="eyebrow">{{ t('共建共享 · 地区分站', 'REGIONAL STATIONS') }}</text>
+        <text class="section-title">{{ t('选择你的家风分站', 'Choose a regional station') }}</text>
+        <text class="section-subtitle">
+          {{ t('当前开放三个地区的样例内容', 'Sample content from three regions') }}
+        </text>
         <view class="region-options">
           <button
             v-for="item in regions"
@@ -168,10 +205,23 @@ function selectRegion(id: RegionId) {
             <text v-if="region === item.id">✓</text>
           </button>
         </view>
-        <text class="scope-note">地区切换仅用于内容展示，不代表真实数据分库或权限隔离。</text>
+        <text class="scope-note">
+          {{
+            t(
+              '地区切换仅用于内容展示，不代表真实数据分库或权限隔离。',
+              'Regions filter sample content. This is not account authorization or database isolation.',
+            )
+          }}
+        </text>
       </view>
     </wd-popup>
-    <wd-popup v-model="readerVisible" position="center" closable custom-class="reader-popup">
+    <wd-popup
+      :z-index="100"
+      v-model="readerVisible"
+      position="center"
+      closable
+      custom-class="reader-popup"
+    >
       <view v-if="reader" class="reader-body">
         <view class="reader-toolbar">
           <text class="tag">演示原创篇章</text>

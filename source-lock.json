@@ -1,12 +1,16 @@
 {
-  "checkedAt": "2026-09-20",
+  "checkedAt": "2026-09-21",
   "frontendTemplate": {
     "repository": "https://github.com/wot-ui/wot-starter",
     "commit": "c9813573b73f45fc08b0eb249f0f28c5ca0fe401",
     "committedAt": "2026-08-29T16:24:14+08:00",
     "license": "MIT",
     "licenseFile": "licenses/wot-starter.MIT.txt",
-    "reuse": ["Uni-app/Vue3/Wot UI dependency combination", "Vite Uni plugin configuration adapted and reduced", "H5 entry document and createSSRApp entry adapted"],
+    "reuse": [
+      "Uni-app/Vue3/Wot UI dependency combination",
+      "Vite Uni plugin configuration adapted and reduced",
+      "H5 entry document and createSSRApp entry adapted"
+    ],
     "modifications": "Keep H5 and mp-weixin only; replace template demo with family culture views; static pages/manifest config; explicit imports; domain repository and mock persistence. Not a full upstream fork."
   },
   "components": {
@@ -15,9 +19,38 @@
     "repository": "https://github.com/wot-ui/wot-ui",
     "license": "MIT",
     "licenseFile": "licenses/wot-ui.MIT.txt",
-    "reuse": ["button", "icon", "checkbox", "popup", "switch"],
+    "reuse": [
+      "button",
+      "icon",
+      "checkbox",
+      "popup",
+      "switch"
+    ],
     "font": "iconfont.ttf embedded in src/styles/icons.scss for local/offline display"
   },
   "dependencyLock": "apps/miniapp/package-lock.json",
-  "backendStatus": "Not integrated. Candidate evaluation and sources in docs/03-open-source.md and docs/06-backend-roadmap.md"
+  "backendStatus": "Not integrated. Candidate evaluation and sources in docs/03-open-source.md and docs/06-backend-roadmap.md",
+  "fonts": {
+    "manifest": "apps/miniapp/src/static/fonts/manifest.json",
+    "families": [
+      "JiafengSans (Source Han Sans SC 2.005R subset)",
+      "JiafengSerif (Source Han Serif SC 2.003R subset)"
+    ],
+    "license": "SIL OFL 1.1",
+    "licenseFiles": [
+      "licenses/source-han-sans-OFL.txt",
+      "licenses/source-han-serif-OFL.txt"
+    ],
+    "modifications": "Subset, remove hints, rename families; retain vertical OpenType features. Per-file upstream SHA256 and output SHA256 are recorded in manifest.",
+    "characterData": {
+      "source": "https://www.unicode.org/Public/17.0.0/ucd/Unihan.zip",
+      "licenseFile": "licenses/Unicode-LICENSE.txt"
+    }
+  },
+  "demoMedia": {
+    "path": "apps/miniapp/src/static/media",
+    "source": "Original project-authored 12-second silent typography clips and covers",
+    "generator": "scripts/generate_demo_media.py",
+    "externalFootage": false
+  }
 }

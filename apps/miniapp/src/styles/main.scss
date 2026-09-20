@@ -3,7 +3,8 @@
 page {
   background: var(--jf-paper);
   color: var(--jf-ink);
-  font-family: 'JiafengSans', 'Noto Sans CJK SC', 'Source Han Sans SC', 'Microsoft YaHei', sans-serif;
+  font-family:
+    'JiafengSans', 'Noto Sans CJK SC', 'Source Han Sans SC', 'Microsoft YaHei', sans-serif;
   font-size: 14px;
   line-height: 1.65;
 }
@@ -103,7 +104,8 @@ text {
   border: 3px double #e7baaa;
   border-radius: 2px;
   font:
-    18px/21px 'JiafengSerif', 'Noto Serif CJK SC',
+    18px/21px 'JiafengSerif',
+    'Noto Serif CJK SC',
     'Source Han Serif SC',
     serif;
   text-align: center;
@@ -114,7 +116,8 @@ text {
 .brand-name {
   display: block;
   font:
-    700 28px/1.3 'JiafengSerif', 'Noto Serif CJK SC',
+    700 28px/1.3 'JiafengSerif',
+    'Noto Serif CJK SC',
     'Source Han Serif SC',
     serif;
   letter-spacing: 5px;
@@ -228,7 +231,8 @@ text {
 .hero-title {
   display: block;
   font:
-    600 43px/1.4 'JiafengSerif', 'Noto Serif CJK SC',
+    600 43px/1.4 'JiafengSerif',
+    'Noto Serif CJK SC',
     'Source Han Serif SC',
     serif;
   letter-spacing: 6px;
@@ -497,7 +501,8 @@ text {
 .section-title {
   display: block;
   font:
-    600 25px/1.5 'JiafengSerif', 'Noto Serif CJK SC',
+    600 25px/1.5 'JiafengSerif',
+    'Noto Serif CJK SC',
     'Source Han Serif SC',
     serif;
   color: var(--jf-ink);
@@ -593,7 +598,7 @@ text {
   border-radius: 10px;
 }
 .story-art-1 {
-  background: #E9E3D8;
+  background: #e9e3d8;
 }
 .story-art-1 > text {
   color: var(--jf-ink);
@@ -624,7 +629,8 @@ text {
 .story-title {
   display: block;
   font:
-    600 18px/1.55 'JiafengSerif', 'Noto Serif CJK SC',
+    600 18px/1.55 'JiafengSerif',
+    'Noto Serif CJK SC',
     'Source Han Serif SC',
     serif;
   margin-bottom: 7px;
@@ -668,7 +674,8 @@ text {
 .quote-text {
   display: block;
   font:
-    600 26px/1.95 'JiafengSerif', 'Noto Serif CJK SC',
+    600 26px/1.95 'JiafengSerif',
+    'Noto Serif CJK SC',
     'Source Han Serif SC',
     serif;
   letter-spacing: 6px;
@@ -705,7 +712,8 @@ text {
 .mini-feature-title {
   display: block;
   font:
-    20px/1.65 'JiafengSerif', 'Noto Serif CJK SC',
+    20px/1.65 'JiafengSerif',
+    'Noto Serif CJK SC',
     'Source Han Serif SC',
     serif;
   margin: 15px 0 23px;
@@ -752,7 +760,8 @@ text {
 }
 .vision-caption > text:first-child {
   font:
-    18px/1.6 'JiafengSerif', 'Noto Serif CJK SC',
+    18px/1.6 'JiafengSerif',
+    'Noto Serif CJK SC',
     serif;
   color: var(--jf-ink);
   letter-spacing: 4px;
@@ -772,7 +781,8 @@ text {
 .footer-brand > text {
   display: block;
   font:
-    18px 'JiafengSerif', 'Noto Serif CJK SC',
+    18px 'JiafengSerif',
+    'Noto Serif CJK SC',
     serif;
   letter-spacing: 3px;
 }
@@ -836,7 +846,8 @@ text {
   gap: 10px;
   align-items: center;
   font:
-    600 17px 'JiafengSerif', 'Noto Serif CJK SC',
+    600 17px 'JiafengSerif',
+    'Noto Serif CJK SC',
     serif;
   margin: 7px 0 23px;
 }
@@ -981,7 +992,8 @@ text {
 .aside-title {
   display: block;
   font:
-    25px/1.7 'JiafengSerif', 'Noto Serif CJK SC',
+    25px/1.7 'JiafengSerif',
+    'Noto Serif CJK SC',
     serif;
   color: var(--jf-ink);
   margin: 18px 0;
@@ -1031,7 +1043,8 @@ text {
 .library-banner-title {
   display: block;
   font:
-    30px/1.7 'JiafengSerif', 'Noto Serif CJK SC',
+    30px/1.7 'JiafengSerif',
+    'Noto Serif CJK SC',
     serif;
   letter-spacing: 7px;
   color: var(--jf-ink);
@@ -1041,7 +1054,8 @@ text {
   position: absolute;
   right: 100px;
   font:
-    80px/1.2 'JiafengSerif', 'Noto Serif CJK SC',
+    80px/1.2 'JiafengSerif',
+    'Noto Serif CJK SC',
     serif;
   letter-spacing: 10px;
   color: #af967345;
@@ -1080,7 +1094,8 @@ text {
 .classic-cover > text:first-of-type {
   writing-mode: vertical-rl;
   font:
-    24px/1.6 'JiafengSerif', 'Noto Serif CJK SC',
+    24px/1.6 'JiafengSerif',
+    'Noto Serif CJK SC',
     serif;
   letter-spacing: 5px;
   margin-top: 25px;
@@ -1118,7 +1133,8 @@ text {
 .classic-title {
   display: block;
   font:
-    600 17px 'JiafengSerif', 'Noto Serif CJK SC',
+    600 17px 'JiafengSerif',
+    'Noto Serif CJK SC',
     serif;
   margin: 19px 0 8px;
 }
@@ -1172,7 +1188,8 @@ text {
 }
 .learning-stamp {
   font:
-    26px/1.4 'JiafengSerif', 'Noto Serif CJK SC',
+    26px/1.4 'JiafengSerif',
+    'Noto Serif CJK SC',
     serif;
   color: var(--jf-ink);
   border: 1px solid var(--jf-gold);
@@ -1205,14 +1222,14 @@ text {
   height: 173px;
   position: relative;
   overflow: hidden;
-  background: #E7D7B8;
+  background: #e7d7b8;
   padding: 16px;
 }
 .activity-art-1 {
   background: #c7bca1;
 }
 .activity-art-2 {
-  background: #E9E3D8;
+  background: #e9e3d8;
 }
 .activity-art > .tag {
   position: relative;
@@ -1250,7 +1267,8 @@ text {
   bottom: 22px;
   writing-mode: vertical-rl;
   font:
-    26px 'JiafengSerif', 'Noto Serif CJK SC',
+    26px 'JiafengSerif',
+    'Noto Serif CJK SC',
     serif;
   letter-spacing: 8px;
   color: var(--jf-ink);
@@ -1341,7 +1359,7 @@ text {
   flex-shrink: 0;
 }
 .timeline-item.complete .timeline-dot {
-  background: #F7E8E8;
+  background: #f7e8e8;
   border-color: var(--jf-red);
   color: var(--jf-ink);
 }
@@ -1358,7 +1376,8 @@ text {
   align-items: center;
   gap: 15px;
   font:
-    600 17px 'JiafengSerif', 'Noto Serif CJK SC',
+    600 17px 'JiafengSerif',
+    'Noto Serif CJK SC',
     serif;
   margin-bottom: 10px;
 }
@@ -1617,7 +1636,8 @@ text {
 .reader-title {
   display: block;
   font:
-    600 28px/1.5 'JiafengSerif', 'Noto Serif CJK SC',
+    600 28px/1.5 'JiafengSerif',
+    'Noto Serif CJK SC',
     serif;
   text-align: center;
   margin: 26px 0 10px;
@@ -1637,7 +1657,8 @@ text {
 .reader-paragraph {
   display: block;
   font:
-    15px/2.2 'JiafengSerif', 'Noto Serif CJK SC',
+    15px/2.2 'JiafengSerif',
+    'Noto Serif CJK SC',
     serif;
   white-space: pre-wrap;
   margin-bottom: 20px;

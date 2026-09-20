@@ -11,6 +11,7 @@ export const largeText = ref(false)
 export const revision = ref(0)
 export const reader = ref<Work | Classic | null>(null)
 export const verticalReading = ref(false)
+export const reviewQuery = ref('')
 export const storageError = ref<string | null>(null)
 export const storageUnavailable = computed(() => storageError.value !== null)
 
@@ -41,6 +42,10 @@ function initializeRepository(): DemoRepository {
       toggleFavorite: rejectWrite,
       registerActivity: rejectWrite,
       cancelRegistration: rejectWrite,
+      resubmitWork: rejectWrite,
+      prepareRevision: rejectWrite,
+      reviewWork: rejectWrite,
+      markNotificationRead: rejectWrite,
     }
   }
 }
@@ -64,6 +69,14 @@ export const favorites = computed(() => {
 export const registrations = computed(() => {
   revision.value
   return repo.listRegistrations()
+})
+export const notifications = computed(() => {
+  revision.value
+  return repo.listNotifications()
+})
+export const certificates = computed(() => {
+  revision.value
+  return repo.listCertificates()
 })
 export function notify(message: string) {
   uni.showToast({ title: message, icon: 'none', duration: 2400 })

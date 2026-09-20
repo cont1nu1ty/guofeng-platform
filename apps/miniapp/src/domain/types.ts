@@ -9,7 +9,66 @@ export type GenreId =
   | 'family-notes'
   | 'commentary'
 export type ChannelId = 'public-service' | 'school' | 'community' | 'special'
-export type WorkStatus = 'pending_initial_review' | 'in_review' | 'collected'
+export type WorkStatus =
+  | 'pending_initial_review'
+  | 'in_review'
+  | 'returned'
+  | 'shortlisted'
+  | 'awarded'
+  | 'collected'
+export type ThemeId =
+  | 'integrity'
+  | 'filial'
+  | 'neighbor'
+  | 'patriotism'
+  | 'heritage'
+  | 'family-history'
+export type ReviewAction = 'return' | 'advance' | 'shortlist' | 'award' | 'collect'
+export interface AttachmentMeta {
+  id: string
+  name: string
+  size: number
+  type: 'image' | 'pdf' | 'word'
+  mimeType?: string
+  tempPath?: string
+  url?: string
+}
+export interface ReviewScores {
+  theme: number
+  writing: number
+  originality: number
+}
+export interface ReviewInput {
+  action: ReviewAction
+  scores: ReviewScores
+  comment: string
+  reviewer?: string
+}
+export interface ReviewRecord extends ReviewInput {
+  id: string
+  stageIndex: number
+  createdAt: string
+  submissionRevision: number
+  averageScore: number
+}
+export interface DemoNotification {
+  id: string
+  workId: string
+  title: string
+  content: string
+  createdAt: string
+  read: boolean
+  isDemo: true
+}
+export interface DemoCertificate {
+  id: string
+  workId: string
+  title: string
+  author: string
+  awardLabel: string
+  issuedAt: string
+  isDemo: true
+}
 
 export interface Option<T extends string = string> {
   id: T
@@ -29,6 +88,10 @@ export interface SubmissionDraft {
   region: RegionId
   author?: string
   copyrightAccepted: boolean
+  themes?: ThemeId[]
+  theme?: ThemeId
+  attachments?: AttachmentMeta[]
+  editingWorkId?: string
 }
 export type ValidationErrors = Partial<Record<keyof SubmissionDraft, string>>
 export interface Work {
@@ -45,6 +108,11 @@ export interface Work {
   submittedAt: string
   progressIndex: number
   tags: string[]
+  themes?: ThemeId[]
+  theme?: ThemeId
+  attachments?: AttachmentMeta[]
+  reviews?: ReviewRecord[]
+  revisionNumber?: number
   isMine: boolean
   isDemo: true
 }

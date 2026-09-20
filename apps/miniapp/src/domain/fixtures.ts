@@ -154,7 +154,7 @@ export const seedClassics: Classic[] = [
     author: '演示编辑组（虚构）',
     region: 'all',
     category: '家书选读',
-    coverColor: '#7c2629',
+    coverColor: '#C41A1A',
     chapterCount: 3,
     excerpt: '在一笔一画里，读懂家人之间最朴素的牵挂。',
     content:
@@ -168,7 +168,7 @@ export const seedClassics: Classic[] = [
     author: '演示编辑组（虚构）',
     region: 'zhejiang',
     category: '家训手记',
-    coverColor: '#49625b',
+    coverColor: '#2C2C2C',
     chapterCount: 2,
     excerpt: '从勤读、守信与惜物开始，记录可以实践的家庭约定。',
     content:
@@ -182,7 +182,7 @@ export const seedClassics: Classic[] = [
     author: '演示编辑组（虚构）',
     region: 'sichuan',
     category: '百姓家风',
-    coverColor: '#927044',
+    coverColor: '#C9A96E',
     chapterCount: 2,
     excerpt: '一院竹影，几代人的相互照看，组成平实而绵长的故事。',
     content:
@@ -242,3 +242,32 @@ export const seedActivities: Activity[] = [
   },
 ]
 export const seeds = { works: seedWorks, classics: seedClassics, activities: seedActivities }
+
+export const themes: import('./types').Option<import('./types').ThemeId>[] = [
+  { id: 'integrity', label: '清廉家风' },
+  { id: 'filial', label: '孝老爱亲' },
+  { id: 'neighbor', label: '邻里互助' },
+  { id: 'patriotism', label: '爱国奉献' },
+  { id: 'heritage', label: '先贤文脉' },
+  { id: 'family-history', label: '家族传记' },
+]
+export const reviewStandards = [
+  {
+    id: 'theme',
+    label: '主题表达',
+    description: '家风主题清晰，表达积极且尊重真实生活。',
+    weight: '等权 · 0–100分',
+  },
+  {
+    id: 'writing',
+    label: '文字表达',
+    description: '结构清楚、语言通顺，符合所选文学体裁。',
+    weight: '等权 · 0–100分',
+  },
+  {
+    id: 'originality',
+    label: '原创与材料',
+    description: '关注原创声明、材料完整与隐私边界；不代替真实查重。',
+    weight: '等权 · 0–100分',
+  },
+]

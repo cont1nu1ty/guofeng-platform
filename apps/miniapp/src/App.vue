@@ -1,7 +1,13 @@
 <script lang="ts">
 import { loadFonts } from './composables/loadFonts'
 import { fontStatus } from './composables/useFontStatus'
-export default { onLaunch() { loadFonts().then((result)=>{fontStatus.value=result}) } }
+export default {
+  onLaunch() {
+    loadFonts().then((result) => {
+      fontStatus.value = result
+    })
+  },
+}
 </script>
 <style lang="scss">
 @import './styles/tokens.scss';
