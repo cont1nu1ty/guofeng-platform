@@ -1,0 +1,1239 @@
+/* Original composed layouts. Basic buttons, checks and icons are Wot UI. */
+.showcase-view {
+  --showcase-line: rgba(44, 44, 44, 0.15);
+  --showcase-muted: #5d5752;
+  color: var(--jf-ink, #2c2c2c);
+  .showcase-title,
+  .showcase-card-title {
+    display: block;
+    font-family: 'JiafengSerif', 'Source Han Serif SC', 'Noto Serif CJK SC', serif;
+    font-weight: 700;
+    color: var(--jf-ink, #2c2c2c);
+  }
+  .showcase-title {
+    font-size: 29px;
+    line-height: 1.45;
+  }
+  .showcase-card-title {
+    font-size: 20px;
+    line-height: 1.5;
+  }
+  .showcase-kicker {
+    display: block;
+    color: var(--jf-red, #c41a1a);
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 9px;
+    letter-spacing: 1px;
+  }
+  .showcase-description {
+    display: block;
+    line-height: 1.85;
+    color: var(--showcase-muted);
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  .showcase-note {
+    display: block;
+    color: var(--showcase-muted);
+    font-size: 12px;
+    line-height: 1.75;
+    margin-top: 8px;
+  }
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+  }
+}
+.showcase-breadcrumb,
+.showcase-meta,
+.showcase-actions,
+.showcase-row-between {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.showcase-breadcrumb {
+  margin-bottom: 24px;
+  color: var(--showcase-muted);
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+.showcase-meta {
+  color: var(--jf-red, #c41a1a);
+  font-size: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.showcase-actions {
+  flex-wrap: wrap;
+  margin-top: 20px;
+  gap: 10px;
+}
+.showcase-row-between {
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.showcase-number {
+  color: var(--jf-red, #c41a1a);
+  font-size: 17px;
+  white-space: nowrap;
+}
+.showcase-panel {
+  background: #fffdf9;
+  border: 1px solid var(--showcase-line);
+  padding: 28px;
+  margin-bottom: 22px;
+}
+.showcase-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 285px;
+  gap: 28px;
+}
+.showcase-detail-layout > view {
+  min-width: 0;
+}
+.showcase-side-panel {
+  padding-top: 3px;
+}
+.showcase-side-panel > .showcase-card-title {
+  padding: 0 0 18px;
+  border-bottom: 1px solid var(--showcase-line);
+}
+.showcase-callout {
+  border-top: 3px solid var(--jf-gold, #c9a96e);
+  background: #fffdf9;
+  padding: 22px;
+  margin-top: 24px;
+  font-size: 13px;
+  line-height: 1.85;
+}
+.showcase-callout > text {
+  display: block;
+  margin-bottom: 12px;
+}
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+.showcase-card {
+  border: 1px solid var(--showcase-line);
+  background: #fffdf9;
+  overflow: hidden;
+  cursor: pointer;
+}
+.showcase-card-body {
+  padding: 23px;
+}
+.showcase-card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--showcase-line);
+  padding-top: 15px;
+  margin-top: 22px;
+  font-size: 12px;
+  color: var(--showcase-muted);
+}
+.showcase-card-foot > text:last-child {
+  color: var(--jf-red, #c41a1a);
+  font-weight: 600;
+}
+.showcase-filter {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin: 28px 0 23px;
+}
+.showcase-share-card {
+  margin-top: 24px;
+  border: 1px solid var(--jf-gold, #c9a96e);
+  padding: 24px;
+  background: var(--jf-paper, #f5f0e8);
+}
+.showcase-share-card .wd-button {
+  margin-top: 18px;
+}
+.showcase-script-line {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--showcase-line);
+  padding: 18px 0;
+  line-height: 1.85;
+}
+.showcase-script-line:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.showcase-step {
+  flex: 0 0 28px;
+  color: var(--jf-red, #c41a1a);
+  font-size: 20px;
+  font-family: Georgia, serif;
+}
+.showcase-input,
+.showcase-textarea {
+  display: block;
+  background: #fff;
+  border: 1px solid #bab3a9;
+  border-radius: 4px;
+  width: 100%;
+  padding: 12px 14px;
+  color: var(--jf-ink, #2c2c2c);
+  font-size: 15px;
+  line-height: 1.65;
+}
+.showcase-input {
+  height: 46px;
+}
+.showcase-textarea {
+  height: 120px;
+  margin: 10px 0;
+}
+.showcase-field-label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  margin: 17px 0 8px;
+}
+.showcase-form-error {
+  margin-top: 18px;
+  border-left: 3px solid var(--jf-red, #c41a1a);
+  background: #fff0ee;
+  padding: 12px 16px;
+  color: var(--jf-red, #c41a1a);
+}
+
+.media-feature {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  background: var(--jf-red, #c41a1a);
+  color: #fff;
+  overflow: hidden;
+  cursor: pointer;
+}
+.media-feature > image {
+  width: 100%;
+  height: 295px;
+}
+.media-feature-copy {
+  padding: 38px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.showcase-view .media-feature-copy .showcase-kicker {
+  color: #ffe4b0;
+}
+.showcase-view .media-feature-copy .showcase-title {
+  color: #fff;
+  margin-bottom: 12px;
+}
+.media-play-link {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  margin-top: 25px;
+  font-weight: 600;
+}
+.media-card-cover {
+  position: relative;
+  height: 180px;
+}
+.media-card-cover > image {
+  width: 100%;
+  height: 100%;
+}
+.media-play-disc {
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  background: rgba(44, 44, 44, 0.5);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.media-duration {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(44, 44, 44, 0.75);
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 7px;
+}
+.media-player-frame {
+  background: #201d1d;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+.media-player {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 225px;
+}
+.media-player-fallback {
+  padding: 40px 26px;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  color: #fff;
+  text-align: center;
+}
+.media-detail-copy {
+  border-top: 0;
+}
+.media-related {
+  display: flex;
+  gap: 14px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--showcase-line);
+  cursor: pointer;
+}
+.media-related > image {
+  width: 90px;
+  height: 68px;
+  flex-shrink: 0;
+}
+.showcase-view .media-related .showcase-card-title {
+  font-size: 14px;
+}
+.media-live-status {
+  color: var(--jf-red, #c41a1a);
+}
+.showcase-live-band {
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+  align-items: center;
+  border-top: 3px solid var(--jf-red, #c41a1a);
+  background: #fffdf9;
+  padding: 27px 32px;
+  margin-top: 30px;
+}
+.showcase-live-band .showcase-card-title {
+  margin-bottom: 8px;
+}
+
+.hall-intro-band {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  background: var(--jf-red, #c41a1a);
+  color: #fff;
+  padding: 28px 38px;
+}
+.showcase-view .hall-intro-band .showcase-title {
+  color: #fff;
+  margin-bottom: 10px;
+}
+.hall-intro-character {
+  border: 1px solid var(--jf-gold, #c9a96e);
+  font-family: 'JiafengSerif', 'Source Han Serif SC', 'Noto Serif CJK SC', serif;
+  font-size: 52px;
+  color: #fff0cf;
+  width: 83px;
+  height: 95px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+.hall-intro-count {
+  margin-left: auto;
+  padding-left: 24px;
+  font-family: Georgia, serif;
+  font-size: 52px;
+  color: #fff0cf;
+  text-align: right;
+}
+.hall-intro-count > text {
+  display: block;
+  font-size: 13px;
+  font-family: sans-serif;
+  white-space: nowrap;
+}
+.hall-people-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+.hall-person-art {
+  height: 250px;
+  background: #eae1d1;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--showcase-line);
+}
+.hall-arch {
+  position: absolute;
+  border: 1px solid var(--jf-gold, #c9a96e);
+  border-radius: 170px 170px 0 0;
+  width: 240px;
+  height: 265px;
+  left: calc(50% - 120px);
+  top: 24px;
+  box-shadow: 0 0 0 12px rgba(201, 169, 110, 0.1);
+}
+.hall-person-seal {
+  position: absolute;
+  top: 36px;
+  left: calc(50% - 37px);
+  padding: 15px 14px;
+  width: 74px;
+  background: var(--jf-red, #c41a1a);
+  color: #fff5df;
+  font-family: 'JiafengSerif', 'Source Han Serif SC', 'Noto Serif CJK SC', serif;
+  font-size: 39px;
+  line-height: 1.32;
+  text-align: center;
+  box-shadow: 8px 8px 0 rgba(44, 44, 44, 0.08);
+}
+.hall-person-book {
+  position: absolute;
+  font-family: 'JiafengSerif', 'Source Han Serif SC', 'Noto Serif CJK SC', serif;
+  top: 74px;
+  left: calc(50% + 62px);
+  writing-mode: vertical-rl;
+  font-size: 20px;
+  letter-spacing: 6px;
+  color: var(--jf-ink, #2c2c2c);
+}
+.hall-art-caption {
+  position: absolute;
+  left: 18px;
+  bottom: 14px;
+  color: #5d5752;
+  font-size: 11px;
+}
+.hall-list-quote {
+  display: block;
+  color: var(--jf-red, #c41a1a);
+  font-family: 'JiafengSerif', 'Source Han Serif SC', 'Noto Serif CJK SC', serif;
+  font-size: 18px;
+  margin-top: 7px;
+}
+.hall-detail-hero {
+  display: flex;
+  gap: 35px;
+  align-items: center;
+  padding: 32px 0 40px;
+}
+.hall-name-seal {
+  width: 110px;
+  flex-shrink: 0;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--jf-red, #c41a1a);
+  color: #fff3d9;
+  border: 5px double #f5f0e8;
+}
+.hall-name-seal > text {
+  font-family: 'JiafengSerif', 'Source Han Serif SC', 'Noto Serif CJK SC', serif;
+  width: 50px;
+  font-size: 37px;
+  line-height: 1.3;
+  text-align: center;
+}
+.hall-hero-quote {
+  display: block;
+  color: var(--jf-red, #c41a1a);
+  font-size: 20px;
+  margin-top: 10px;
+}
+.hall-tour-panel {
+  padding: 24px;
+}
+.hall-scene-tabs {
+  gap: 6px;
+  margin: 19px 0;
+}
+.hall-tour-scene {
+  height: 310px;
+  background: #e2d8c5;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #d2c5ad;
+}
+.hall-tour-scene::before {
+  content: '';
+  position: absolute;
+  height: 80px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #bdab8d;
+  transform: perspective(300px) rotateX(20deg);
+  transform-origin: bottom;
+  border-top: 2px solid #af9872;
+}
+.hall-scene-wall {
+  position: absolute;
+  top: 20px;
+  left: 12%;
+  right: 12%;
+  bottom: 83px;
+  border: 8px double rgba(145, 107, 45, 0.3);
+  display: flex;
+  justify-content: center;
+  padding-top: 17px;
+}
+.hall-wall-scroll {
+  background: #fcf5e7;
+  box-shadow:
+    0 0 0 1px rgba(44, 44, 44, 0.2),
+    4px 5px 10px rgba(44, 44, 44, 0.07);
+  padding: 14px 23px;
+  max-width: 75%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+}
+.hall-wall-scroll > text {
+  color: var(--jf-ink, #2c2c2c);
+  font-family: 'JiafengSerif', 'Source Han Serif SC', 'Noto Serif CJK SC', serif;
+  font-size: 22px;
+  letter-spacing: 3px;
+  text-align: center;
+}
+.hall-desk {
+  position: absolute;
+  background: #9d825b;
+  width: 150px;
+  height: 12px;
+  bottom: 78px;
+  left: 42px;
+  transform: skewY(-5deg);
+}
+.hall-desk::before,
+.hall-desk::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 50px;
+  top: 10px;
+  background: #806746;
+}
+.hall-desk::before {
+  left: 12px;
+}
+.hall-desk::after {
+  right: 12px;
+}
+.hall-open-book {
+  width: 106px;
+  height: 61px;
+  background: #fbf3df;
+  border: 3px solid var(--jf-red, #c41a1a);
+  position: absolute;
+  bottom: 9px;
+  left: 25px;
+  transform: skewY(10deg);
+  text-align: center;
+  font-family: 'JiafengSerif', 'Source Han Serif SC', 'Noto Serif CJK SC', serif;
+  font-size: 15px;
+  padding: 13px 6px;
+}
+.hall-genealogy {
+  position: absolute;
+  right: 18px;
+  top: 41px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 12px;
+  background: #f7eddc;
+  border: 1px solid #b39c73;
+  max-width: 100px;
+}
+.hall-genealogy > text {
+  border: 1px solid #b39c73;
+  padding: 3px 7px;
+  font-size: 11px;
+  text-align: center;
+}
+.hall-genealogy > view {
+  width: 1px;
+  height: 7px;
+  background: #b39c73;
+}
+.hall-hotspot {
+  position: absolute;
+  background: var(--jf-red, #c41a1a);
+  color: #fff;
+  width: 29px;
+  height: 29px;
+  line-height: 29px;
+  border-radius: 50%;
+  font-weight: 700;
+  border: 2px solid #fff3df;
+  box-shadow: 0 0 0 4px rgba(196, 26, 26, 0.12);
+  font-size: 13px;
+}
+.hall-hotspot.active {
+  box-shadow: 0 0 0 6px rgba(196, 26, 26, 0.23);
+}
+.hall-hotspot-0 {
+  top: 42px;
+  left: 46%;
+}
+.hall-hotspot-1 {
+  bottom: 102px;
+  left: 93px;
+}
+.hall-hotspot-2 {
+  top: 94px;
+  right: 30px;
+}
+.hall-scene-caption {
+  position: absolute;
+  bottom: 12px;
+  left: 18px;
+  color: #30291d;
+  font-size: 12px;
+}
+.hall-scene-1 {
+  background: #dad0ba;
+}
+.hall-scene-1 .hall-scene-wall {
+  left: 7%;
+  right: 26%;
+}
+.hall-scene-1 .hall-desk {
+  width: 200px;
+  left: 65px;
+}
+.hall-scene-1 .hall-open-book {
+  width: 137px;
+  height: 83px;
+  font-size: 20px;
+  bottom: 12px;
+}
+.hall-scene-2 {
+  background: #e9e0d0;
+}
+.hall-scene-2 .hall-wall-scroll {
+  border-left: 5px solid var(--jf-red, #c41a1a);
+}
+.hall-scene-2 .hall-genealogy {
+  right: 40px;
+  top: 35px;
+}
+.hall-exhibit-label {
+  padding: 19px;
+  background: var(--jf-paper, #f5f0e8);
+  border-left: 3px solid var(--jf-red, #c41a1a);
+  margin-top: 17px;
+  line-height: 1.8;
+  font-size: 14px;
+}
+.hall-exhibit-label .showcase-card-title {
+  margin-bottom: 6px;
+}
+.hall-book-display {
+  width: 180px;
+  height: 240px;
+  background: var(--jf-red, #c41a1a);
+  box-shadow:
+    8px 0 0 #e9e0cf,
+    11px 0 0 #c9a96e,
+    12px 12px 18px rgba(44, 44, 44, 0.13);
+  margin: 18px auto 35px;
+  padding: 24px 24px 24px 38px;
+  position: relative;
+  color: #fff1cf;
+}
+.hall-book-display > text:first-of-type {
+  writing-mode: vertical-rl;
+  font-size: 31px;
+  letter-spacing: 6px;
+  font-family: 'JiafengSerif', 'Source Han Serif SC', 'Noto Serif CJK SC', serif;
+}
+.hall-book-spine {
+  position: absolute;
+  left: 17px;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid #edcba1;
+}
+.hall-book-author {
+  position: absolute;
+  right: 22px;
+  bottom: 24px;
+  font-size: 12px;
+  writing-mode: vertical-rl;
+  letter-spacing: 4px;
+}
+.hall-reflection .showcase-textarea {
+  margin-top: 18px;
+}
+
+.shop-route-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+.shop-route-grid > view {
+  min-height: 248px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.shop-route-grid .showcase-title {
+  font-size: 25px;
+  margin-bottom: 12px;
+}
+.shop-route-grid .wd-button {
+  margin-top: 22px;
+}
+.shop-route-public {
+  color: #fff;
+  background: var(--jf-red, #c41a1a);
+}
+.showcase-view .shop-route-public .showcase-title {
+  color: #fff;
+}
+.showcase-view .shop-route-public .showcase-kicker {
+  color: #ffe5b9;
+}
+.shop-route-public .wd-button {
+  background: #fff9ee !important;
+}
+.shop-route-custom {
+  background: #ebe0cc;
+  border-top: 3px solid var(--jf-gold, #c9a96e);
+}
+.shop-product-art {
+  position: relative;
+  min-height: 230px;
+  background: #e9e0d0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  overflow: hidden;
+}
+.shop-product-art::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 24%;
+  background: rgba(201, 169, 110, 0.17);
+}
+.shop-product-object {
+  width: 111px;
+  height: 155px;
+  background: var(--jf-red, #c41a1a);
+  border-left: 7px double #dfb482;
+  box-shadow:
+    5px 0 0 #fff8eb,
+    7px 0 0 #c9a96e,
+    13px 15px 13px rgba(44, 44, 44, 0.16);
+  transform: rotate(-8deg);
+  color: #fff3dc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 10px;
+  position: relative;
+}
+.shop-product-mark {
+  font-family: 'JiafengSerif', 'Source Han Serif SC', 'Noto Serif CJK SC', serif;
+  font-size: 34px;
+  writing-mode: vertical-rl;
+  letter-spacing: 9px;
+}
+.shop-product-small {
+  margin-top: auto;
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+.shop-product-family-book {
+  background: #e4dacb;
+}
+.shop-product-family-book .shop-product-object {
+  background: #2c2c2c;
+  border-left-color: #c9a96e;
+  transform: rotate(7deg);
+}
+.shop-product-precept-cards {
+  background: #eee3ce;
+}
+.shop-product-precept-cards .shop-product-object {
+  width: 59px;
+  height: 174px;
+  background: #fff8e8;
+  color: var(--jf-red, #c41a1a);
+  border: 1px solid var(--jf-gold, #c9a96e);
+  box-shadow:
+    18px 5px 0 var(--jf-red, #c41a1a),
+    35px 10px 0 #d7bd91,
+    44px 18px 14px rgba(44, 44, 44, 0.14);
+  transform: rotate(-10deg);
+  margin-right: 27px;
+  padding: 20px 5px;
+}
+.shop-product-precept-cards .shop-product-small {
+  font-size: 7px;
+  letter-spacing: 1px;
+  writing-mode: vertical-rl;
+}
+.shop-art-note {
+  position: absolute;
+  bottom: 12px;
+  left: 17px;
+  font-size: 10px;
+  color: #5d5752;
+}
+.shop-product-detail {
+  display: grid;
+  grid-template-columns: 0.88fr 1.12fr;
+  gap: 40px;
+  margin-bottom: 30px;
+}
+.shop-product-detail .shop-product-art {
+  min-height: 375px;
+}
+.shop-product-detail .shop-product-object {
+  transform: rotate(-6deg) scale(1.4);
+}
+.shop-product-detail .shop-product-precept-cards .shop-product-object {
+  transform: rotate(-10deg) scale(1.4);
+}
+.shop-product-copy {
+  padding: 18px 0;
+}
+.shop-product-copy .showcase-title {
+  font-size: 28px;
+}
+.shop-specification {
+  display: block;
+  border-top: 1px solid var(--showcase-line);
+  border-bottom: 1px solid var(--showcase-line);
+  padding: 14px 0;
+  margin: 20px 0;
+  font-size: 13px;
+}
+.shop-detail-points > text {
+  display: block;
+  padding-left: 16px;
+  position: relative;
+  margin: 10px 0;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.shop-detail-points > text::before {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  background: var(--jf-red, #c41a1a);
+}
+.shop-form {
+  border-top: 3px solid var(--jf-red, #c41a1a);
+}
+.shop-form-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 25px;
+}
+.shop-form-agreement {
+  margin-top: 22px;
+  display: block;
+}
+.shop-form-agreement .wd-checkbox__label {
+  white-space: normal;
+  line-height: 1.8;
+}
+.shop-result {
+  text-align: center;
+  padding: 37px;
+}
+.shop-result > text {
+  display: block;
+  margin: 12px 0;
+}
+.shop-result-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--jf-red, #c41a1a);
+  color: #fff;
+  border-radius: 50%;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 18px;
+}
+.shop-result-id {
+  color: var(--jf-red, #c41a1a);
+  font-family: monospace;
+  font-size: 16px;
+}
+.shop-result-track {
+  display: flex;
+  gap: 20px;
+  max-width: 530px;
+  justify-content: space-between;
+  margin: 25px auto;
+  font-size: 12px;
+}
+.shop-result-track > view {
+  flex: 1;
+  color: var(--jf-red, #c41a1a);
+}
+.shop-result-track > view > text {
+  display: block;
+  border-top: 2px solid var(--jf-red, #c41a1a);
+  margin-bottom: 10px;
+  padding-top: 12px;
+  font-size: 17px;
+}
+.shop-result-track .future {
+  color: #666;
+}
+.shop-result-track .future > text {
+  border-top-style: dashed;
+  border-top-color: #a9a39a;
+}
+.shop-record-summary {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 24px;
+  background: #efe6d6;
+  border-left: 3px solid var(--jf-red, #c41a1a);
+  margin-bottom: 24px;
+}
+.shop-record-summary > text {
+  font-size: 36px;
+  font-family: Georgia, serif;
+  color: var(--jf-red, #c41a1a);
+}
+.shop-record-summary .showcase-note {
+  margin-top: 3px;
+}
+.shop-status {
+  font-size: 12px;
+  color: var(--jf-red, #c41a1a);
+  border: 1px solid #d9a7a2;
+  background: #fff3ee;
+  padding: 3px 9px;
+}
+.shop-status.cancelled {
+  color: #666;
+  border-color: #ccc;
+  background: #f2f0ec;
+}
+.shop-record > .showcase-card-title {
+  margin: 8px 0 12px;
+}
+
+@media (max-width: 860px) {
+  .showcase-detail-layout {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .showcase-side-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 22px;
+  }
+  .showcase-side-panel > .showcase-card-title {
+    grid-column: 1 / -1;
+  }
+  .showcase-side-panel .showcase-callout {
+    margin-top: 12px;
+  }
+  .showcase-grid {
+    gap: 16px;
+  }
+  .showcase-card-body {
+    padding: 18px;
+  }
+  .showcase-view .showcase-card-title {
+    font-size: 18px;
+  }
+  .media-feature-copy {
+    padding: 25px;
+  }
+  .media-feature > image {
+    height: 285px;
+  }
+  .shop-product-detail {
+    gap: 25px;
+  }
+  .hall-tour-scene {
+    height: 345px;
+  }
+  .hall-scene-wall {
+    bottom: 88px;
+  }
+  .hall-wall-scroll {
+    height: 150px;
+  }
+  .hall-genealogy {
+    right: 30px;
+  }
+}
+@media (max-width: 600px) {
+  .showcase-view .showcase-title {
+    font-size: 24px;
+  }
+  .showcase-view .showcase-description {
+    font-size: 14px;
+  }
+  .showcase-view .showcase-card-title {
+    font-size: 19px;
+  }
+  .showcase-panel {
+    padding: 21px;
+  }
+  .showcase-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .showcase-filter {
+    margin: 23px 0 20px;
+    gap: 8px;
+  }
+  .showcase-breadcrumb {
+    margin-bottom: 18px;
+  }
+  .showcase-side-panel {
+    display: block;
+  }
+  .showcase-callout {
+    margin-top: 18px;
+  }
+  .media-feature {
+    grid-template-columns: 1fr;
+  }
+  .media-feature > image {
+    height: 193px;
+  }
+  .media-feature-copy {
+    padding: 25px;
+  }
+  .media-feature-copy > .showcase-title {
+    font-size: 27px;
+  }
+  .media-play-link {
+    margin-top: 18px;
+  }
+  .media-card-cover {
+    height: 188px;
+  }
+  .media-player {
+    min-height: 190px;
+  }
+  .showcase-live-band {
+    padding: 23px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .media-related > image {
+    width: 106px;
+    height: 69px;
+  }
+  .showcase-share-card {
+    padding: 19px;
+  }
+  .hall-intro-band {
+    padding: 24px;
+    gap: 19px;
+    align-items: flex-start;
+  }
+  .hall-intro-character {
+    width: 55px;
+    height: 70px;
+    font-size: 35px;
+  }
+  .hall-intro-band .showcase-title {
+    font-size: 22px;
+  }
+  .hall-intro-band > view:nth-child(2) > text:last-child {
+    font-size: 12px;
+  }
+  .hall-intro-count {
+    display: none;
+  }
+  .hall-people-grid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .hall-person-art {
+    height: 235px;
+  }
+  .hall-detail-hero {
+    gap: 20px;
+    padding: 17px 0 30px;
+    align-items: flex-start;
+  }
+  .hall-name-seal {
+    width: 75px;
+    height: 130px;
+  }
+  .hall-name-seal > text {
+    width: 33px;
+    font-size: 29px;
+  }
+  .hall-detail-hero .showcase-description {
+    margin-left: -95px;
+    margin-top: 24px;
+  }
+  .hall-hero-quote {
+    font-size: 17px;
+  }
+  .hall-tour-panel {
+    padding: 17px;
+  }
+  .hall-tour-scene {
+    height: 288px;
+  }
+  .hall-scene-wall {
+    left: 7%;
+    right: 7%;
+    bottom: 77px;
+    padding-top: 13px;
+    border-width: 5px;
+  }
+  .hall-wall-scroll {
+    padding: 13px;
+    max-width: 75%;
+    height: 110px;
+  }
+  .hall-wall-scroll > text {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+  .hall-genealogy {
+    top: 100px;
+    right: 10px;
+    padding: 7px;
+    max-width: 88px;
+  }
+  .hall-hotspot-0 {
+    top: 33px;
+    left: 43%;
+  }
+  .hall-hotspot-1 {
+    left: 56px;
+    bottom: 81px;
+  }
+  .hall-hotspot-2 {
+    right: 19px;
+    top: 111px;
+  }
+  .hall-desk {
+    left: 18px;
+    width: 135px;
+    bottom: 66px;
+  }
+  .hall-open-book {
+    width: 100px;
+    left: 16px;
+  }
+  .hall-scene-1 .hall-desk {
+    width: 158px;
+    left: 24px;
+  }
+  .hall-scene-1 .hall-open-book {
+    width: 111px;
+    height: 66px;
+    font-size: 17px;
+  }
+  .hall-scene-2 .hall-genealogy {
+    top: 105px;
+    right: 12px;
+  }
+  .hall-scene-caption {
+    font-size: 11px;
+    left: 12px;
+  }
+  .hall-scene-tabs .wd-button {
+    font-size: 11px;
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+  .hall-exhibit-label {
+    padding: 16px;
+  }
+  .hall-book-display {
+    margin-top: 18px;
+  }
+  .shop-route-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .shop-route-grid > view {
+    min-height: 216px;
+    padding: 27px;
+  }
+  .shop-route-grid .showcase-title {
+    font-size: 24px;
+  }
+  .shop-product-art {
+    min-height: 242px;
+  }
+  .shop-product-detail {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .shop-product-detail .shop-product-art {
+    min-height: 305px;
+  }
+  .shop-product-detail .shop-product-object {
+    transform: rotate(-6deg) scale(1.25);
+  }
+  .shop-product-detail .shop-product-precept-cards .shop-product-object {
+    transform: rotate(-10deg) scale(1.25);
+  }
+  .shop-form-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .shop-form .showcase-row-between {
+    flex-direction: column;
+  }
+  .shop-result {
+    padding: 28px 19px;
+  }
+  .shop-result-track {
+    gap: 10px;
+    font-size: 11px;
+  }
+  .shop-result-id {
+    font-size: 13px;
+  }
+  .shop-record .showcase-row-between {
+    flex-wrap: wrap;
+  }
+  .shop-record-summary {
+    padding: 21px;
+  }
+}

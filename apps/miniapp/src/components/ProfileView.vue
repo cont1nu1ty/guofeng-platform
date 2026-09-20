@@ -20,7 +20,7 @@ const tab = ref('works')
       <text class="section-title">家风同行者</text>
       <text class="section-subtitle">访客演示身份 · 数据保存在当前设备</text>
     </view>
-    <wd-button plain size="small" @click="navigate('submit')">开始创作 ↗</wd-button>
+    <wd-button variant="plain" size="small" @click="navigate('submit')">开始创作 ↗</wd-button>
   </view>
   <view class="profile-stats">
     <button @click="tab = 'works'">
@@ -63,7 +63,7 @@ const tab = ref('works')
         </view>
         <view v-if="!myWorks.length" class="empty-state">
           <text>你的第一篇家风故事，从这里开始。</text>
-          <wd-button plain @click="navigate('submit')">写一篇作品</wd-button>
+          <wd-button variant="plain" @click="navigate('submit')">写一篇作品</wd-button>
         </view>
       </template>
       <template v-else-if="tab === 'favorites'">

@@ -6,6 +6,13 @@
         "navigationStyle": "custom",
         "navigationBarTitleText": "家风中华行"
       }
+    },
+    {
+      "path": "pages/explore/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "家风中华行"
+      }
     }
   ],
   "globalStyle": {

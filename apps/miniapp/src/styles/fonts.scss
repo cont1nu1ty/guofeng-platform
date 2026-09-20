@@ -1,0 +1,32 @@
+/* The bundled OFL subsets are actual Source Han outlines, renamed after subsetting.
+   H5 loads from the same origin. Mini-programs use loadFonts() from App.onLaunch. */
+/* #ifdef H5 */
+@font-face {
+  font-family: 'JiafengSans';
+  src: url('/static/fonts/JiafengSans-Regular.woff') format('woff');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JiafengSerif';
+  src: url('/static/fonts/JiafengSerif-SemiBold.woff') format('woff');
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+/* #endif */
+
+/* Explicit utility classes also work while fonts load or for unbundled characters. */
+.font-sans {
+  font-family:
+    'JiafengSans', 'Source Han Sans SC', 'Noto Sans CJK SC', 'PingFang SC', 'Microsoft YaHei',
+    sans-serif;
+}
+
+.font-serif {
+  font-family:
+    'JiafengSerif', 'Source Han Serif SC', 'Noto Serif CJK SC', 'Songti SC', 'STSong', serif;
+  font-weight: 600;
+}

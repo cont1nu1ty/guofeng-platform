@@ -4,16 +4,8 @@ import type { DemoRepository } from '../domain/repository'
 import { regions } from '../domain/fixtures'
 import type { RegionId, Work, Classic } from '../domain/types'
 
-export type Screen =
-  | 'home'
-  | 'submit'
-  | 'library'
-  | 'learning'
-  | 'review'
-  | 'profile'
-  | 'assistant'
-  | 'admin'
-export const screen = ref<Screen>('home')
+export { navigate, goBack } from './useNavigation'
+export type { Screen } from './useNavigation'
 export const region = ref<RegionId>('all')
 export const largeText = ref(false)
 export const revision = ref(0)
@@ -84,10 +76,6 @@ export function safely<T>(action: () => T): T | undefined {
   } catch (error) {
     notify(error instanceof Error ? error.message : '操作未完成，请重试')
   }
-}
-export function navigate(target: Screen) {
-  screen.value = target
-  uni.pageScrollTo({ scrollTop: 0, duration: 0 })
 }
 export function openReader(item: Work | Classic) {
   reader.value = item

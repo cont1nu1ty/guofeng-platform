@@ -61,7 +61,7 @@ function submit() {
     <text>当前状态：待区县初审。此操作不向真实平台投稿。</text>
     <view class="button-row">
       <wd-button @click="navigate('profile')">查看我的投稿</wd-button>
-      <wd-button plain @click="submittedId = ''">继续创作</wd-button>
+      <wd-button variant="plain" @click="submittedId = ''">继续创作</wd-button>
     </view>
   </view>
   <view v-else class="form-layout">
