@@ -1,0 +1,23 @@
+{
+  "checkedAt": "2026-09-20",
+  "frontendTemplate": {
+    "repository": "https://github.com/wot-ui/wot-starter",
+    "commit": "c9813573b73f45fc08b0eb249f0f28c5ca0fe401",
+    "committedAt": "2026-08-29T16:24:14+08:00",
+    "license": "MIT",
+    "licenseFile": "licenses/wot-starter.MIT.txt",
+    "reuse": ["Uni-app/Vue3/Wot UI dependency combination", "Vite Uni plugin configuration adapted and reduced", "H5 entry document and createSSRApp entry adapted"],
+    "modifications": "Keep H5 and mp-weixin only; replace template demo with family culture views; static pages/manifest config; explicit imports; domain repository and mock persistence. Not a full upstream fork."
+  },
+  "components": {
+    "package": "@wot-ui/ui",
+    "version": "2.3.1",
+    "repository": "https://github.com/wot-ui/wot-ui",
+    "license": "MIT",
+    "licenseFile": "licenses/wot-ui.MIT.txt",
+    "reuse": ["button", "icon", "checkbox", "popup", "switch"],
+    "font": "iconfont.ttf embedded in src/styles/icons.scss for local/offline display"
+  },
+  "dependencyLock": "apps/miniapp/package-lock.json",
+  "backendStatus": "Not integrated. Candidate evaluation and sources in docs/03-open-source.md and docs/06-backend-roadmap.md"
+}

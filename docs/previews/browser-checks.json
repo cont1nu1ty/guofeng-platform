@@ -1,0 +1,71 @@
+{
+  "testedAt": "2026-09-20T13:32:09.896Z",
+  "url": "http://localhost:5173",
+  "browser": "/opt/google/chrome/chrome (headless)",
+  "desktop": "1440×1100",
+  "mobile": "390×844",
+  "results": [
+    {
+      "name": "桌面首页 1440×1100 无横向溢出",
+      "status": "passed",
+      "detail": "{\"viewport\":1440,\"page\":1440,\"body\":1440}"
+    },
+    {
+      "name": "空投稿提示标题、正文与版权必填",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "name": "草稿填写后离开再返回恢复",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "name": "版权勾选投稿生成 DEMO 编号，个人中心可见且刷新保留",
+      "status": "passed",
+      "detail": "DEMO-MU9UVAFN-0001"
+    },
+    {
+      "name": "按投稿编号查询待初审与当前节点",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "name": "典籍收藏/取消，横竖排和大字阅读切换",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "name": "活动预约与取消即时更新人数与预约总数",
+      "status": "passed",
+      "detail": "24 → 25 → 24"
+    },
+    {
+      "name": "地区切换筛选浙江活动与作品",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "name": "桌面全部主要页面无横向溢出",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "name": "手机 390×844 首页与主要页面无横向溢出",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "name": "手机典籍阅读弹窗横竖排和大字切换无页面溢出",
+      "status": "passed",
+      "detail": ""
+    },
+    {
+      "name": "浏览器无未捕获异常和 console.error",
+      "status": "passed",
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "consoleErrors": []
+}
