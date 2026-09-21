@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import SectionHeading from './SectionHeading.vue'
-import { navigate, goBack, useRouteParams } from '../composables/useNavigation'
-import { t } from '../composables/useLocale'
-import { region } from '../composables/useDemo'
-import { venues, type BilingualText } from '../domain/contentCatalog'
+import { computed, ref, watch } from 'vue'
+import SectionHeading from '../../components/SectionHeading.vue'
+import VenueJourney from './VenueJourney.vue'
+import { navigate, goBack, useRouteParams } from '../../composables/useNavigation'
+import { t } from '../../composables/useLocale'
+import { region } from '../../composables/useDemo'
+import { venues, type BilingualText } from '../../domain/contentCatalog'
 const L = (value: BilingualText) => t(value.zh, value.en)
 const params = useRouteParams()
 const venue = computed(() => venues.find((item) => item.id === params.value.id))
 const selectedRegion = ref<string>(region.value)
+watch(region, (value) => {
+  selectedRegion.value = value
+})
 const selectedPin = ref<string>(venues[0].id)
 const routeVisible = ref(false)
 const filtered = computed(() =>
@@ -76,6 +80,7 @@ const highlighted = computed(
           </wd-button>
         </view>
       </view>
+      <VenueJourney :destination="L(venue.title)" />
       <view v-if="routeVisible" class="content-route-panel">
         <text class="content-panel-title">{{ t('参观路线示意', 'Illustrative visit route') }}</text>
         <view class="content-route-stops">
@@ -150,7 +155,20 @@ const highlighted = computed(
           {{ t(item.zh, item.en) }}
         </view>
       </view>
-      <view class="content-venue-map-layout">
+      <view v-if="!filtered.length" class="empty-state">
+        <text>
+          {{
+            t(
+              '当前地区暂无阵地样例，后续内容将在统一版式下展示。',
+              'No sample venues are available in this region yet. Future content will use the same layout.',
+            )
+          }}
+        </text>
+        <wd-button variant="plain" @click="selectedRegion = 'all'">
+          {{ t('查看其他地区样例', 'Browse samples from other regions') }}
+        </wd-button>
+      </view>
+      <view v-else class="content-venue-map-layout">
         <view class="content-map">
           <view class="content-map-grid" />
           <view class="content-map-river" />

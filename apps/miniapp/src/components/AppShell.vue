@@ -1,25 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, provide } from 'vue'
+import { localizeNotice } from '../composables/localizeNotice'
 import { getMiniAppHeaderStyle } from '../composables/useMiniAppInsets'
 const miniappHeaderStyle = getMiniAppHeaderStyle()
-import HomeView from './HomeView.vue'
-import SubmitView from './SubmitView.vue'
-import LibraryView from './LibraryView.vue'
-import LearningView from './LearningView.vue'
-import ReviewView from './ReviewView.vue'
-import ProfileView from './ProfileView.vue'
-import AssistantView from './AssistantView.vue'
-import AdminView from './AdminView.vue'
 import { region, regionLabel, navigate, largeText, storageError } from '../composables/useDemo'
 import type { Screen } from '../composables/useDemo'
 import { routeKey, goBack } from '../composables/useNavigation'
 import { t, locale, toggleLocale } from '../composables/useLocale'
-import NewsView from './NewsView.vue'
-import ClassroomView from './ClassroomView.vue'
-import VenuesView from './VenuesView.vue'
-import MediaView from './MediaView.vue'
-import HallView from './HallView.vue'
-import ShopView from './ShopView.vue'
 const props = withDefaults(defineProps<{ screen?: Screen; params?: Record<string, string> }>(), {
   screen: 'home',
   params: () => ({}),
@@ -59,7 +46,7 @@ function selectRegion(id: RegionId) {
       <text>{{ t('家风文化 · 界面演示', 'Family culture · Demo') }}</text>
     </view>
     <!-- #endif -->
-    <view v-if="storageError" class="storage-alert">{{ storageError }}</view>
+    <view v-if="storageError" class="storage-alert">{{ localizeNotice(storageError) }}</view>
     <view class="utility-bar">
       <view class="container utility-inner">
         <text>
@@ -85,6 +72,13 @@ function selectRegion(id: RegionId) {
           </view>
         </button>
         <view class="header-actions">
+          <button
+            class="header-search"
+            :aria-label="t('全站搜索', 'Search the platform')"
+            @click="navigate('search')"
+          >
+            <wd-icon name="search" size="18px" />
+          </button>
           <button class="locale-toggle" @click="toggleLocale">
             {{ locale === 'zh' ? 'EN' : '中文' }}
           </button>
@@ -124,20 +118,7 @@ function selectRegion(id: RegionId) {
       <view v-if="canBack" class="back-bar">
         <button class="text-button" @click="goBack">← {{ t('返回上一页', 'Back') }}</button>
       </view>
-      <HomeView v-if="screen === 'home'" />
-      <SubmitView v-else-if="screen === 'submit'" />
-      <LibraryView v-else-if="screen === 'library'" />
-      <LearningView v-else-if="screen === 'learning'" />
-      <ReviewView v-else-if="screen === 'review'" />
-      <ProfileView v-else-if="screen === 'profile'" />
-      <AssistantView v-else-if="screen === 'assistant'" />
-      <AdminView v-else-if="screen === 'admin'" />
-      <NewsView v-else-if="screen === 'news'" />
-      <ClassroomView v-else-if="screen === 'classroom'" />
-      <VenuesView v-else-if="screen === 'venues'" />
-      <MediaView v-else-if="screen === 'media'" />
-      <HallView v-else-if="screen === 'hall'" />
-      <ShopView v-else-if="screen === 'shop'" />
+      <slot />
     </view>
     <view class="site-footer container">
       <view class="footer-brand">
@@ -185,19 +166,26 @@ function selectRegion(id: RegionId) {
         <text class="eyebrow">{{ t('共建共享 · 地区分站', 'REGIONAL STATIONS') }}</text>
         <text class="section-title">{{ t('选择你的家风分站', 'Choose a regional station') }}</text>
         <text class="section-subtitle">
-          {{ t('当前开放三个地区的样例内容', 'Sample content from three regions') }}
+          {{
+            t(
+              '34 个省级地区与海外入口；部分地区暂有样例',
+              '34 regional choices and overseas; samples are available in selected regions',
+            )
+          }}
         </text>
-        <view class="region-options">
-          <button
-            v-for="item in regions"
-            :key="item.id"
-            :class="['choice-card', { active: region === item.id }]"
-            @click="selectRegion(item.id)"
-          >
-            {{ t(item.label) }}
-            <text v-if="region === item.id">✓</text>
-          </button>
-        </view>
+        <scroll-view scroll-y class="region-scroll">
+          <view class="region-options">
+            <button
+              v-for="item in regions"
+              :key="item.id"
+              :class="['choice-card', { active: region === item.id }]"
+              @click="selectRegion(item.id)"
+            >
+              {{ t(item.label) }}
+              <text v-if="region === item.id">✓</text>
+            </button>
+          </view>
+        </scroll-view>
         <text class="scope-note">
           {{
             t(
@@ -212,6 +200,22 @@ function selectRegion(id: RegionId) {
 </template>
 
 <style scoped>
+.header-search {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  color: var(--jf-ink);
+  border: 0;
+}
+.region-scroll {
+  height: 45vh;
+  max-height: 420px;
+  margin: 18px 0;
+}
 /* #ifdef MP-WEIXIN */
 .miniapp-safe-top {
   display: flex;

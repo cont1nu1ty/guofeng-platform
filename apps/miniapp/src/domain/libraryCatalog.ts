@@ -153,9 +153,9 @@ const worksEnglish: Record<
 export function isClassic(item: ReadingItem): item is Classic {
   return 'chapterCount' in item
 }
-function sourceParagraphs(content: string) {
+function sourceParagraphs(content: string, richText = false) {
   return content
-    .split(/\n\s*\n/)
+    .split(richText ? /\n+/ : /\n\s*\n/)
     .map((part) => part.trim())
     .filter((part) => part && !/^【演示原创/.test(part))
 }
@@ -191,7 +191,10 @@ export function readingDocument(item: ReadingItem, locale: 'zh' | 'en'): Reading
       {
         id: 'chapter-1',
         title: locale === 'en' ? 'Full text' : '正文',
-        paragraphs: useEnglish && work ? work.paragraphs : sourceParagraphs(item.content),
+        paragraphs:
+          useEnglish && work
+            ? work.paragraphs
+            : sourceParagraphs(item.content, !classic && Boolean(item.contentDelta)),
       },
     ]
   if (!chapters.length)

@@ -9,7 +9,7 @@ import subprocess
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "apps/miniapp/src/static/media"
+OUT = ROOT / "apps/miniapp/src/pkg-content/static/media"
 OUT.mkdir(parents=True, exist_ok=True)
 SERIF = "/usr/share/fonts/noto-cjk/NotoSerifCJK-Regular.ttc"
 SANS = "/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc"

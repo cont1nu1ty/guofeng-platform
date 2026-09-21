@@ -1,3 +1,4 @@
+import { regionalOptions } from './regionCatalog'
 import type {
   Activity,
   ChannelId,
@@ -25,12 +26,7 @@ export const channels: Option<ChannelId>[] = [
   { id: 'community', label: '城乡群众' },
   { id: 'special', label: '特色群体' },
 ]
-export const regions: Option<RegionId>[] = [
-  { id: 'all', label: '全国' },
-  { id: 'beijing', label: '北京' },
-  { id: 'zhejiang', label: '浙江' },
-  { id: 'sichuan', label: '四川' },
-]
+export const regions: Option<RegionId>[] = regionalOptions
 /** 原文的六级路径仍在讨论，以下仅用于沟通界面，不代表正式评审制度。 */
 export const reviewStages: ReviewStage[] = [
   {

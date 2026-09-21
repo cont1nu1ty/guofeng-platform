@@ -1,0 +1,48 @@
+/** Stable UI region choices; this is not a tenancy or authorization model. */
+export const provinceCatalog = [
+  ['beijing', '北京', 'Beijing'],
+  ['tianjin', '天津', 'Tianjin'],
+  ['hebei', '河北', 'Hebei'],
+  ['shanxi', '山西', 'Shanxi'],
+  ['inner-mongolia', '内蒙古', 'Inner Mongolia'],
+  ['liaoning', '辽宁', 'Liaoning'],
+  ['jilin', '吉林', 'Jilin'],
+  ['heilongjiang', '黑龙江', 'Heilongjiang'],
+  ['shanghai', '上海', 'Shanghai'],
+  ['jiangsu', '江苏', 'Jiangsu'],
+  ['zhejiang', '浙江', 'Zhejiang'],
+  ['anhui', '安徽', 'Anhui'],
+  ['fujian', '福建', 'Fujian'],
+  ['jiangxi', '江西', 'Jiangxi'],
+  ['shandong', '山东', 'Shandong'],
+  ['henan', '河南', 'Henan'],
+  ['hubei', '湖北', 'Hubei'],
+  ['hunan', '湖南', 'Hunan'],
+  ['guangdong', '广东', 'Guangdong'],
+  ['guangxi', '广西', 'Guangxi'],
+  ['hainan', '海南', 'Hainan'],
+  ['chongqing', '重庆', 'Chongqing'],
+  ['sichuan', '四川', 'Sichuan'],
+  ['guizhou', '贵州', 'Guizhou'],
+  ['yunnan', '云南', 'Yunnan'],
+  ['xizang', '西藏', 'Xizang'],
+  ['shaanxi', '陕西', 'Shaanxi'],
+  ['gansu', '甘肃', 'Gansu'],
+  ['qinghai', '青海', 'Qinghai'],
+  ['ningxia', '宁夏', 'Ningxia'],
+  ['xinjiang', '新疆', 'Xinjiang'],
+  ['taiwan', '台湾', 'Taiwan'],
+  ['hong-kong', '香港', 'Hong Kong'],
+  ['macao', '澳门', 'Macao'],
+] as const
+export type ProvinceId = (typeof provinceCatalog)[number][0]
+export const regionalOptions = [
+  { id: 'all' as const, label: '全国' },
+  ...provinceCatalog.map(([id, label]) => ({ id, label })),
+  { id: 'overseas' as const, label: '海外' },
+]
+export const regionTranslations: Record<string, string> = Object.fromEntries([
+  ['全国', 'National'],
+  ['海外', 'Overseas'],
+  ...provinceCatalog.map(([, zh, en]) => [zh, en]),
+])

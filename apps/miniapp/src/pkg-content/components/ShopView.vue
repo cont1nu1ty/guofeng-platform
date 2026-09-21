@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { readInputValue } from '../composables/readInputValue'
+import { readInputValue } from '../../composables/readInputValue'
 import { computed, reactive, ref, watch } from 'vue'
-import SectionHeading from './SectionHeading.vue'
+import SectionHeading from '../../components/SectionHeading.vue'
 import {
   culturalProducts,
   validateCommerceForm,
   type BilingualText,
   type CommerceKind,
   type CommerceRequest,
-} from '../domain/showcaseCatalog'
+} from '../../domain/showcaseCatalog'
 import {
   commerceRequests,
   showcaseStorageError,
   createCommerceRequest,
   cancelCommerceRequest,
-} from '../composables/useShowcase'
-import { navigate, goBack, useRouteParams } from '../composables/useNavigation'
-import { t } from '../composables/useLocale'
+} from '../../composables/useShowcase'
+import { navigate, goBack, useRouteParams } from '../../composables/useNavigation'
+import { t } from '../../composables/useLocale'
 const params = useRouteParams()
 const lt = (value: BilingualText) => t(value.zh, value.en)
 const current = computed(() => culturalProducts.find((product) => product.id === params.value.id))

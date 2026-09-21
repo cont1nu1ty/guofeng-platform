@@ -148,6 +148,12 @@ text {
   padding-left: 26px;
 }
 .avatar-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
   width: 33px;
   height: 33px;
   border: 1px solid #dbcbb7;

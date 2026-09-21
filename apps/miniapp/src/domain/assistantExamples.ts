@@ -302,6 +302,170 @@ export const assistantTools: AssistantTool[] = [
       },
     ],
   },
+  {
+    id: 'knowledge',
+    symbol: '知',
+    label: text('家风知识问答', 'Family-values Q&A'),
+    description: text(
+      '阅读可追溯的知识卡，区分家风、家训与日常行动。',
+      'Read source-labeled cards linking family values, principles and everyday actions.',
+    ),
+    promptLabel: text('想了解的家风知识', 'Your family-values question'),
+    examples: [
+      {
+        id: 'knowledge-difference',
+        label: text('家风与家训的区别', 'Values and principles'),
+        input: text(
+          '家风和家训有什么区别？',
+          'How do family values differ from written family principles?',
+        ),
+        result: text(
+          '知识卡 JF-K01 · 原创编辑示例\n\n家训可以理解为家人共同表达的准则；家风则更多体现在长期相处中形成的习惯与氛围。写下“以诚相待”是一条家训，答应之后认真做、做不到时及时说明，是把它带进生活的行动。\n\n可以从一次家庭讨论开始：每人提出一件希望保持的小事，商量一个本周能做到的约定，再一起回顾。不同家庭可以有不同表达，不必追求统一口号。',
+          'Knowledge card JF-K01 · Original editorial sample\n\nWritten family principles express shared commitments. Family values also live in habits and the atmosphere that develops over time. “Be honest” is a principle; keeping a promise, or explaining promptly when it becomes impossible, puts it into practice.\n\nBegin with a family conversation. Each person suggests a small habit worth keeping, agrees on one practical action for the week, and reviews it together. Families can use different language without adopting a single slogan.',
+        ),
+        notes: [
+          text(
+            '来源：平台原创知识卡 JF-K01；用于展示知识条目引用方式。',
+            'Source: original platform knowledge card JF-K01, demonstrating a traceable entry.',
+          ),
+          text(
+            '不是实时检索，不引用未经核验的古籍原文。',
+            'This is not live retrieval and does not quote unverified classical text.',
+          ),
+        ],
+      },
+      {
+        id: 'knowledge-talk',
+        label: text('怎样开展家庭共读', 'Plan a shared reading'),
+        input: text(
+          '如何让家风共读更容易参与？',
+          'How can a family reading session be more welcoming?',
+        ),
+        result: text(
+          '知识卡 JF-K02 · 原创编辑示例\n\n先选择一段适合家人理解的短文，约定十分钟，不把共读变成考试。轮流读一句，也允许只听不读。\n\n读完后可以问：“哪句话让你想起家里的一件事？”鼓励讲具体经历，避免比较谁答得更好。最后商量一件小行动，例如共同整理旧书或向长辈询问一段记忆。尊重每个人的意愿与节奏。',
+          'Knowledge card JF-K02 · Original editorial sample\n\nChoose a short passage that everyone can understand and set aside ten minutes. Keep reading separate from testing. Take turns with a sentence, while allowing anyone to listen instead.\n\nAfterward, ask which line recalled a moment at home. Welcome specific experiences instead of ranking answers. Agree on one small action, such as sorting old books or asking an elder about a memory. Respect each person’s pace and willingness.',
+        ),
+        notes: [
+          text(
+            '来源：平台原创共读活动卡 JF-K02。',
+            'Source: original platform shared-reading card JF-K02.',
+          ),
+          text(
+            '正式知识库需经过内容审校后接入。',
+            'A production knowledge base requires editorial review.',
+          ),
+        ],
+      },
+    ],
+  },
+  {
+    id: 'compliance',
+    symbol: '审',
+    label: text('内容审核样例', 'Content review sample'),
+    description: text(
+      '查看隐私、出处与授权的审核报告样例，正式结论由人工确认。',
+      'Explore sample privacy, attribution and permission findings for human review.',
+    ),
+    promptLabel: text('待审核文本或备注', 'Text or review note'),
+    examples: [
+      {
+        id: 'review-privacy',
+        label: text('个人信息与授权', 'Privacy and permission'),
+        input: text(
+          '预设稿写出了邻居的完整电话，并附了一张未征得同意的家庭照片。',
+          'The preset includes a neighbor’s full phone number and a family photo shared without permission.',
+        ),
+        result: text(
+          '审核报告样例 · JF-R01\n\n待修改：正文出现个人联系方式。建议删除或替换为不识别个人的演示内容。\n待确认：家庭照片中人物的使用授权尚未说明。建议确认授权，或换为自有且获准使用的素材。\n复核建议：作者检查正文、附件与署名；由内容人员确认后再进入公开展示。\n该报告针对预设案例，不会检查当前新输入，不构成法律意见或真实审核通过。',
+          'Sample review report · JF-R01\n\nRevise: personal contact information appears in the preset. Remove it or replace it with non-identifying sample content.\nConfirm: permission for people shown in a family photo is unspecified. Confirm permission or use authorized original material.\nHuman review: the author checks text, attachments and attribution before an editor considers publication.\nThis report concerns the preset only. It does not analyze new input and is neither legal advice nor an actual approval.',
+        ),
+        notes: [
+          text(
+            '样例状态：需要修改；没有拦截或提交到真实审核流程。',
+            'Sample state: revision needed. Nothing is blocked or submitted to a real review process.',
+          ),
+          text(
+            '后续需配置正式审核规则、申诉和人工复核。',
+            'Production needs reviewed rules, appeals and human checks.',
+          ),
+        ],
+      },
+      {
+        id: 'review-source',
+        label: text('引用与出处核对', 'Check quotations and sources'),
+        input: text(
+          '预设家书使用了一句未标出处的网络名言。',
+          'The preset family letter includes an online quotation without attribution.',
+        ),
+        result: text(
+          '审核报告样例 · JF-R02\n\n待核实：引用语句没有可靠出处，不能仅凭网络转发归于历史人物。\n修改建议：找到可核对版本后补充来源；无法核实时，可删去署名与引号，改写成自己的真实感受。\n人工复核项：引用范围、素材授权与事实表达。\n这里只展示报告结构，不执行查重、事实核验、敏感词拦截或正式合规认证。',
+          'Sample review report · JF-R02\n\nVerify: a quoted phrase has no reliable source. Online circulation alone does not establish attribution to a historical figure.\nSuggested edit: locate a verifiable edition and supply the source. If it cannot be confirmed, remove the attribution and quotation marks and express your own experience.\nHuman checks: quotation scope, material permission and factual wording.\nThis demonstrates report structure only, without plagiarism detection, fact checking, content blocking or compliance certification.',
+        ),
+        notes: [
+          text(
+            '来源：原创审核流程案例，不是针对你的内容的判断。',
+            'Source: original review-process scenario, not a judgment about your content.',
+          ),
+        ],
+      },
+    ],
+  },
+  {
+    id: 'storyboard',
+    symbol: '剧',
+    label: text('图文短剧分镜', 'Illustrated storyboard'),
+    description: text(
+      '把预设家风故事拆成画面、台词与镜头，手工调整分镜文本。',
+      'Explore a preset story through shots, dialogue and editable scene descriptions.',
+    ),
+    promptLabel: text('故事梗概或分镜备注', 'Story outline or storyboard note'),
+    examples: [
+      {
+        id: 'story-meal',
+        label: text('一盏晚归的灯', 'A light left on'),
+        input: text(
+          '把家人为晚归的人留饭的故事，写成三个镜头的短剧。',
+          'Turn a story about saving a meal for a late arrival into three scenes.',
+        ),
+        result: text(
+          '镜头一｜厨房·夜｜全景·4秒\n画面：暖灯亮着，桌上放着一碗盖好的饭。\n台词：奶奶：先别收，还有人没回来。\n\n镜头二｜门口·夜｜近景·4秒\n画面：孩子推门，奶奶把饭放到桌前。\n台词：孩子：您怎么还没睡？奶奶：饭热着，慢慢吃。\n\n镜头三｜厨房·翌日｜中景·4秒\n画面：孩子主动洗碗，给奶奶倒水。\n台词：孩子：今天换我照顾您。',
+          'Scene 1 | Kitchen at night | Wide shot, 4 seconds\nVisual: a warm light and a covered bowl on the table.\nDialogue: Grandma: Leave it there; someone is still coming home.\n\nScene 2 | Doorway at night | Close shot, 4 seconds\nVisual: a child enters; Grandma sets the meal down.\nDialogue: Child: Why are you still awake? Grandma: The food is warm. Take your time.\n\nScene 3 | Kitchen next day | Medium shot, 4 seconds\nVisual: the child washes dishes and pours water for Grandma.\nDialogue: Child: Today, let me look after you.',
+        ),
+        notes: [
+          text(
+            '原创分镜预设；画面以文字示意，没有生成图片、声音或视频。',
+            'Original preset storyboard; visuals are described in text. No images, audio or video are generated.',
+          ),
+          text(
+            '每一空行分隔一个镜头，下方卡片随你的编辑同步。',
+            'A blank line separates scenes. Preview cards update as you edit.',
+          ),
+        ],
+      },
+      {
+        id: 'story-promise',
+        label: text('还书的约定', 'The borrowed book'),
+        input: text(
+          '用三个镜头展示按时归还借书的小故事。',
+          'Tell a three-scene story about returning a borrowed book on time.',
+        ),
+        result: text(
+          '镜头一｜书桌·傍晚｜近景·4秒\n画面：孩子翻开书，看到写着归还日期的便签。\n台词：孩子：今天该还书了。\n\n镜头二｜街道·傍晚｜中景·4秒\n画面：孩子把书装进袋子，和家人一起出门。\n台词：家人：答应的事情，记得认真做。\n\n镜头三｜邻居家门口｜近景·4秒\n画面：孩子递回书，朋友微笑接过。\n台词：孩子：谢谢你的书，我很喜欢。朋友：下次一起读。',
+          'Scene 1 | Desk at dusk | Close shot, 4 seconds\nVisual: a child opens a book and sees a note with its return date.\nDialogue: Child: It is due back today.\n\nScene 2 | Street at dusk | Medium shot, 4 seconds\nVisual: the child packs the book and leaves with a family member.\nDialogue: Family member: Give your promises care.\n\nScene 3 | Neighbor’s doorway | Close shot, 4 seconds\nVisual: the child returns the book; a friend smiles.\nDialogue: Child: Thank you. I loved this book. Friend: Let us read together next time.',
+        ),
+        notes: [
+          text(
+            '可手工编辑镜头与台词，保存后可在个人中心恢复。',
+            'Edit scenes and dialogue by hand, then save and reopen from My account.',
+          ),
+          text(
+            '未执行图像生成、视频合成或上传素材。',
+            'No image generation, video rendering or material upload takes place.',
+          ),
+        ],
+      },
+    ],
+  },
 ]
 
 export function getAssistantTool(mode: AssistantMode): AssistantTool {
@@ -317,7 +481,8 @@ export function createAssistantDraft(
   region: RegionId,
   language: 'zh' | 'en' = 'zh',
 ): SubmissionDraft {
-  if (mode === 'help') throw new Error('帮助回答不作为投稿作品，请选择创作模式。')
+  if (['help', 'knowledge', 'compliance'].includes(mode))
+    throw new Error('帮助回答或审核资料不作为投稿作品，请选择创作模式。')
   if (!result.trim() || result.length > 10000)
     throw new Error('请先查看或完善不超过10000字的示例结果。')
   const titles = {
@@ -325,6 +490,10 @@ export function createAssistantDraft(
     rules: text('我们的家庭约定（示例）', 'Our family commitments (sample)'),
     polish: text('生活里的家风（示例）', 'Family values in everyday life'),
     ocr: text('家训手记（校对示例）', 'Family note (proofreading sample)'),
+    storyboard: text('家风短剧分镜（示例）', 'Family storyboard (sample)'),
+    help: text('', ''),
+    knowledge: text('', ''),
+    compliance: text('', ''),
   }
   return {
     title: titles[mode][language],

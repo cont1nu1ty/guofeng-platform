@@ -1,3 +1,4 @@
+import { cleanWritingDelta, writingText } from './writingTools'
 import {
   channels,
   genres,
@@ -123,6 +124,12 @@ function normalizeDraft(draft: SubmissionDraft): SubmissionDraft {
       : []
   return {
     ...draft,
+    ...(draft.contentDelta
+      ? { contentDelta: cleanWritingDelta(draft.contentDelta, draft.content) }
+      : {}),
+    ...(typeof draft.overseasLocation === 'string'
+      ? { overseasLocation: draft.overseasLocation.trim().slice(0, 100) }
+      : {}),
     themes: [...new Set(selected)].slice(0, 3),
     attachments: Array.isArray(draft.attachments)
       ? draft.attachments.filter(isAttachment).slice(0, 5)
@@ -138,6 +145,9 @@ function normalizeWork(work: Work): Work {
       : []
   return {
     ...work,
+    ...(work.contentDelta
+      ? { contentDelta: cleanWritingDelta(work.contentDelta, work.content) }
+      : {}),
     themes: [...new Set(selected)].slice(0, 3),
     attachments: Array.isArray(work.attachments)
       ? work.attachments.filter(isAttachment).slice(0, 5)
@@ -170,6 +180,21 @@ export function validateSubmission(draft: SubmissionDraft): ValidationErrors {
   if (titleLength < 2 || titleLength > 50) errors.title = '标题需为 2–50 个字。'
   if ([...(typeof draft.content === 'string' ? draft.content.trim() : '')].length < 20)
     errors.content = '正文至少填写 20 个字。'
+  if ([...(typeof draft.content === 'string' ? draft.content : '')].length > 10000)
+    errors.content = '正文最多填写 10000 个字。'
+  if (
+    draft.region === 'overseas' &&
+    (typeof draft.overseasLocation !== 'string' ||
+      !draft.overseasLocation.trim() ||
+      draft.overseasLocation.length > 100)
+  )
+    errors.overseasLocation = '请填写不超过100字的海外国家与城市。'
+  if (
+    draft.contentDelta &&
+    writingText(cleanWritingDelta(draft.contentDelta)).trim() !==
+      (typeof draft.content === 'string' ? draft.content.trim() : '')
+  )
+    errors.content = '正文格式与文字不一致，请重新确认正文。'
   if (!validGenre(draft.genre)) errors.genre = '请选择有效的投稿体裁。'
   if (!validChannel(draft.channel)) errors.channel = '请选择有效的投稿通道。'
   if (!validRegion(draft.region)) errors.region = '请选择有效的所属地区。'
@@ -390,6 +415,10 @@ export function createDemoRepository(storage: DemoStorage) {
       id,
       title: draft.title.trim(),
       content,
+      ...(draft.contentDelta
+        ? { contentDelta: cleanWritingDelta(draft.contentDelta, content) }
+        : {}),
+      ...(draft.region === 'overseas' ? { overseasLocation: draft.overseasLocation?.trim() } : {}),
       excerpt: [...content].slice(0, 72).join(''),
       author: author ? `${author}（演示投稿）` : '体验用户（演示投稿）',
       genre: draft.genre,
@@ -480,6 +509,8 @@ export function createDemoRepository(storage: DemoStorage) {
       const draft: SubmissionDraft = {
         title: work.title,
         content: work.content,
+        ...(work.contentDelta ? { contentDelta: copy(work.contentDelta) } : {}),
+        ...(work.overseasLocation ? { overseasLocation: work.overseasLocation } : {}),
         author: work.author.replace(/（演示投稿）$/, ''),
         genre: work.genre,
         channel: work.channel,

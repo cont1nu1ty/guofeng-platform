@@ -95,6 +95,10 @@ const inputChanged = computed(
     current.value.prompt.trim() !== example.value.input.en.trim(),
 )
 const hasResult = computed(() => !!current.value.resultPrompt)
+const isReference = computed(() => ['help', 'knowledge', 'compliance'].includes(mode.value))
+const storyboardFrames = computed(() =>
+  current.value.result.split(/\n\s*\n/).filter((part) => part.trim()),
+)
 const canUseResult = computed(() => !!current.value.result.trim())
 const manuscriptText = computed(
   () =>
@@ -229,7 +233,7 @@ function attemptTransfer(replace = false) {
   conflictVisible.value = true
 }
 function startTransfer() {
-  if (!canUseResult.value || mode.value === 'help') return
+  if (!canUseResult.value || isReference.value) return
   const candidate = safely(() =>
     createAssistantDraft(mode.value, current.value.result, region.value, locale.value),
   )
@@ -300,7 +304,7 @@ watch(locale, (next, previous) => {
       <view class="assistant-demo-mark">✦</view>
       <view>
         <text class="assistant-note-title">
-          {{ t('当前是五种工具的交互样例', 'Five interactive tool samples') }}
+          {{ t('当前是八种工具的交互样例', 'Eight interactive tool samples') }}
         </text>
         <text>
           {{
@@ -419,7 +423,7 @@ watch(locale, (next, previous) => {
           <text>
             {{
               t(
-                '选一个样例，查看它的结构、对照或校对思路。五个工具会展示不同的预设内容。',
+                '选一个样例，查看它的结构、对照或校对思路。八个工具会展示不同的预设内容。',
                 'Choose a sample to explore its structure, comparison or proofreading notes. Each tool offers different preset content.',
               )
             }}
@@ -448,12 +452,12 @@ watch(locale, (next, previous) => {
                 ? t('润色示例，可继续改写', 'Polished sample — editable')
                 : mode === 'ocr'
                   ? t('待校文本，可手动更正', 'Text to proofread — editable')
-                  : mode === 'help'
-                    ? t('预设帮助回答', 'Preset help answer')
+                  : isReference
+                    ? t('预设参考资料', 'Preset reference material')
                     : t('示例正文，可继续改写', 'Sample text — editable')
             }}
           </text>
-          <text v-if="mode === 'help'" class="assistant-help-answer">{{ current.result }}</text>
+          <text v-if="isReference" class="assistant-help-answer">{{ current.result }}</text>
           <template v-else>
             <textarea
               v-for="editor in resultEditors"
@@ -467,12 +471,37 @@ watch(locale, (next, previous) => {
               :aria-label="t('助手示例结果', 'Assistant sample result')"
             />
           </template>
+          <view v-if="mode === 'storyboard'" class="storyboard-preview">
+            <text class="field-label">
+              {{ t('分镜卡片 · 与上方文本同步', 'Scene cards · Synced with the text above') }}
+            </text>
+            <view v-for="(frame, index) in storyboardFrames" :key="index" class="storyboard-frame">
+              <view class="storyboard-visual">
+                <text>{{ String(index + 1).padStart(2, '0') }}</text>
+                <text>{{ t('画面文字示意', 'Text-only visual sketch') }}</text>
+              </view>
+              <text selectable>{{ frame }}</text>
+            </view>
+          </view>
+          <view v-if="mode === 'compliance'" class="assistant-compliance-status">
+            <text>{{ t('待人工复核 · 样例报告', 'Human review needed · Sample report') }}</text>
+            <text>
+              {{
+                t(
+                  '仅供查看审核交互。没有实际审查或放行你的输入。',
+                  'Demonstrates the review interface. Your input has not been assessed or approved.',
+                )
+              }}
+            </text>
+          </view>
           <view v-if="!current.restoredId || mode === 'ocr'" class="assistant-review-notes">
             <text class="field-label">
               {{
                 mode === 'ocr'
                   ? t('校对提示', 'Proofreading notes')
-                  : t('这个样例的写法', 'What this sample demonstrates')
+                  : isReference
+                    ? t('来源与参考说明', 'Sources and reference notes')
+                    : t('这个样例的写法', 'What this sample demonstrates')
               }}
             </text>
             <text v-for="(note, index) in example.notes" :key="index">
@@ -505,7 +534,7 @@ watch(locale, (next, previous) => {
             >
               {{ alreadySaved ? t('已存档', 'Saved') : t('保存示例', 'Save sample') }}
             </wd-button>
-            <wd-button v-if="mode !== 'help'" :disabled="!canUseResult" @click="startTransfer">
+            <wd-button v-if="!isReference" :disabled="!canUseResult" @click="startTransfer">
               {{ t('转入新投稿草稿', 'Use as a new contribution draft') }} →
             </wd-button>
           </view>
@@ -1062,6 +1091,58 @@ watch(locale, (next, previous) => {
   }
   .assistant-manuscript-text {
     font-size: 18px;
+  }
+}
+</style>
+
+<style scoped>
+.storyboard-preview {
+  margin: 20px 0;
+}
+.storyboard-frame {
+  display: grid;
+  grid-template-columns: 105px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+  margin: 12px 0;
+  border: 1px solid #c9a96e;
+  font-size: 13px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+.storyboard-visual {
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  align-items: center;
+  background: #f5f0e8;
+  text-align: center;
+  font-size: 11px;
+}
+.storyboard-visual text:first-child {
+  font-size: 32px;
+  font-weight: 600;
+  color: #c41a1a;
+}
+.assistant-compliance-status {
+  padding: 14px;
+  background: #f5f0e8;
+  border-left: 3px solid #c41a1a;
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 18px 0;
+}
+.assistant-compliance-status text {
+  display: block;
+}
+@media (max-width: 420px) {
+  .storyboard-frame {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .storyboard-visual {
+    min-height: 70px;
   }
 }
 </style>

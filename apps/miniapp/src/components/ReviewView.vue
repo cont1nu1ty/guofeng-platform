@@ -2,6 +2,7 @@
 import { readInputValue } from '../composables/readInputValue'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
+import CertificateExport from './CertificateExport.vue'
 import { reviewStages, reviewStandards } from '../domain/fixtures'
 import { repo, openReader, myWorks, revision, reviewQuery, navigate } from '../composables/useDemo'
 import { useRouteParams } from '../composables/useNavigation'
@@ -312,7 +313,16 @@ watch(
       <text class="eyebrow">
         {{ t('模拟证书 · 无正式效力', 'DEMO CERTIFICATE · NO OFFICIAL VALIDITY') }}
       </text>
-      <text class="section-title">{{ certificate.awardLabel }}</text>
+      <text class="section-title">
+        {{
+          t(
+            certificate.awardLabel,
+            certificate.awardLabel.includes('典藏')
+              ? 'Collection certificate'
+              : 'Sample award certificate',
+          )
+        }}
+      </text>
       <text class="reader-paragraph">{{ certificate.title }}</text>
       <text>{{ certificate.author }}</text>
       <text class="muted">{{ certificate.id }}</text>
@@ -325,6 +335,20 @@ watch(
           )
         }}
       </text>
+      <CertificateExport
+        :certificate="{
+          id: certificate.id,
+          title: t(
+            certificate.awardLabel,
+            certificate.awardLabel.includes('典藏')
+              ? 'Collection certificate'
+              : 'Sample award certificate',
+          ),
+          recipient: certificate.author,
+          subject: certificate.title,
+          date: certificate.issuedAt,
+        }"
+      />
       <wd-button variant="plain" @click="certificateVisible = false">
         {{ t('关闭', 'Close') }}
       </wd-button>

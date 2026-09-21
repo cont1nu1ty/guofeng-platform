@@ -16,6 +16,7 @@ import { excerpts, saveExcerpt, archiveError } from '../composables/usePersonalA
 import { useReadingTools } from '../composables/useReadingTools'
 import { genres, themes, regions } from '../domain/fixtures'
 import { glossaryFor, isClassic, readingDocument, type ReadingItem } from '../domain/libraryCatalog'
+import { writingHtml } from '../domain/writingTools'
 const params = useRouteParams()
 const query = ref('')
 const genre = ref('all')
@@ -26,6 +27,7 @@ const vertical = ref(false)
 const selectionMode = ref(false)
 const selectedParagraphs = ref<number[]>([])
 const excerptNote = ref('')
+const excerptExpanded = ref(false)
 const glossaryId = ref('')
 const tools = useReadingTools()
 const {
@@ -43,6 +45,11 @@ const source = computed(() => {
     ? (repo.getClassic(params.value.id) ?? repo.getWork(params.value.id))
     : undefined
 })
+const formattedWork = computed(() =>
+  source.value && !isClassic(source.value) && source.value.contentDelta
+    ? writingHtml(source.value.contentDelta, source.value.content)
+    : '',
+)
 const document = computed(() =>
   source.value ? readingDocument(source.value, locale.value) : undefined,
 )
@@ -461,6 +468,12 @@ function exportDocument() {
             </view>
           </scroll-view>
           <view
+            v-else-if="formattedWork && !selectionMode"
+            :class="['library-horizontal-prose', { 'library-large': largeText }]"
+          >
+            <rich-text :nodes="formattedWork" selectable />
+          </view>
+          <view
             v-else
             :class="[
               'library-horizontal-prose',
@@ -574,7 +587,12 @@ function exportDocument() {
                 )
               }}
             </text>
-            <text v-else class="library-excerpt-selection">{{ selectedText }}</text>
+            <button v-else class="library-excerpt-selection" @click="excerptExpanded = true">
+              <text>{{ selectedText }}</text>
+              <text class="library-expand-label">
+                {{ t('点击展开全文', 'Read the full excerpt') }} ↗
+              </text>
+            </button>
             <view class="library-excerpt-count">
               <text>
                 {{ t('已选', 'Selected: ') }} {{ selectedParagraphs.length }}
@@ -913,6 +931,23 @@ function exportDocument() {
         }}
       </view>
     </template>
+    <wd-popup
+      v-model="excerptExpanded"
+      :z-index="100"
+      position="center"
+      closable
+      custom-class="content-popup"
+    >
+      <view class="dialog-body">
+        <text class="section-title">{{ t('摘抄全文', 'Full excerpt') }}</text>
+        <scroll-view scroll-y class="library-full-excerpt">
+          <text selectable>{{ selectedText }}</text>
+        </scroll-view>
+        <wd-button variant="plain" @click="excerptExpanded = false">
+          {{ t('收起并继续阅读', 'Close and continue reading') }}
+        </wd-button>
+      </view>
+    </wd-popup>
   </view>
 </template>
 <style scoped lang="scss">
@@ -1363,6 +1398,25 @@ function exportDocument() {
   max-height: 190px;
   overflow: auto;
   white-space: pre-wrap;
+  text-align: left;
+  width: 100%;
+  border-radius: 0;
+  color: var(--jf-ink);
+}
+.library-expand-label {
+  display: block;
+  color: var(--jf-red);
+  font:
+    12px/1.8 'JiafengSans',
+    sans-serif;
+  margin-top: 8px;
+}
+.library-full-excerpt {
+  height: 50vh;
+  max-height: 460px;
+  white-space: pre-wrap;
+  line-height: 2;
+  margin: 18px 0;
 }
 .library-excerpt-count {
   display: flex;

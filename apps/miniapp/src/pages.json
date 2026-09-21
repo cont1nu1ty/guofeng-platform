@@ -25,5 +25,19 @@
     "custom": {
       "^wd-(.*)": "@wot-ui/ui/components/wd-$1/wd-$1.vue"
     }
-  }
+  },
+  "subPackages": [
+    {
+      "root": "pkg-content",
+      "pages": [
+        {
+          "path": "pages/index",
+          "style": {
+            "navigationStyle": "custom",
+            "navigationBarTitleText": "家风中华行"
+          }
+        }
+      ]
+    }
+  ]
 }

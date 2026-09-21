@@ -29,8 +29,8 @@ export const mediaCatalog: MediaItem[] = [
       'A short original letter about honesty, thrift and taking responsibility.',
     ),
     duration: '00:12',
-    poster: '/static/media/family-letter.jpg',
-    source: '/static/media/family-letter.mp4',
+    poster: '/pkg-content/static/media/family-letter.jpg',
+    source: '/pkg-content/static/media/family-letter.mp4',
     transcript: [
       text(
         '亲爱的孩子，愿你心中有光，脚下有路。',
@@ -57,8 +57,8 @@ export const mediaCatalog: MediaItem[] = [
       'Three everyday moments: sharing a meal, helping a neighbour and keeping a promise.',
     ),
     duration: '00:12',
-    poster: '/static/media/everyday-values.jpg',
-    source: '/static/media/everyday-values.mp4',
+    poster: '/pkg-content/static/media/everyday-values.jpg',
+    source: '/pkg-content/static/media/everyday-values.mp4',
     transcript: [
       text('一粥一饭，记得来之不易。', 'Remember the work behind every meal.'),
       text(
@@ -82,8 +82,8 @@ export const mediaCatalog: MediaItem[] = [
       'A replay interface sample exploring honesty, thrift and clear boundaries.',
     ),
     duration: '00:12',
-    poster: '/static/media/integrity-talk.jpg',
-    source: '/static/media/integrity-talk.mp4',
+    poster: '/pkg-content/static/media/integrity-talk.jpg',
+    source: '/pkg-content/static/media/integrity-talk.mp4',
     transcript: [
       text(
         '把规矩记在心里，把诚信落实在行动中。',

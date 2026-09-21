@@ -2,8 +2,8 @@
   "name": "家风中华行 · 演示",
   "appid": "__UNI__JIAFENG_DEMO",
   "description": "家风文化平台前端交流演示",
-  "versionName": "0.1.0",
-  "versionCode": "10",
+  "versionName": "0.5.0",
+  "versionCode": "50",
   "transformPx": false,
   "vueVersion": "3",
   "mp-weixin": {
@@ -13,7 +13,10 @@
       "es6": true,
       "minified": true
     },
-    "usingComponents": true
+    "usingComponents": true,
+    "optimization": {
+      "subPackages": true
+    }
   },
   "h5": {
     "title": "家风中华行 · 交互演示",

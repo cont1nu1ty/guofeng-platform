@@ -1,4 +1,5 @@
-export type RegionId = 'all' | 'beijing' | 'zhejiang' | 'sichuan'
+import type { ProvinceId } from './regionCatalog'
+export type RegionId = 'all' | ProvinceId | 'overseas'
 export type GenreId =
   | 'letter'
   | 'essay'
@@ -81,6 +82,8 @@ export interface ReviewStage {
   tentative: true
 }
 export interface SubmissionDraft {
+  contentDelta?: import('./writingTools').WritingDelta
+  overseasLocation?: string
   title: string
   content: string
   genre: GenreId
@@ -95,6 +98,8 @@ export interface SubmissionDraft {
 }
 export type ValidationErrors = Partial<Record<keyof SubmissionDraft, string>>
 export interface Work {
+  contentDelta?: import('./writingTools').WritingDelta
+  overseasLocation?: string
   id: string
   title: string
   content: string

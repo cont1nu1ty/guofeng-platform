@@ -35,7 +35,9 @@ const candidate = () =>
   createAssistantDraft('letter', getAssistantExample('letter').result.zh, 'zhejiang')
 describe('助手预设与草稿交接', () => {
   it('所有创作预设在中英文下都能形成可编辑的新稿，版权必须另行确认', () => {
-    for (const tool of assistantTools.filter((item) => item.id !== 'help'))
+    for (const tool of assistantTools.filter(
+      (item) => !['help', 'knowledge', 'compliance'].includes(item.id),
+    ))
       for (const example of tool.examples)
         for (const language of ['zh', 'en'] as const) {
           const draft = createAssistantDraft(tool.id, example.result[language], 'sichuan', language)

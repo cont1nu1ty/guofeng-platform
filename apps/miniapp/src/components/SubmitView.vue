@@ -1,7 +1,17 @@
 <script setup lang="ts">
 import { readInputValue } from '../composables/readInputValue'
 import { computed, reactive, ref, watch } from 'vue'
+import WritingEditor from './WritingEditor.vue'
+import WritingInspiration from './WritingInspiration.vue'
+import SubmissionSupport from './SubmissionSupport.vue'
+import {
+  cleanWritingDelta,
+  writingHtml,
+  checkPoem,
+  type WritingDelta,
+} from '../domain/writingTools'
 import SectionHeading from './SectionHeading.vue'
+import { regionTranslations } from '../domain/regionCatalog'
 import { genres, channels, regions, themes } from '../domain/fixtures'
 import type { AttachmentMeta, SubmissionDraft, ThemeId, ValidationErrors } from '../domain/types'
 import { repo, region, safely, notify, revision, storageUnavailable } from '../composables/useDemo'
@@ -56,8 +66,50 @@ const showAttachmentPreview = ref(false)
 const previewAttachment = ref<AttachmentMeta | null>(null)
 const submitting = ref(false)
 const revisionLoadError = ref(false)
-const undoText = ref<string | null>(null)
 const editorKey = ref(0)
+const showInspiration = ref(false)
+const poemCheck = ref<ReturnType<typeof checkPoem> | null>(null)
+const poemSource = ref('')
+const previewHtml = computed(() => writingHtml(form.contentDelta, form.content))
+function richChange(value: { content: string; contentDelta: WritingDelta }) {
+  pauseSave = true
+  form.content = value.content
+  form.contentDelta = value.contentDelta
+  pauseSave = false
+  try {
+    repo.saveDraft({ ...form })
+    draftState.value = 'saved'
+  } catch {
+    draftState.value = 'error'
+  }
+}
+function appendInspiration(value: string) {
+  const next = form.content + (form.content.trim() ? '\n\n' : '') + value
+  if ([...next].length > 10000) {
+    notify(
+      t(
+        '追加后超过10000字，请复制所需段落。',
+        'This would exceed 10,000 characters. Copy only the passage you need.',
+      ),
+    )
+    return
+  }
+  const delta = cleanWritingDelta(form.contentDelta, form.content)
+  delta.ops.push({ insert: (form.content.trim() ? '\n' : '') + value + '\n' })
+  richChange({
+    content: delta.ops
+      .map((op) => op.insert)
+      .join('')
+      .replace(/\n$/, ''),
+    contentDelta: delta,
+  })
+  editorKey.value++
+  notify(t('已追加到正文末尾，原稿保留。', 'Appended at the end. Your original text is retained.'))
+}
+function runPoemCheck() {
+  poemSource.value = form.content
+  poemCheck.value = checkPoem(form.content)
+}
 const { picking, attachmentErrors, selectAttachments, removeAttachment, markPreviewUnavailable } =
   useSubmissionAttachments()
 const selectedThemes = computed(() => form.themes ?? [])
@@ -99,7 +151,7 @@ const dictionaries: Record<string, string> = {
   全国: 'National',
 }
 function label(value: string) {
-  return t(value, dictionaries[value] ?? value)
+  return t(value, regionTranslations[value] ?? dictionaries[value] ?? value)
 }
 function optionLabel(options: { id: string; label: string }[], id: string) {
   return label(options.find((item) => item.id === id)?.label ?? id)
@@ -108,6 +160,10 @@ function errorText(value?: string) {
   if (!value) return ''
   const english: Record<string, string> = {
     '标题需为 2–50 个字。': 'Enter a title of 2–50 characters.',
+    '正文最多填写 10000 个字。': 'Keep the body within 10,000 characters.',
+    '正文格式与文字不一致，请重新确认正文。':
+      'The formatted and plain text differ. Review the body again.',
+    '请填写不超过100字的海外国家与城市。': 'Enter your country and city in at most 100 characters.',
     '正文至少填写 20 个字。': 'Write at least 20 characters.',
     '请阅读并同意演示版权声明。': 'Read and accept the sample copyright notice.',
     '请选择有效的投稿体裁。': 'Choose a valid genre.',
@@ -181,47 +237,6 @@ function toggleTheme(id: ThemeId) {
   else notify(t('最多选择 3 个主题', 'Choose up to 3 themes'))
   errors.value.themes = undefined
 }
-function formatText(action: 'paragraphs' | 'indent' | 'heading' | 'letter') {
-  const previous = form.content
-  let next = previous
-  if (action === 'paragraphs')
-    next = previous
-      .split(/\n+/)
-      .map((part) => part.trim())
-      .filter(Boolean)
-      .join('\n\n')
-  if (action === 'indent')
-    next = previous
-      .split(/\n+/)
-      .map((part) => part.trim())
-      .filter(Boolean)
-      .map((part) => `　　${part}`)
-      .join('\n\n')
-  if (action === 'heading')
-    next = `${previous.trimEnd()}${previous.trim() ? '\n\n' : ''}${t('【小标题】', '[Section heading]')}\n`
-  if (action === 'letter') next = `${t('亲爱的家人：', 'Dear family,')}\n\n${previous.trimStart()}`
-  if ([...next].length > 10000) {
-    notify(
-      t(
-        '正文最多 10000 字，请精简后再整理。',
-        'Keep the text within 10,000 characters before formatting.',
-      ),
-    )
-    return
-  }
-  if (next !== previous) {
-    undoText.value = previous
-    form.content = next
-    editorKey.value++
-  }
-}
-function undoFormatting() {
-  if (undoText.value !== null) {
-    form.content = undoText.value
-    undoText.value = null
-    editorKey.value++
-  }
-}
 async function addAttachments(mode: 'image' | 'document', replaceId?: string) {
   const result = await selectAttachments(mode, attachments.value, replaceId)
   if (result) {
@@ -271,8 +286,12 @@ function submit() {
     submittedId.value = result.id
     submittedRevision.value = result.revisionNumber ?? 1
     showPreview.value = false
-    Object.assign(form, blank(), { editingWorkId: undefined, theme: undefined })
-    undoText.value = null
+    Object.assign(form, blank(), {
+      editingWorkId: undefined,
+      theme: undefined,
+      contentDelta: undefined,
+      overseasLocation: undefined,
+    })
     pauseSave = false
     draftState.value = 'new'
   }
@@ -448,6 +467,24 @@ function continueWriting() {
             />
           </view>
         </view>
+        <view v-if="form.region === 'overseas'">
+          <text class="field-label">
+            {{ t('国家／地区与城市', 'Country / territory and city') }} *
+          </text>
+          <input
+            v-model="form.overseasLocation"
+            @blur="form.overseasLocation = readInputValue($event, form.overseasLocation)"
+            @confirm="form.overseasLocation = readInputValue($event, form.overseasLocation)"
+            maxlength="100"
+            class="form-input"
+            :placeholder="
+              t('例如：新加坡 · 新加坡市（演示）', 'For example: Singapore · Singapore (demo)')
+            "
+          />
+          <text v-if="errors.overseasLocation" class="field-error">
+            {{ errorText(errors.overseasLocation) }}
+          </text>
+        </view>
         <view class="form-step">
           <text class="step-badge">02</text>
           <text>{{ t('写下你的家风故事', 'Write your family story') }}</text>
@@ -473,47 +510,23 @@ function continueWriting() {
             {{ t('作品正文', 'Story text') }}
             <text class="required">*</text>
           </text>
-          <button class="text-button" @click="navigate('assistant')">
+          <button class="text-button" @click="showInspiration = !showInspiration">
             ✦ {{ t('寻找创作灵感', 'Find writing ideas') }}
           </button>
         </view>
-        <view class="submit-editor-toolbar">
-          <wd-button variant="text" size="small" @click="formatText('paragraphs')">
-            {{ t('整理分段', 'Paragraphs') }}
-          </wd-button>
-          <wd-button variant="text" size="small" @click="formatText('indent')">
-            {{ t('首行缩进', 'Indent') }}
-          </wd-button>
-          <wd-button variant="text" size="small" @click="formatText('heading')">
-            {{ t('添加小标题', 'Add heading') }}
-          </wd-button>
-          <wd-button variant="text" size="small" @click="formatText('letter')">
-            {{ t('家书开头', 'Letter opening') }}
-          </wd-button>
-          <wd-button
-            variant="text"
-            size="small"
-            :disabled="undoText === null"
-            @click="undoFormatting"
-          >
-            {{ t('撤销排版', 'Undo formatting') }}
-          </wd-button>
+        <view :class="['writing-workspace', { 'with-inspiration': showInspiration }]">
+          <WritingEditor
+            :key="editorKey"
+            :text="form.content"
+            :delta="form.contentDelta"
+            @change="richChange"
+          />
+          <WritingInspiration
+            v-if="showInspiration"
+            @close="showInspiration = false"
+            @append="appendInspiration"
+          />
         </view>
-        <textarea
-          @blur="form.content = readInputValue($event, form.content)"
-          @confirm="form.content = readInputValue($event, form.content)"
-          :key="editorKey"
-          v-model="form.content"
-          :class="['writing-area', { invalid: errors.content }]"
-          :placeholder="
-            t(
-              '从一段回忆、一句家训或一封家书开始……（至少20字）',
-              'Begin with a memory, a family principle or a letter… (at least 20 characters)',
-            )
-          "
-          :maxlength="10000"
-          :aria-label="t('作品正文', 'Story text')"
-        />
         <view class="editor-meta">
           <text :class="{ 'submit-save-error': draftState === 'error' }">{{ draftMessage }}</text>
           <text>{{ bodyLength }} / 10000</text>
@@ -522,11 +535,54 @@ function continueWriting() {
         <text class="submit-helper">
           {{
             t(
-              '排版工具仅整理纯文本；预览可检查段落，不保留 Word 原有格式。',
-              'These tools format plain text. Preview paragraphs before submitting; Word formatting is not imported.',
+              '支持加粗、斜体、下划线、小标题和列表。选中文字后操作；草稿和作品预览保留格式，不导入附件中的格式。',
+              'Select text to apply bold, italic, underline, headings or lists. Formatting is kept in drafts and previews. Attachment formatting is not imported.',
             )
           }}
         </text>
+        <view class="poem-check-panel">
+          <wd-button variant="plain" size="small" @click="runPoemCheck">
+            {{ t('检查诗词句式', 'Check verse structure') }}
+          </wd-button>
+          <text class="submit-helper">
+            {{
+              t(
+                '本机按标点和换行计句、计字；不判断平仄、押韵或文学质量。',
+                'Counts lines and characters locally using punctuation and line breaks. It does not assess tones, rhyme or literary quality.',
+              )
+            }}
+          </text>
+          <view v-if="poemCheck" class="poem-check-result">
+            <text v-if="poemSource !== form.content" class="field-error">
+              {{ t('正文已修改，请重新检查。', 'The text changed. Run the check again.') }}
+            </text>
+            <text>
+              {{ poemCheck.lines.length }} {{ t('句', 'lines') }} ·
+              {{ poemCheck.counts.join(' / ') || '0' }} {{ t('字', 'characters') }}
+            </text>
+            <text>
+              {{
+                poemCheck.pattern
+                  ? t(
+                      '字数句式接近五言或七言的四句／八句结构，不能据此判为合律。',
+                      'Counts resemble a four- or eight-line Chinese verse with five or seven characters per line; this does not establish formal validity.',
+                    )
+                  : t(
+                      '未匹配五言／七言四句或八句结构，可按自由诗、散文或其他体裁继续创作。',
+                      'No standard five- or seven-character, four- or eight-line pattern matched. You can continue as free verse, prose or another form.',
+                    )
+              }}
+            </text>
+            <text v-if="!poemCheck.chinese">
+              {{
+                t(
+                  '包含非汉字，当前字数仅作编辑参考。',
+                  'Non-Chinese characters are present; counts are only an editing reference.',
+                )
+              }}
+            </text>
+          </view>
+        </view>
         <view class="form-step submit-attachment-step">
           <text class="step-badge">03</text>
           <text>{{ t('添加附件与确认', 'Attachments and confirmation') }}</text>
@@ -665,6 +721,7 @@ function continueWriting() {
             </wd-button>
           </view>
         </view>
+        <SubmissionSupport />
       </view>
       <view class="form-aside">
         <text class="eyebrow">{{ t('落笔之前', 'Before you begin') }}</text>
@@ -739,7 +796,10 @@ function continueWriting() {
             <view class="submit-preview-themes">
               <text v-for="id in selectedThemes" :key="id">{{ optionLabel(themes, id) }}</text>
             </view>
-            <text class="submit-preview-body">{{ form.content }}</text>
+            <rich-text class="submit-preview-body" :nodes="previewHtml" />
+            <text v-if="form.region === 'overseas'" class="submit-helper">
+              {{ form.overseasLocation }}
+            </text>
             <view v-if="attachments.length" class="submit-preview-attachments">
               <text class="submit-panel-title">
                 {{ t('附件清单（仅元信息）', 'Attachment list (metadata only)') }}
@@ -1396,6 +1456,40 @@ function continueWriting() {
   }
   .submit-revision-banner {
     padding: 15px;
+  }
+}
+</style>
+
+<style scoped>
+.writing-workspace {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+.writing-workspace.with-inspiration {
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.8fr);
+}
+.poem-check-panel {
+  margin-top: 18px;
+  padding: 14px;
+  background: #f5f0e8;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.poem-check-result {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.poem-check-result text {
+  display: block;
+  margin-top: 6px;
+}
+@media (max-width: 1100px) {
+  .writing-workspace.with-inspiration {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 </style>

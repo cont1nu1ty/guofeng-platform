@@ -19,13 +19,7 @@
     "repository": "https://github.com/wot-ui/wot-ui",
     "license": "MIT",
     "licenseFile": "licenses/wot-ui.MIT.txt",
-    "reuse": [
-      "button",
-      "icon",
-      "checkbox",
-      "popup",
-      "switch"
-    ],
+    "reuse": ["button", "icon", "checkbox", "popup", "switch"],
     "font": "iconfont.ttf embedded in src/styles/icons.scss for local/offline display"
   },
   "dependencyLock": "apps/miniapp/package-lock.json",
@@ -48,9 +42,72 @@
     }
   },
   "demoMedia": {
-    "path": "apps/miniapp/src/static/media",
+    "path": "apps/miniapp/src/pkg-content/static/media",
     "source": "Original project-authored 12-second silent typography clips and covers",
     "generator": "scripts/generate_demo_media.py",
     "externalFootage": false
+  },
+  "richTextEditor": {
+    "library": "Quill",
+    "version": "1.3.7",
+    "repository": "https://github.com/quilljs/quill/tree/v1.3.7",
+    "source": "https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js",
+    "license": "BSD-3-Clause",
+    "licenseFile": "licenses/quill-BSD-3-Clause.txt",
+    "path": "apps/miniapp/src/vendor/quill-1.3.7.js",
+    "sha256": "d0804f77a6ba28b756ec02af26128f3d5516ef8ebb95c5734291a9eafb6f9268",
+    "modifications": "Removed sourceMappingURL only; H5-only local import for Uni editor. No external runtime request."
+  },
+  "demoAudio": {
+    "path": "apps/miniapp/src/pkg-content/static/audio",
+    "manifest": "scripts/audio-sample-manifest.json",
+    "generator": "scripts/generate-audio-samples.py",
+    "source": "Original project-authored bilingual scripts with offline synthetic narration",
+    "softwareSource": "https://github.com/espeak-ng/espeak-ng",
+    "generatorVersion": "eSpeak NG 1.52.0 and FFmpeg",
+    "toolBinariesDistributed": false,
+    "historicalRecording": false,
+    "files": [
+      {
+        "name": "integrity-en.mp3",
+        "bytes": 38156,
+        "sha256": "ed9dc99f5548a616d43717b093177c2e8de7a13c107b298256639b4d3ac85239"
+      },
+      {
+        "name": "integrity-zh.mp3",
+        "bytes": 46541,
+        "sha256": "0d47d2c1566302a91f42fd921d0a1d3281a1996c16f2940da0998daa3d5dd4d4"
+      },
+      {
+        "name": "promise-en.mp3",
+        "bytes": 41056,
+        "sha256": "5989c516d2e07c2d6d89ae270992162359091dd1855ec2d200fc84f10ceddfe8"
+      },
+      {
+        "name": "promise-zh.mp3",
+        "bytes": 48187,
+        "sha256": "f1653f9a1a98754123c5eab475332aa19223b113681193235b9caf50ff4a7de8"
+      },
+      {
+        "name": "yan-zhitui-en.mp3",
+        "bytes": 31416,
+        "sha256": "d90b2584f5de3165744cf520490c514d870523c4ea10040d4df40c77ea386122"
+      },
+      {
+        "name": "yan-zhitui-zh.mp3",
+        "bytes": 45366,
+        "sha256": "26ed9230ffd4bc3fe421c6d21f0781f3fb75a0eee3b85939d652a2a664edfac9"
+      },
+      {
+        "name": "zhuge-liang-en.mp3",
+        "bytes": 36040,
+        "sha256": "7f4cf190eca67ae74150a7da401aec208ed94e3f664063bae412efbc4210fcc6"
+      },
+      {
+        "name": "zhuge-liang-zh.mp3",
+        "bytes": 42074,
+        "sha256": "27a80440352a2f8926ee63818ca8d2b2c7737e1b6aef17a6d5bd9e44ac735abe"
+      }
+    ]
   }
 }

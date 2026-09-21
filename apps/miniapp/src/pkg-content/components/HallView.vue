@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { readInputValue } from '../composables/readInputValue'
+import { readInputValue } from '../../composables/readInputValue'
 import { computed, ref, watch } from 'vue'
-import SectionHeading from './SectionHeading.vue'
-import { hallPeople, type BilingualText } from '../domain/showcaseCatalog'
-import { navigate, goBack, useRouteParams } from '../composables/useNavigation'
-import { t } from '../composables/useLocale'
+import SectionHeading from '../../components/SectionHeading.vue'
+import HallExperiencePanel from './HallExperiencePanel.vue'
+import { hallPeople, type BilingualText } from '../../domain/showcaseCatalog'
+import { navigate, goBack, useRouteParams } from '../../composables/useNavigation'
+import { t } from '../../composables/useLocale'
 const params = useRouteParams()
 const lt = (value: BilingualText) => t(value.zh, value.en)
 const current = computed(() => hallPeople.find((person) => person.id === params.value.id))
@@ -244,6 +245,7 @@ function copySource() {
               <text>{{ lt(note) }}</text>
             </view>
           </view>
+          <HallExperiencePanel :person="current" />
           <view class="showcase-panel hall-reflection">
             <text class="showcase-card-title">
               {{ t('把家训带回家', 'Bring the precept home') }}
@@ -392,8 +394,8 @@ function copySource() {
       <view class="scope-note">
         {{
           t(
-            '本期提供原创图文展厅；720° 全景与真实文物数字采集需要另行提供授权素材。',
-            'This edition provides original illustrated galleries. Panoramas and digitised artefacts require separately licensed materials.',
+            '本期提供图文导览、可拖动空间示意、家训描摹与预置讲解；720° 实景与文物扫描需另行提供授权素材。',
+            'This edition includes illustrated tours, draggable spatial concepts, tracing and prepared narration. Real panoramas and digitised artefacts require separately licensed materials.',
           )
         }}
       </view>

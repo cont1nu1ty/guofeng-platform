@@ -1,1169 +1,2252 @@
 {
-  "results": [
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "home",
-      "overflow": false,
-      "content": 1348,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "news",
-      "overflow": false,
-      "content": 921,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "classroom",
-      "overflow": false,
-      "content": 391,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "venues",
-      "overflow": false,
-      "content": 401,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "media",
-      "overflow": false,
-      "content": 353,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "hall",
-      "overflow": false,
-      "content": 361,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "shop",
-      "overflow": false,
-      "content": 345,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "learning",
-      "overflow": false,
-      "content": 414,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "submit",
-      "overflow": false,
-      "content": 723,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "profile",
-      "overflow": false,
-      "content": 302,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "review",
-      "overflow": false,
-      "content": 615,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "admin",
-      "overflow": false,
-      "content": 268,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "library",
-      "overflow": false,
-      "content": 674,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "zh",
-      "large": false,
-      "screen": "assistant",
-      "overflow": false,
-      "content": 369,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "home",
-      "overflow": false,
-      "content": 3652,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "news",
-      "overflow": false,
-      "content": 2357,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "classroom",
-      "overflow": false,
-      "content": 1091,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "venues",
-      "overflow": false,
-      "content": 1186,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "media",
-      "overflow": false,
-      "content": 937,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "hall",
-      "overflow": false,
-      "content": 1013,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "shop",
-      "overflow": false,
-      "content": 1047,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "learning",
-      "overflow": false,
-      "content": 1095,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "submit",
-      "overflow": false,
-      "content": 2035,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "profile",
-      "overflow": false,
-      "content": 869,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "review",
-      "overflow": false,
-      "content": 1917,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "admin",
-      "overflow": false,
-      "content": 636,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "library",
-      "overflow": false,
-      "content": 2156,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": false,
-      "screen": "assistant",
-      "overflow": false,
-      "content": 1100,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "home",
-      "overflow": false,
-      "content": 1348,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "news",
-      "overflow": false,
-      "content": 921,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "classroom",
-      "overflow": false,
-      "content": 391,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "venues",
-      "overflow": false,
-      "content": 401,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "media",
-      "overflow": false,
-      "content": 353,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "hall",
-      "overflow": false,
-      "content": 361,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "shop",
-      "overflow": false,
-      "content": 345,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "learning",
-      "overflow": false,
-      "content": 414,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "submit",
-      "overflow": false,
-      "content": 723,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "profile",
-      "overflow": false,
-      "content": 302,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "review",
-      "overflow": false,
-      "content": 615,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "admin",
-      "overflow": false,
-      "content": 268,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "library",
-      "overflow": false,
-      "content": 674,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "zh",
-      "large": false,
-      "screen": "assistant",
-      "overflow": false,
-      "content": 369,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "home",
-      "overflow": false,
-      "content": 3652,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "news",
-      "overflow": false,
-      "content": 2357,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "classroom",
-      "overflow": false,
-      "content": 1091,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "venues",
-      "overflow": false,
-      "content": 1186,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "media",
-      "overflow": false,
-      "content": 937,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "hall",
-      "overflow": false,
-      "content": 1013,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "shop",
-      "overflow": false,
-      "content": 1047,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "learning",
-      "overflow": false,
-      "content": 1095,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "submit",
-      "overflow": false,
-      "content": 2035,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "profile",
-      "overflow": false,
-      "content": 869,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "review",
-      "overflow": false,
-      "content": 1917,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "admin",
-      "overflow": false,
-      "content": 636,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "library",
-      "overflow": false,
-      "content": 2156,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": false,
-      "screen": "assistant",
-      "overflow": false,
-      "content": 1100,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "home",
-      "overflow": false,
-      "content": 1348,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "news",
-      "overflow": false,
-      "content": 921,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "classroom",
-      "overflow": false,
-      "content": 391,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "venues",
-      "overflow": false,
-      "content": 401,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "media",
-      "overflow": false,
-      "content": 353,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "hall",
-      "overflow": false,
-      "content": 361,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "shop",
-      "overflow": false,
-      "content": 345,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "learning",
-      "overflow": false,
-      "content": 414,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "submit",
-      "overflow": false,
-      "content": 723,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "profile",
-      "overflow": false,
-      "content": 302,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "review",
-      "overflow": false,
-      "content": 615,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "admin",
-      "overflow": false,
-      "content": 268,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "library",
-      "overflow": false,
-      "content": 674,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "zh",
-      "large": false,
-      "screen": "assistant",
-      "overflow": false,
-      "content": 369,
-      "largeClass": false,
-      "langClass": false
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "home",
-      "overflow": false,
-      "content": 3652,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "news",
-      "overflow": false,
-      "content": 2357,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "classroom",
-      "overflow": false,
-      "content": 1091,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "venues",
-      "overflow": false,
-      "content": 1186,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "media",
-      "overflow": false,
-      "content": 937,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "hall",
-      "overflow": false,
-      "content": 1013,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "shop",
-      "overflow": false,
-      "content": 1047,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "learning",
-      "overflow": false,
-      "content": 1095,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "submit",
-      "overflow": false,
-      "content": 2035,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "profile",
-      "overflow": false,
-      "content": 869,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "review",
-      "overflow": false,
-      "content": 1917,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "admin",
-      "overflow": false,
-      "content": 636,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "library",
-      "overflow": false,
-      "content": 2156,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 1440,
-      "lang": "en",
-      "large": false,
-      "screen": "assistant",
-      "overflow": false,
-      "content": 1100,
-      "largeClass": false,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "home",
-      "overflow": false,
-      "content": 3652,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "news",
-      "overflow": false,
-      "content": 2357,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "classroom",
-      "overflow": false,
-      "content": 1091,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "venues",
-      "overflow": false,
-      "content": 1186,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "media",
-      "overflow": false,
-      "content": 937,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "hall",
-      "overflow": false,
-      "content": 1013,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "shop",
-      "overflow": false,
-      "content": 1047,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "learning",
-      "overflow": false,
-      "content": 1095,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "submit",
-      "overflow": false,
-      "content": 2035,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "profile",
-      "overflow": false,
-      "content": 869,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "review",
-      "overflow": false,
-      "content": 1917,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "admin",
-      "overflow": false,
-      "content": 636,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "library",
-      "overflow": false,
-      "content": 2156,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 320,
-      "lang": "en",
-      "large": true,
-      "screen": "assistant",
-      "overflow": false,
-      "content": 1100,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "home",
-      "overflow": false,
-      "content": 3652,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "news",
-      "overflow": false,
-      "content": 2357,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "classroom",
-      "overflow": false,
-      "content": 1091,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "venues",
-      "overflow": false,
-      "content": 1186,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "media",
-      "overflow": false,
-      "content": 937,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "hall",
-      "overflow": false,
-      "content": 1013,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "shop",
-      "overflow": false,
-      "content": 1047,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "learning",
-      "overflow": false,
-      "content": 1095,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "submit",
-      "overflow": false,
-      "content": 2035,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "profile",
-      "overflow": false,
-      "content": 869,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "review",
-      "overflow": false,
-      "content": 1917,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "admin",
-      "overflow": false,
-      "content": 636,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "library",
-      "overflow": false,
-      "content": 2156,
-      "largeClass": true,
-      "langClass": true
-    },
-    {
-      "width": 390,
-      "lang": "en",
-      "large": true,
-      "screen": "assistant",
-      "overflow": false,
-      "content": 1100,
-      "largeClass": true,
-      "langClass": true
-    }
-  ],
-  "errors": [],
-  "productionSubdirectory": {
-    "kind": "production-subdirectory",
-    "base": "http://localhost:5190/demo/",
+  "version": "0.5.0-user-frontend",
+  "scope": "H5 desktop Chromium with independent contexts; no WeChat device acceptance",
+  "layout": {
+    "results": [
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "home",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1360,
+        "heading": "四大家风专区",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/index/index"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "submit",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 819,
+        "heading": "把家的故事，写给时代",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=submit"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "library",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 674,
+        "heading": "开卷有益，家风有源",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=library"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "review",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 615,
+        "heading": "每一份认真，都有回音",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=review"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "profile",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 361,
+        "heading": "家风同行者",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=profile"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "assistant",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 389,
+        "heading": "让灵感，落在笔尖",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=assistant"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "admin",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 267,
+        "heading": "区域运营与专家工作台",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=admin"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "search",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 582,
+        "heading": "一处检索，遍览家风",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=search"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "news",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 933,
+        "heading": "家国同心，家风共传",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "classroom",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 391,
+        "heading": "修身齐家，清风同行",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=classroom"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "venues",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 401,
+        "heading": "家风有传承，身边有阵地",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=venues"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "media",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 371,
+        "heading": "帧藏家风，让温暖被看见",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=media"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "hall",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 372,
+        "heading": "走近先贤，读懂家国",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=hall"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "shop",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 345,
+        "heading": "把好家风，带进生活",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=shop"
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "learning",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 581,
+        "heading": "在行走中，读懂家风",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=learning"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "home",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 3680,
+        "heading": "Four paths through family heritage",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/index/index"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "submit",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 2389,
+        "heading": "Share a family story with the world",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=submit"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "library",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 2156,
+        "heading": "Open a book. Discover our shared values.",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=library"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "review",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1917,
+        "heading": "Every story deserves a response",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=review"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "profile",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1097,
+        "heading": "A companion in family heritage",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=profile"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "assistant",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1163,
+        "heading": "Turn inspiration into words",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=assistant"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "admin",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 635,
+        "heading": "Operations and reviewer workspace",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=admin"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "search",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1688,
+        "heading": "Explore family culture in one search",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=search"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "news",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 2388,
+        "heading": "Stories that connect generations",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "classroom",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1091,
+        "heading": "Learn together. Live with integrity.",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=classroom"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "venues",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1186,
+        "heading": "Discover a place to learn together",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=venues"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "media",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 991,
+        "heading": "Family stories, brought to life",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=media"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "hall",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1065,
+        "heading": "Meet the thinkers behind the precepts",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=hall"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "shop",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1047,
+        "heading": "Bring family heritage into daily life",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=shop"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "learning",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1639,
+        "heading": "Discover family values through experience",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=learning"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "home",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1360,
+        "heading": "四大家风专区",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/index/index"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "submit",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 819,
+        "heading": "把家的故事，写给时代",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=submit"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "library",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 674,
+        "heading": "开卷有益，家风有源",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=library"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "review",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 615,
+        "heading": "每一份认真，都有回音",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=review"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "profile",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 361,
+        "heading": "家风同行者",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=profile"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "assistant",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 389,
+        "heading": "让灵感，落在笔尖",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=assistant"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "admin",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 267,
+        "heading": "区域运营与专家工作台",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=admin"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "search",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 582,
+        "heading": "一处检索，遍览家风",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=search"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "news",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 933,
+        "heading": "家国同心，家风共传",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "classroom",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 391,
+        "heading": "修身齐家，清风同行",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=classroom"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "venues",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 401,
+        "heading": "家风有传承，身边有阵地",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=venues"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "media",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 371,
+        "heading": "帧藏家风，让温暖被看见",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=media"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "hall",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 372,
+        "heading": "走近先贤，读懂家国",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=hall"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "shop",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 345,
+        "heading": "把好家风，带进生活",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=shop"
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "learning",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 581,
+        "heading": "在行走中，读懂家风",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=learning"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "home",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 3680,
+        "heading": "Four paths through family heritage",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/index/index"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "submit",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 2389,
+        "heading": "Share a family story with the world",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=submit"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "library",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 2156,
+        "heading": "Open a book. Discover our shared values.",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=library"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "review",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1917,
+        "heading": "Every story deserves a response",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=review"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "profile",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1097,
+        "heading": "A companion in family heritage",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=profile"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "assistant",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1163,
+        "heading": "Turn inspiration into words",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=assistant"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "admin",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 635,
+        "heading": "Operations and reviewer workspace",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=admin"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "search",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1688,
+        "heading": "Explore family culture in one search",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=search"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "news",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 2388,
+        "heading": "Stories that connect generations",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "classroom",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1091,
+        "heading": "Learn together. Live with integrity.",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=classroom"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "venues",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1186,
+        "heading": "Discover a place to learn together",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=venues"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "media",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 991,
+        "heading": "Family stories, brought to life",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=media"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "hall",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1065,
+        "heading": "Meet the thinkers behind the precepts",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=hall"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "shop",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1047,
+        "heading": "Bring family heritage into daily life",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=shop"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "learning",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1639,
+        "heading": "Discover family values through experience",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=learning"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "home",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 1360,
+        "heading": "四大家风专区",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/index/index"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "submit",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 819,
+        "heading": "把家的故事，写给时代",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=submit"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "library",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 674,
+        "heading": "开卷有益，家风有源",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=library"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "review",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 615,
+        "heading": "每一份认真，都有回音",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=review"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "profile",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 361,
+        "heading": "家风同行者",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=profile"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "assistant",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 389,
+        "heading": "让灵感，落在笔尖",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=assistant"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "admin",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 267,
+        "heading": "区域运营与专家工作台",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=admin"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "search",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 582,
+        "heading": "一处检索，遍览家风",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=search"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "news",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 933,
+        "heading": "家国同心，家风共传",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "classroom",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 391,
+        "heading": "修身齐家，清风同行",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=classroom"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "venues",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 401,
+        "heading": "家风有传承，身边有阵地",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=venues"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "media",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 371,
+        "heading": "帧藏家风，让温暖被看见",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=media"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "hall",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 372,
+        "heading": "走近先贤，读懂家国",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=hall"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "shop",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 345,
+        "heading": "把好家风，带进生活",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=shop"
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "learning",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 581,
+        "heading": "在行走中，读懂家风",
+        "largeClass": false,
+        "langClass": false,
+        "brand": "家风中华行",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=learning"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "home",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 3680,
+        "heading": "Four paths through family heritage",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/index/index"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "submit",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 2389,
+        "heading": "Share a family story with the world",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=submit"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "library",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 2156,
+        "heading": "Open a book. Discover our shared values.",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=library"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "review",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 1917,
+        "heading": "Every story deserves a response",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=review"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "profile",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 1097,
+        "heading": "A companion in family heritage",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=profile"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "assistant",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 1163,
+        "heading": "Turn inspiration into words",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=assistant"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "admin",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 635,
+        "heading": "Operations and reviewer workspace",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=admin"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "search",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 1688,
+        "heading": "Explore family culture in one search",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=search"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "news",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 2388,
+        "heading": "Stories that connect generations",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "classroom",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 1091,
+        "heading": "Learn together. Live with integrity.",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=classroom"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "venues",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 1186,
+        "heading": "Discover a place to learn together",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=venues"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "media",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 991,
+        "heading": "Family stories, brought to life",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=media"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "hall",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 1065,
+        "heading": "Meet the thinkers behind the precepts",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=hall"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "shop",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 1047,
+        "heading": "Bring family heritage into daily life",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=shop"
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "learning",
+        "overflow": false,
+        "scrollWidth": 1440,
+        "visibleOverflow": [],
+        "content": 1639,
+        "heading": "Discover family values through experience",
+        "largeClass": false,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=learning"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "home",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 3680,
+        "heading": "Four paths through family heritage",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/index/index"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "submit",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 2389,
+        "heading": "Share a family story with the world",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=submit"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "library",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 2156,
+        "heading": "Open a book. Discover our shared values.",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=library"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "review",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1917,
+        "heading": "Every story deserves a response",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=review"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "profile",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1097,
+        "heading": "A companion in family heritage",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=profile"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "assistant",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1163,
+        "heading": "Turn inspiration into words",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=assistant"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "admin",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 635,
+        "heading": "Operations and reviewer workspace",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=admin"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "search",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1688,
+        "heading": "Explore family culture in one search",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=search"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "news",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 2388,
+        "heading": "Stories that connect generations",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "classroom",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1091,
+        "heading": "Learn together. Live with integrity.",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=classroom"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "venues",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1186,
+        "heading": "Discover a place to learn together",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=venues"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "media",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 991,
+        "heading": "Family stories, brought to life",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=media"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "hall",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1065,
+        "heading": "Meet the thinkers behind the precepts",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=hall"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "shop",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1047,
+        "heading": "Bring family heritage into daily life",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=shop"
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "learning",
+        "overflow": false,
+        "scrollWidth": 320,
+        "visibleOverflow": [],
+        "content": 1639,
+        "heading": "Discover family values through experience",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=learning"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "home",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 3680,
+        "heading": "Four paths through family heritage",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/index/index"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "submit",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 2389,
+        "heading": "Share a family story with the world",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=submit"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "library",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 2156,
+        "heading": "Open a book. Discover our shared values.",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=library"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "review",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1917,
+        "heading": "Every story deserves a response",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=review"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "profile",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1097,
+        "heading": "A companion in family heritage",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=profile"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "assistant",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1163,
+        "heading": "Turn inspiration into words",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=assistant"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "admin",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 635,
+        "heading": "Operations and reviewer workspace",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=admin"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "search",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1688,
+        "heading": "Explore family culture in one search",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=search"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "news",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 2388,
+        "heading": "Stories that connect generations",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "classroom",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1091,
+        "heading": "Learn together. Live with integrity.",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=classroom"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "venues",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1186,
+        "heading": "Discover a place to learn together",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=venues"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "media",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 991,
+        "heading": "Family stories, brought to life",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=media"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "hall",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1065,
+        "heading": "Meet the thinkers behind the precepts",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=hall"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "shop",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1047,
+        "heading": "Bring family heritage into daily life",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=shop"
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "screen": "learning",
+        "overflow": false,
+        "scrollWidth": 390,
+        "visibleOverflow": [],
+        "content": 1639,
+        "heading": "Discover family values through experience",
+        "largeClass": true,
+        "langClass": true,
+        "brand": "Family Values · China",
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=learning"
+      }
+    ],
+    "errors": [],
+    "screenshots": [
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/final-layout-home-390-en.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/final-layout-submit-390-en.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/final-layout-profile-390-en.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/final-layout-search-390-en.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/final-layout-learning-390-en.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/final-layout-home-1440-zh.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/final-layout-profile-320-en-large.png"
+    ]
+  },
+  "profileAfterFix": {
+    "results": [
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "overflow": 0,
+        "labels": [
+          {
+            "text": "0 我的投稿",
+            "client": 121,
+            "scroll": 121
+          },
+          {
+            "text": "0 完成课程",
+            "client": 121,
+            "scroll": 121
+          },
+          {
+            "text": "0 证书样张",
+            "client": 121,
+            "scroll": 121
+          },
+          {
+            "text": "0 未读消息",
+            "client": 122,
+            "scroll": 122
+          },
+          {
+            "text": "投稿用户",
+            "client": 113,
+            "scroll": 113
+          },
+          {
+            "text": "评审专家",
+            "client": 113,
+            "scroll": 113
+          },
+          {
+            "text": "运营人员",
+            "client": 113,
+            "scroll": 113
+          }
+        ]
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "overflow": 0,
+        "labels": [
+          {
+            "text": "0 Submissions",
+            "client": 121,
+            "scroll": 121
+          },
+          {
+            "text": "0 Courses completed",
+            "client": 121,
+            "scroll": 121
+          },
+          {
+            "text": "0 Sample certificates",
+            "client": 121,
+            "scroll": 121
+          },
+          {
+            "text": "0 Unread messages",
+            "client": 122,
+            "scroll": 122
+          },
+          {
+            "text": "Contributor",
+            "client": 113,
+            "scroll": 113
+          },
+          {
+            "text": "Reviewer",
+            "client": 113,
+            "scroll": 113
+          },
+          {
+            "text": "Operator",
+            "client": 113,
+            "scroll": 113
+          }
+        ]
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "overflow": 0,
+        "labels": [
+          {
+            "text": "0 我的投稿",
+            "client": 78,
+            "scroll": 78
+          },
+          {
+            "text": "0 完成课程",
+            "client": 78,
+            "scroll": 78
+          },
+          {
+            "text": "0 证书样张",
+            "client": 78,
+            "scroll": 78
+          },
+          {
+            "text": "0 未读消息",
+            "client": 79,
+            "scroll": 79
+          },
+          {
+            "text": "投稿用户",
+            "client": 95,
+            "scroll": 95
+          },
+          {
+            "text": "评审专家",
+            "client": 95,
+            "scroll": 95
+          },
+          {
+            "text": "运营人员",
+            "client": 95,
+            "scroll": 95
+          }
+        ]
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "overflow": 0,
+        "labels": [
+          {
+            "text": "0 Submissions",
+            "client": 78,
+            "scroll": 78
+          },
+          {
+            "text": "0 Courses completed",
+            "client": 78,
+            "scroll": 78
+          },
+          {
+            "text": "0 Sample certificates",
+            "client": 78,
+            "scroll": 78
+          },
+          {
+            "text": "0 Unread messages",
+            "client": 79,
+            "scroll": 79
+          },
+          {
+            "text": "Contributor",
+            "client": 95,
+            "scroll": 95
+          },
+          {
+            "text": "Reviewer",
+            "client": 95,
+            "scroll": 95
+          },
+          {
+            "text": "Operator",
+            "client": 95,
+            "scroll": 95
+          }
+        ]
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "overflow": 0,
+        "labels": [
+          {
+            "text": "0 我的投稿",
+            "client": 267,
+            "scroll": 267
+          },
+          {
+            "text": "0 完成课程",
+            "client": 267,
+            "scroll": 267
+          },
+          {
+            "text": "0 证书样张",
+            "client": 267,
+            "scroll": 267
+          },
+          {
+            "text": "0 未读消息",
+            "client": 268,
+            "scroll": 268
+          },
+          {
+            "text": "投稿用户",
+            "client": 82,
+            "scroll": 82
+          },
+          {
+            "text": "评审专家",
+            "client": 82,
+            "scroll": 82
+          },
+          {
+            "text": "运营人员",
+            "client": 82,
+            "scroll": 82
+          }
+        ]
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "overflow": 0,
+        "labels": [
+          {
+            "text": "0 Submissions",
+            "client": 267,
+            "scroll": 267
+          },
+          {
+            "text": "0 Courses completed",
+            "client": 267,
+            "scroll": 267
+          },
+          {
+            "text": "0 Sample certificates",
+            "client": 267,
+            "scroll": 267
+          },
+          {
+            "text": "0 Unread messages",
+            "client": 268,
+            "scroll": 268
+          },
+          {
+            "text": "Contributor",
+            "client": 82,
+            "scroll": 82
+          },
+          {
+            "text": "Reviewer",
+            "client": 82,
+            "scroll": 82
+          },
+          {
+            "text": "Operator",
+            "client": 82,
+            "scroll": 82
+          }
+        ]
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "overflow": 0,
+        "labels": [
+          {
+            "text": "0 Submissions",
+            "client": 121,
+            "scroll": 121
+          },
+          {
+            "text": "0 Courses completed",
+            "client": 121,
+            "scroll": 121
+          },
+          {
+            "text": "0 Sample certificates",
+            "client": 121,
+            "scroll": 121
+          },
+          {
+            "text": "0 Unread messages",
+            "client": 122,
+            "scroll": 122
+          },
+          {
+            "text": "Contributor",
+            "client": 113,
+            "scroll": 113
+          },
+          {
+            "text": "Reviewer",
+            "client": 113,
+            "scroll": 113
+          },
+          {
+            "text": "Operator",
+            "client": 113,
+            "scroll": 113
+          }
+        ]
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": true,
+        "overflow": 0,
+        "labels": [
+          {
+            "text": "0 Submissions",
+            "client": 78,
+            "scroll": 78
+          },
+          {
+            "text": "0 Courses completed",
+            "client": 78,
+            "scroll": 78
+          },
+          {
+            "text": "0 Sample certificates",
+            "client": 78,
+            "scroll": 78
+          },
+          {
+            "text": "0 Unread messages",
+            "client": 79,
+            "scroll": 79
+          },
+          {
+            "text": "Contributor",
+            "client": 95,
+            "scroll": 95
+          },
+          {
+            "text": "Reviewer",
+            "client": 95,
+            "scroll": 95
+          },
+          {
+            "text": "Operator",
+            "client": 95,
+            "scroll": 95
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "production": {
+    "kind": "v0.5-production-subdirectory",
+    "base": "http://127.0.0.1:5190/demo/",
+    "checkedAt": "2026-09-21T02:22:50.875Z",
     "fonts": [
       {
-        "url": "http://localhost:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSans-Regular.woff",
         "status": 200
       },
       {
-        "url": "http://localhost:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
         "status": 200
       },
       {
-        "url": "http://localhost:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSans-Regular.woff",
         "status": 200
       },
       {
-        "url": "http://localhost:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
         "status": 200
       },
       {
-        "url": "http://localhost:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSans-Regular.woff",
         "status": 200
       },
       {
-        "url": "http://localhost:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
         "status": 200
       },
       {
-        "url": "http://localhost:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSans-Regular.woff",
         "status": 200
       },
       {
-        "url": "http://localhost:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
         "status": 200
       },
       {
-        "url": "http://localhost:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSans-Regular.woff",
         "status": 200
       },
       {
-        "url": "http://localhost:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSans-Regular.woff",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:5190/demo/static/fonts/JiafengSerif-SemiBold.woff",
         "status": 200
       }
     ],
@@ -1177,10 +2260,85 @@
         "status": "loaded"
       }
     ],
+    "core": [
+      {
+        "screen": "submit",
+        "url": "http://127.0.0.1:5190/demo/#/pages/explore/index?screen=submit",
+        "ok": true
+      },
+      {
+        "screen": "library",
+        "url": "http://127.0.0.1:5190/demo/#/pages/explore/index?screen=library",
+        "ok": true
+      },
+      {
+        "screen": "review",
+        "url": "http://127.0.0.1:5190/demo/#/pages/explore/index?screen=review",
+        "ok": true
+      },
+      {
+        "screen": "profile",
+        "url": "http://127.0.0.1:5190/demo/#/pages/explore/index?screen=profile",
+        "ok": true
+      },
+      {
+        "screen": "assistant",
+        "url": "http://127.0.0.1:5190/demo/#/pages/explore/index?screen=assistant",
+        "ok": true
+      }
+    ],
+    "contentNavigation": "http://127.0.0.1:5190/demo/#/pkg-content/pages/index?screen=learning",
+    "audio": {
+      "display": "暂停\n停止\n0:01 / 0:15",
+      "url": "http://127.0.0.1:5190/demo/pkg-content/static/audio/promise-zh.mp3"
+    },
+    "audioResponses": [
+      {
+        "url": "http://127.0.0.1:5190/demo/pkg-content/static/audio/promise-zh.mp3",
+        "status": 200
+      }
+    ],
+    "video": {
+      "src": "http://127.0.0.1:5190/demo/pkg-content/static/media/family-letter.mp4",
+      "time": 0.701464,
+      "duration": 12
+    },
+    "cache": {
+      "offlinePlayback": {
+        "source": "blob:http://127.0.0.1:5190/d1deb75e-fd9e-4812-8d9c-ddfe903e9e24",
+        "time": 0.646275
+      },
+      "deleted": true
+    },
+    "screenshots": [
+      "desktop-home.png",
+      "mobile-home.png",
+      "mobile-submit.png",
+      "mobile-library.png",
+      "mobile-review.png",
+      "mobile-profile.png",
+      "mobile-assistant.png",
+      "mobile-reader.png",
+      "mobile-audio.png",
+      "mobile-media.png"
+    ],
     "errors": [],
-    "failed": [],
-    "video": true
+    "failed": []
   },
-  "date": "2026-09-21",
-  "scope": "H5 browser viewport simulation; not WeChat device verification"
+  "packages": {
+    "build": {
+      "fileCount": 205,
+      "totalBytes": 2399480,
+      "mainBytes": 1742843,
+      "contentBytes": 656637,
+      "appidMatches": true
+    },
+    "dev": {
+      "fileCount": 206,
+      "totalBytes": 2924442,
+      "mainBytes": 2171484,
+      "contentBytes": 752958,
+      "appidMatches": true
+    }
+  }
 }

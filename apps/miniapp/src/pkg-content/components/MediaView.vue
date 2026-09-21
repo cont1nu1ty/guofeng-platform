@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import SectionHeading from './SectionHeading.vue'
-import { mediaCatalog, type BilingualText } from '../domain/showcaseCatalog'
+import SectionHeading from '../../components/SectionHeading.vue'
+import MediaCreationPanel from './MediaCreationPanel.vue'
+import { useReplayCache } from '../../composables/useReplayCache'
+import { mediaCatalog, type BilingualText } from '../../domain/showcaseCatalog'
 import {
   mediaFavorites,
   mediaLikes,
   showcaseStorageError,
   toggleMediaFavorite,
   toggleMediaLike,
-} from '../composables/useShowcase'
-import { navigate, goBack, useRouteParams } from '../composables/useNavigation'
-import { t } from '../composables/useLocale'
-import { assetUrl } from '../composables/useAssetUrl'
+} from '../../composables/useShowcase'
+import { navigate, goBack, useRouteParams } from '../../composables/useNavigation'
+import { t } from '../../composables/useLocale'
+import { assetUrl } from '../../composables/useAssetUrl'
 const params = useRouteParams()
 const current = computed(() => mediaCatalog.find((item) => item.id === params.value.id))
+const replayCache = useReplayCache(current)
 const filter = ref('all')
 const shareOpen = ref(false)
 const playerError = ref(false)
@@ -90,7 +93,7 @@ function copyShare() {
               v-if="!playerError"
               :key="current.id"
               class="media-player"
-              :src="assetUrl(current.source)"
+              :src="replayCache.source.value"
               :poster="assetUrl(current.poster)"
               :controls="true"
               :show-center-play-btn="true"
@@ -121,6 +124,57 @@ function copyShare() {
           <text v-if="playerLoading && !playerError" class="showcase-note" role="status">
             {{ t('正在缓冲样片…', 'Buffering the sample…') }}
           </text>
+          <view class="showcase-panel">
+            <text class="showcase-card-title">{{ t('回放文件缓存', 'Replay file cache') }}</text>
+            <view class="showcase-actions">
+              <wd-button size="small" :disabled="replayCache.busy.value" @click="replayCache.save">
+                {{
+                  replayCache.busy.value
+                    ? t('处理中…', 'Working…')
+                    : replayCache.cached.value
+                      ? t('重新缓存', 'Cache again')
+                      : t('缓存本条样片', 'Cache this sample')
+                }}
+              </wd-button>
+              <wd-button
+                v-if="replayCache.cached.value"
+                size="small"
+                variant="plain"
+                @click="replayCache.useCached.value = !replayCache.useCached.value"
+              >
+                {{
+                  replayCache.useCached.value
+                    ? t('切回随包播放', 'Use packaged source')
+                    : t('使用缓存播放', 'Play from cache')
+                }}
+              </wd-button>
+              <wd-button
+                v-if="replayCache.cached.value"
+                size="small"
+                variant="plain"
+                :disabled="replayCache.busy.value"
+                @click="replayCache.remove"
+              >
+                {{ t('删除缓存', 'Delete cache') }}
+              </wd-button>
+            </view>
+            <text class="showcase-note">
+              {{
+                replayCache.useCached.value
+                  ? t(
+                      '当前播放器使用本机缓存文件。',
+                      'The player is using the locally cached file.',
+                    )
+                  : t(
+                      '缓存仅保存本条样片，不代表整个站点可离线启动。',
+                      'Caching stores this sample file only; it does not make the whole site available offline.',
+                    )
+              }}
+            </text>
+            <text v-if="replayCache.message.value" class="showcase-note" role="status">
+              {{ replayCache.message.value }}
+            </text>
+          </view>
           <view class="media-detail-copy showcase-panel">
             <view class="showcase-meta">
               <text>
@@ -240,6 +294,7 @@ function copyShare() {
           )
         "
       />
+      <MediaCreationPanel :initial-tab="params.tab" />
       <view class="media-feature" @click="navigate('media', { id: mediaCatalog[0].id })">
         <image :src="assetUrl(mediaCatalog[0].poster)" mode="aspectFill" />
         <view class="media-feature-copy">

@@ -1,3 +1,4 @@
+import { localizeNotice } from './localizeNotice'
 import { computed, ref, watch } from 'vue'
 import { navigate } from './useNavigation'
 import { createDemoRepository } from '../domain/repository'
@@ -7,7 +8,22 @@ import type { RegionId, Work, Classic } from '../domain/types'
 
 export { navigate, goBack } from './useNavigation'
 export type { Screen } from './useNavigation'
-export const region = ref<RegionId>('all')
+function initialRegion(): RegionId {
+  try {
+    const saved = uni.getStorageSync('jiafeng:region')
+    return regions.some((r) => r.id === saved) ? (saved as RegionId) : 'all'
+  } catch {
+    return 'all'
+  }
+}
+export const region = ref<RegionId>(initialRegion())
+watch(region, (value) => {
+  try {
+    uni.setStorageSync('jiafeng:region', value)
+  } catch {
+    notify('地区已切换，但本机设置未能保存')
+  }
+})
 function initialLargeText() {
   try {
     return uni.getStorageSync('jiafeng:largeText') === true
@@ -92,7 +108,7 @@ export const certificates = computed(() => {
   return repo.listCertificates()
 })
 export function notify(message: string) {
-  uni.showToast({ title: message, icon: 'none', duration: 2400 })
+  uni.showToast({ title: localizeNotice(message), icon: 'none', duration: 2400 })
 }
 export function safely<T>(action: () => T): T | undefined {
   try {

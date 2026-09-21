@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { regionTranslations } from '../domain/regionCatalog'
 export type Locale = 'zh' | 'en'
 const initial = (): Locale => {
   try {
@@ -9,6 +10,7 @@ const initial = (): Locale => {
 }
 export const locale = ref<Locale>(initial())
 export const translations: Record<string, string> = {
+  ...regionTranslations,
   首页: 'Home',
   家风典藏: 'Library',
   家风投稿: 'Contribute',

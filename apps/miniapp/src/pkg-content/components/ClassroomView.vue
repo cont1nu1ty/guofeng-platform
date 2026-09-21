@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import SectionHeading from './SectionHeading.vue'
-import { navigate, goBack, useRouteParams } from '../composables/useNavigation'
-import { t } from '../composables/useLocale'
-import { notify } from '../composables/useDemo'
-import { courses, type BilingualText } from '../domain/contentCatalog'
+import SectionHeading from '../../components/SectionHeading.vue'
+import CertificateExport from '../../components/CertificateExport.vue'
+import { navigate, goBack, useRouteParams } from '../../composables/useNavigation'
+import { t } from '../../composables/useLocale'
+import { notify } from '../../composables/useDemo'
+import { courses, type BilingualText } from '../../domain/contentCatalog'
 import {
   completeLesson,
   completeQuiz,
   getCourseProgress,
   learningStorageError,
   learningSummary,
-} from '../composables/useLearningProgress'
+} from '../../composables/useLearningProgress'
 const L = (value: BilingualText) => t(value.zh, value.en)
 const params = useRouteParams()
 const course = computed(() => courses.find((item) => item.id === params.value.id))
@@ -285,6 +286,15 @@ function selectAnswer(index: number) {
             )
           }}
         </text>
+        <CertificateExport
+          :certificate="{
+            id: 'course-' + course.id,
+            title: t('课程结业证书', 'Course Completion'),
+            recipient: t('家风同行者', 'Demo participant'),
+            subject: L(course.title),
+            date: progress.completedAt?.slice(0, 10) ?? '',
+          }"
+        />
       </view>
     </template>
     <template v-else-if="params.id">

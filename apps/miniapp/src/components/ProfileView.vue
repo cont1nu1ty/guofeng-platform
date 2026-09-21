@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
+import AccountPanel from './AccountPanel.vue'
+import CertificateExport from './CertificateExport.vue'
 import {
   myWorks,
   favorites,
@@ -19,6 +21,12 @@ import {
 import { navigate, useRouteParams } from '../composables/useNavigation'
 import { locale, setLocale, t } from '../composables/useLocale'
 import { fontStatus } from '../composables/useFontStatus'
+import {
+  recitationRecords,
+  videoSubmissionRecords,
+  localMediaPath,
+  localMediaError,
+} from '../composables/useLocalMedia'
 import {
   learningRecords,
   checkedInActivities,
@@ -75,6 +83,12 @@ const tab = ref('works')
 const workFilter = ref('all')
 const role = ref('visitor')
 const showCertificate = ref(false)
+const showArchive = ref(false)
+const selectedArchive = ref<PersonalRow>()
+function openArchive(row: PersonalRow) {
+  selectedArchive.value = row
+  showArchive.value = true
+}
 const selectedCertificateId = ref('')
 const information = ref<'privacy' | 'about'>('privacy')
 const showInformation = ref(false)
@@ -162,7 +176,11 @@ const selectedCertificate = computed(() =>
   certificateCards.value.find((item) => item.id === selectedCertificateId.value),
 )
 const tabs = computed(() => [
-  { id: 'works', label: t('我的投稿', 'Submissions'), count: myWorks.value.length },
+  {
+    id: 'works',
+    label: t('我的投稿', 'Submissions'),
+    count: myWorks.value.length + videoSubmissionRecords.value.length,
+  },
   { id: 'messages', label: t('消息中心', 'Messages'), count: unreadCount.value },
   { id: 'certificates', label: t('证书夹', 'Certificates'), count: certificateCards.value.length },
   {
@@ -171,7 +189,11 @@ const tabs = computed(() => [
     count: favorites.value.length + mediaFavorites.value.length,
   },
   { id: 'events', label: t('预约与签到', 'Bookings'), count: registrations.value.length },
-  { id: 'learning', label: t('学习记录', 'Learning'), count: learningSummary.value.started },
+  {
+    id: 'learning',
+    label: t('学习记录', 'Learning'),
+    count: learningSummary.value.started + recitationRecords.value.length,
+  },
   { id: 'gifts', label: t('文创记录', 'Gift requests'), count: commerceRequests.value.length },
   {
     id: 'archive',
@@ -430,7 +452,14 @@ const rows = computed<PersonalRow[]>(() => {
       ...aiArchives.value.map((item) => ({
         id: item.id,
         title: item.prompt || t('家风创作存档', 'Saved writing sample'),
-        tag: t('AI 预设创作示例', 'Preset assistant sample'),
+        tag:
+          item.mode === 'knowledge'
+            ? t('家风知识', 'Heritage knowledge')
+            : item.mode === 'compliance'
+              ? t('审校样例', 'Review sample')
+              : item.mode === 'storyboard'
+                ? t('短剧分镜', 'Storyboards')
+                : t('AI 预设创作示例', 'Preset assistant sample'),
         meta: dateLabel(item.createdAt),
         body: item.result,
         actions: [
@@ -450,6 +479,13 @@ const rows = computed<PersonalRow[]>(() => {
     ]
   return []
 })
+const visibleMediaRecords = computed(() =>
+  tab.value === 'learning'
+    ? recitationRecords.value
+    : tab.value === 'works' && workFilter.value === 'all'
+      ? videoSubmissionRecords.value
+      : [],
+)
 const panelHelp = computed(
   () =>
     ({
@@ -554,6 +590,7 @@ function openInformation(kind: 'privacy' | 'about') {
         {{ t('开始创作 ↗', 'Start writing ↗') }}
       </wd-button>
     </view>
+    <AccountPanel />
     <view class="profile-stats profile-overview">
       <button @click="tab = 'works'">
         <text>{{ myWorks.length }}</text>
@@ -623,13 +660,19 @@ function openInformation(kind: 'privacy' | 'about') {
           >
             <view class="profile-record-copy">
               <text v-if="row.tag" class="tag">{{ row.tag }}</text>
-              <text class="story-title" @click="row.actions[0]?.run()">{{ row.title }}</text>
+              <text
+                class="story-title"
+                @click="tab === 'archive' ? openArchive(row) : row.actions[0]?.run()"
+              >
+                {{ row.title }}
+              </text>
               <text
                 :class="[
                   'profile-description',
                   { 'profile-quote': row.quote, 'profile-archive-preview': tab === 'archive' },
                 ]"
                 v-if="row.body"
+                @click="tab === 'archive' && openArchive(row)"
               >
                 {{ row.body }}
               </text>
@@ -642,6 +685,9 @@ function openInformation(kind: 'privacy' | 'about') {
               </view>
             </view>
             <view class="profile-actions">
+              <button v-if="tab === 'archive'" class="text-button" @click="openArchive(row)">
+                {{ t('展开全文', 'Read in full') }}
+              </button>
               <button
                 v-for="(action, index) in row.actions"
                 :key="index"
@@ -653,8 +699,72 @@ function openInformation(kind: 'privacy' | 'about') {
             </view>
           </view>
         </template>
+        <view v-if="tab === 'learning'" class="profile-notebook-links">
+          <button class="text-button" @click="navigate('learning', { tab: 'audio' })">
+            {{ t('听故事 / 诵读打卡 →', 'Audio stories / reading practice →') }}
+          </button>
+        </view>
+        <view v-if="tab === 'works' && workFilter === 'all'" class="profile-notebook-links">
+          <button class="text-button" @click="navigate('media', { tab: 'submit' })">
+            {{ t('视频投稿与记录 →', 'Video submissions and records →') }}
+          </button>
+        </view>
         <view
-          v-if="tab === 'certificates' ? !certificateCards.length : !rows.length"
+          v-for="record in visibleMediaRecords"
+          :key="record.id"
+          class="personal-row profile-record"
+        >
+          <view class="profile-record-copy">
+            <text class="tag">
+              {{
+                record.kind === 'recitation'
+                  ? t('诵读打卡 · 本机记录', 'Reading practice · Local record')
+                  : t('视频投稿 · 本机记录', 'Video submission · Local record')
+              }}
+            </text>
+            <text class="story-title">{{ record.title }}</text>
+            <text class="profile-description">
+              {{ record.fileName }} · {{ Math.round(record.size / 1024) }} KB
+            </text>
+            <text class="muted">
+              {{ dateLabel(record.createdAt) }} ·
+              {{
+                localMediaPath(record.id)
+                  ? t('本次会话可试听 / 预览', 'Preview available in this session')
+                  : t(
+                      '文件需重新选择，记录已保留',
+                      'Select the file again to preview; record retained',
+                    )
+              }}
+            </text>
+          </view>
+          <view class="profile-actions">
+            <button
+              class="text-button"
+              @click="
+                record.kind === 'recitation'
+                  ? navigate('learning', { tab: 'audio' })
+                  : navigate('media', { tab: 'submit' })
+              "
+            >
+              {{ t('查看记录 →', 'View record →') }}
+            </button>
+          </view>
+        </view>
+        <text v-if="(tab === 'learning' || tab === 'works') && localMediaError" class="scope-note">
+          {{
+            t(
+              '本机音视频记录无法读取，已有数据未覆盖。',
+              'Local media records could not be read. Existing data was preserved.',
+            )
+          }}
+        </text>
+        <view
+          v-if="
+            tab === 'certificates'
+              ? !certificateCards.length
+              : !rows.length && !visibleMediaRecords.length
+          "
           class="empty-state"
         >
           <text>{{ emptyCopy }}</text>
@@ -731,6 +841,20 @@ function openInformation(kind: 'privacy' | 'about') {
             </text>
           </view>
         </view>
+        <button
+          class="setting-row profile-setting-link"
+          @click="navigate('news', { view: 'subscriptions' })"
+        >
+          <text>{{ t('资讯订阅与通知', 'News subscriptions and notices') }}</text>
+          <text>→</text>
+        </button>
+        <button
+          class="setting-row profile-setting-link"
+          @click="navigate('learning', { tab: 'audio' })"
+        >
+          <text>{{ t('音频故事与诵读', 'Audio stories and reading practice') }}</text>
+          <text>→</text>
+        </button>
         <button class="setting-row profile-setting-link" @click="openInformation('privacy')">
           <text>{{ t('隐私与数据', 'Privacy and data') }}</text>
           <text>→</text>
@@ -778,13 +902,32 @@ function openInformation(kind: 'privacy' | 'about') {
         <text class="scope-note">
           {{
             t(
-              '当前为本机演示账户。登录、实名认证和跨设备同步尚未接入。',
-              'Local demo account. Sign-in, identity verification and cross-device sync are not connected.',
+              '可体验本机模拟登录与认证。真实授权、实名认证和跨设备同步尚未接入。',
+              'Local sign-in and verification states can be previewed. Real authorisation, identity checks and cross-device sync are not connected.',
             )
           }}
         </text>
       </view>
     </view>
+    <wd-popup
+      v-model="showArchive"
+      :z-index="100"
+      position="center"
+      closable
+      custom-class="content-popup"
+    >
+      <view v-if="selectedArchive" class="profile-dialog profile-archive-dialog">
+        <text class="tag">{{ selectedArchive.tag }}</text>
+        <text class="section-title">{{ selectedArchive.title }}</text>
+        <scroll-view scroll-y class="profile-full-scroll">
+          <text class="profile-full-text" selectable>{{ selectedArchive.body }}</text>
+        </scroll-view>
+        <text class="muted">{{ selectedArchive.meta }}</text>
+        <wd-button variant="plain" @click="showArchive = false">
+          {{ t('收起全文', 'Close full text') }}
+        </wd-button>
+      </view>
+    </wd-popup>
     <wd-popup
       v-model="showCertificate"
       :z-index="100"
@@ -805,6 +948,7 @@ function openInformation(kind: 'privacy' | 'about') {
           <text class="profile-certificate-id">{{ selectedCertificate.id }}</text>
           <view class="profile-certificate-seal">{{ t('样张', 'DEMO') }}</view>
         </view>
+        <CertificateExport :certificate="selectedCertificate" />
         <text class="scope-note">
           {{
             t(
@@ -874,6 +1018,25 @@ function openInformation(kind: 'privacy' | 'about') {
   </view>
 </template>
 <style scoped lang="scss">
+.profile-archive-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.profile-full-scroll {
+  max-height: 52vh;
+  height: 44vh;
+}
+.profile-full-text {
+  display: block;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.9;
+  font-size: 16px;
+}
+.profile-large .profile-full-text {
+  font-size: 19px;
+}
 .profile-page {
   color: var(--jf-ink, #2c2c2c);
 }
@@ -1125,6 +1288,10 @@ function openInformation(kind: 'privacy' | 'about') {
   font-size: 12px;
   line-height: 1.6;
 }
+.profile-role-options button {
+  padding: 8px 7px;
+  overflow-wrap: anywhere;
+}
 .profile-language button.active,
 .profile-role-options button.active {
   border-color: var(--jf-red, #c41a1a);
@@ -1268,6 +1435,19 @@ function openInformation(kind: 'privacy' | 'about') {
   }
   .profile-certificate-grid {
     grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 360px) {
+  .profile-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .profile-role-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .profile-role-options button {
+    width: 100%;
+    box-sizing: border-box;
   }
 }
 </style>

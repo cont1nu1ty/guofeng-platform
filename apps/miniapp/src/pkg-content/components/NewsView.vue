@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import SectionHeading from './SectionHeading.vue'
-import { navigate, goBack, useRouteParams } from '../composables/useNavigation'
-import { t } from '../composables/useLocale'
+import SectionHeading from '../../components/SectionHeading.vue'
+import NewsSubscriptions from './NewsSubscriptions.vue'
+import { newsPreferences, toggleNewsCategory } from '../../composables/useNewsPreferences'
+import { navigate, goBack, useRouteParams } from '../../composables/useNavigation'
+import { t } from '../../composables/useLocale'
 import {
   familyTopics,
   newsArticles,
   newsCategories,
   type BilingualText,
-} from '../domain/contentCatalog'
+} from '../../domain/contentCatalog'
 const L = (value: BilingualText) => t(value.zh, value.en)
 const params = useRouteParams()
 const category = ref('all')
@@ -53,7 +55,22 @@ function resetFilters() {
 </script>
 <template>
   <view class="content-page">
-    <template v-if="article">
+    <view v-if="!article && !params.id" class="content-filter-tabs news-top-tabs">
+      <button
+        :class="['choice-card', { active: params.view !== 'subscriptions' }]"
+        @click="navigate('news')"
+      >
+        {{ t('全部资讯', 'All updates') }}
+      </button>
+      <button
+        :class="['choice-card', { active: params.view === 'subscriptions' }]"
+        @click="navigate('news', { view: 'subscriptions' })"
+      >
+        {{ t('我的订阅', 'My subscriptions') }} · {{ newsPreferences.categories.length }}
+      </button>
+    </view>
+    <NewsSubscriptions v-if="params.view === 'subscriptions' && !params.id" />
+    <template v-else-if="article">
       <view class="content-back">
         <wd-button variant="plain" size="small" @click="goBack()">
           {{ t('返回资讯', 'Back to updates') }}
@@ -68,6 +85,13 @@ function resetFilters() {
           <text>{{ topicLabel(article.topic) }}</text>
           <text>{{ article.date }}</text>
         </view>
+        <wd-button variant="plain" size="small" @click="toggleNewsCategory(article.category)">
+          {{
+            newsPreferences.categories.includes(article.category)
+              ? t('已订阅该分类 ✓', 'Category subscribed ✓')
+              : t('订阅该分类 +', 'Subscribe to category +')
+          }}
+        </wd-button>
         <text class="content-detail-title">{{ L(article.title) }}</text>
         <text class="content-lead">{{ L(article.excerpt) }}</text>
         <view class="content-author">
@@ -225,3 +249,13 @@ function resetFilters() {
     </template>
   </view>
 </template>
+
+<style scoped>
+.news-top-tabs {
+  margin-bottom: 24px;
+}
+.news-top-tabs .choice-card {
+  padding: 10px 15px;
+  font-size: 14px;
+}
+</style>

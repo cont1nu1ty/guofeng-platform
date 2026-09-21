@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import SectionHeading from './SectionHeading.vue'
+import { readInputValue } from '../composables/readInputValue'
 import { openReader, works, regionLabel, repo, region } from '../composables/useDemo'
 import { navigate, type Screen } from '../composables/useNavigation'
 import { t, locale } from '../composables/useLocale'
@@ -370,13 +371,21 @@ function topicArticle(id: string) {
           <wd-icon name="search-line" size="19px" />
           <input
             v-model="query"
-            :placeholder="t('搜索作品、资讯、典籍、活动', 'Search stories, news, books and events')"
+            :placeholder="
+              t('搜索作品、资讯、课堂、视频等', 'Search stories, courses, videos and more')
+            "
+            confirm-type="search"
+            @blur="query = readInputValue($event, query)"
+            @confirm="navigate('search', { q: readInputValue($event, query).trim() })"
             :aria-label="t('搜索作品、资讯、典籍、活动', 'Search stories, news, books and events')"
           />
           <button v-if="query" class="text-button" @click="query = ''">
             {{ t('清除', 'Clear') }}
           </button>
         </view>
+        <button class="text-button home-search-all" @click="navigate('search', { q: terms })">
+          {{ t('查看全站搜索结果', 'View all search results') }} →
+        </button>
         <view
           v-for="(work, index) in filteredWorks.slice(0, 3)"
           :key="work.id"
@@ -971,5 +980,11 @@ function topicArticle(id: string) {
   .home-english .vision-strip > view {
     font-size: 8px;
   }
+}
+</style>
+
+<style scoped>
+.home-search-all {
+  margin: 12px 0 22px;
 }
 </style>

@@ -1,5 +1,13 @@
 import type { DemoStorage } from './types'
-export type AssistantMode = 'letter' | 'rules' | 'polish' | 'ocr' | 'help'
+export type AssistantMode =
+  | 'letter'
+  | 'rules'
+  | 'polish'
+  | 'ocr'
+  | 'help'
+  | 'knowledge'
+  | 'compliance'
+  | 'storyboard'
 export interface Excerpt {
   id: string
   sourceId: string
@@ -37,7 +45,16 @@ export function createPersonalArchive(storage: DemoStorage) {
     !state.aiArchives.every(
       (item) =>
         strings(item, ['id', 'mode', 'prompt', 'result', 'createdAt']) &&
-        ['letter', 'rules', 'polish', 'ocr', 'help'].includes(item.mode),
+        [
+          'letter',
+          'rules',
+          'polish',
+          'ocr',
+          'help',
+          'knowledge',
+          'compliance',
+          'storyboard',
+        ].includes(item.mode),
     )
   )
     throw new Error('存档格式无法读取，请先备份本机数据')

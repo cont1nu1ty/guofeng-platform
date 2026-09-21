@@ -1,6 +1,6 @@
 # 架构与后端衔接方案
 
-版本：0.4 · 2026-09-21。本文区分当前项目结构与未来方案，不表示后端、鉴权、多租户或外部服务已经实现。
+版本：0.5 · 2026-09-21。本文区分当前项目结构与未来方案，不表示后端、鉴权、多租户或外部服务已经实现。
 
 ## 1. 当前实现范围
 
@@ -20,17 +20,27 @@ Wot UI 提供界面组件，并不自带本项目投稿、评审、报名、权�
 
 ## 2. 当前目录职责
 
-| 路径 | 职责 |
-| --- | --- |
-| `apps/miniapp` | Uni-app 应用工程；页面、样式、平台配置与运行脚本 |
-| `apps/miniapp/src/domain/types.ts` | `Work`、`SubmissionDraft`、`Classic`、`Activity` 等领域类型 |
-| `apps/miniapp/src/domain/fixtures.ts` | 体裁/通道/地区字典、待定评审节点及虚构内容 |
-| `apps/miniapp/src/domain/libraryCatalog.ts` | 典籍章节、作品译文、原创释义等演示阅读内容 |
-| `apps/miniapp/src/domain/assistantExamples.ts` | 五类双语预设与草稿转入保护，未调用模型 |
-| `apps/miniapp/src/domain/personalArchive.ts` | 摘抄批注、助手存档与注入式本机存储 |
-| `apps/miniapp/src/domain/repository.ts` | 稿件查询、草稿、提交、收藏、预约等 Mock 行为与状态保存 |
-| `contracts/openapi.yaml` | 未来 HTTP API 的讨论草案，不是已部署接口 |
-| `docs` | 需求、迭代、开源复用、架构与演示说明 |
+| 路径                                                | 职责                                                           |
+| --------------------------------------------------- | -------------------------------------------------------------- |
+| `apps/miniapp`                                      | Uni-app 应用工程；页面、样式、平台配置与运行脚本               |
+| `apps/miniapp/src/domain/types.ts`                  | `Work`、`SubmissionDraft`、`Classic`、`Activity` 等领域类型    |
+| `apps/miniapp/src/domain/fixtures.ts`               | 体裁/通道/地区字典、待定评审节点及虚构内容                     |
+| `apps/miniapp/src/domain/libraryCatalog.ts`         | 典籍章节、作品译文、原创释义等演示阅读内容                     |
+| `apps/miniapp/src/domain/assistantExamples.ts`      | 八类双语预设、分镜文本与草稿转入保护，未调用模型               |
+| `apps/miniapp/src/domain/writingTools.ts`           | 富文本 Delta 白名单、受控 HTML 生成与诗词句式计数              |
+| `apps/miniapp/src/domain/regionCatalog.ts`          | 34 个省级地区与海外的中英展示字典                              |
+| `apps/miniapp/src/domain/searchCatalog.ts`          | 九类内容的本机搜索索引与筛选                                   |
+| `apps/miniapp/src/domain/accountDemo.ts`            | 本机登录／认证状态机，非微信授权或真实实名                     |
+| `apps/miniapp/src/domain/newsPreferences.ts`        | 分类订阅、提醒频率与免打扰偏好                                 |
+| `apps/miniapp/src/domain/localMedia.ts`             | 诵读／视频文件校验与记录类型                                   |
+| `apps/miniapp/src/components/AppShell.vue`          | 公共头尾、导航、地区及路由上下文，插槽承载页面主体             |
+| `apps/miniapp/src/components/ExploreContent.vue`    | 主包核心业务组件分发                                           |
+| `apps/miniapp/src/pkg-content/pages/index.vue`      | 资讯、课堂、阵地、视频、名人馆、文创、传习分包入口             |
+| `apps/miniapp/src/pkg-content/components`、`static` | 七类内容视图、专属交互组件及其音视频素材，作为分包物理目录组织 |
+| `apps/miniapp/src/domain/personalArchive.ts`        | 摘抄批注、助手存档与注入式本机存储                             |
+| `apps/miniapp/src/domain/repository.ts`             | 稿件查询、草稿、提交、收藏、预约等 Mock 行为与状态保存         |
+| `contracts/openapi.yaml`                            | 未来 HTTP API 的讨论草案，不是已部署接口                       |
+| `docs`                                              | 需求、迭代、开源复用、架构与演示说明                           |
 
 ### 2.1 存储注入
 
@@ -40,11 +50,46 @@ Wot UI 提供界面组件，并不自带本项目投稿、评审、报名、权�
 
 单草稿是当前模型，不是原文“云端草稿”的实现。以后若允许同一用户保存多个草稿，需增加草稿 ID、列表、更新时间、并发版本，并调整 API 与页面，不能只把本地键改成网络地址。
 
-### 2.2 接口替换的实际边界
+### 2.2 当前存储、文件与导出
 
-当前 Repository 为同步方法。新增本地能力也保持此边界：`useLearningProgress` 保存课程/签到，`useShowcase` 保存视频互动与文创记录，`usePersonalArchive` 保存摘抄与 AI 示例；这些是独立本机存储，不是账号服务。
+以下都是单设备数据，不按演示登录身份切分；退出演示账户不会自动删除投稿或学习记录。
 
-当前页面由 `pages/index/index` 和 `pages/explore/index` 挂载 AppShell。一级栏目用 reLaunch，详情用 navigateTo / navigateBack，并通过每页提供的 route 参数读取内容；正常返回保留上一页筛选和滚动。后续可以将业务视图迁入独立页面/分包。
+| 键或存储位置                                            | 内容与持久化边界                                                                                        |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `jiafeng:demo:v1`                                       | 单草稿、稿件、评审、收藏、预约、通知与作品证书；本轮兼容增加 `contentDelta`、`overseasLocation`         |
+| `jiafeng:account:v1`                                    | 演示登录与认证资料／状态；不存真实凭据                                                                  |
+| `jiafeng:archives:v1`                                   | 完整摘抄、感想与八类助手存档，兼容原有五类记录                                                          |
+| `jiafeng:news-preferences:v1`                           | 资讯分类订阅、提醒开关、频率、夜间免打扰；不产生推送                                                    |
+| `jiafeng:learning:v1`                                   | 课程学习、测验、活动签到等本机记录                                                                      |
+| `jiafeng:showcase:v1`                                   | 视频互动、公益申领与定制记录                                                                            |
+| `jiafeng:local-media:v1`                                | 诵读／视频投稿的标题、分类、文件名、大小、时长等元信息，最多保留 100 条；媒体文件路径只在本轮会话内存中 |
+| `jiafeng:reflection:<人物ID>`                           | 家训约定文字                                                                                            |
+| `jiafeng:live-reminder:v1`                              | 虚构直播提醒的本机开关；没有实际排期或消息                                                              |
+| `jiafeng:locale`、`jiafeng:region`、`jiafeng:largeText` | 中英语言、地区、大字偏好                                                                                |
+| H5 CacheStorage `jiafeng-replays-v1`                    | 用户主动缓存的回放文件；播放时转为 Blob URL，支持删除；没有 Service Worker 全站离线启动                 |
+| 微信 `jiafeng-replays-v1:<回放ID>` 与 `USER_DATA_PATH`  | 包内回放的文件副本与路径索引；读取前检查文件存在，失败反馈，不把路径记录当作文件保存成功                |
+
+附件和用户选择／录制的音视频不通过 JSON 写入本地存储，也不上传对象存储。页面重新加载后保留列表元信息；临时文件丢失时需重新选择，不能承诺媒体内容持久保存。回放缓存属于独立、用户主动执行的文件操作。
+
+`CertificateExport` 以相同数据生成带“演示样张”标识的实际 PNG：H5 使用 Canvas 与 Blob 发起下载；微信使用 Canvas 临时文件及保存相册 API，并处理权限拒绝与重试。画布描摹采用类似平台接口。H5 下载请求成功不等于文件已落盘，微信接口代码与编译也不能替代真机权限验收。
+
+### 2.3 富文本与旧稿兼容
+
+`SubmissionDraft`、`Work` 保留原 `content: string`，增加可选 `contentDelta`。`WritingEditor` 复用 Uni-app editor：H5 条件导入本地 Quill 1.3.7，微信使用终端 editor，不将 Quill 放入微信静态资源。供应代码与 BSD 声明保存在 `src/vendor`。
+
+`writingTools.cleanWritingDelta` 只接受字符串 `insert` 及 `bold/italic/underline/header(2或3)/list(ordered或bullet)`，剔除外部图片、链接、任意样式和其他嵌入。预览 HTML 由 `writingHtml` 从白名单 Delta 和转义后的文字生成，不直接信任编辑器返回或本机保存的任意 HTML。提交检查富文本与纯文本是否一致；搜索、摘要、字数校验等沿用纯文本。旧纯文本稿件按需转换，草稿恢复与同编号重投保留格式，失败不替换既有存储。
+
+就地灵感面板只读本地预设；追加前显示明确确认，并在原稿末尾新增文本，保留原段格式。独立助手转稿仍先检查现有普通／修改稿，退回修改稿始终不可被助手覆盖。海外投稿另填 `overseasLocation`，仅作为展示与稿件字段，不构成身份、地域或租户核验。
+
+### 2.4 页面主体与分包路由
+
+主包 `pages/index/index`、`pages/explore/index` 通过 `AppShell` 的插槽挂载 `ExploreContent`，承载首页、投稿、典藏、评审、个人中心、助手、已有专家／运营视图及搜索。`pkg-content/pages/index` 单独导入 `pkg-content/components` 中的资讯、课堂、阵地、视频、名人馆、文创、传习七类内容组件及专属交互组件；音视频也放入 `pkg-content/static`，使页面与媒体资源具有明确的分包物理归属。公共框架无需静态导入全部内容页面；实际分包体积以构建结果为准。
+
+`useNavigation.screenUrl` 根据 `contentScreens` 选择主包或内容分包入口。一级栏目使用 `reLaunch`，带详情参数且页面栈未满时使用 `navigateTo`，正常返回用 `navigateBack`。每个页面提供独立 route 参数，避免多个页面共享一个可变 screen。原 `pages/explore/index?screen=media&id=...` 等内容链接使用 `redirectTo` 转入分包，保留原参数；旧书签可继续使用。
+
+### 2.5 接口替换的实际边界
+
+当前 Repository 仍是同步方法。`useLearningProgress`、`useShowcase`、`usePersonalArchive`、`useAccountDemo`、`useNewsPreferences` 和 `useLocalMedia` 分别管理本机状态。媒体录制、播放、文件导出与缓存使用终端异步 API，但不因此成为账号、上传或发布服务。
 
 未来 HTTP 访问是异步操作，因此切换到后端时仍需将页面调用与反馈改为异步，并增加加载、取消、重试、会话失效和网络错误处理；不是无改动替换。
 
@@ -52,33 +97,33 @@ Wot UI 提供界面组件，并不自带本项目投稿、评审、报名、权�
 
 ## 3. 已有字段与契约对应
 
-| 当前领域模型 | API 草案沿用的字段 | 未来需补足 / 注意 |
-| --- | --- | --- |
-| `SubmissionDraft` | `title`、`content`、`genre`、`channel`、`region`、可选 `author`、`copyrightAccepted` | 当前同意的是演示声明。正式提交另外绑定协议版本、告知文本和服务端确认记录，不能以单个布尔值声称完成电子签署 |
-| `Work` | `id`、正文/摘要、作者、体裁/通道/地区、状态、`submittedAt`、`progressIndex`、标签、`isMine` | `id` 暂同时作为作品编号；正式是否增加独立公开编号待定。`isMine` 由认证身份计算；公开列表只返回已批准公开的作品 |
-| `Classic` | 标题、副题、作者、正文/摘要、地区、分类、封面颜色、章节数 | 未来长篇内容拆为目录/章节；列表中完整正文只是本草案的过渡结构 |
-| `Activity` | 标题、正文、地区、地点、组织方、日期/时段、分类、容量、报名数 | 未来补充报名窗口、活动状态、时区和取消规则；库存与名额必须由服务端原子校验 |
-| `Registration` | `activityId`、`registeredAt` | 服务端绑定认证用户，不接受客户端传入报名所属用户；正式取消/签到状态另扩展 |
-| 收藏 | 当前记录作品或典籍的 ID | API 采用 `contentId` 与 `contentType`，避免未来不同表 ID 冲突；HTTP 适配层映射回领域对象 |
-| `isDemo: true` | API 草案中为只读 `boolean` | 当前类型仅允许 `true`；未来应通过适配层或显式升级类型支持真实数据 `false`，不能强制伪装成演示或移除来源标识 |
+| 当前领域模型      | API 草案沿用的字段                                                                          | 未来需补足 / 注意                                                                                              |
+| ----------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `SubmissionDraft` | `title`、`content`、`genre`、`channel`、`region`、可选 `author`、`copyrightAccepted`        | 当前同意的是演示声明。正式提交另外绑定协议版本、告知文本和服务端确认记录，不能以单个布尔值声称完成电子签署     |
+| `Work`            | `id`、正文/摘要、作者、体裁/通道/地区、状态、`submittedAt`、`progressIndex`、标签、`isMine` | `id` 暂同时作为作品编号；正式是否增加独立公开编号待定。`isMine` 由认证身份计算；公开列表只返回已批准公开的作品 |
+| `Classic`         | 标题、副题、作者、正文/摘要、地区、分类、封面颜色、章节数                                   | 未来长篇内容拆为目录/章节；列表中完整正文只是本草案的过渡结构                                                  |
+| `Activity`        | 标题、正文、地区、地点、组织方、日期/时段、分类、容量、报名数                               | 未来补充报名窗口、活动状态、时区和取消规则；库存与名额必须由服务端原子校验                                     |
+| `Registration`    | `activityId`、`registeredAt`                                                                | 服务端绑定认证用户，不接受客户端传入报名所属用户；正式取消/签到状态另扩展                                      |
+| 收藏              | 当前记录作品或典籍的 ID                                                                     | API 采用 `contentId` 与 `contentType`，避免未来不同表 ID 冲突；HTTP 适配层映射回领域对象                       |
+| `isDemo: true`    | API 草案中为只读 `boolean`                                                                  | 当前类型仅允许 `true`；未来应通过适配层或显式升级类型支持真实数据 `false`，不能强制伪装成演示或移除来源标识    |
 
-当前 `RegionId` 是 `all/beijing/zhejiang/sichuan`，只是演示字典。正式行政区编码与层级查询需独立设计；草案保留现有值是为字段对照，不代表已经覆盖全国。`all` 只表示全国展示或尚未细分的内容归属，不代表任何写入或查看全部租户的权限。
+当前 `RegionId` 包含 `all`、34 个省级地区及 `overseas`，提供全国选择结构与无内容状态。现有示例内容仍集中于少数地区，不表示 34 地已有实际运营数据；市／区县正式编码、行政层级和真实数据需独立设计。API 初版枚举尚未同步这些新值。`all` 只表示全国展示或尚未细分的内容归属，不代表任何写入或查看全部租户的权限。
 
-当前 `WorkStatus` 为 `pending_initial_review/in_review/returned/shortlisted/awarded/collected`。退回稿同编号重投，`revisionNumber` 递增；评分、状态、通知与证书通过仓库一次保存，失败时不推进界面状态。当前演示采用逐级晋级后确认入围、授奖和入藏，生产仍需确认撤回、拒绝、异议与公开发布规则。六级节点仍是原文待讨论的示意，不能由 `progressIndex` 推导正式晋级规则。
+当前 `WorkStatus` 为 `pending_initial_review/in_review/returned/shortlisted/awarded/collected`。退回稿同编号重投，`revisionNumber` 递增；评分、状态、通知与证书通过仓库一次保存，失败时不推进界面状态。当前演示采用逐级晋级后确认入围、授奖和入藏，本轮没有扩展运营后台。生产仍需确认撤回、拒绝、异议与公开发布规则。六级节点仍是原文待讨论的示意，不能由 `progressIndex` 推导正式晋级规则。
 
 ## 4. HTTP 契约草案
 
-`contracts/openapi.yaml` 使用 OpenAPI 3.0.3，设计地址为保留域名 `api.example.invalid`，不能调用。它保留初版 12 个核心路径，用于后端讨论，尚未追齐本轮评分、消息、证书、附件元信息及内容模块新增字段，不能直接据此生成完整后端。新增接口应先确认业务规则，再扩展本契约：
+`contracts/openapi.yaml` 使用 OpenAPI 3.0.3，设计地址为保留域名 `api.example.invalid`，不能调用。它保留初版 12 个核心路径，用于后端讨论，尚未追齐当前评分、消息、证书、附件元信息、富文本 Delta、全国地区、海外字段、认证、订阅及媒体模块新增字段，不能直接据此生成完整后端。新增接口应先确认业务规则，再扩展本契约：
 
-| 领域 | 核心约定 |
-| --- | --- |
-| 作品 | `GET /works` 支持展示筛选和 `scope=public/mine`；`POST /works` 提交；`GET /works/{workId}/progress` 查询编号对应进度 |
-| 草稿 | `GET/PUT/DELETE /me/draft`，暂对应当前一个用户一个草稿 |
-| 典籍与活动 | `GET /classics`、`GET /activities`，支持分页与地区过滤 |
-| 预约 | `GET/POST /me/registrations`；`DELETE /me/registrations/{activityId}` |
-| 收藏 | `GET /me/favorites`；`PUT/DELETE /me/favorites/{contentId}`，显式区分作品/典籍 |
-| AI（后期） | `POST /ai/tasks` 仅约定任务受理；任务结果查询、取消、流式输出及回调另立契约 |
-| 评审（后期） | `GET /review/tasks`、`PUT /review/tasks/{taskId}/score`；服务端提供规则版本和评分维度，不假定六级配置已定 |
+| 领域         | 核心约定                                                                                                             |
+| ------------ | -------------------------------------------------------------------------------------------------------------------- |
+| 作品         | `GET /works` 支持展示筛选和 `scope=public/mine`；`POST /works` 提交；`GET /works/{workId}/progress` 查询编号对应进度 |
+| 草稿         | `GET/PUT/DELETE /me/draft`，暂对应当前一个用户一个草稿                                                               |
+| 典籍与活动   | `GET /classics`、`GET /activities`，支持分页与地区过滤                                                               |
+| 预约         | `GET/POST /me/registrations`；`DELETE /me/registrations/{activityId}`                                                |
+| 收藏         | `GET /me/favorites`；`PUT/DELETE /me/favorites/{contentId}`，显式区分作品/典籍                                       |
+| AI（后期）   | `POST /ai/tasks` 仅约定任务受理；任务结果查询、取消、流式输出及回调另立契约                                          |
+| 评审（后期） | `GET /review/tasks`、`PUT /review/tasks/{taskId}/score`；服务端提供规则版本和评分维度，不假定六级配置已定            |
 
 当前示例列表携带正文，便于对照本地模型。正式大数据量场景应新增详情与章节接口、将列表改为摘要投影；这应作为契约版本变更实施。当前草案不覆盖生产系统全部功能，也不包含登录、角色管理、总库同步、运营内容发布、支付或文件服务接口。
 
@@ -114,7 +159,7 @@ Wot UI 提供界面组件，并不自带本项目投稿、评审、报名、权�
 4. 只有检查通过、归本人/授权租户且未过期的 `attachmentId` 才能关联作品；投稿接口不接受任意下载 URL。
 5. 私密附件下载也需服务端授权；不得直接把对象地址当作永久公开链接。清理未完成上传和未关联对象，定义保留/删除策略。
 
-前端已增加 `themes`、`attachments` 和 `editingWorkId`，附件目前只存名称、大小、类型等元信息；实际临时文件路径留在本轮会话内存中。它们并非服务端附件 ID。未来需将正式协议版本、附件 ID 和上传完成接口同步到领域类型、API 与测试。
+前端已增加 `themes`、`attachments`、`editingWorkId`、`contentDelta` 和 `overseasLocation`，附件目前只存名称、大小、类型等元信息；实际临时文件路径留在本轮会话内存中。它们并非服务端附件 ID。未来需将正式协议版本、附件 ID 和上传完成接口同步到领域类型、API 与测试。
 
 ## 5. 建议的后端演进
 

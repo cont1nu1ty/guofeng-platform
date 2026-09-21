@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import SectionHeading from './SectionHeading.vue'
+import { computed, ref, watch, onMounted, nextTick } from 'vue'
+import SectionHeading from '../../components/SectionHeading.vue'
+import CertificateExport from '../../components/CertificateExport.vue'
+import AudioRecitationPanel from './AudioRecitationPanel.vue'
 import {
   repo,
   region,
@@ -9,17 +11,22 @@ import {
   registrations,
   revision,
   notify,
-} from '../composables/useDemo'
-import { navigate, goBack, useRouteParams } from '../composables/useNavigation'
-import { t } from '../composables/useLocale'
-import { activityTranslations, venues, type BilingualText } from '../domain/contentCatalog'
+} from '../../composables/useDemo'
+import { navigate, goBack, useRouteParams } from '../../composables/useNavigation'
+import { t } from '../../composables/useLocale'
+import { activityTranslations, venues, type BilingualText } from '../../domain/contentCatalog'
 import {
   checkInActivity,
   clearActivityCheckIn,
   isCheckedIn,
   learningStorageError,
-} from '../composables/useLearningProgress'
-import type { Activity } from '../domain/types'
+} from '../../composables/useLearningProgress'
+import type { Activity } from '../../domain/types'
+onMounted(async () => {
+  await nextTick()
+  if (params.value.tab === 'audio')
+    uni.pageScrollTo({ selector: '#audio-recitation-panel', duration: 0 })
+})
 const L = (value: BilingualText) => t(value.zh, value.en)
 const params = useRouteParams()
 const activities = computed(() => {
@@ -268,6 +275,15 @@ function showAllActivities() {
             )
           }}
         </text>
+        <CertificateExport
+          :certificate="{
+            id: 'activity-' + event.id,
+            title: t('活动参与证书', 'Activity Participation'),
+            recipient: t('家风同行者', 'Demo participant'),
+            subject: title(event),
+            date: event.date,
+          }"
+        />
       </view>
     </template>
     <template v-else-if="params.id">
@@ -333,6 +349,7 @@ function showAllActivities() {
           <wd-icon name="arrow-right" />
         </view>
       </view>
+      <view id="audio-recitation-panel"><AudioRecitationPanel /></view>
       <view class="content-filter-tabs content-filter-space">
         <view
           :class="['content-filter-chip', { active: !registeredOnly }]"

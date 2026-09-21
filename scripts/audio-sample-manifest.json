@@ -1,0 +1,47 @@
+{
+  "generator": "espeak-ng 1.52.0 and ffmpeg",
+  "softwareSource": "https://github.com/espeak-ng/espeak-ng",
+  "description": "Original demonstration scripts; offline synthetic narration, no real voice impersonation or historical recording.",
+  "samples": [
+    {
+      "name": "promise-zh",
+      "voice": "cmn",
+      "script": "这是一则虚构的红色家风故事。老党员在家书里写道，答应群众的事，要认真做到。孙女读完信，决定从身边的小事尽责。"
+    },
+    {
+      "name": "promise-en",
+      "voice": "en",
+      "script": "An original fictional story. In a family letter, a veteran Party member wrote: keep the promises you make to the community. After reading it, a granddaughter chose to take responsibility through small acts of service."
+    },
+    {
+      "name": "integrity-zh",
+      "voice": "cmn",
+      "script": "这是一则原创清廉故事。孩子问，家里的纸能用单位的吗？父亲说，公家的东西要留给公事。清廉，始于日常的选择。"
+    },
+    {
+      "name": "integrity-en",
+      "voice": "en",
+      "script": "An original story about integrity. A child asked if they could bring paper home from the office. The parent said, public supplies are for public work. Integrity begins with everyday choices."
+    },
+    {
+      "name": "zhuge-liang-zh",
+      "voice": "cmn",
+      "script": "欢迎走进诸葛亮主题展。静以修身，俭以养德。请从一段家训出发，思考今天能够实践的一件小事。"
+    },
+    {
+      "name": "zhuge-liang-en",
+      "voice": "en",
+      "script": "Welcome to this gallery about Zhuge Liang. Explore calmness, simple living and self cultivation. Begin with one precept and consider a small action you can practise today."
+    },
+    {
+      "name": "yan-zhitui-zh",
+      "voice": "cmn",
+      "script": "欢迎走进颜之推主题展。学习不仅在书本，也在观察和实践中。请想一想，怎样把今天学到的道理用于生活。"
+    },
+    {
+      "name": "yan-zhitui-en",
+      "voice": "en",
+      "script": "Welcome to this gallery about Yan Zhitui. Learning grows through books, observation and practice. Consider how one idea you learned today could guide everyday life."
+    }
+  ]
+}
