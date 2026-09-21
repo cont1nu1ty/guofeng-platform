@@ -4,44 +4,46 @@
 
 ## 文件与大小
 
-| 本地文件                                                   | 官方原字体                           | 当前子集大小  |
-| ---------------------------------------------------------- | ------------------------------------ | ------------- |
-| `apps/miniapp/src/static/fonts/JiafengSans-Regular.woff`   | Source Han Sans SC Regular，2.005R   | 420,096 bytes |
-| `apps/miniapp/src/static/fonts/JiafengSerif-SemiBold.woff` | Source Han Serif SC SemiBold，2.003R | 569,268 bytes |
+| 平台 | 字体 | WOFF字节 | 码位数 |
+| --- | --- | ---: | ---: |
+| H5 | JiafengSans Regular | 420,216 | 2359 |
+| H5 | JiafengSerif SemiBold | 569,420 | 2359 |
+| 微信 | JiafengSans Regular | 343,116 | 2008 |
+| 微信 | JiafengSerif SemiBold | 465,828 | 2008 |
 
-2026-09-21 对话与轮播调整后合计 **989,364 bytes，约 966.2 KiB**，比 `v0.5.0-user-frontend` 增加 5,028 bytes。每次扩容后的准确大小、SHA256、版本与码位数以 `scripts/font-data/manifest.json` 为准。这里选择 WOFF，避免低版本 iOS 对 WOFF2 的兼容差异。原始 16/24 MB OTF 仅用于构建，未打入应用。构建脚本与元数据位于 `scripts/`，不随 `static/` 打包；运行包内字体目录只保留两份 WOFF。
+H5合计 **989,636 bytes**，路径为 `apps/miniapp/src/static/h5/fonts/`；微信WOFF合计 **808,944 bytes**，构建输入位于 `scripts/font-data/mp/`，转为Data URL后数据部分合计 **1,078,592 bytes**。微信运行包不再附带独立WOFF。准确版本、SHA256和码位数分别见 `scripts/font-data/manifest.json` 与 `scripts/font-data/mp/manifest.json`。
 
-字符集合由以下部分并集产生：
+两套字体都包含全部源码用字、英文数字和常用标点。H5继续合并Unihan频率最高的1800个汉字；微信合并源码之外频率最高的600个额外常用汉字。频率依据Unicode17的`kHanyuPinlu`各读音频率求和，同频按码位排序；这不等于完整规范汉字字库。
 
-- Unicode 17.0.0 Unihan `kHanyuPinlu` 各读音频率求和后，按总频率取前 1800 个汉字；相同频率按码位排序。它是扩展演示输入的经验集合，不等同于国家通用规范汉字完整表。
-- 构建时 `apps/miniapp/src` 的 Vue、TypeScript、JSON、SCSS 中出现的全部字符，字体工具自身目录除外。
-- 英文大小写、数字、常用中西文标点、全角标点。
-
-当前两份字体各覆盖 **2358 个实际码位**，包括账户认证、证书导出、订阅搜索、全国地区、音视频工具及新增助手文案；本次扫描 `src` 的 81 个 Vue、TypeScript、JSON、SCSS 文件，1102 个不同中文码位均被两份字体覆盖，缺失为 0。中文统计检查 CJK 扩展 A、基本区、兼容区及扩展 B–I 范围，本次源码中文均落在 U+4E00–U+9FFF。码位数从保存后的字体 `cmap` 读取，包含保留竖排特性时带入的额外映射。保留 `vert` / `vrt2` 竖排替代特性，但这不等于已经验证微信竖排排版。未包含的生僻字、用户输入或后续动态内容逐字回退系统字体；新增文案应重新运行裁剪，不能把子集称为完整思源字库。
+2026-09-21最终扫描82份Vue/TypeScript/JSON/SCSS源码，共1106个不同汉字，两套字体缺失均为0，四份字体保留`vert`/`vrt2`竖排特性、OFL说明及重命名。未收录的动态内容和生僻字仍逐字回退系统字体。使用WOFF以兼顾微信官方建议格式；原始16/24MB OTF只在构建缓存中，不打入应用。
 
 ## H5 加载与验证
 
-`src/styles/fonts.scss` 的 `@font-face` 通过相对路径 `../static/fonts/…` 引用本地 WOFF，无需外部字体 CDN。当前 Uni-app/Vite 构建保留此路径，并提示无法在构建阶段解析；它没有重写成带 hash 的字体资源地址。产物 CSS 位于 `assets/`，静态字体复制至同级的 `static/fonts/`，浏览器以 CSS 文件地址为基准解析 `../static/fonts/…`。此机制依赖保留 `assets/` 与 `static/` 的产物目录关系。`src/composables/loadFonts.ts` 通过 `document.fonts.load` 触发并检测实际加载，采用 `font-display: swap` 保持首屏可读。
+`src/styles/fonts.scss` 的 `@font-face` 通过相对路径 `../static/h5/fonts/…` 引用本地 WOFF，无需外部字体 CDN。当前 Uni-app/Vite 构建保留此路径，并提示无法在构建阶段解析；它没有重写成带 hash 的字体资源地址。产物 CSS 位于 `assets/`，静态字体复制至同级的 `static/h5/fonts/`，浏览器以 CSS 文件地址为基准解析 `../static/h5/fonts/…`。此机制依赖保留 `assets/` 与 `static/` 的产物目录关系。`src/composables/loadFonts.ts` 通过 `document.fonts.load` 触发并检测实际加载，采用 `font-display: swap` 保持首屏可读。
 
 接入方式：在全局样式导入 `fonts.scss`；正文字体栈首项设置为 `JiafengSans`，标题/典籍字体栈首项设置为 `JiafengSerif`。在 `App.onLaunch()` 调用 `void loadFonts()`。函数返回 `{ platform, allLoaded, fonts }`，每个字体包含 `loaded`、`source`，失败包含 `error`；重复调用共用一次加载结果，8 秒超时不阻塞界面。
 
 浏览器应同时确认 Network 字体请求成功和 `document.fonts.load('600 16px "JiafengSerif"', '家风中华行')` 返回已加载字体；仅 `getComputedStyle().fontFamily` 显示字体名不能证明字体加载成功。
 
-2026-09-21 已用实际 H5 生产产物在 `http://localhost:5190/demo/` 子目录验证：样式从 `/demo/assets/index-*.css` 加载，两份字体实际请求 `/demo/static/fonts/JiafengSans-Regular.woff`、`/demo/static/fonts/JiafengSerif-SemiBold.woff`，均返回 HTTP 200 和 `font/woff`，响应字节数与 SHA256 匹配当时构建使用的清单。`document.fonts` 中两个家族均为 `loaded`，400/600 字重的 `load` 与 `check` 检查均通过；无页面 JavaScript 异常、无失败请求。这验证了当前产物目录结构下的子目录加载，不代表任意 CDN 路径改写都兼容。
+历史记录（迁移至static/h5之前）：2026-09-21 已用实际 H5 生产产物在 `http://localhost:5190/demo/` 子目录验证：样式从 `/demo/assets/index-*.css` 加载，两份字体实际请求 `/demo/static/fonts/JiafengSans-Regular.woff`、`/demo/static/fonts/JiafengSerif-SemiBold.woff`，均返回 HTTP 200 和 `font/woff`，响应字节数与 SHA256 匹配当时构建使用的清单。`document.fonts` 中两个家族均为 `loaded`，400/600 字重的 `load` 与 `check` 检查均通过；无页面 JavaScript 异常、无失败请求。这验证了当前产物目录结构下的子目录加载，不代表任意 CDN 路径改写都兼容。
 
-## 微信加载：模拟器已确认回退，仍需补齐交付方案
+2026-09-21本次路径迁移后，已重新用H5正式产物的`/demo/`子目录验证：两份字体从`/demo/static/h5/fonts/`返回HTTP200，字节与SHA256匹配新清单；两个家族均为`loaded`，个人中心状态正确，无失败请求或JS异常。
 
-小程序条件编译分支从包内 `static/fonts` 读取 WOFF，并转成 base64 data URI 后调用 `uni.loadFontFace({ global: true })`。这使演示不强制依赖第三方网络；字体文件只存一份，不额外在 JS 中内嵌另一份 base64。
+## 微信加载：构建内联 Data URL
 
-**官方明确支持的微信 `loadFontFace` 资源方式是 HTTPS 网络字体，且需满足跨域条件。** 本版离线 data URI 路径是兼容尝试，不是该正式契约保证的能力；没有 iOS/Android 微信真机验证前，不能承诺全部微信环境成功。API 失败或超时会返回失败状态，页面继续使用字体栈中的系统宋体/黑体，不伪造加载成功。[uni-app 字体 API](https://uniapp.dcloud.net.cn/api/ui/font.html)
+原方案在手机和模拟器读取包内 WOFF 时均失败；模拟器错误为 `readFile:fail permission denied`。现在移除运行时文件读取，Vite 在构建时把微信专用 WOFF 转成 Data URL，`App.onLaunch()` 调用 `uni.loadFontFace({ global: true })` 注册。整个过程不请求字体服务器，不需要部署 HTTPS 域名。
 
-2026-09-21 实际在 Linux 微信开发者工具 2.01.2510290、基础库 3.17.2 打开正式构建：读取包内 WOFF 返回 `readFile:fail permission denied`，视图的 `document.fonts` 未注册 `JiafengSans` / `JiafengSerif`，当前使用系统后备字体。失败发生在文件读取阶段，尚未进入 data URI 注册；这不能证明其他内联方案不可用。H5 加载结果不受影响。
+**更正旧文档：微信基础库从 3.7.9 起已正式支持 Data URL。** 先前依据 DCloud 旧 API 页面写出的“只有 HTTPS 属于正式支持”不准确，应以当前 [微信 `wx.loadFontFace` 官方文档](https://developers.weixin.qq.com/miniprogram/dev/api/ui/font/wx.loadFontFace.html) 为准。`global` 从2.10.0支持，要求应用入口调用；WOFF仍是官方建议格式。
 
-后续微信正式交付应：
+- H5保留原有常用字覆盖，字体迁至 `src/static/h5/fonts/`；Uni-app构建微信时会排除其他平台静态目录，因此不重复带入H5字体。
+- 微信子集覆盖全部当前源码文字，并补充源码之外频率最高的600个常用汉字。两份WOFF及对应清单放在 `scripts/font-data/mp/`，不会被静态资源复制；Vite虚拟模块按清单验证字节数和SHA256后，各内联一份。
+- `npm run build:mp-weixin` 在构建后自动检查主包小于2MiB、两个字体各只有一份Data URL、没有重复的WOFF或H5字体。新增界面文字后重建子集，不能只修改二进制而不更新清单。
+- 运行时按数字段检查基础库版本。低于3.7.9时明确提示升级微信并使用系统字体；加载失败使用系统字体，8秒超时显示状态待确认；均不阻塞页面、不误报成功。未知SDK版本按实际API结果判断。
+- H5与微信子集外的生僻字仍逐字回退。成功回调表示字体注册成功，不等于所有用户输入、其他字重、原生输入控件和Canvas都已验收。
 
-1. 在 iOS、Android 真机验证返回状态、首页标题/正文、表单输入、横竖排标点及多页面全局字体；开发工具截图不能代替此项。
-2. 优先将同一 WOFF 部署到自有 HTTPS 静态域名，设置跨域响应与相应小程序域名配置，把 `source` 替换为该地址。接口支持 `global` 需基础库 2.10.0 及以上，并由 `App.onLaunch` 调用。
-3. 随页面增长检查编译后的实际包体；完整多字重/全字库应使用按需网络字体或明确分包方案，不要直接把原始 CJK OTF 放入主包。
+重新在手机测试时，请使用本次新构建生成预览包，退出旧小程序后重新扫码；在“我的”查看字体状态与两份字体明细，再核对首页标题、正文、典藏竖排和传习分包。模拟器结果见 [验证记录](07-validation.md)，手机结果须实际复测确认。
+
+将来需要覆盖更大字库时，可改为自有HTTPS字体及CORS配置，避免无限扩大主包；这是后续生产选项，当前离线演示不依赖它。
 
 ## 来源、许可与校验
 
@@ -61,7 +63,7 @@ Unihan.zip
 f7a48b2b545acfaa77b2d607ae28747404ce02baefee16396c5d2d7a8ef34b5e
 ```
 
-本次交付子集 SHA256：
+迁移前H5子集 SHA256（当前准确值见两套manifest）：
 
 ```text
 JiafengSans-Regular.woff
@@ -72,7 +74,7 @@ JiafengSerif-SemiBold.woff
 
 ## 可复现扩容
 
-脚本位于 `scripts/build-font-subsets.py`。从项目根目录运行；下载仅在开发时发生，固定源文件均做 SHA256 校验。缓存路径放在交付项目外的 `work/` 目录。
+脚本位于 `scripts/build-font-subsets.py`，一次生成H5与微信两套子集。默认 `--common-count 1800` 和 `--mp-extra-count 600`；分别记录清单与字表。从项目根目录运行；下载仅在开发时发生，固定源文件均做 SHA256 校验。缓存路径放在交付项目外的 `work/` 目录。
 
 ```bash
 python3 -m venv ../../work/font-venv

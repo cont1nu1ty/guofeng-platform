@@ -1,15 +1,29 @@
 /**
  * Source Han font subsets with no mandatory third-party request.
  * H5: actual local @font-face + FontFaceSet verification.
- * WeChat: read the packaged WOFF as a data URI and attempt global font registration.
- * The official WeChat contract guarantees HTTPS fonts; this offline path still
- * needs real-device verification. A failed registration leaves CSS fallbacks active.
+ * WeChat: register build-time bundled WOFF data URIs globally (SDK 3.7.9+).
+ * A failed registration leaves CSS fallbacks active; device rendering still needs validation.
  * See docs/09-fonts.md for coverage, licenses and the deployment alternative.
  */
+// #ifdef MP-WEIXIN
+import bundledWechatFonts from 'virtual:jiafeng-wechat-fonts'
+import { registerWechatFonts } from './registerWechatFonts'
+// #endif
+
+export type FontLoadFailure =
+  | 'unsupported-sdk'
+  | 'unavailable'
+  | 'timeout'
+  | 'invalid-font'
+  | 'permission-denied'
+  | 'load-failed'
+  | 'not-detected'
+
 export interface FontLoadResult {
   family: string
   loaded: boolean
-  source: 'local-css' | 'local-data-uri' | 'unavailable'
+  source: 'local-css' | 'bundled-data-uri' | 'unavailable'
+  errorCode?: FontLoadFailure
   error?: string
 }
 
@@ -26,12 +40,6 @@ const fonts = [
 
 let loading: Promise<FontsLoadResult> | undefined
 
-function errorText(error: unknown): string {
-  if (error instanceof Error) return error.message
-  if (error && typeof error === 'object' && 'errMsg' in error) return String(error.errMsg)
-  return String(error)
-}
-
 // This timeout reports a fallback status; it does not block app startup or navigation.
 function withDeadline(
   font: (typeof fonts)[number],
@@ -44,7 +52,8 @@ function withDeadline(
         family: font.family,
         loaded: false,
         source,
-        error: '字体加载超时，使用系统后备字体',
+        errorCode: 'timeout',
+        error: '字体加载超时，状态暂未确认',
       })
     }, 8000)
     operation.then(
@@ -54,12 +63,18 @@ function withDeadline(
           family: font.family,
           loaded,
           source,
-          ...(loaded ? {} : { error: '未检测到字体' }),
+          ...(loaded ? {} : { errorCode: 'not-detected' as const, error: '未检测到字体' }),
         })
       },
-      (error: unknown) => {
+      () => {
         clearTimeout(timer)
-        resolve({ family: font.family, loaded: false, source, error: errorText(error) })
+        resolve({
+          family: font.family,
+          loaded: false,
+          source,
+          errorCode: 'load-failed',
+          error: '字体加载失败，使用系统后备字体',
+        })
       },
     )
   })
@@ -88,30 +103,11 @@ async function loadAll(): Promise<FontsLoadResult> {
 
   // #ifdef MP-WEIXIN
   platform = 'mp-weixin'
-  operations = fonts.map((font) =>
-    withDeadline(
-      font,
-      'local-data-uri',
-      new Promise<boolean>((resolve, reject) => {
-        const fs = uni.getFileSystemManager()
-        fs.readFile({
-          filePath: `static/fonts/${font.file}`,
-          encoding: 'base64',
-          success(result) {
-            uni.loadFontFace({
-              global: true,
-              family: font.family,
-              source: `url("data:font/woff;base64,${String(result.data)}")`,
-              desc: { style: 'normal', weight: font.weight, variant: 'normal' },
-              success: () => resolve(true),
-              fail: reject,
-            })
-          },
-          fail: reject,
-        })
-      }),
-    ),
-  )
+  return registerWechatFonts(bundledWechatFonts, uni).then((results) => ({
+    platform: 'mp-weixin',
+    allLoaded: results.length > 0 && results.every((font) => font.loaded),
+    fonts: results,
+  }))
   // #endif
 
   const results = await Promise.all(operations)

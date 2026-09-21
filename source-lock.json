@@ -19,7 +19,13 @@
     "repository": "https://github.com/wot-ui/wot-ui",
     "license": "MIT",
     "licenseFile": "licenses/wot-ui.MIT.txt",
-    "reuse": ["button", "icon", "checkbox", "popup", "switch"],
+    "reuse": [
+      "button",
+      "icon",
+      "checkbox",
+      "popup",
+      "switch"
+    ],
     "font": "iconfont.ttf embedded in src/styles/icons.scss for local/offline display"
   },
   "dependencyLock": "apps/miniapp/package-lock.json",
@@ -39,7 +45,9 @@
     "characterData": {
       "source": "https://www.unicode.org/Public/17.0.0/ucd/Unihan.zip",
       "licenseFile": "licenses/Unicode-LICENSE.txt"
-    }
+    },
+    "wechatManifest": "scripts/font-data/mp/manifest.json",
+    "delivery": "H5 uses static/h5/fonts WOFF files; WeChat embeds a separate WOFF subset as Data URLs at build time (base library >= 3.7.9). No runtime font network or package-file reads."
   },
   "demoMedia": {
     "path": "apps/miniapp/src/pkg-content/static/media",

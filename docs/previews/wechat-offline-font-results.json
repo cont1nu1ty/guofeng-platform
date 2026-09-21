@@ -1,0 +1,82 @@
+{
+  "results": [
+    {
+      "screen": "home",
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded",
+          "weight": "400"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded",
+          "weight": "600"
+        }
+      ],
+      "metrics": {
+        "family": "JiafengSerif, \"Source Han Serif SC\", serif",
+        "weight": "600"
+      },
+      "errors": []
+    },
+    {
+      "screen": "profile",
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded",
+          "weight": "400"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded",
+          "weight": "600"
+        }
+      ],
+      "metrics": {
+        "family": "JiafengSerif, \"Source Han Serif SC\", serif",
+        "weight": "600"
+      },
+      "errors": []
+    },
+    {
+      "screen": "reading",
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded",
+          "weight": "400"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded",
+          "weight": "600"
+        }
+      ],
+      "metrics": null,
+      "errors": []
+    },
+    {
+      "screen": "learning",
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded",
+          "weight": "400"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded",
+          "weight": "600"
+        }
+      ],
+      "metrics": {
+        "family": "JiafengSerif, \"Source Han Serif SC\", serif",
+        "weight": "700"
+      },
+      "errors": []
+    }
+  ],
+  "appErrors": []
+}

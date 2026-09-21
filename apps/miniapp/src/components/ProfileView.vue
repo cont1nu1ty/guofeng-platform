@@ -21,6 +21,7 @@ import {
 import { navigate, useRouteParams } from '../composables/useNavigation'
 import { locale, setLocale, t } from '../composables/useLocale'
 import { fontStatus } from '../composables/useFontStatus'
+import type { FontLoadResult } from '../composables/loadFonts'
 import {
   recitationRecords,
   videoSubmissionRecords,
@@ -222,8 +223,28 @@ const fontLabel = computed(() =>
     ? t('字体加载中', 'Loading fonts')
     : fontStatus.value.allLoaded
       ? t('思源宋体、黑体已加载', 'Source Han fonts loaded')
-      : t('部分字体使用系统后备', 'Some fonts use system fallbacks'),
+      : fontStatus.value.fonts.some((font) => font.errorCode === 'timeout')
+        ? t('字体加载状态待确认', 'Font status unconfirmed')
+        : t('部分字体使用系统后备', 'Some fonts use system fallbacks'),
 )
+function fontFailureMessage(font: FontLoadResult): string {
+  switch (font.errorCode) {
+    case 'unsupported-sdk':
+      return t('升级微信后可使用离线字体', 'Update WeChat to use offline fonts')
+    case 'timeout':
+      return t('加载超时', 'Loading timed out')
+    case 'unavailable':
+      return t('当前环境不支持字体加载', 'Font loading is unavailable in this environment')
+    case 'invalid-font':
+      return t('字体文件未能识别', 'The font file could not be read')
+    case 'permission-denied':
+      return t('微信未允许加载字体', 'WeChat did not allow the font to load')
+    case 'not-detected':
+      return t('未检测到字体加载成功', 'Font loading was not confirmed')
+    default:
+      return t('字体加载失败', 'Font loading failed')
+  }
+}
 function openProgress(id: string) {
   reviewQuery.value = id
   navigate('review', { id })
@@ -841,7 +862,14 @@ function openInformation(kind: 'privacy' | 'about') {
           <view v-if="showFontDetails" class="profile-font-details">
             <text v-for="font in fontStatus?.fonts ?? []" :key="font.family">
               {{ font.family }} ·
-              {{ font.loaded ? t('已加载', 'Loaded') : t('系统后备', 'System fallback') }}
+              {{
+                font.loaded
+                  ? t('已加载', 'Loaded')
+                  : font.errorCode === 'timeout'
+                    ? t('待确认', 'Unconfirmed')
+                    : t('系统后备', 'System fallback')
+              }}
+              {{ font.loaded ? '' : ' · ' + fontFailureMessage(font) }}
             </text>
             <text>
               {{

@@ -1,0 +1,23 @@
+{
+  "fonts": [
+    {
+      "family": "JiafengSans",
+      "status": "loaded",
+      "weight": "400"
+    },
+    {
+      "family": "JiafengSerif",
+      "status": "loaded",
+      "weight": "600"
+    }
+  ],
+  "fontRequests": [
+    "http://127.0.0.1:5190/demo/static/h5/fonts/JiafengSans-Regular.woff",
+    "http://127.0.0.1:5190/demo/static/h5/fonts/JiafengSerif-SemiBold.woff",
+    "http://127.0.0.1:5190/demo/static/h5/fonts/JiafengSans-Regular.woff",
+    "http://127.0.0.1:5190/demo/static/h5/fonts/JiafengSerif-SemiBold.woff"
+  ],
+  "errors": [],
+  "failed": [],
+  "profileStatus": true
+}
