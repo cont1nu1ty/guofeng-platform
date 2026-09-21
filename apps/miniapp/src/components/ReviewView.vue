@@ -283,7 +283,11 @@ watch(
     "
   />
   <view class="review-standards">
-    <view v-for="(standard, index) in reviewStandards" :key="standard.id">
+    <view
+      v-for="(standard, index) in reviewStandards"
+      :key="standard.id"
+      class="review-standard-card"
+    >
       <text class="story-title">{{ t(standard.label, standardEnglish[index]!.title) }}</text>
       <text class="reader-paragraph">
         {{ t(standard.description, standardEnglish[index]!.description) }}
@@ -381,7 +385,7 @@ watch(
   gap: 18px;
   margin: 24px 0;
 }
-.review-standards > view {
+.review-standards > .review-standard-card {
   padding: 24px;
   border: 1px solid #ded4c3;
   background: #fffaf1;

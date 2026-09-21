@@ -29,16 +29,18 @@
 
 2026-09-21 已用实际 H5 生产产物在 `http://localhost:5190/demo/` 子目录验证：样式从 `/demo/assets/index-*.css` 加载，两份字体实际请求 `/demo/static/fonts/JiafengSans-Regular.woff`、`/demo/static/fonts/JiafengSerif-SemiBold.woff`，均返回 HTTP 200 和 `font/woff`，响应字节数与 SHA256 匹配当时构建使用的清单。`document.fonts` 中两个家族均为 `loaded`，400/600 字重的 `load` 与 `check` 检查均通过；无页面 JavaScript 异常、无失败请求。这验证了当前产物目录结构下的子目录加载，不代表任意 CDN 路径改写都兼容。
 
-## 微信加载：已实现离线尝试，仍需真机验收
+## 微信加载：模拟器已确认回退，仍需补齐交付方案
 
 小程序条件编译分支从包内 `static/fonts` 读取 WOFF，并转成 base64 data URI 后调用 `uni.loadFontFace({ global: true })`。这使演示不强制依赖第三方网络；字体文件只存一份，不额外在 JS 中内嵌另一份 base64。
 
 **官方明确支持的微信 `loadFontFace` 资源方式是 HTTPS 网络字体，且需满足跨域条件。** 本版离线 data URI 路径是兼容尝试，不是该正式契约保证的能力；没有 iOS/Android 微信真机验证前，不能承诺全部微信环境成功。API 失败或超时会返回失败状态，页面继续使用字体栈中的系统宋体/黑体，不伪造加载成功。[uni-app 字体 API](https://uniapp.dcloud.net.cn/api/ui/font.html)
 
+2026-09-21 实际在 Linux 微信开发者工具 2.01.2510290、基础库 3.17.2 打开正式构建：读取包内 WOFF 返回 `readFile:fail permission denied`，视图的 `document.fonts` 未注册 `JiafengSans` / `JiafengSerif`，当前使用系统后备字体。失败发生在文件读取阶段，尚未进入 data URI 注册；这不能证明其他内联方案不可用。H5 加载结果不受影响。
+
 后续微信正式交付应：
 
 1. 在 iOS、Android 真机验证返回状态、首页标题/正文、表单输入、横竖排标点及多页面全局字体；开发工具截图不能代替此项。
-2. 若离线 data URI 被运行时拒绝，将同一 WOFF 上传自有 HTTPS 静态域名，设置跨域响应与相应小程序域名配置，把 `source` 替换为该地址。接口支持 `global` 需基础库 2.10.0 及以上，并由 `App.onLaunch` 调用。
+2. 优先将同一 WOFF 部署到自有 HTTPS 静态域名，设置跨域响应与相应小程序域名配置，把 `source` 替换为该地址。接口支持 `global` 需基础库 2.10.0 及以上，并由 `App.onLaunch` 调用。
 3. 随页面增长检查编译后的实际包体；完整多字重/全字库应使用按需网络字体或明确分包方案，不要直接把原始 CJK OTF 放入主包。
 
 ## 来源、许可与校验

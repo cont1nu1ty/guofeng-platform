@@ -93,7 +93,12 @@ function requestHandoff() {
         }}
       </text>
       <view class="support-questions">
-        <button v-for="(item, index) in faq" :key="index" @click="ask(index)">
+        <button
+          class="support-question-option"
+          v-for="(item, index) in faq"
+          :key="index"
+          @click="ask(index)"
+        >
           {{ t(item.zh, item.en) }}
         </button>
       </view>
@@ -102,6 +107,7 @@ function requestHandoff() {
         <text>{{ t(item.zh, item.en) }}</text>
       </view>
       <input
+        class="support-question-input"
         v-for="editor in questionEditors"
         :key="editor.version"
         :value="input"
@@ -131,6 +137,7 @@ function requestHandoff() {
           }}
         </text>
         <textarea
+          class="support-handoff-input"
           v-if="!queued"
           v-model="handoffNote"
           :maxlength="500"
@@ -151,7 +158,7 @@ function requestHandoff() {
           {{ t('预览申请结果', 'Preview request result') }}
         </wd-button>
         <view v-else class="support-queued">
-          <text>
+          <text class="support-queued-copy">
             {{
               t(
                 '演示申请已生成 · 待人工处理（示例状态）',
@@ -159,7 +166,7 @@ function requestHandoff() {
               )
             }}
           </text>
-          <text>{{ handoffNote }}</text>
+          <text class="support-queued-copy">{{ handoffNote }}</text>
           <button class="text-button" @click="queued = false">
             {{ t('修改说明', 'Edit description') }}
           </button>
@@ -193,7 +200,7 @@ function requestHandoff() {
   gap: 8px;
   margin: 12px 0;
 }
-.support-questions button {
+.support-questions .support-question-option {
   margin: 0;
   font-size: 12px;
   padding: 5px 9px;
@@ -214,7 +221,7 @@ function requestHandoff() {
   padding: 8px;
   font-weight: 600;
 }
-.support-content input {
+.support-content .support-question-input {
   height: 44px;
   box-sizing: border-box;
   padding: 10px;
@@ -235,7 +242,7 @@ function requestHandoff() {
   font-size: 13px;
   line-height: 1.8;
 }
-.support-handoff textarea {
+.support-handoff .support-handoff-input {
   width: 100%;
   height: 95px;
   margin: 12px 0;
@@ -243,7 +250,7 @@ function requestHandoff() {
   padding: 8px;
   box-sizing: border-box;
 }
-.support-queued text {
+.support-queued .support-queued-copy {
   display: block;
   margin: 10px 0;
 }

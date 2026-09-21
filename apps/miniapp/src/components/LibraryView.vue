@@ -265,9 +265,9 @@ function exportDocument() {
                 : '#F5F0E8',
           }"
         >
-          <view />
-          <text>{{ t('家风', 'Values') }}</text>
-          <text>{{ t('选读', 'Read') }}</text>
+          <view class="library-mini-book-frame" />
+          <text class="library-mini-book-label">{{ t('家风', 'Values') }}</text>
+          <text class="library-mini-book-label">{{ t('选读', 'Read') }}</text>
         </view>
         <view class="library-reader-intro">
           <view class="library-reader-kicker">
@@ -278,8 +278,10 @@ function exportDocument() {
           <text class="library-reader-author">{{ document.author }}</text>
           <text class="library-reader-summary">{{ document.excerpt }}</text>
           <view class="library-reader-tags">
-            <text>{{ optionLabel(genres, document.genre) }}</text>
-            <text v-for="id in document.themes" :key="id">{{ optionLabel(themes, id) }}</text>
+            <text class="library-reader-tag">{{ optionLabel(genres, document.genre) }}</text>
+            <text class="library-reader-tag" v-for="id in document.themes" :key="id">
+              {{ optionLabel(themes, id) }}
+            </text>
           </view>
         </view>
       </view>
@@ -326,8 +328,10 @@ function exportDocument() {
         <view class="library-reader-sidebar">
           <view class="library-contents">
             <view class="library-side-heading">
-              <text>{{ t('卷册目录', 'Contents') }}</text>
-              <text>{{ document.chapters.length }} {{ t('章', 'chapters') }}</text>
+              <text class="library-side-heading-text">{{ t('卷册目录', 'Contents') }}</text>
+              <text class="library-side-heading-text">
+                {{ document.chapters.length }} {{ t('章', 'chapters') }}
+              </text>
             </view>
             <button
               v-for="(chapter, index) in document.chapters"
@@ -335,8 +339,10 @@ function exportDocument() {
               :class="['library-chapter-link', { active: chapterIndex === index }]"
               @click="setChapter(index)"
             >
-              <text>{{ String(index + 1).padStart(2, '0') }}</text>
-              <text>{{ chapter.title }}</text>
+              <text class="library-chapter-link-text">
+                {{ String(index + 1).padStart(2, '0') }}
+              </text>
+              <text class="library-chapter-link-text">{{ chapter.title }}</text>
             </button>
             <text class="library-side-note">
               {{
@@ -496,11 +502,11 @@ function exportDocument() {
             </view>
           </view>
           <view class="library-page-end">
-            <text>◆</text>
-            <text>
+            <text class="library-page-end-text">◆</text>
+            <text class="library-page-end-text">
               {{ t('让一份好家风，成为日常的力量', 'Let family values strengthen everyday life') }}
             </text>
-            <text>◆</text>
+            <text class="library-page-end-text">◆</text>
           </view>
           <view class="library-chapter-navigation">
             <wd-button
@@ -554,15 +560,21 @@ function exportDocument() {
             </text>
             <text>{{ t(currentGlossary.meaning, currentGlossary.meaningEn) }}</text>
             <view class="library-reflect-prompt">
-              <text>{{ t('想一想', 'Reflect') }}</text>
-              <text>{{ t(currentGlossary.prompt, currentGlossary.promptEn) }}</text>
+              <text class="library-reflect-text">{{ t('想一想', 'Reflect') }}</text>
+              <text class="library-reflect-text">
+                {{ t(currentGlossary.prompt, currentGlossary.promptEn) }}
+              </text>
             </view>
           </view>
         </view>
         <view class="library-excerpt-panel">
           <view class="library-side-heading">
-            <text>{{ t('我的阅读札记', 'My reading notes') }}</text>
-            <text>{{ savedExcerptsCount }} {{ t('条', 'saved') }}</text>
+            <text class="library-side-heading-text">
+              {{ t('我的阅读札记', 'My reading notes') }}
+            </text>
+            <text class="library-side-heading-text">
+              {{ savedExcerptsCount }} {{ t('条', 'saved') }}
+            </text>
           </view>
           <view v-if="!selectionMode" class="library-excerpt-intro">
             <text class="library-excerpt-mark">“</text>
@@ -661,10 +673,10 @@ function exportDocument() {
       </view>
       <view class="library-rights-panel">
         <view class="library-rights-copy">
-          <text class="library-panel-title">
+          <text class="library-panel-title library-rights-text">
             {{ t('内容来源与使用说明', 'Content source and use') }}
           </text>
-          <text>
+          <text class="library-rights-text">
             {{
               document.isClassic
                 ? t(
@@ -677,7 +689,7 @@ function exportDocument() {
                   )
             }}
           </text>
-          <text>
+          <text class="library-rights-text">
             {{
               t(
                 '导出包含本篇全部可见章节与演示标识，供本次沟通使用；对外使用应以实际内容授权为准。',
@@ -831,8 +843,8 @@ function exportDocument() {
         </view>
       </view>
       <view class="library-results-line">
-        <text class="section-title">{{ t('典籍卷册', 'Book volumes') }}</text>
-        <text>
+        <text class="section-title library-results-text">{{ t('典籍卷册', 'Book volumes') }}</text>
+        <text class="library-results-text">
           {{ classics.length }} {{ t('卷 · 当前地区与筛选', 'volumes · current filters') }}
         </text>
       </view>
@@ -847,18 +859,20 @@ function exportDocument() {
             }"
           >
             <view class="cover-thread" />
-            <text>{{ reading(book).title }}</text>
-            <text class="cover-seal">{{ t('家风', 'Values') }}</text>
+            <text class="library-cover-text">{{ reading(book).title }}</text>
+            <text class="cover-seal library-cover-text">{{ t('家风', 'Values') }}</text>
           </view>
           <view class="library-book-meta">
-            <text>
+            <text class="library-book-meta-text">
               {{
                 book.region === 'all'
                   ? t('全国总卷', 'National volume')
                   : optionLabel(regions, book.region) + t('分卷', ' volume')
               }}
             </text>
-            <text>{{ reading(book).chapters.length }} {{ t('章', 'chapters') }}</text>
+            <text class="library-book-meta-text">
+              {{ reading(book).chapters.length }} {{ t('章', 'chapters') }}
+            </text>
           </view>
           <text class="classic-title">{{ reading(book).title }}</text>
           <text class="muted">{{ reading(book).subtitle }}</text>
@@ -898,7 +912,9 @@ function exportDocument() {
           <text class="story-title" @click="openItem(work)">{{ reading(work).title }}</text>
           <text class="story-excerpt" @click="openItem(work)">{{ reading(work).excerpt }}</text>
           <view class="library-work-themes">
-            <text v-for="id in reading(work).themes" :key="id">{{ optionLabel(themes, id) }}</text>
+            <text class="library-work-theme" v-for="id in reading(work).themes" :key="id">
+              {{ optionLabel(themes, id) }}
+            </text>
           </view>
           <view class="card-bottom">
             <text class="muted">{{ reading(work).author }}</text>
@@ -1007,19 +1023,19 @@ function exportDocument() {
   gap: 7px;
   color: #fffdf8;
 }
-.library-mini-book > text {
+.library-mini-book > .library-mini-book-label {
   writing-mode: vertical-rl;
   font:
     22px/1.5 'JiafengSerif',
     serif;
   letter-spacing: 3px;
 }
-.library-mini-book > text:last-child {
+.library-mini-book > .library-mini-book-label:last-child {
   font-size: 11px;
   border: 1px solid var(--jf-gold, #c9a96e);
   padding: 5px 2px;
 }
-.library-mini-book > view {
+.library-mini-book > .library-mini-book-frame {
   position: absolute;
   top: 13px;
   left: 7px;
@@ -1063,7 +1079,7 @@ function exportDocument() {
   gap: 8px;
   margin-top: 17px;
 }
-.library-reader-tags > text {
+.library-reader-tags > .library-reader-tag {
   font-size: 11px;
   padding: 3px 9px;
   border: 1px solid #dfd0b8;
@@ -1107,7 +1123,7 @@ function exportDocument() {
   font-size: 17px;
   font-weight: 700;
 }
-.library-side-heading > text:last-child {
+.library-side-heading > .library-side-heading-text:last-child {
   font-size: 12px;
   font-weight: 400;
   color: #666;
@@ -1133,7 +1149,7 @@ function exportDocument() {
   padding-left: 17px;
   font-weight: 600;
 }
-.library-chapter-link > text:first-child {
+.library-chapter-link > .library-chapter-link-text:first-child {
   flex-shrink: 0;
   color: var(--jf-red, #c41a1a);
 }
@@ -1291,8 +1307,8 @@ function exportDocument() {
   font-size: 11px;
   color: #666;
 }
-.library-page-end > text:first-child,
-.library-page-end > text:last-child {
+.library-page-end > .library-page-end-text:first-child,
+.library-page-end > .library-page-end-text:last-child {
   color: var(--jf-gold, #c9a96e);
 }
 .library-chapter-navigation {
@@ -1356,10 +1372,10 @@ function exportDocument() {
   padding: 17px;
   font-size: 13px;
 }
-.library-reflect-prompt > text {
+.library-reflect-prompt > .library-reflect-text {
   display: block;
 }
-.library-reflect-prompt > text:first-child {
+.library-reflect-prompt > .library-reflect-text:first-child {
   font-weight: 600;
   color: var(--jf-red, #c41a1a);
   margin-bottom: 7px;
@@ -1470,7 +1486,7 @@ function exportDocument() {
   font-size: 13px;
   line-height: 1.9;
 }
-.library-rights-copy > text {
+.library-rights-copy > .library-rights-text {
   display: block;
   margin-bottom: 10px;
 }
@@ -1557,7 +1573,7 @@ function exportDocument() {
   gap: 17px;
   margin: 28px 0 6px;
 }
-.library-results-line > text:last-child {
+.library-results-line > .library-results-text:last-child {
   color: #666;
   font-size: 12px;
 }
@@ -1570,7 +1586,7 @@ function exportDocument() {
   margin-top: 18px;
   color: #5b5b5b;
 }
-.library-book-meta > text:first-child {
+.library-book-meta > .library-book-meta-text:first-child {
   color: var(--jf-red, #c41a1a);
 }
 .library-view .classic-title {
@@ -1600,13 +1616,13 @@ function exportDocument() {
   flex-wrap: wrap;
   margin-top: 14px;
 }
-.library-work-themes > text {
+.library-work-themes > .library-work-theme {
   font-size: 11px;
   color: #626262;
   background: #f2e9da;
   padding: 3px 8px;
 }
-.library-en .classic-cover > text:first-of-type {
+.library-en .classic-cover > .library-cover-text:first-of-type {
   writing-mode: horizontal-tb;
   font-size: 22px;
   line-height: 1.6;
@@ -1620,7 +1636,7 @@ function exportDocument() {
   letter-spacing: 1px;
   padding: 4px 6px;
 }
-.library-en .library-mini-book > text {
+.library-en .library-mini-book > .library-mini-book-label {
   writing-mode: horizontal-tb;
   font-size: 15px;
   letter-spacing: 0;
@@ -1628,7 +1644,7 @@ function exportDocument() {
 .library-en .library-mini-book {
   flex-direction: column;
 }
-.library-en .library-mini-book > text:last-child {
+.library-en .library-mini-book > .library-mini-book-label:last-child {
   font-size: 11px;
 }
 @media (max-width: 900px) {
@@ -1687,17 +1703,17 @@ function exportDocument() {
     border-right-width: 5px;
     gap: 3px;
   }
-  .library-mini-book > text {
+  .library-mini-book > .library-mini-book-label {
     font-size: 18px;
   }
-  .library-mini-book > text:last-child {
+  .library-mini-book > .library-mini-book-label:last-child {
     font-size: 9px;
     padding: 4px 1px;
   }
-  .library-mini-book > view {
+  .library-mini-book > .library-mini-book-frame {
     inset: 7px 5px;
   }
-  .library-en .library-mini-book > text {
+  .library-en .library-mini-book > .library-mini-book-label {
     font-size: 12px;
   }
   .library-reader-title {
@@ -1718,7 +1734,7 @@ function exportDocument() {
     margin-top: 14px;
     gap: 5px;
   }
-  .library-reader-tags > text {
+  .library-reader-tags > .library-reader-tag {
     font-size: 10px;
     padding: 3px 7px;
   }
@@ -1877,7 +1893,7 @@ function exportDocument() {
     gap: 10px;
     align-items: flex-start;
   }
-  .library-results-line > text:last-child {
+  .library-results-line > .library-results-text:last-child {
     font-size: 11px;
     text-align: right;
   }
@@ -1896,7 +1912,7 @@ function exportDocument() {
   .library-view .card-bottom {
     flex-wrap: wrap;
   }
-  .library-en .classic-cover > text:first-of-type {
+  .library-en .classic-cover > .library-cover-text:first-of-type {
     font-size: 18px;
     max-width: 79%;
     padding: 12px 7px;

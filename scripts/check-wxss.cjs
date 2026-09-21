@@ -18,10 +18,25 @@ function walk(folder) {
   const compile = require(path.resolve(compilerPath))
   const files = walk(directory)
   if (!files.length) throw new Error('No WXSS files. Build the mini-program first.')
+  const failures = []
   for (const file of files) {
     const relative = path.relative(directory, file)
-    try { await compile({ files: [relative], cwd: directory }) }
-    catch (error) { throw new Error(`${relative}: ${error.message || error}`) }
+    try {
+      // Request this file's output: pageCount: 0 returns only shared runtime code.
+      // Component selector diagnostics are embedded in the output, not thrown.
+      const result = await compile({ files: [relative], pageCount: 1, cwd: directory })
+      const output = result[relative]
+      if (typeof output !== 'string') throw new Error('Compiler did not return this WXSS file.')
+      const configPath = file.replace(/\.wxss$/, '.json')
+      const component = fs.existsSync(configPath) && JSON.parse(fs.readFileSync(configPath, 'utf8')).component === true
+      if (component) {
+        const warning = output.match(/Some selectors are not allowed[^)]+\)/)
+        if (warning) throw new Error(warning[0])
+      }
+    } catch (error) {
+      failures.push(`${relative}: ${error.message || error}`)
+    }
   }
-  console.log(`Native WXSS compilation passed: ${files.length} files`)
+  if (failures.length) throw new Error(failures.join('\n'))
+  console.log(`Native WXSS compilation and component selector checks passed: ${files.length} files`)
 })().catch(error => { console.error(error); process.exitCode = 1 })

@@ -320,9 +320,11 @@ watch(
         <ConversationPanel :mode="mode" @use="useConversationReply" />
       </view>
       <view v-if="hasResult" class="assistant-editor-toggle">
-        <view>
-          <text>{{ t('这段内容的后续操作', 'Work with this passage') }}</text>
-          <text>
+        <view class="assistant-editor-summary">
+          <text class="assistant-editor-summary-line">
+            {{ t('这段内容的后续操作', 'Work with this passage') }}
+          </text>
+          <text class="assistant-editor-summary-line">
             {{
               t(
                 '编辑、复制、存档，或安全转入投稿',
@@ -345,11 +347,11 @@ watch(
           <text class="section-title">{{ t('阅读、改写与带走', 'Read, adapt and keep') }}</text>
         </view>
         <view v-if="!hasResult" class="assistant-result-empty">
-          <text class="assistant-empty-mark">文</text>
-          <text class="section-title">
+          <text class="assistant-empty-mark assistant-empty-copy">文</text>
+          <text class="section-title assistant-empty-copy">
             {{ t('好表达，从细节开始', 'Good writing starts with detail') }}
           </text>
-          <text>
+          <text class="assistant-empty-copy">
             {{
               t(
                 '选一个样例，查看它的结构、对照或校对思路。八个工具会展示不同的预设内容。',
@@ -417,15 +419,21 @@ watch(
             </text>
             <view v-for="(frame, index) in storyboardFrames" :key="index" class="storyboard-frame">
               <view class="storyboard-visual">
-                <text>{{ String(index + 1).padStart(2, '0') }}</text>
-                <text>{{ t('画面文字示意', 'Text-only visual sketch') }}</text>
+                <text class="storyboard-visual-label">
+                  {{ String(index + 1).padStart(2, '0') }}
+                </text>
+                <text class="storyboard-visual-label">
+                  {{ t('画面文字示意', 'Text-only visual sketch') }}
+                </text>
               </view>
               <text selectable>{{ frame }}</text>
             </view>
           </view>
           <view v-if="mode === 'compliance'" class="assistant-compliance-status">
-            <text>{{ t('待人工复核 · 样例报告', 'Human review needed · Sample report') }}</text>
-            <text>
+            <text class="assistant-compliance-copy">
+              {{ t('待人工复核 · 样例报告', 'Human review needed · Sample report') }}
+            </text>
+            <text class="assistant-compliance-copy">
               {{
                 t(
                   '仅供查看审核交互。没有实际审查或放行你的输入。',
@@ -567,7 +575,7 @@ watch(
           }}
         </text>
         <view class="assistant-draft-comparison">
-          <view>
+          <view class="assistant-draft-card">
             <text class="field-label">{{ t('现有草稿', 'Existing draft') }}</text>
             <text>{{ existingDraft?.title || t('未命名草稿', 'Untitled draft') }}</text>
             <text class="muted">
@@ -578,7 +586,7 @@ watch(
               {{ existingDraft.editingWorkId }}
             </text>
           </view>
-          <view>
+          <view class="assistant-draft-card">
             <text class="field-label">{{ t('拟创建的新稿', 'Proposed new draft') }}</text>
             <text>{{ candidateDraft?.title }}</text>
             <text class="muted">
@@ -740,7 +748,7 @@ watch(
   border-color: var(--jf-gold);
   background: var(--jf-paper);
 }
-.assistant-example-button > text {
+.assistant-example-button > .assistant-example-label {
   flex-shrink: 0;
   color: var(--jf-red);
 }
@@ -764,7 +772,7 @@ watch(
   color: var(--jf-muted);
   margin: 9px 0 18px;
 }
-.assistant-input-count > text:last-child {
+.assistant-input-count > .assistant-count-label:last-child {
   white-space: nowrap;
 }
 .assistant-input-warning {
@@ -793,7 +801,7 @@ watch(
   padding: 24px;
   box-sizing: border-box;
 }
-.assistant-result-empty > text:last-child {
+.assistant-result-empty > .assistant-empty-copy:last-child {
   font-size: 14px;
   color: var(--jf-muted);
   line-height: 1.95;
@@ -933,7 +941,7 @@ watch(
   gap: 16px;
   margin: 22px 0;
 }
-.assistant-draft-comparison > view {
+.assistant-draft-comparison > .assistant-draft-card {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -1064,7 +1072,7 @@ watch(
   text-align: center;
   font-size: 11px;
 }
-.storyboard-visual text:first-child {
+.storyboard-visual .storyboard-visual-label:first-child {
   font-size: 32px;
   font-weight: 600;
   color: #c41a1a;
@@ -1077,7 +1085,7 @@ watch(
   line-height: 1.8;
   margin: 18px 0;
 }
-.assistant-compliance-status text {
+.assistant-compliance-status .assistant-compliance-copy {
   display: block;
 }
 @media (max-width: 420px) {
@@ -1109,7 +1117,7 @@ watch(
   background: #f5f0e8;
   border: 1px solid #dfd2bd;
 }
-.assistant-editor-toggle > view {
+.assistant-editor-toggle > .assistant-editor-summary {
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -1117,7 +1125,10 @@ watch(
   font-size: 15px;
   font-weight: 600;
 }
-.assistant-editor-toggle > view text + text {
+.assistant-editor-toggle
+  > .assistant-editor-summary
+  .assistant-editor-summary-line
+  + .assistant-editor-summary-line {
   font-size: 12px;
   font-weight: 400;
   color: #65615a;

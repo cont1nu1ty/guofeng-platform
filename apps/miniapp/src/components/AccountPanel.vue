@@ -236,9 +236,13 @@ function edit() {
           </template>
           <template v-else>
             <view class="account-detail">
-              <text>{{ accountState.verification.form?.displayName }}</text>
-              <text>{{ accountState.verification.form?.affiliation }}</text>
-              <text class="muted">
+              <text class="account-detail-line">
+                {{ accountState.verification.form?.displayName }}
+              </text>
+              <text class="account-detail-line">
+                {{ accountState.verification.form?.affiliation }}
+              </text>
+              <text class="muted account-detail-line">
                 {{ t('提交日期：', 'Submitted: ')
                 }}{{ accountState.verification.submittedAt?.slice(0, 10) }}
               </text>
@@ -425,7 +429,7 @@ function edit() {
 .account-dialog .account-field .account-categories {
   margin-top: 9px;
 }
-.account-dialog .account-detail text {
+.account-dialog .account-detail .account-detail-line {
   display: block;
   margin-top: 5px;
 }

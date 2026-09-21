@@ -16,7 +16,6 @@ const L = (text: BilingualText) => t(text.zh, text.en)
 const query = ref('')
 const selectedTopic = ref('all')
 const heroIndex = ref(0)
-const carouselPaused = ref(false)
 const terms = computed(() => query.value.trim().toLocaleLowerCase())
 const match = (...text: string[]) => text.join(' ').toLocaleLowerCase().includes(terms.value)
 const topics = computed(() => [
@@ -274,7 +273,7 @@ function topicArticle(id: string) {
     <swiper
       class="home-hero-swiper"
       :current="heroIndex"
-      :autoplay="!carouselPaused"
+      :autoplay="true"
       :interval="6500"
       :duration="450"
       :circular="true"
@@ -285,10 +284,14 @@ function topicArticle(id: string) {
           <view class="hero-copy">
             <text class="hero-kicker">{{ slide.kicker }}</text>
             <view class="hero-title">
-              <text v-for="line in slide.title" :key="line">{{ line }}</text>
+              <text v-for="line in slide.title" :key="line" class="hero-title-line">
+                {{ line }}
+              </text>
             </view>
             <view class="hero-description">
-              <text v-for="line in slide.description" :key="line">{{ line }}</text>
+              <text v-for="line in slide.description" :key="line" class="hero-description-line">
+                {{ line }}
+              </text>
             </view>
             <wd-button custom-class="hero-button" @click="navigate(slide.screen, slide.params)">
               {{ slide.action }}
@@ -335,9 +338,6 @@ function topicArticle(id: string) {
           <text>0{{ index + 1 }}</text>
         </button>
       </view>
-      <button class="home-carousel-pause" @click="carouselPaused = !carouselPaused">
-        {{ carouselPaused ? t('继续轮播', 'Resume slides') : t('暂停轮播', 'Pause slides') }}
-      </button>
     </view>
     <view class="announcement" @click="navigate('news', { id: 'notice-autumn' })">
       <view class="notice-symbol">{{ t('告', 'N') }}</view>
@@ -537,9 +537,11 @@ function topicArticle(id: string) {
         </view>
         <view class="home-venue-link" @click="navigate('venues')">
           <wd-icon name="location" size="22px" />
-          <view>
-            <text>{{ t('身边的家风阵地', 'Explore learning venues') }}</text>
-            <text>
+          <view class="home-venue-copy">
+            <text class="home-venue-copy-line">
+              {{ t('身边的家风阵地', 'Explore learning venues') }}
+            </text>
+            <text class="home-venue-copy-line">
               {{
                 t('示意地图 · 场馆导览 · 预约体验', 'Illustrated map · venue tours · demo bookings')
               }}
@@ -572,7 +574,7 @@ function topicArticle(id: string) {
           @click="navigate('news', { id: article.id })"
         >
           <view class="home-news-meta">
-            <text>{{ articleCategory(article.category) }}</text>
+            <text class="home-news-category">{{ articleCategory(article.category) }}</text>
             <text>{{ article.date }}</text>
           </view>
           <text class="home-news-title">{{ L(article.title) }}</text>
@@ -582,28 +584,28 @@ function topicArticle(id: string) {
       </view>
     </view>
     <view class="vision-strip home-statistics">
-      <view>
+      <view class="home-statistic">
         <text class="vision-number">
           12,860
-          <text>{{ t('篇', 'works') }}</text>
+          <text class="home-statistic-unit">{{ t('篇', 'works') }}</text>
         </text>
         <text>{{ t('累计投稿（示例）', 'Total submissions · sample') }}</text>
       </view>
-      <view>
+      <view class="home-statistic">
         <text class="vision-number">
           8,620
-          <text>{{ t('人', 'people') }}</text>
+          <text class="home-statistic-unit">{{ t('人', 'people') }}</text>
         </text>
         <text>{{ t('参与人数（示例）', 'Participants · sample') }}</text>
       </view>
-      <view>
+      <view class="home-statistic">
         <text class="vision-number">
           34
-          <text>{{ t('个', 'regions') }}</text>
+          <text class="home-statistic-unit">{{ t('个', 'regions') }}</text>
         </text>
         <text>{{ t('覆盖地区（示例）', 'Regions covered · sample') }}</text>
       </view>
-      <view class="vision-caption">
+      <view class="vision-caption home-statistic">
         <text>
           {{ t('汇万家之美', 'Many families') }}
           <br />
@@ -637,8 +639,8 @@ function topicArticle(id: string) {
   padding-top: 32px;
   padding-bottom: 26px;
 }
-.hero-title > text,
-.hero-description > text {
+.hero-title > .hero-title-line,
+.hero-description > .hero-description-line {
   display: block;
 }
 .home-hero-swiper .hero-title {
@@ -681,11 +683,6 @@ function topicArticle(id: string) {
   color: var(--jf-red, #c41a1a);
   border-top-color: var(--jf-red, #c41a1a);
   font-weight: 700;
-}
-.home-carousel-pause {
-  font-size: 11px;
-  color: #5d5752;
-  padding: 5px 0 5px 12px;
 }
 .home-topic-section {
   margin-bottom: 35px;
@@ -762,15 +759,15 @@ function topicArticle(id: string) {
   background: #fffdf9;
   cursor: pointer;
 }
-.home-venue-link > view {
+.home-venue-link > .home-venue-copy {
   flex: 1;
 }
-.home-venue-link > view > text {
+.home-venue-link > .home-venue-copy > .home-venue-copy-line {
   display: block;
   font-size: 13px;
   font-weight: 600;
 }
-.home-venue-link > view > text + text {
+.home-venue-link > .home-venue-copy > .home-venue-copy-line + .home-venue-copy-line {
   font-size: 11px;
   font-weight: 400;
   color: #5d5752;
@@ -798,7 +795,7 @@ function topicArticle(id: string) {
   font-size: 11px;
   color: #5d5752;
 }
-.home-news-meta > text:first-child {
+.home-news-meta > .home-news-category:first-child {
   color: var(--jf-red, #c41a1a);
 }
 .home-news-title {
@@ -828,7 +825,7 @@ function topicArticle(id: string) {
 .home-statistics .vision-number {
   color: var(--jf-red, #c41a1a);
 }
-.home-statistics > view {
+.home-statistics > .home-statistic {
   color: #57514d;
 }
 .home-english .hero-title {
@@ -892,8 +889,7 @@ function topicArticle(id: string) {
   }
   .home-carousel-tools {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 9px;
+    grid-template-columns: minmax(0, 1fr);
     padding-top: 7px;
   }
   .home-carousel-dots {
@@ -906,12 +902,6 @@ function topicArticle(id: string) {
     min-width: 0;
     height: 32px;
     padding: 0;
-  }
-  .home-carousel-pause {
-    margin: 0;
-    padding: 5px 0;
-    font-size: 10px;
-    white-space: nowrap;
   }
   .home-topic-section {
     margin-bottom: 28px;
@@ -969,11 +959,11 @@ function topicArticle(id: string) {
     font-size: 25px;
     letter-spacing: 0;
   }
-  .home-statistics .vision-number text {
+  .home-statistics .vision-number .home-statistic-unit {
     font-size: 9px;
     margin-left: 4px;
   }
-  .home-statistics > view {
+  .home-statistics > .home-statistic {
     font-size: 9px;
   }
   .home-statistics-note {
@@ -1039,12 +1029,12 @@ function topicArticle(id: string) {
   .home-english .vision-number {
     font-size: 23px;
   }
-  .home-english .vision-number text {
+  .home-english .vision-number .home-statistic-unit {
     display: block;
     font-size: 9px;
     margin-left: 0;
   }
-  .home-english .vision-strip > view {
+  .home-english .vision-strip > .home-statistic {
     font-size: 8px;
   }
 }

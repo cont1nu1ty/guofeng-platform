@@ -20,10 +20,13 @@ function append(reply: ConversationReply) {
   <view class="writing-inspiration">
     <view class="writing-inspiration-heading">
       <text>{{ t('边写边聊', 'Write and talk') }}</text>
-      <button @click="emit('close')">{{ t('收起', 'Collapse') }} ×</button>
+      <button class="writing-inspiration-close" @click="emit('close')">
+        {{ t('收起', 'Collapse') }} ×
+      </button>
     </view>
     <view class="writing-inspiration-modes">
       <button
+        class="writing-inspiration-mode"
         v-for="item in modes"
         :key="item.id"
         :class="{ active: mode === item.id }"
@@ -55,7 +58,7 @@ function append(reply: ConversationReply) {
   font-size: 15px;
   font-weight: 600;
 }
-.writing-inspiration-heading button {
+.writing-inspiration-heading .writing-inspiration-close {
   margin: 0;
   padding: 3px 7px;
   color: #c41a1a;
@@ -69,7 +72,7 @@ function append(reply: ConversationReply) {
   gap: 7px;
   margin-bottom: 10px;
 }
-.writing-inspiration-modes button {
+.writing-inspiration-modes .writing-inspiration-mode {
   margin: 0;
   padding: 4px 10px;
   line-height: 1.8;
@@ -78,7 +81,7 @@ function append(reply: ConversationReply) {
   background: #f5f0e8;
   color: #2c2c2c;
 }
-.writing-inspiration-modes button.active {
+.writing-inspiration-modes .writing-inspiration-mode.active {
   background: #c41a1a;
   color: #fff;
   border-color: #c41a1a;

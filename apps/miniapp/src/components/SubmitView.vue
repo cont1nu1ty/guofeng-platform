@@ -555,14 +555,14 @@ function continueWriting() {
             }}
           </text>
           <view v-if="poemCheck" class="poem-check-result">
-            <text v-if="poemSource !== form.content" class="field-error">
+            <text v-if="poemSource !== form.content" class="field-error poem-check-copy">
               {{ t('正文已修改，请重新检查。', 'The text changed. Run the check again.') }}
             </text>
-            <text>
+            <text class="poem-check-copy">
               {{ poemCheck.lines.length }} {{ t('句', 'lines') }} ·
               {{ poemCheck.counts.join(' / ') || '0' }} {{ t('字', 'characters') }}
             </text>
-            <text>
+            <text class="poem-check-copy">
               {{
                 poemCheck.pattern
                   ? t(
@@ -575,7 +575,7 @@ function continueWriting() {
                     )
               }}
             </text>
-            <text v-if="!poemCheck.chinese">
+            <text class="poem-check-copy" v-if="!poemCheck.chinese">
               {{
                 t(
                   '包含非汉字，当前字数仅作编辑参考。',
@@ -752,8 +752,8 @@ function continueWriting() {
           {{ t('了解评审流程', 'Explore the review process') }} →
         </button>
         <view class="submit-aside-note">
-          <text>{{ t('演示流程', 'Demo flow') }}</text>
-          <text>
+          <text class="submit-aside-note-copy">{{ t('演示流程', 'Demo flow') }}</text>
+          <text class="submit-aside-note-copy">
             {{
               t(
                 '填写草稿 → 预览确认 → 投稿编号\n评审意见 → 修改重投 → 消息与证书',
@@ -796,20 +796,26 @@ function continueWriting() {
               {{ form.author || t('体验用户（演示署名）', 'Demo user') }}
             </text>
             <view class="submit-preview-themes">
-              <text v-for="id in selectedThemes" :key="id">{{ optionLabel(themes, id) }}</text>
+              <text class="submit-preview-theme" v-for="id in selectedThemes" :key="id">
+                {{ optionLabel(themes, id) }}
+              </text>
             </view>
             <rich-text class="submit-preview-body" :nodes="previewHtml" />
             <text v-if="form.region === 'overseas'" class="submit-helper">
               {{ form.overseasLocation }}
             </text>
             <view v-if="attachments.length" class="submit-preview-attachments">
-              <text class="submit-panel-title">
+              <text class="submit-panel-title submit-preview-attachment-copy">
                 {{ t('附件清单（仅元信息）', 'Attachment list (metadata only)') }}
               </text>
-              <view v-for="file in attachments" :key="file.id">
+              <view
+                class="submit-preview-attachment-row"
+                v-for="file in attachments"
+                :key="file.id"
+              >
                 <wd-icon :name="fileIcon(file)" />
-                <text>{{ file.name }}</text>
-                <text>{{ attachmentSize(file.size) }}</text>
+                <text class="submit-preview-attachment-copy">{{ file.name }}</text>
+                <text class="submit-preview-attachment-copy">{{ attachmentSize(file.size) }}</text>
               </view>
             </view>
             <text v-if="form.editingWorkId" class="submit-helper">
@@ -875,10 +881,10 @@ function continueWriting() {
         </view>
         <scroll-view scroll-y class="submit-agreement-scroll">
           <view class="submit-agreement-article">
-            <text class="submit-panel-title">
+            <text class="submit-panel-title submit-agreement-copy">
               {{ t('一、体验范围', '1. Scope of this demonstration') }}
             </text>
-            <text>
+            <text class="submit-agreement-copy">
               {{
                 t(
                   '本原型用于需求沟通。文字和附件信息保存在当前设备，不向真实征集平台、云端存储或第三方机构发送。请使用虚构人物和您有权使用的演示内容。',
@@ -886,10 +892,10 @@ function continueWriting() {
                 )
               }}
             </text>
-            <text class="submit-panel-title">
+            <text class="submit-panel-title submit-agreement-copy">
               {{ t('二、内容与署名', '2. Content and author names') }}
             </text>
-            <text>
+            <text class="submit-agreement-copy">
               {{
                 t(
                   '提交前检查标题、正文、作者署名与所属地区；不填写身份证号、住址、电话等真实敏感资料。引用、改编或提供他人作品时，正式上线流程需核实来源与使用权限。',
@@ -897,8 +903,10 @@ function continueWriting() {
                 )
               }}
             </text>
-            <text class="submit-panel-title">{{ t('三、附件说明', '3. Attachments') }}</text>
-            <text>
+            <text class="submit-panel-title submit-agreement-copy">
+              {{ t('三、附件说明', '3. Attachments') }}
+            </text>
+            <text class="submit-agreement-copy">
               {{
                 t(
                   '文件选择不等于文件上传。本演示只保存附件元信息，图片临时预览可能在刷新后失效；PDF 与 Word 展示文件信息，不解析文档正文。',
@@ -906,10 +914,10 @@ function continueWriting() {
                 )
               }}
             </text>
-            <text class="submit-panel-title">
+            <text class="submit-panel-title submit-agreement-copy">
               {{ t('四、版权确认样例', '4. Sample copyright acknowledgement') }}
             </text>
-            <text>
+            <text class="submit-agreement-copy">
               {{
                 t(
                   '勾选仅用于演示您已阅读本说明的交互，不构成正式电子签名、版权转让、独家授权或发布许可。正式征集的展示、出版、改编、撤回与留存规则尚需另行确认。',
@@ -917,10 +925,10 @@ function continueWriting() {
                 )
               }}
             </text>
-            <text class="submit-panel-title">
+            <text class="submit-panel-title submit-agreement-copy">
               {{ t('五、评审与修改', '5. Reviews and revisions') }}
             </text>
-            <text>
+            <text class="submit-agreement-copy">
               {{
                 t(
                   '作品编号、评语、入围、获奖、典藏与证书均为模拟状态，不代表实际审批或授奖。退回修改可保留同一编号重投，历史评语用于沟通演示。',
@@ -928,8 +936,10 @@ function continueWriting() {
                 )
               }}
             </text>
-            <text class="submit-panel-title">{{ t('六、本机记录', '6. Local records') }}</text>
-            <text>
+            <text class="submit-panel-title submit-agreement-copy">
+              {{ t('六、本机记录', '6. Local records') }}
+            </text>
+            <text class="submit-agreement-copy">
               {{
                 t(
                   '清理本机存储可能移除草稿、投稿和状态记录。演示无账号同步；正式产品需另行提供账户、隐私、保留期限与撤回渠道。',
@@ -1197,7 +1207,7 @@ function continueWriting() {
   line-height: 1.9;
   white-space: pre-line;
 }
-.submit-aside-note > text:first-child {
+.submit-aside-note > .submit-aside-note-copy:first-child {
   font-weight: 700;
   color: var(--jf-red, #c41a1a);
 }
@@ -1254,7 +1264,7 @@ function continueWriting() {
   flex-wrap: wrap;
   margin: 20px 0;
 }
-.submit-preview-themes > text {
+.submit-preview-themes > .submit-preview-theme {
   background: #f5eee3;
   padding: 4px 9px;
   font-size: 11px;
@@ -1273,19 +1283,23 @@ function continueWriting() {
   margin-top: 15px;
   border-top: 1px solid #dfd3c0;
 }
-.submit-preview-attachments > view {
+.submit-preview-attachments > .submit-preview-attachment-row {
   display: flex;
   gap: 8px;
   align-items: center;
   margin-top: 12px;
   font-size: 12px;
 }
-.submit-preview-attachments > view > text:first-of-type {
+.submit-preview-attachments
+  > .submit-preview-attachment-row
+  > .submit-preview-attachment-copy:first-of-type {
   min-width: 0;
   flex: 1;
   overflow-wrap: anywhere;
 }
-.submit-preview-attachments > view > text:last-child {
+.submit-preview-attachments
+  > .submit-preview-attachment-row
+  > .submit-preview-attachment-copy:last-child {
   flex-shrink: 0;
   color: #626262;
 }
@@ -1314,7 +1328,7 @@ function continueWriting() {
   font-size: 14px;
   line-height: 1.95;
 }
-.submit-agreement-article > text {
+.submit-agreement-article > .submit-agreement-copy {
   display: block;
   margin-bottom: 17px;
 }
@@ -1485,7 +1499,7 @@ function continueWriting() {
   font-size: 13px;
   line-height: 1.8;
 }
-.poem-check-result text {
+.poem-check-result .poem-check-copy {
   display: block;
   margin-top: 6px;
 }

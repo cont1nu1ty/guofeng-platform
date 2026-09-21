@@ -1,0 +1,60 @@
+{
+  "date": "2026-09-21",
+  "tool": "Weixin Devtools Stable 2.01.2510290",
+  "library": "3.17.2",
+  "project": "apps/miniapp/dist/build/mp-weixin",
+  "fontRead": [
+    {
+      "file": "JiafengSans-Regular.woff",
+      "errMsg": "readFile:fail permission denied, open static/fonts/JiafengSans-Regular.woff"
+    },
+    {
+      "file": "JiafengSerif-SemiBold.woff",
+      "errMsg": "readFile:fail permission denied, open static/fonts/JiafengSerif-SemiBold.woff"
+    }
+  ],
+  "appErrors": [],
+  "home": {
+    "title": true,
+    "pause": 0,
+    "dots": 6,
+    "fonts": [
+      {
+        "family": "weui",
+        "status": "unloaded"
+      },
+      {
+        "family": "jiafeng-icons",
+        "status": "loaded"
+      },
+      {
+        "family": "wd-icons",
+        "status": "unloaded"
+      }
+    ]
+  },
+  "viewErrors": [],
+  "selectorWarnings": [],
+  "checks": [
+    {
+      "check": "首页移除暂停/六项切换/06自动回01",
+      "pass": true
+    },
+    {
+      "check": "投稿灵感原页弹框/快捷对话",
+      "pass": true
+    },
+    {
+      "check": "传习内容分包与图标显示",
+      "pass": true
+    },
+    {
+      "check": "助手输入发送/气泡回复",
+      "pass": true
+    },
+    {
+      "check": "典籍横竖排与摘抄全文弹层",
+      "pass": true
+    }
+  ]
+}

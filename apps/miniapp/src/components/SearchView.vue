@@ -51,6 +51,7 @@ function kindLabel(id: SearchKind) {
     <view class="search-field">
       <wd-icon name="search" />
       <input
+        class="search-keyword-input"
         v-model="query"
         confirm-type="search"
         @blur="query = readInputValue($event, query)"
@@ -179,7 +180,7 @@ function kindLabel(id: SearchKind) {
   text-align: center;
   margin: 24px 0;
 }
-.search-field input {
+.search-field .search-keyword-input {
   min-width: 0;
   flex: 1;
 }

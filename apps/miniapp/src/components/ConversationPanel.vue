@@ -196,7 +196,7 @@ watch(locale, () => {
 <template>
   <view :class="['conversation-panel', { compact, 'conversation-large': largeText }]">
     <view class="conversation-heading">
-      <view>
+      <view class="conversation-heading-copy">
         <text class="conversation-title">
           {{ t('家风助手对话', 'Family-values conversation') }}
         </text>
@@ -223,7 +223,7 @@ watch(locale, () => {
           )
         }}
       </text>
-      <view>
+      <view class="conversation-confirm-actions">
         <wd-button size="small" @click="clearConversation">
           {{ t('确认开始新对话', 'Start a new conversation') }}
         </wd-button>
@@ -241,7 +241,7 @@ watch(locale, () => {
       <view v-if="!current.messages.length" class="conversation-message assistant">
         <text class="conversation-speaker">{{ t('家风助手', 'Assistant') }}</text>
         <view class="conversation-bubble">
-          <text>
+          <text class="conversation-bubble-copy">
             {{
               t(
                 '你好，想从哪一件家里的小事聊起？你可以直接输入想法，也可以选下方问题。',
@@ -261,9 +261,9 @@ watch(locale, () => {
           {{ message.role === 'user' ? t('我', 'You') : t('家风助手', 'Assistant') }}
         </text>
         <view class="conversation-bubble">
-          <text selectable>{{ message.text }}</text>
+          <text class="conversation-bubble-copy" selectable>{{ message.text }}</text>
           <view v-if="message.role === 'assistant'" class="conversation-message-actions">
-            <button @click="copyMessage(message)">
+            <button class="conversation-message-action" @click="copyMessage(message)">
               {{
                 copied === message.id
                   ? t('已复制', 'Copied')
@@ -273,6 +273,7 @@ watch(locale, () => {
               }}
             </button>
             <button
+              class="conversation-message-action"
               v-if="message.reply?.content"
               @click="pendingUse = pendingUse === message.id ? '' : message.id"
             >
@@ -281,7 +282,10 @@ watch(locale, () => {
               }}
             </button>
           </view>
-          <text v-if="copyError === message.id" class="conversation-feedback">
+          <text
+            v-if="copyError === message.id"
+            class="conversation-feedback conversation-bubble-copy"
+          >
             {{
               t(
                 '复制失败，可长按选择文字后手动复制。',
@@ -303,7 +307,7 @@ watch(locale, () => {
                     )
               }}
             </text>
-            <view>
+            <view class="conversation-confirm-actions">
               <wd-button size="small" @click="useMessage(message)">
                 {{
                   append
@@ -316,7 +320,10 @@ watch(locale, () => {
               </wd-button>
             </view>
           </view>
-          <text v-if="used === message.id && !pendingUse" class="conversation-feedback">
+          <text
+            v-if="used === message.id && !pendingUse"
+            class="conversation-feedback conversation-bubble-copy"
+          >
             {{
               append
                 ? t(
@@ -335,6 +342,7 @@ watch(locale, () => {
     </scroll-view>
     <view class="conversation-quick-questions">
       <button
+        class="conversation-quick-question"
         v-for="(item, index) in suggestions"
         :key="index"
         @click="send(item.exampleId, item.prompt)"
@@ -342,6 +350,7 @@ watch(locale, () => {
         {{ item.label }}
       </button>
       <button
+        class="conversation-quick-question"
         v-if="append"
         @click="
           send(
@@ -355,6 +364,7 @@ watch(locale, () => {
     </view>
     <view class="conversation-composer">
       <textarea
+        class="conversation-input"
         v-for="binding in bindings"
         :id="inputId"
         :key="binding.key"
@@ -373,7 +383,9 @@ watch(locale, () => {
         @confirm="confirmInput($event, binding)"
       />
       <view class="conversation-send-row">
-        <text>{{ current.input.length }} / {{ MAX_CHAT_INPUT }}</text>
+        <text class="conversation-input-count">
+          {{ current.input.length }} / {{ MAX_CHAT_INPUT }}
+        </text>
         <wd-button size="small" @click="send()">{{ t('发送', 'Send') }} ↑</wd-button>
       </view>
       <text v-if="current.error" class="conversation-error" role="alert">{{ current.error }}</text>
@@ -395,7 +407,7 @@ watch(locale, () => {
   justify-content: space-between;
   gap: 12px;
 }
-.conversation-heading > view {
+.conversation-heading > .conversation-heading-copy {
   min-width: 0;
   display: flex;
   flex-wrap: wrap;
@@ -462,7 +474,7 @@ watch(locale, () => {
   overflow-wrap: anywhere;
   word-break: break-word;
 }
-.conversation-bubble > text {
+.conversation-bubble > .conversation-bubble-copy {
   white-space: pre-wrap;
 }
 .user .conversation-bubble {
@@ -479,7 +491,7 @@ watch(locale, () => {
   border-top: 1px solid #ede2d2;
   padding-top: 10px;
 }
-.conversation-message-actions button {
+.conversation-message-actions .conversation-message-action {
   margin: 0;
   padding: 2px 8px;
   font-size: 12px;
@@ -508,8 +520,8 @@ watch(locale, () => {
   border-radius: 6px;
   background: #f5f0e8;
 }
-.conversation-use-confirm > view,
-.conversation-clear-confirm > view {
+.conversation-use-confirm > .conversation-confirm-actions,
+.conversation-clear-confirm > .conversation-confirm-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -541,7 +553,7 @@ watch(locale, () => {
   gap: 7px;
   padding: 14px 22px 8px;
 }
-.conversation-quick-questions button {
+.conversation-quick-questions .conversation-quick-question {
   min-width: 0;
   max-width: 100%;
   margin: 0;
@@ -558,7 +570,7 @@ watch(locale, () => {
 .conversation-composer {
   padding: 7px 22px 20px;
 }
-.conversation-composer textarea {
+.conversation-composer .conversation-input {
   width: 100%;
   height: 88px;
   box-sizing: border-box;
@@ -577,7 +589,7 @@ watch(locale, () => {
   margin-top: 10px;
   gap: 14px;
 }
-.conversation-send-row > text {
+.conversation-send-row > .conversation-input-count {
   font-size: 11px;
   color: #65615a;
 }
@@ -606,25 +618,25 @@ watch(locale, () => {
 .compact .conversation-quick-questions {
   padding: 12px 10px 6px;
 }
-.compact .conversation-quick-questions button {
+.compact .conversation-quick-questions .conversation-quick-question {
   padding: 4px 8px;
   font-size: 11px;
 }
 .compact .conversation-composer {
   padding: 6px 10px 13px;
 }
-.compact .conversation-composer textarea {
+.compact .conversation-composer .conversation-input {
   font-size: 13px;
   height: 90px;
 }
 .conversation-large .conversation-bubble,
-.conversation-large .conversation-composer textarea {
+.conversation-large .conversation-composer .conversation-input {
   font-size: 19px;
 }
-.conversation-large .conversation-composer textarea {
+.conversation-large .conversation-composer .conversation-input {
   height: 126px;
 }
-.conversation-large .conversation-quick-questions button {
+.conversation-large .conversation-quick-questions .conversation-quick-question {
   font-size: 15px;
 }
 @media (max-width: 600px) {

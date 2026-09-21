@@ -592,19 +592,19 @@ function openInformation(kind: 'privacy' | 'about') {
     </view>
     <AccountPanel />
     <view class="profile-stats profile-overview">
-      <button @click="tab = 'works'">
+      <button class="profile-overview-button" @click="tab = 'works'">
         <text>{{ myWorks.length }}</text>
         {{ t('我的投稿', 'Submissions') }}
       </button>
-      <button @click="tab = 'learning'">
+      <button class="profile-overview-button" @click="tab = 'learning'">
         <text>{{ learningSummary.completed }}</text>
         {{ t('完成课程', 'Courses completed') }}
       </button>
-      <button @click="tab = 'certificates'">
+      <button class="profile-overview-button" @click="tab = 'certificates'">
         <text>{{ certificateCards.length }}</text>
         {{ t('证书样张', 'Sample certificates') }}
       </button>
-      <button @click="tab = 'messages'">
+      <button class="profile-overview-button" @click="tab = 'messages'">
         <text>{{ unreadCount }}</text>
         {{ t('未读消息', 'Unread messages') }}
       </button>
@@ -679,7 +679,7 @@ function openInformation(kind: 'privacy' | 'about') {
               <text class="muted">{{ row.meta }}</text>
               <view v-if="row.progress !== undefined" class="profile-progress-row">
                 <view class="profile-progress">
-                  <view :style="{ width: row.progress + '%' }" />
+                  <view class="profile-progress-fill" :style="{ width: row.progress + '%' }" />
                 </view>
                 <text>{{ row.progress }}%</text>
               </view>
@@ -811,8 +811,20 @@ function openInformation(kind: 'privacy' | 'about') {
         <view class="profile-setting-block">
           <text>{{ t('界面语言', 'Interface language') }}</text>
           <view class="profile-language">
-            <button :class="{ active: locale === 'zh' }" @click="setLocale('zh')">简体中文</button>
-            <button :class="{ active: locale === 'en' }" @click="setLocale('en')">English</button>
+            <button
+              class="profile-option-button"
+              :class="{ active: locale === 'zh' }"
+              @click="setLocale('zh')"
+            >
+              简体中文
+            </button>
+            <button
+              class="profile-option-button"
+              :class="{ active: locale === 'en' }"
+              @click="setLocale('en')"
+            >
+              English
+            </button>
           </view>
           <text class="muted">
             {{ t('用户作品保留原文', 'User submissions keep their original language') }}
@@ -876,6 +888,7 @@ function openInformation(kind: 'privacy' | 'about') {
                 { id: 'operator', zh: '运营人员', en: 'Operator' },
               ]"
               :key="item.id"
+              class="profile-option-button"
               :class="{ active: role === item.id }"
               @click="role = item.id"
             >
@@ -1063,7 +1076,7 @@ function openInformation(kind: 'privacy' | 'about') {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 }
-.profile-overview button {
+.profile-overview .profile-overview-button {
   min-width: 0;
   padding: 20px 8px;
   line-height: 1.7;
@@ -1196,7 +1209,7 @@ function openInformation(kind: 'privacy' | 'about') {
   height: 5px;
   background: #e2d9cd;
 }
-.profile-progress > view {
+.profile-progress > .profile-progress-fill {
   height: 100%;
   background: var(--jf-red, #c41a1a);
 }
@@ -1279,8 +1292,8 @@ function openInformation(kind: 'privacy' | 'about') {
   gap: 8px;
   margin-top: 13px;
 }
-.profile-language button,
-.profile-role-options button {
+.profile-language .profile-option-button,
+.profile-role-options .profile-option-button {
   flex: 1;
   margin: 0;
   padding: 8px 9px;
@@ -1288,12 +1301,12 @@ function openInformation(kind: 'privacy' | 'about') {
   font-size: 12px;
   line-height: 1.6;
 }
-.profile-role-options button {
+.profile-role-options .profile-option-button {
   padding: 8px 7px;
   overflow-wrap: anywhere;
 }
-.profile-language button.active,
-.profile-role-options button.active {
+.profile-language .profile-option-button.active,
+.profile-role-options .profile-option-button.active {
   border-color: var(--jf-red, #c41a1a);
   color: var(--jf-red, #c41a1a);
   background: #fff;
@@ -1405,7 +1418,7 @@ function openInformation(kind: 'privacy' | 'about') {
   .profile-local-note {
     font-size: 12px;
   }
-  .profile-overview button {
+  .profile-overview .profile-overview-button {
     font-size: 11px;
     padding: 16px 5px;
   }
@@ -1445,7 +1458,7 @@ function openInformation(kind: 'privacy' | 'about') {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .profile-role-options button {
+  .profile-role-options .profile-option-button {
     width: 100%;
     box-sizing: border-box;
   }

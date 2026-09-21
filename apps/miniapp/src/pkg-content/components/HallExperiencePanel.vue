@@ -383,7 +383,7 @@ onBeforeUnmount(stopVoice)
       </view>
       <view v-if="preview" class="tracing-preview">
         <text class="experience-subtitle">{{ t('我的描摹', 'My tracing') }}</text>
-        <image :src="preview" mode="widthFix" />
+        <image class="tracing-preview-image" :src="preview" mode="widthFix" />
         <wd-button size="small" variant="plain" @click="downloadDrawing">
           {{ t('保存图片', 'Save image') }}
         </wd-button>
@@ -434,7 +434,7 @@ onBeforeUnmount(stopVoice)
         }}
       </text>
       <view v-for="(item, index) in hallQuestions" :key="index" class="hall-question">
-        <button @click="question = question === index ? -1 : index">
+        <button class="hall-question-toggle" @click="question = question === index ? -1 : index">
           {{ item.question[locale] }} {{ question === index ? '−' : '+' }}
         </button>
         <text v-if="question === index" class="experience-prose">{{ item.answer[locale] }}</text>
@@ -579,7 +579,7 @@ onBeforeUnmount(stopVoice)
   padding: 16px;
   background: #f5f0e8;
 }
-.tracing-preview image {
+.tracing-preview .tracing-preview-image {
   display: block;
   width: 100%;
   margin: 16px 0;
@@ -589,7 +589,7 @@ onBeforeUnmount(stopVoice)
   margin-top: 16px;
   padding-top: 12px;
 }
-.hall-question button {
+.hall-question .hall-question-toggle {
   padding: 8px 0;
   background: transparent;
   text-align: left;
@@ -597,7 +597,7 @@ onBeforeUnmount(stopVoice)
   line-height: 1.7;
   white-space: normal;
 }
-.hall-question button::after {
+.hall-question .hall-question-toggle::after {
   border: 0;
 }
 .experience-message {

@@ -75,23 +75,50 @@ function plainInput(event: unknown) {
 <template>
   <view class="writing-rich-shell">
     <view class="writing-rich-toolbar" @touchend.stop>
-      <button :class="{ active: status.bold }" :disabled="!ready" @click="format('bold')">
+      <button
+        class="writing-format-button"
+        :class="{ active: status.bold }"
+        :disabled="!ready"
+        @click="format('bold')"
+      >
         {{ t('加粗', 'Bold') }}
       </button>
-      <button :class="{ active: status.italic }" :disabled="!ready" @click="format('italic')">
+      <button
+        class="writing-format-button"
+        :class="{ active: status.italic }"
+        :disabled="!ready"
+        @click="format('italic')"
+      >
         {{ t('斜体', 'Italic') }}
       </button>
-      <button :class="{ active: status.underline }" :disabled="!ready" @click="format('underline')">
+      <button
+        class="writing-format-button"
+        :class="{ active: status.underline }"
+        :disabled="!ready"
+        @click="format('underline')"
+      >
         {{ t('下划线', 'Underline') }}
       </button>
-      <button :class="{ active: status.header }" :disabled="!ready" @click="format('header', 2)">
+      <button
+        class="writing-format-button"
+        :class="{ active: status.header }"
+        :disabled="!ready"
+        @click="format('header', 2)"
+      >
         {{ t('小标题', 'Heading') }}
       </button>
-      <button :class="{ active: status.list }" :disabled="!ready" @click="format('list', 'bullet')">
+      <button
+        class="writing-format-button"
+        :class="{ active: status.list }"
+        :disabled="!ready"
+        @click="format('list', 'bullet')"
+      >
         {{ t('列表', 'List') }}
       </button>
-      <button :disabled="!ready" @click="context?.undo({})">{{ t('撤销', 'Undo') }}</button>
-      <button :disabled="!ready" @click="context?.removeFormat({})">
+      <button class="writing-format-button" :disabled="!ready" @click="context?.undo({})">
+        {{ t('撤销', 'Undo') }}
+      </button>
+      <button class="writing-format-button" :disabled="!ready" @click="context?.removeFormat({})">
         {{ t('清除格式', 'Clear format') }}
       </button>
     </view>
@@ -119,7 +146,7 @@ function plainInput(event: unknown) {
       @statuschange="syncStatus"
     />
     <view v-else class="writing-editor-fallback">
-      <text>
+      <text class="writing-fallback-copy">
         {{
           t(
             '富文本暂不可用，可继续使用纯文本编辑，原稿仍保留。',
@@ -127,7 +154,13 @@ function plainInput(event: unknown) {
           )
         }}
       </text>
-      <textarea :value="fallback" :maxlength="10000" @input="plainInput" @blur="plainInput" />
+      <textarea
+        class="writing-fallback-input"
+        :value="fallback"
+        :maxlength="10000"
+        @input="plainInput"
+        @blur="plainInput"
+      />
     </view>
   </view>
 </template>
@@ -146,7 +179,7 @@ function plainInput(event: unknown) {
   padding: 9px;
   border-bottom: 1px solid #e6dbc6;
 }
-.writing-rich-toolbar button {
+.writing-rich-toolbar .writing-format-button {
   margin: 0;
   padding: 5px 9px;
   font-size: 12px;
@@ -154,7 +187,7 @@ function plainInput(event: unknown) {
   background: #f5f0e8;
   color: #2c2c2c;
 }
-.writing-rich-toolbar button.active {
+.writing-rich-toolbar .writing-format-button.active {
   background: #c41a1a;
   color: #fff;
 }
@@ -177,11 +210,11 @@ function plainInput(event: unknown) {
 .writing-editor-fallback {
   padding: 14px;
 }
-.writing-editor-fallback text {
+.writing-editor-fallback .writing-fallback-copy {
   font-size: 13px;
   line-height: 1.6;
 }
-.writing-editor-fallback textarea {
+.writing-editor-fallback .writing-fallback-input {
   width: 100%;
   height: 310px;
   margin-top: 10px;
