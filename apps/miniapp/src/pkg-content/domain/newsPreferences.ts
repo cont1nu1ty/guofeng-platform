@@ -1,4 +1,4 @@
-import type { DemoStorage } from './types'
+import type { DemoStorage } from '../../domain/types'
 export interface NewsPreferences {
   categories: string[]
   updates: boolean

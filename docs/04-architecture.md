@@ -20,27 +20,32 @@ Wot UI 提供界面组件，并不自带本项目投稿、评审、报名、权�
 
 ## 2. 当前目录职责
 
-| 路径                                                | 职责                                                           |
-| --------------------------------------------------- | -------------------------------------------------------------- |
-| `apps/miniapp`                                      | Uni-app 应用工程；页面、样式、平台配置与运行脚本               |
-| `apps/miniapp/src/domain/types.ts`                  | `Work`、`SubmissionDraft`、`Classic`、`Activity` 等领域类型    |
-| `apps/miniapp/src/domain/fixtures.ts`               | 体裁/通道/地区字典、待定评审节点及虚构内容                     |
-| `apps/miniapp/src/domain/libraryCatalog.ts`         | 典籍章节、作品译文、原创释义等演示阅读内容                     |
-| `apps/miniapp/src/domain/assistantExamples.ts`      | 八类双语预设、分镜文本与草稿转入保护，未调用模型               |
-| `apps/miniapp/src/domain/writingTools.ts`           | 富文本 Delta 白名单、受控 HTML 生成与诗词句式计数              |
-| `apps/miniapp/src/domain/regionCatalog.ts`          | 34 个省级地区与海外的中英展示字典                              |
-| `apps/miniapp/src/domain/searchCatalog.ts`          | 九类内容的本机搜索索引与筛选                                   |
-| `apps/miniapp/src/domain/accountDemo.ts`            | 本机登录／认证状态机，非微信授权或真实实名                     |
-| `apps/miniapp/src/domain/newsPreferences.ts`        | 分类订阅、提醒频率与免打扰偏好                                 |
-| `apps/miniapp/src/domain/localMedia.ts`             | 诵读／视频文件校验与记录类型                                   |
-| `apps/miniapp/src/components/AppShell.vue`          | 公共头尾、导航、地区及路由上下文，插槽承载页面主体             |
-| `apps/miniapp/src/components/ExploreContent.vue`    | 主包核心业务组件分发                                           |
-| `apps/miniapp/src/pkg-content/pages/index.vue`      | 资讯、课堂、阵地、视频、名人馆、文创、传习分包入口             |
-| `apps/miniapp/src/pkg-content/components`、`static` | 七类内容视图、专属交互组件及其音视频素材，作为分包物理目录组织 |
-| `apps/miniapp/src/domain/personalArchive.ts`        | 摘抄批注、助手存档与注入式本机存储                             |
-| `apps/miniapp/src/domain/repository.ts`             | 稿件查询、草稿、提交、收藏、预约等 Mock 行为与状态保存         |
-| `contracts/openapi.yaml`                            | 未来 HTTP API 的讨论草案，不是已部署接口                       |
-| `docs`                                              | 需求、迭代、开源复用、架构与演示说明                           |
+| 路径                                                             | 职责                                                           |
+| ---------------------------------------------------------------- | -------------------------------------------------------------- |
+| `apps/miniapp`                                                   | Uni-app 应用工程；页面、样式、平台配置与运行脚本               |
+| `apps/miniapp/src/domain/types.ts`                               | `Work`、`SubmissionDraft`、`Classic`、`Activity` 等领域类型    |
+| `apps/miniapp/src/domain/fixtures.ts`                            | 体裁/通道/地区字典、待定评审节点及虚构内容                     |
+| `apps/miniapp/src/domain/libraryCatalog.ts`                      | 典籍章节、作品译文、原创释义等演示阅读内容                     |
+| `apps/miniapp/src/domain/assistantExamples.ts`                   | 八类双语预设、分镜文本与草稿转入保护，未调用模型               |
+| `apps/miniapp/src/domain/writingTools.ts`                        | 富文本 Delta 白名单、受控 HTML 生成与诗词句式计数              |
+| `apps/miniapp/src/domain/regionCatalog.ts`                       | 34 个省级地区与海外的中英展示字典                              |
+| `apps/miniapp/src/domain/searchCatalog.ts`                       | 九类内容的本机搜索索引与筛选                                   |
+| `apps/miniapp/src/domain/accountDemo.ts`                         | 本机登录／认证状态机，非微信授权或真实实名                     |
+| `apps/miniapp/src/pkg-content/domain/newsPreferences.ts`         | 分类订阅、提醒频率与免打扰偏好；由资讯分包使用                 |
+| `apps/miniapp/src/pkg-content/domain/audioStories.ts`            | 有声故事内容与音源目录；由内容分包使用                         |
+| `apps/miniapp/src/pkg-content/domain/hallExperience.ts`          | 场馆空间、人物讲解与互动数据；由内容分包使用                   |
+| `apps/miniapp/src/pkg-content/composables/useNewsPreferences.ts` | 资讯偏好的本机存储适配，沿用原存储键                           |
+| `apps/miniapp/src/pkg-content/composables/useReplayCache.ts`     | H5与微信回放文件缓存适配，沿用原缓存与索引                     |
+| `apps/miniapp/src/pkg-content/composables/useAssetUrl.ts`        | 内容分包资源地址解析，兼容H5开发、生产子目录及微信包内路径     |
+| `apps/miniapp/src/domain/localMedia.ts`                          | 诵读／视频文件校验与记录类型                                   |
+| `apps/miniapp/src/components/AppShell.vue`                       | 公共头尾、导航、地区及路由上下文，插槽承载页面主体             |
+| `apps/miniapp/src/components/ExploreContent.vue`                 | 主包核心业务组件分发                                           |
+| `apps/miniapp/src/pkg-content/pages/index.vue`                   | 资讯、课堂、阵地、视频、名人馆、文创、传习分包入口             |
+| `apps/miniapp/src/pkg-content/components`、`static`              | 七类内容视图、专属交互组件及其音视频素材，作为分包物理目录组织 |
+| `apps/miniapp/src/domain/personalArchive.ts`                     | 摘抄批注、助手存档与注入式本机存储                             |
+| `apps/miniapp/src/domain/repository.ts`                          | 稿件查询、草稿、提交、收藏、预约等 Mock 行为与状态保存         |
+| `contracts/openapi.yaml`                                         | 未来 HTTP API 的讨论草案，不是已部署接口                       |
+| `docs`                                                           | 需求、迭代、开源复用、架构与演示说明                           |
 
 ### 2.1 存储注入
 
@@ -91,15 +96,29 @@ Wot UI 提供界面组件，并不自带本项目投稿、评审、报名、权�
 
 主包 `pages/index/index`、`pages/explore/index` 通过 `AppShell` 的插槽挂载 `ExploreContent`，承载首页、投稿、典藏、评审、个人中心、助手、已有专家／运营视图及搜索。`pkg-content/pages/index` 单独导入 `pkg-content/components` 中的资讯、课堂、阵地、视频、名人馆、文创、传习七类内容组件及专属交互组件；音视频也放入 `pkg-content/static`，使页面与媒体资源具有明确的分包物理归属。公共框架无需静态导入全部内容页面；实际分包体积以构建结果为准。
 
+2026-09-21最终优化将 `audioStories.ts`、`hallExperience.ts`、`newsPreferences.ts` 从 `src/domain` 移入 `src/pkg-content/domain`，将 `useNewsPreferences.ts`、`useReplayCache.ts`、`useAssetUrl.ts` 从 `src/composables` 移入 `src/pkg-content/composables`。这是6个模块的物理归属调整，主包编译后JS合计减少6,984字节；订阅键、回放缓存语义及媒体内容不变。`useAssetUrl` 统一处理H5开发/生产子目录下包内资源地址，避免重复的分包路径。
+
+`mp-weixin.lazyCodeLoading` 为 `requiredComponents`，正式产物与模拟器已确认按需注入启用。它不会自动把主包依赖移入分包，也不等于测得明确的冷启动收益。最终本地逐文件主包为1,547,176字节；13:02开发工具实际复扫中JS Files通过，Main Package和媒体资源项仍未通过。工具按 `compiler.compile` 开发产物的内存文件集逐包检查，覆盖所有分包；同次明细中的主包为1,783,675字节，不能用本地总数代替实际未通过结论。包体与字体方案对比见 [字体对比报告](12-font-comparison.md)。
+
 `useNavigation.screenUrl` 根据 `contentScreens` 选择主包或内容分包入口。一级栏目使用 `reLaunch`，带详情参数且页面栈未满时使用 `navigateTo`，正常返回用 `navigateBack`。每个页面提供独立 route 参数，避免多个页面共享一个可变 screen。原 `pages/explore/index?screen=media&id=...` 等内容链接使用 `redirectTo` 转入分包，保留原参数；旧书签可继续使用。
 
 ### 2.5 接口替换的实际边界
 
 当前 Repository 仍是同步方法。`useLearningProgress`、`useShowcase`、`usePersonalArchive`、`useAccountDemo`、`useNewsPreferences` 和 `useLocalMedia` 分别管理本机状态。媒体录制、播放、文件导出与缓存使用终端异步 API，但不因此成为账号、上传或发布服务。
 
+其中资讯偏好、回放缓存和内容资源地址适配现位于 `pkg-content/composables`；其余上述共用状态仍在 `src/composables`。这次移动没有增加服务端接口或改变已有本机记录。
+
 未来 HTTP 访问是异步操作，因此切换到后端时仍需将页面调用与反馈改为异步，并增加加载、取消、重试、会话失效和网络错误处理；不是无改动替换。
 
 建议先定义异步 `PlatformRepository` 接口，将现有 Mock Repository 包装为 Promise 实现，再新增 HTTP 实现。UI 通过应用初始化处选择实现，页面不直接拼接请求 URL。DTO 与领域模型之间设适配层，避免将后端租户、审计或内部存储字段直接暴露给界面。
+
+### 2.6 字体交付与状态
+
+H5由 `styles/fonts.scss` 加载 `src/static/h5/fonts` 中的两份WOFF，`loadFonts.ts` 用 `document.fonts` 核验；本轮H5字体和覆盖不变。微信使用最终选定的 **API＋compact**：`scripts/build-font-subsets.py` 保留全部源码文字与标点，再加200个额外常用汉字，并在裁剪后展开CFF子程序。两份WOFF共569,396字节，每家族1608码点；未收录的用户输入和未来内容使用系统后备字体。
+
+微信字体构建输入位于 `scripts/font-data/mp`，不直接复制到运行包。Vite的 `virtual:jiafeng-wechat-fonts` 校验清单字节与SHA256后内联Data URL；`App.onLaunch` 调用 `loadFonts`，由 `registerWechatFonts` 执行全局 `loadFontFace`，保留真实成功/失败回调、SDK版本检查及8秒状态确认期限。低于基础库3.7.9时提示升级微信，超时表示状态尚未确认，不假称字体已加载或确定渲染失败。不存在运行时读取包内WOFF的流程。
+
+四方案模拟器比较没有证明WXSS能明显改善冷启动，因此保留已有API状态与错误提示。开发工具、手机、字形覆盖和包体是不同验收项；细节见 [字体交付说明](09-fonts.md) 与 [对比基准](benchmarks/font-comparison-2026-09-21.json)。
 
 ## 3. 已有字段与契约对应
 

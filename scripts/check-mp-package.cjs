@@ -16,6 +16,23 @@ const files = walk(directory).filter(file => !file.endsWith('/project.private.co
 const main = files.filter(file => !subpackages.some(prefix => path.relative(directory, file).split(path.sep).join('/').startsWith(prefix)))
 const bytes = main.reduce((sum, file) => sum + fs.statSync(file).size, 0)
 if (bytes >= 2 * 1024 * 1024) throw new Error(`Main package exceeds 2 MiB: ${bytes} bytes`)
+// Content-only modules belong to the content subpackage, including its private domain layer.
+const contentModules = [
+  'composables/useAssetUrl.js',
+  'composables/useNewsPreferences.js',
+  'composables/useReplayCache.js',
+  'domain/audioStories.js',
+  'domain/hallExperience.js',
+  'domain/newsPreferences.js',
+]
+for (const module of contentModules) {
+  if (fs.existsSync(path.join(directory, module))) {
+    throw new Error(`Content-only module leaked into the main package: ${module}`)
+  }
+  if (!fs.existsSync(path.join(directory, 'pkg-content', module))) {
+    throw new Error(`Missing content-subpackage module: ${module}`)
+  }
+}
 if (files.some(file => /[/\\]static[/\\](?:h5[/\\])?fonts[/\\]/.test(file))) {
   throw new Error('WeChat package contains duplicate binary fonts or H5-only fonts. Rebuild from a clean output directory.')
 }

@@ -1,6 +1,6 @@
 import { computed, onBeforeUnmount, ref, watch, type ComputedRef } from 'vue'
 import { assetUrl } from './useAssetUrl'
-import { t } from './useLocale'
+import { t } from '../../composables/useLocale'
 interface Replay {
   id: string
   source: string

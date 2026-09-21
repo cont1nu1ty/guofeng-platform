@@ -1,0 +1,13 @@
+{
+  "same_all_artifacts": true,
+  "hashes": {
+    "scripts/font-data/charset.txt": "21696c7e79fd2919e708a5212128322a9db544449ad8448b58987a03665f2493",
+    "scripts/font-data/manifest.json": "4e252b7c7f1d46bd559ec6c75f8436b46a72e0523c1056465ce360175e16a204",
+    "scripts/font-data/mp/charset.txt": "e2bd9cbbf8417c6cfce1c05e3580db88087869a3faebfd7c9bd131c2fb65d307",
+    "scripts/font-data/mp/JiafengSerif-SemiBold.woff": "1b7b50b01f986574f70e025179a3745d16872601e9c392eb79f683ffaab253a4",
+    "scripts/font-data/mp/manifest.json": "6dbb63f986f50f62157bb693b92c302c0f6fc3d45d17d7b5d3fbc0b6a554160d",
+    "scripts/font-data/mp/JiafengSans-Regular.woff": "5abc4b633de13dd0441cbda4aa2faaa696f4b853423606c324c9295eb7dcec86",
+    "apps/miniapp/src/static/h5/fonts/JiafengSerif-SemiBold.woff": "98bd2de96c8cbf0535b0e8f0b87895b9c4b5531715712334aafc5de1e0830eb0",
+    "apps/miniapp/src/static/h5/fonts/JiafengSans-Regular.woff": "07c04f6125a07780193a75805522b991fc17a15a537e9e66870c3d8b41027dcb"
+  }
+}

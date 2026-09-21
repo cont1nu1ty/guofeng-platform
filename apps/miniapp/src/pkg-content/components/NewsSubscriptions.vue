@@ -7,7 +7,7 @@ import {
   newsPreferenceError,
   toggleNewsCategory,
   updateNewsPreferences,
-} from '../../composables/useNewsPreferences'
+} from '../composables/useNewsPreferences'
 import { navigate } from '../../composables/useNavigation'
 const selectedArticles = computed(() =>
   newsArticles.filter((a) => newsPreferences.value.categories.includes(a.category)),

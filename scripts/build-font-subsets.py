@@ -69,7 +69,7 @@ def project_characters():
     return chars
 
 
-def build_subsets(chars, cache, output):
+def build_subsets(chars, cache, output, *, expand_cff_subroutines=False):
     output.mkdir(parents=True, exist_ok=True)
     report = []
     for source in FONT_SOURCES:
@@ -101,6 +101,10 @@ def build_subsets(chars, cache, output):
             cff.fontNames = [family+'-'+style]
             cff.topDictIndex[0].FullName = family+' '+style
             cff.topDictIndex[0].FamilyName = family
+            if expand_cff_subroutines:
+                # For these subsets, expanded outlines compress better in WOFF.
+                # This keeps glyph drawing, metrics and vertical layout unchanged.
+                cff.desubroutinize()
         font.flavor = 'woff'
         name = family+'-'+style+'.woff'
         font.save(output / name)
@@ -132,8 +136,8 @@ def main():
                         help='Intermediate download cache outside the delivered project')
     parser.add_argument('--common-count', type=int, default=1800,
                         help='H5: union source characters with this many top common Han characters')
-    parser.add_argument('--mp-extra-count', type=int, default=600,
-                        help='WeChat: add this many common Han characters absent from the source set')
+    parser.add_argument('--mp-extra-count', type=int, default=200,
+                        help='WeChat: add this many common Han characters absent from the source set (default: 200; use 600 for expanded dynamic-text coverage)')
     args = parser.parse_args()
     if args.common_count < 0 or args.mp_extra_count < 0:
         parser.error('Character counts must be non-negative')
@@ -156,11 +160,12 @@ def main():
         'common_character_count': args.common_count,
         'fonts': h5_fonts,
     })
-    mp_fonts = build_subsets(mp_chars, args.cache, MP_OUTPUT)
+    mp_fonts = build_subsets(mp_chars, args.cache, MP_OUTPUT, expand_cff_subroutines=True)
     write_metadata(MP_OUTPUT, mp_chars, {
         **shared,
         'common_character_method': 'sum kHanyuPinlu frequencies; descending; code point tie-break; exclude source characters and fixed punctuation before selecting extras',
         'extra_common_character_count': args.mp_extra_count,
+        'cff_optimization': 'desubroutinize after subsetting; WOFF compression unchanged',
         'fonts': mp_fonts,
     })
     print(json.dumps({'h5': h5_fonts, 'mp-weixin': mp_fonts}, ensure_ascii=False, indent=2))

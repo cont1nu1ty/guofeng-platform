@@ -1,0 +1,71 @@
+{
+  "candidate": "/home/steven/Documents/Codex/2026-09-20/xb/work/font-role-experiments/both-source-plus200-desubr",
+  "fonts": [
+    {
+      "family": "JiafengSans",
+      "bytes": 250000,
+      "sha256": "5abc4b633de13dd0441cbda4aa2faaa696f4b853423606c324c9295eb7dcec86",
+      "codepoint_count": 1608,
+      "all_glyphs_checked": 1656,
+      "unencoded_glyphs_checked": 55,
+      "every_glyph_drawing_equals_plain_and_formal_2008": true,
+      "all_horizontal_and_vertical_metrics_equal": true,
+      "GSUB_all_features_canonical_XML_equals_formal_2008": true,
+      "GPOS_all_features_canonical_XML_equals_formal_2008": true,
+      "gsub_features": [
+        "ccmp",
+        "vert",
+        "vrt2"
+      ],
+      "non_outline_tables_identical_to_plain": [
+        "BASE",
+        "GPOS",
+        "GSUB",
+        "OS/2",
+        "VORG",
+        "cmap",
+        "hhea",
+        "hmtx",
+        "maxp",
+        "name",
+        "post",
+        "vhea",
+        "vmtx"
+      ],
+      "format": "WOFF1/OpenType-CFF1"
+    },
+    {
+      "family": "JiafengSerif",
+      "bytes": 319396,
+      "sha256": "1b7b50b01f986574f70e025179a3745d16872601e9c392eb79f683ffaab253a4",
+      "codepoint_count": 1608,
+      "all_glyphs_checked": 1657,
+      "unencoded_glyphs_checked": 55,
+      "every_glyph_drawing_equals_plain_and_formal_2008": true,
+      "all_horizontal_and_vertical_metrics_equal": true,
+      "GSUB_all_features_canonical_XML_equals_formal_2008": true,
+      "GPOS_all_features_canonical_XML_equals_formal_2008": true,
+      "gsub_features": [
+        "ccmp",
+        "vert",
+        "vrt2"
+      ],
+      "non_outline_tables_identical_to_plain": [
+        "BASE",
+        "GPOS",
+        "GSUB",
+        "OS/2",
+        "VORG",
+        "cmap",
+        "hhea",
+        "hmtx",
+        "maxp",
+        "name",
+        "post",
+        "vhea",
+        "vmtx"
+      ],
+      "format": "WOFF1/OpenType-CFF1"
+    }
+  ]
+}

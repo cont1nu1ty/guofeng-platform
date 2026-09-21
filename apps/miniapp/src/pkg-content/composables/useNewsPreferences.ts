@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { createNewsPreferences, type NewsPreferences } from '../domain/newsPreferences'
-import { newsCategories } from '../domain/contentCatalog'
-import { t } from './useLocale'
+import { newsCategories } from '../../domain/contentCatalog'
+import { t } from '../../composables/useLocale'
 const failed = ref(false)
 let repository: ReturnType<typeof createNewsPreferences> | undefined
 try {

@@ -2,18 +2,20 @@
 
 本版附带实际字体文件，不再仅在 `font-family` 中填写思源名称。正文使用思源黑体 Regular（400），标题使用思源宋体 SemiBold（600）。裁剪后的内部字体名称为 `JiafengSans`、`JiafengSerif`，以遵守原字体的保留名称条款。600 之外的宋体字重、400 之外的黑体字重由浏览器匹配/合成，不宣称附带全部字重。
 
-## 文件与大小
+**2026-09-21最终选择：API＋compact。** 微信保留 `loadFontFace` 的真实状态回调，两份WOFF从808,944降至569,396字节（减少29.6%）；全部1106个源码汉字仍覆盖，源码外额外常用字从600调整为200。H5字体和覆盖不变。四方案比较及测试边界见 [字体对比报告](12-font-comparison.md)；下文历史记录不代表当前包体。
 
-| 平台 | 字体 | WOFF字节 | 码位数 |
-| --- | --- | ---: | ---: |
-| H5 | JiafengSans Regular | 420,216 | 2359 |
-| H5 | JiafengSerif SemiBold | 569,420 | 2359 |
-| 微信 | JiafengSans Regular | 343,116 | 2008 |
-| 微信 | JiafengSerif SemiBold | 465,828 | 2008 |
+## 当前文件与大小
 
-H5合计 **989,636 bytes**，路径为 `apps/miniapp/src/static/h5/fonts/`；微信WOFF合计 **808,944 bytes**，构建输入位于 `scripts/font-data/mp/`，转为Data URL后数据部分合计 **1,078,592 bytes**。微信运行包不再附带独立WOFF。准确版本、SHA256和码位数分别见 `scripts/font-data/manifest.json` 与 `scripts/font-data/mp/manifest.json`。
+| 平台 | 字体                  | WOFF字节 | 码位数 |
+| ---- | --------------------- | -------: | -----: |
+| H5   | JiafengSans Regular   |  420,216 |   2359 |
+| H5   | JiafengSerif SemiBold |  569,420 |   2359 |
+| 微信 | JiafengSans Regular   |  250,000 |   1608 |
+| 微信 | JiafengSerif SemiBold |  319,396 |   1608 |
 
-两套字体都包含全部源码用字、英文数字和常用标点。H5继续合并Unihan频率最高的1800个汉字；微信合并源码之外频率最高的600个额外常用汉字。频率依据Unicode17的`kHanyuPinlu`各读音频率求和，同频按码位排序；这不等于完整规范汉字字库。
+H5合计 **989,636 bytes**，路径为 `apps/miniapp/src/static/h5/fonts/`；微信WOFF合计 **569,396 bytes**，构建输入位于 `scripts/font-data/mp/`，转为Data URL后Base64数据部分合计 **759,200 bytes**。微信运行包不再附带独立WOFF。准确版本、SHA256和码位数分别见 `scripts/font-data/manifest.json` 与 `scripts/font-data/mp/manifest.json`。
+
+两套字体都包含全部源码用字、英文数字和常用标点。H5继续合并Unihan频率最高的1800个汉字；微信合并源码之外频率最高的200个额外常用汉字。额外动态覆盖比上一版少400字；新用户输入或未来内容出现未收录字时逐字回退系统字体，不能称为两家族仍各有2008码点覆盖。频率依据Unicode17的`kHanyuPinlu`各读音频率求和，同频按码位排序；这不等于完整规范汉字字库。
 
 2026-09-21最终扫描82份Vue/TypeScript/JSON/SCSS源码，共1106个不同汉字，两套字体缺失均为0，四份字体保留`vert`/`vrt2`竖排特性、OFL说明及重命名。未收录的动态内容和生僻字仍逐字回退系统字体。使用WOFF以兼顾微信官方建议格式；原始16/24MB OTF只在构建缓存中，不打入应用。
 
@@ -21,7 +23,7 @@ H5合计 **989,636 bytes**，路径为 `apps/miniapp/src/static/h5/fonts/`；微
 
 `src/styles/fonts.scss` 的 `@font-face` 通过相对路径 `../static/h5/fonts/…` 引用本地 WOFF，无需外部字体 CDN。当前 Uni-app/Vite 构建保留此路径，并提示无法在构建阶段解析；它没有重写成带 hash 的字体资源地址。产物 CSS 位于 `assets/`，静态字体复制至同级的 `static/h5/fonts/`，浏览器以 CSS 文件地址为基准解析 `../static/h5/fonts/…`。此机制依赖保留 `assets/` 与 `static/` 的产物目录关系。`src/composables/loadFonts.ts` 通过 `document.fonts.load` 触发并检测实际加载，采用 `font-display: swap` 保持首屏可读。
 
-接入方式：在全局样式导入 `fonts.scss`；正文字体栈首项设置为 `JiafengSans`，标题/典籍字体栈首项设置为 `JiafengSerif`。在 `App.onLaunch()` 调用 `void loadFonts()`。函数返回 `{ platform, allLoaded, fonts }`，每个字体包含 `loaded`、`source`，失败包含 `error`；重复调用共用一次加载结果，8 秒超时不阻塞界面。
+接入方式：在全局样式导入 `fonts.scss`；正文字体栈首项设置为 `JiafengSans`，标题/典籍字体栈首项设置为 `JiafengSerif`。在 `App.onLaunch()` 调用 `void loadFonts()`。函数返回 `{ platform, allLoaded, fonts }`，每个字体包含 `loaded`、`source`，未确认或失败包含 `errorCode`/`error`；微信来源为 `bundled-data-uri`。重复调用共用一次加载结果，8秒超时显示状态待确认，不阻塞界面，也不把超时等同于确定的渲染失败。
 
 浏览器应同时确认 Network 字体请求成功和 `document.fonts.load('600 16px "JiafengSerif"', '家风中华行')` 返回已加载字体；仅 `getComputedStyle().fontFamily` 显示字体名不能证明字体加载成功。
 
@@ -36,7 +38,7 @@ H5合计 **989,636 bytes**，路径为 `apps/miniapp/src/static/h5/fonts/`；微
 **更正旧文档：微信基础库从 3.7.9 起已正式支持 Data URL。** 先前依据 DCloud 旧 API 页面写出的“只有 HTTPS 属于正式支持”不准确，应以当前 [微信 `wx.loadFontFace` 官方文档](https://developers.weixin.qq.com/miniprogram/dev/api/ui/font/wx.loadFontFace.html) 为准。`global` 从2.10.0支持，要求应用入口调用；WOFF仍是官方建议格式。
 
 - H5保留原有常用字覆盖，字体迁至 `src/static/h5/fonts/`；Uni-app构建微信时会排除其他平台静态目录，因此不重复带入H5字体。
-- 微信子集覆盖全部当前源码文字，并补充源码之外频率最高的600个常用汉字。两份WOFF及对应清单放在 `scripts/font-data/mp/`，不会被静态资源复制；Vite虚拟模块按清单验证字节数和SHA256后，各内联一份。
+- 微信子集覆盖全部当前源码文字，并补充源码之外频率最高的200个常用汉字。两份WOFF及对应清单放在 `scripts/font-data/mp/`，不会被静态资源复制；Vite虚拟模块按清单验证字节数和SHA256后，各内联一份。
 - `npm run build:mp-weixin` 在构建后自动检查主包小于2MiB、两个字体各只有一份Data URL、没有重复的WOFF或H5字体。新增界面文字后重建子集，不能只修改二进制而不更新清单。
 - 运行时按数字段检查基础库版本。低于3.7.9时明确提示升级微信并使用系统字体；加载失败使用系统字体，8秒超时显示状态待确认；均不阻塞页面、不误报成功。未知SDK版本按实际API结果判断。
 - H5与微信子集外的生僻字仍逐字回退。成功回调表示字体注册成功，不等于所有用户输入、其他字重、原生输入控件和Canvas都已验收。
@@ -44,6 +46,14 @@ H5合计 **989,636 bytes**，路径为 `apps/miniapp/src/static/h5/fonts/`；微
 重新在手机测试时，请使用本次新构建生成预览包，退出旧小程序后重新扫码；在“我的”查看字体状态与两份字体明细，再核对首页标题、正文、典藏竖排和传习分包。模拟器结果见 [验证记录](07-validation.md)，手机结果须实际复测确认。
 
 将来需要覆盖更大字库时，可改为自有HTTPS字体及CORS配置，避免无限扩大主包；这是后续生产选项，当前离线演示不依赖它。
+
+## 当前优化与验收
+
+仅微信子集在裁剪后调用 FontTools 的 `CFF.desubroutinize()`，继续输出WOFF1/CFF1，不引入Zopfli或更换字体。保留的字形绘制、横纵度量、许可和竖排特性没有改变。严格审核逐个比较全部1656/1657个字形（包括每份55个未编码的替代字形），GSUB/GPOS按字形名称规范化后的XML与原2008字版本一致；审核工件SHA256与正式清单相同。证据摘要见 [对比报告](12-font-comparison.md#字形与覆盖审核)。
+
+最终6模块迁移后，本地主包逐文件合计1,547,176字节，低于1.5MiB；微信开发工具13:02实际复扫的JS Files已通过，但Main Package仍未通过。该项基于 `compiler.compile` 的开发产物内存文件集，对所有分包逐项检查1.5MiB。同次扫描持久化明细中的主包 `__APP__` 为1,783,675字节（约1.701MiB），超过阈值210,811字节；内容分包为725,555字节。不能以本地加总代替通过结论，详见 [质量扫描口径与来源](benchmarks/wechat-quality-scan-notes.md)。字体各内联一次，没有重复WOFF。缩减字库与迁移6个内容分包模块共同减少包体，不能把全部差额归因于字体。API和WXSS的compact实验均未出现原1126KB大传输提醒；每方案仅同一开发工具下3轮冷启动，不能宣称启动明显提速。
+
+最终正式构建在基础库3.17.2的首页、个人中心、典籍阅读、传习分包中，两种字体实际加载及竖排切换通过。字体方案选定后的单次冷启动12,023ms、首渲染1,416ms仅用于该次正式产物复核，不用于方案排序。真机字体、原生控件、Canvas和动态输入仍需后续验证；14个媒体资源共491,445字节维持离线演示，因此200K资源总量建议仍未通过。
 
 ## 来源、许可与校验
 
@@ -74,7 +84,7 @@ JiafengSerif-SemiBold.woff
 
 ## 可复现扩容
 
-脚本位于 `scripts/build-font-subsets.py`，一次生成H5与微信两套子集。默认 `--common-count 1800` 和 `--mp-extra-count 600`；分别记录清单与字表。从项目根目录运行；下载仅在开发时发生，固定源文件均做 SHA256 校验。缓存路径放在交付项目外的 `work/` 目录。
+脚本位于 `scripts/build-font-subsets.py`，一次生成H5与微信两套子集。默认 `--common-count 1800` 和 `--mp-extra-count 200`；分别记录清单与字表。从项目根目录运行；下载仅在开发时发生，固定源文件均做 SHA256 校验。缓存路径放在交付项目外的 `work/` 目录。
 
 ```bash
 python3 -m venv ../../work/font-venv
@@ -82,7 +92,7 @@ python3 -m venv ../../work/font-venv
 ../../work/font-venv/bin/python scripts/build-font-subsets.py --cache ../../work/font-sources
 ```
 
-更新组件文案后重新执行即可覆盖新字。可用 `--common-count 2500` 扩大常用字，但必须再次检查微信包体。脚本会刷新两份 WOFF、`scripts/font-data/charset.txt` 和 `scripts/font-data/manifest.json`；字体源版本升级必须同时更新脚本固定提交、SHA256、许可、第三方声明与本说明。
+更新组件文案后重新执行即可覆盖新字。H5可用 `--common-count 2500` 扩大常用字；微信可加 `--mp-extra-count 600` 恢复上一版的额外动态覆盖，仍保留CFF优化，须重新检查包体和真机。脚本刷新H5字体/清单及微信 `scripts/font-data/mp` 的两份字体、字表和清单；MP清单记录 `extra_common_character_count` 与 `cff_optimization`。H5不执行新增CFF优化。固定源码下两次生成的字体、字表和清单SHA256一致，见本轮对比报告。字体源版本升级必须同时更新固定提交、SHA256、许可、第三方声明与本说明。
 
 v0.5 功能代码冻结后的历史补扫为 79 个源文件、1080 个不同中文码位，两份字体均无缺字；媒体文案调整没有新增未收录字。清单中的字节数和 SHA256 与字体文件一致，字表已涵盖当前全部源码字符，因此本次补扫未重新生成字体。
 
@@ -119,10 +129,10 @@ v0.5 字体刷新验证：在相同源码下执行原脚本两次，两份 WOFF�
 
 补入“履”后的最终生产构建已重新在 `/demo/` 子目录验证，两份字体 HTTP 200 且均为 `loaded`；同时确认静态视频可播放。H5 结果不等于微信真机字体通过。
 
-## v0.5 最终分包核对
+## 历史 v0.5 最终分包核对
 
 完成内容分包后，微信发布版主包为1,742,843 bytes，内容分包为656,637 bytes；字体仍仅在主包保留一份。最终生产子路径复查确认两份字体HTTP200且实际loaded。完整检查及微信尚未验证项目见 `07-validation.md`。
 
-## v0.5.1 字符覆盖
+## 历史 v0.5.1 早期字符覆盖
 
-六类首页轮播、聊天气泡和连续追问文案更新后重建子集。扫描81个源码文件、1102个不同中文码位，两份字体缺字均为0；每份覆盖2358码位，合计989,364字节。源码中的新字已覆盖，用户输入的未收录字仍回退系统字体。两份当前SHA256以本页上方及 `scripts/font-data/manifest.json` 为准。
+六类首页轮播、聊天气泡和连续追问文案更新后重建子集。扫描81个源码文件、1102个不同中文码位，两份字体缺字均为0；每份覆盖2358码位，合计989,364字节。源码中的新字已覆盖，用户输入的未收录字仍回退系统字体。该条是本轮平台分字库优化前的记录；当前大小、覆盖和SHA256以本页现行表及两套manifest为准。

@@ -2,9 +2,9 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { onHide } from '@dcloudio/uni-app'
 import { locale, t } from '../../composables/useLocale'
-import { assetUrl } from '../../composables/useAssetUrl'
+import { assetUrl } from '../composables/useAssetUrl'
 import { readInputValue } from '../../composables/readInputValue'
-import { audioStories } from '../../domain/audioStories'
+import { audioStories } from '../domain/audioStories'
 import { validateMediaFile, type LocalMediaFile } from '../../domain/localMedia'
 import {
   localMediaError,

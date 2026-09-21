@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
 import NewsSubscriptions from './NewsSubscriptions.vue'
-import { newsPreferences, toggleNewsCategory } from '../../composables/useNewsPreferences'
+import { newsPreferences, toggleNewsCategory } from '../composables/useNewsPreferences'
 import { navigate, goBack, useRouteParams } from '../../composables/useNavigation'
 import { t } from '../../composables/useLocale'
 import {

@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
 import MediaCreationPanel from './MediaCreationPanel.vue'
-import { useReplayCache } from '../../composables/useReplayCache'
+import { useReplayCache } from '../composables/useReplayCache'
 import { mediaCatalog, type BilingualText } from '../../domain/showcaseCatalog'
 import {
   mediaFavorites,
@@ -13,7 +13,7 @@ import {
 } from '../../composables/useShowcase'
 import { navigate, goBack, useRouteParams } from '../../composables/useNavigation'
 import { t } from '../../composables/useLocale'
-import { assetUrl } from '../../composables/useAssetUrl'
+import { assetUrl } from '../composables/useAssetUrl'
 const params = useRouteParams()
 const current = computed(() => mediaCatalog.find((item) => item.id === params.value.id))
 const replayCache = useReplayCache(current)

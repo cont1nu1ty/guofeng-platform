@@ -1,0 +1,195 @@
+{
+  "date": "2026-09-21",
+  "environment": {
+    "os": "Linux",
+    "wechatDevtools": "2.01.2510290",
+    "baseLibrary": "3.17.2",
+    "renderer": "WebView",
+    "build": "production",
+    "coldStartsPerVariant": 3,
+    "order": [
+      "api-full",
+      "wxss-full",
+      "api-full",
+      "wxss-full",
+      "api-full",
+      "wxss-full",
+      "api-compact",
+      "wxss-compact",
+      "api-compact",
+      "wxss-compact",
+      "api-compact",
+      "wxss-compact"
+    ],
+    "cache": "clear compile cache; preserve local storage; no code package download required",
+    "limitations": "Simulator only; other desktop processes and developer-tool startup fluctuate; not a real-device latency benchmark."
+  },
+  "selected": "api-compact",
+  "variants": [
+    {
+      "variant": "api-full",
+      "mainPackageBytes": 1866621,
+      "fontCodepointsPerFamily": 2008,
+      "woffBytes": 808944,
+      "appLaunchMs": [
+        18184,
+        14883,
+        15144
+      ],
+      "medianAppLaunchMs": 15144,
+      "firstRenderMs": [
+        2087,
+        1897,
+        1869
+      ],
+      "initTransferMs": [
+        459,
+        350,
+        314
+      ],
+      "largeTransferWarning": true,
+      "allFontFacesLoaded": true,
+      "sdkErrors": []
+    },
+    {
+      "variant": "wxss-full",
+      "mainPackageBytes": 1866740,
+      "fontCodepointsPerFamily": 2008,
+      "woffBytes": 808944,
+      "appLaunchMs": [
+        17169,
+        15218,
+        21139
+      ],
+      "medianAppLaunchMs": 17169,
+      "firstRenderMs": [
+        2381,
+        1970,
+        2054
+      ],
+      "initTransferMs": [
+        10,
+        7,
+        9
+      ],
+      "largeTransferWarning": false,
+      "allFontFacesLoaded": true,
+      "sdkErrors": []
+    },
+    {
+      "variant": "api-compact",
+      "mainPackageBytes": 1547229,
+      "fontCodepointsPerFamily": 1608,
+      "woffBytes": 569396,
+      "appLaunchMs": [
+        14440,
+        15540,
+        15092
+      ],
+      "medianAppLaunchMs": 15092,
+      "firstRenderMs": [
+        1764,
+        1679,
+        1741
+      ],
+      "initTransferMs": [
+        259,
+        223,
+        301
+      ],
+      "largeTransferWarning": false,
+      "allFontFacesLoaded": true,
+      "sdkErrors": [
+        {
+          "sample": 3,
+          "message": "<Error: SystemError (appServiceSDKScriptError)\ntoo early>\nError: too early\n    at new <anonymous> (http://127.0.0.1:41697/appservice/__dev__/WAServiceMainContext.js?t=wechat&v=3.17.2:1:1275202)\n    at Function.fail (http://127.0.0.1:41697/appservice/__dev__/WAServiceMainContext.js?t=wechat&v=3.17.2:1:1275387)\n    at p (http://127.0.0.1:41697/appservice/__dev__/WAServiceMainContext.js?t=wechat&v=3.17.2:1:176903)\n    at Object.fail (http://127.0.0.1:41697/appservice/__dev__/WAServiceMainContext.js?t=wechat&v=3.17.2:1:177346)\n    at http://127.0.0.1:41697/appservice/__dev__/WAServiceMainContext.js?t=wechat&v=3.17.2:1:1296267\n    at H (http://127.0.0.1:41697/appservice/__dev__/WAServiceMainContext.js?t=wechat&v=3.17.2:1:1296419)\n    at http://127.0.0.1:41697/appservice/__dev__/WAServiceMainContext.js?t=wechat&v=3.17.2:1:1296611\n    at r (http://127.0.0.1:41697/appservice/__dev__/WAServiceMainContext.js?t=wechat&v=3.17.2:1:1291850)\n    at s (http://127.0.0.1:41697/appservice/__dev__/WAServiceMainContext.js?t=wechat&v=3.17.2:1:134376)\n    at Object.invoke (http://127.0.0.1:41697/appservice/__dev__/WAServiceMainContext.js?t=wechat&v=3.17.2:1:134499)"
+        }
+      ]
+    },
+    {
+      "variant": "wxss-compact",
+      "mainPackageBytes": 1547348,
+      "fontCodepointsPerFamily": 1608,
+      "woffBytes": 569396,
+      "appLaunchMs": [
+        18765,
+        16148,
+        15142
+      ],
+      "medianAppLaunchMs": 16148,
+      "firstRenderMs": [
+        2198,
+        2035,
+        2686
+      ],
+      "initTransferMs": [
+        12,
+        8,
+        6
+      ],
+      "largeTransferWarning": false,
+      "allFontFacesLoaded": true,
+      "sdkErrors": []
+    }
+  ],
+  "finalColdLaunch": {
+    "perf": [
+      {
+        "duration": 12023,
+        "entryType": "navigation",
+        "name": "appLaunch",
+        "startTime": 1789966215662,
+        "navigationType": "appLaunch",
+        "path": "pages/index/index",
+        "pageId": 1,
+        "needDownloadPkgs": false
+      },
+      {
+        "duration": 1416,
+        "entryType": "render",
+        "name": "firstRender",
+        "startTime": 1789966226269,
+        "path": "pages/index/index",
+        "pageId": 1,
+        "viewLayerReadyTime": 1789966223618,
+        "initDataSendTime": 1789966227218,
+        "initDataRecvTime": 1789966227410,
+        "viewLayerRenderStartTime": 1789966227428,
+        "viewLayerRenderEndTime": 1789966227649
+      }
+    ],
+    "pages": [
+      "pages/index/index"
+    ]
+  },
+  "finalBuild": {
+    "mainPackageDiskBytes": 1547176,
+    "relocatedModules": 6,
+    "relocationMainBytesSaved": 6984,
+    "fontWoffBytes": 569396,
+    "sourceHanCovered": 1106,
+    "extraCommonHan": 200,
+    "codeQuality": {
+      "scanTime": "2026-09-21T13:02:25.964+08:00",
+      "jsFiles": "Pass",
+      "mainPackage": "Not Pass",
+      "mediaResources": "Not Pass",
+      "compiledMainBytes": 1783675,
+      "compiledContentPackageBytes": 725555,
+      "perPackageLimitBytes": 1572864,
+      "mainBytesOverLimit": 210811,
+      "source": "Persisted codeQuality result for the build/mp-weixin project; compiler resultType dev."
+    },
+    "validation": {
+      "unitTests": 80,
+      "testFiles": 13,
+      "typecheck": true,
+      "format": true,
+      "h5Build": true,
+      "wechatBuild": true,
+      "h5DevRegression": "5 groups passed",
+      "h5ProductionRegression": "5 groups passed",
+      "realDevice": "not tested"
+    }
+  }
+}

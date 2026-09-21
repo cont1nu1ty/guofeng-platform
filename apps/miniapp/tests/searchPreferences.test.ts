@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { createSearchIndex, findEntries } from '../src/domain/searchCatalog'
 import { seedWorks, seedClassics, seedActivities } from '../src/domain/fixtures'
-import { createNewsPreferences } from '../src/domain/newsPreferences'
+import { createNewsPreferences } from '../src/pkg-content/domain/newsPreferences'
 import { provinceCatalog, regionalOptions } from '../src/domain/regionCatalog'
 describe('platform search', () => {
   const index = createSearchIndex(seedWorks, seedClassics, seedActivities)

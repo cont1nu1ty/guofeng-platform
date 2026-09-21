@@ -3,37 +3,38 @@
   "common_character_source": "https://www.unicode.org/Public/17.0.0/ucd/Unihan.zip",
   "common_character_source_sha256": "f7a48b2b545acfaa77b2d607ae28747404ce02baefee16396c5d2d7a8ef34b5e",
   "common_character_method": "sum kHanyuPinlu frequencies; descending; code point tie-break; exclude source characters and fixed punctuation before selecting extras",
-  "extra_common_character_count": 600,
+  "extra_common_character_count": 200,
+  "cff_optimization": "desubroutinize after subsetting; WOFF compression unchanged",
   "fonts": [
     {
       "family": "JiafengSans",
       "style": "Regular",
       "weight": 400,
       "file": "JiafengSans-Regular.woff",
-      "bytes": 343116,
-      "sha256": "8b43684863287ce863830fe9cd86195d1b6a24cf127c6d5d1da652ee3a50b6a0",
+      "bytes": 250000,
+      "sha256": "5abc4b633de13dd0441cbda4aa2faaa696f4b853423606c324c9295eb7dcec86",
       "source_file": "SourceHanSansSC-Regular.otf",
       "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-han-sans/a4f7cf94edfb9d7ffbdfc4841de276358bd7e0f2/OTF/SimplifiedChinese/SourceHanSansSC-Regular.otf",
       "source_release": "2.005R",
       "source_version": "Version 2.005;addfeatures 5.0.0b21",
       "source_sha256": "f1d8611151880c6c336aabeac4640ef434fa13cbfbf1ffe82d0a71b2a5637256",
-      "glyph_count": 2056,
-      "codepoint_count": 2008
+      "glyph_count": 1656,
+      "codepoint_count": 1608
     },
     {
       "family": "JiafengSerif",
       "style": "SemiBold",
       "weight": 600,
       "file": "JiafengSerif-SemiBold.woff",
-      "bytes": 465828,
-      "sha256": "ac225d15b283848ea9b02d7ea55d14e7fc88f135307e65dafde4df422080bd90",
+      "bytes": 319396,
+      "sha256": "1b7b50b01f986574f70e025179a3745d16872601e9c392eb79f683ffaab253a4",
       "source_file": "SourceHanSerifSC-SemiBold.otf",
       "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-han-serif/7889f11bf31170b5d092a083b357c8c8130f89e0/OTF/SimplifiedChinese/SourceHanSerifSC-SemiBold.otf",
       "source_release": "2.003R",
       "source_version": "Version 2.003;hotconv 1.1.1;makeotfexe 2.6.0",
       "source_sha256": "faf16caeaf207e1926e01af8d9f1a8e71b0e9d8f51bf3b5d9a78f9f30e7e3e31",
-      "glyph_count": 2057,
-      "codepoint_count": 2008
+      "glyph_count": 1657,
+      "codepoint_count": 1608
     }
   ]
 }

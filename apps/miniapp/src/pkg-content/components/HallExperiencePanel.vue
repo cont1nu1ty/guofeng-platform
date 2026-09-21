@@ -2,9 +2,9 @@
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { onHide } from '@dcloudio/uni-app'
 import { locale, t } from '../../composables/useLocale'
-import { assetUrl } from '../../composables/useAssetUrl'
+import { assetUrl } from '../composables/useAssetUrl'
 import type { HallPerson } from '../../domain/showcaseCatalog'
-import { hallNarration, hallQuestions } from '../../domain/hallExperience'
+import { hallNarration, hallQuestions } from '../domain/hallExperience'
 const props = defineProps<{ person: HallPerson }>()
 const instance = getCurrentInstance()
 const tab = ref('panorama')

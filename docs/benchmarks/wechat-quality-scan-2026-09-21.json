@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-09-21T05:03:56.006Z",
+  "text": "Code Quality\nRescan\n2026/09/21 13:02\nMain Package\n3 Item \nMain Package Size\nMain package size (without plugins) should be less than 1.5 MCheck documentation\nNot Pass\nJS Files\nThe main package has JS that is only dependent on other sub-packages:Check documentation\nPass\nComponents\nThe main package has components that are only dependent on other sub-packages:Check documentation\nPass\nCode Package\n3 Item \nImage and Audio Resources\nPicture and audio resources size exceeds 200 KCheck documentation\nNot Pass\nComponents\nLazyCodeLoading is not turned onCheck documentation\nPass\nPlugins\nReference plugin size exceeds 200 KCheck documentation\nPass\nCode Compress\n3 Item \nNo Use or Dependency Files\n3 Item \nSensitive Information\n1 Item ",
+  "rect": {
+    "x": 301,
+    "y": 653.25,
+    "width": 1035,
+    "height": 298.75,
+    "top": 653.25,
+    "right": 1336,
+    "bottom": 952,
+    "left": 301
+  }
+}

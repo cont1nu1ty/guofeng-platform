@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { t, locale } from '../../composables/useLocale'
 import { readInputValue } from '../../composables/readInputValue'
-import { assetUrl } from '../../composables/useAssetUrl'
+import { assetUrl } from '../composables/useAssetUrl'
 import { navigate } from '../../composables/useNavigation'
 import { validateMediaFile, type LocalMediaFile } from '../../domain/localMedia'
 import {
