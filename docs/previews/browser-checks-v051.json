@@ -1,0 +1,3036 @@
+{
+  "hero": {
+    "layouts": [
+      {
+        "width": 320,
+        "lang": "zh",
+        "index": 0,
+        "title": "政策学习\n从家出发",
+        "kicker": "全国政策通知 · 版式样例",
+        "hero": {
+          "top": 194.28125,
+          "bottom": 584.28125,
+          "left": 18,
+          "right": 302
+        },
+        "copy": {
+          "top": 194.28125,
+          "bottom": 584.28125,
+          "left": 18,
+          "right": 205.4375
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 252.375,
+            "bottom": 333.375,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          },
+          {
+            "cls": "hero-description",
+            "top": 343.375,
+            "bottom": 413.375,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 433.375,
+            "bottom": 469.375,
+            "left": 38,
+            "right": 143.25,
+            "client": 105,
+            "scroll": 105
+          },
+          {
+            "cls": "hero-foot",
+            "top": 489.375,
+            "bottom": 500.921875,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "index": 1,
+        "title": "让好家风\n代代相传",
+        "kicker": "征稿公告 · 家书征集样例",
+        "hero": {
+          "top": 194.28125,
+          "bottom": 584.28125,
+          "left": 18,
+          "right": 302
+        },
+        "copy": {
+          "top": 194.28125,
+          "bottom": 584.28125,
+          "left": 18,
+          "right": 205.4375
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 252.375,
+            "bottom": 333.375,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          },
+          {
+            "cls": "hero-description",
+            "top": 343.375,
+            "bottom": 395.875,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 415.875,
+            "bottom": 451.875,
+            "left": 38,
+            "right": 143.25,
+            "client": 105,
+            "scroll": 105
+          },
+          {
+            "cls": "hero-foot",
+            "top": 471.875,
+            "bottom": 483.421875,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "index": 2,
+        "title": "家风相聚\n薪火相传",
+        "kicker": "年度盛典 · 预告演示",
+        "hero": {
+          "top": 194.28125,
+          "bottom": 584.28125,
+          "left": 18,
+          "right": 302
+        },
+        "copy": {
+          "top": 194.28125,
+          "bottom": 584.28125,
+          "left": 18,
+          "right": 205.4375
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 252.375,
+            "bottom": 333.375,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          },
+          {
+            "cls": "hero-description",
+            "top": 343.375,
+            "bottom": 413.375,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 433.375,
+            "bottom": 469.375,
+            "left": 38,
+            "right": 143.25,
+            "client": 105,
+            "scroll": 105
+          },
+          {
+            "cls": "hero-foot",
+            "top": 489.375,
+            "bottom": 500.921875,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "index": 3,
+        "title": "新卷启读\n共续文脉",
+        "kicker": "典籍首发 · 新卷预览",
+        "hero": {
+          "top": 194.28125,
+          "bottom": 584.28125,
+          "left": 18,
+          "right": 302
+        },
+        "copy": {
+          "top": 194.28125,
+          "bottom": 584.28125,
+          "left": 18,
+          "right": 205.4375
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 252.375,
+            "bottom": 333.375,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          },
+          {
+            "cls": "hero-description",
+            "top": 343.375,
+            "bottom": 413.375,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 433.375,
+            "bottom": 469.375,
+            "left": 38,
+            "right": 143.25,
+            "client": 105,
+            "scroll": 105
+          },
+          {
+            "cls": "hero-foot",
+            "top": 489.375,
+            "bottom": 500.921875,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "index": 4,
+        "title": "走进书院\n读懂家风",
+        "kicker": "研学活动 · 预约体验",
+        "hero": {
+          "top": 194.28125,
+          "bottom": 584.28125,
+          "left": 18,
+          "right": 302
+        },
+        "copy": {
+          "top": 194.28125,
+          "bottom": 584.28125,
+          "left": 18,
+          "right": 205.4375
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 252.375,
+            "bottom": 333.375,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          },
+          {
+            "cls": "hero-description",
+            "top": 343.375,
+            "bottom": 413.375,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 433.375,
+            "bottom": 469.375,
+            "left": 38,
+            "right": 143.25,
+            "client": 105,
+            "scroll": 105
+          },
+          {
+            "cls": "hero-foot",
+            "top": 489.375,
+            "bottom": 500.921875,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "index": 5,
+        "title": "清风润家\n正气传承",
+        "kicker": "廉政课堂 · 家庭共同学习",
+        "hero": {
+          "top": 194.28125,
+          "bottom": 584.28125,
+          "left": 18,
+          "right": 302
+        },
+        "copy": {
+          "top": 194.28125,
+          "bottom": 584.28125,
+          "left": 18,
+          "right": 205.4375
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 252.375,
+            "bottom": 333.375,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          },
+          {
+            "cls": "hero-description",
+            "top": 343.375,
+            "bottom": 395.875,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 415.875,
+            "bottom": 451.875,
+            "left": 38,
+            "right": 143.25,
+            "client": 105,
+            "scroll": 105
+          },
+          {
+            "cls": "hero-foot",
+            "top": 471.875,
+            "bottom": 483.421875,
+            "left": 38,
+            "right": 185.4375,
+            "client": 147,
+            "scroll": 147
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "index": 0,
+        "title": "Learn and\ngrow together",
+        "kicker": "NATIONAL NOTICES · DEMO",
+        "hero": {
+          "top": 208.265625,
+          "bottom": 598.265625,
+          "left": 18,
+          "right": 302
+        },
+        "copy": {
+          "top": 208.265625,
+          "bottom": 598.265625,
+          "left": 18,
+          "right": 228.15625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 266.359375,
+            "bottom": 383.78125,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          },
+          {
+            "cls": "hero-description",
+            "top": 393.78125,
+            "bottom": 459.78125,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 479.78125,
+            "bottom": 515.78125,
+            "left": 38,
+            "right": 174.21875,
+            "client": 136,
+            "scroll": 136
+          },
+          {
+            "cls": "hero-foot",
+            "top": 534.78125,
+            "bottom": 546.328125,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "index": 1,
+        "title": "Let family\nvalues endure",
+        "kicker": "CALL FOR STORIES · DEMO",
+        "hero": {
+          "top": 208.265625,
+          "bottom": 598.265625,
+          "left": 18,
+          "right": 302
+        },
+        "copy": {
+          "top": 208.265625,
+          "bottom": 598.265625,
+          "left": 18,
+          "right": 228.15625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 266.359375,
+            "bottom": 383.78125,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          },
+          {
+            "cls": "hero-description",
+            "top": 393.78125,
+            "bottom": 443.28125,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 463.28125,
+            "bottom": 499.28125,
+            "left": 38,
+            "right": 177.90625,
+            "client": 140,
+            "scroll": 140
+          },
+          {
+            "cls": "hero-foot",
+            "top": 518.28125,
+            "bottom": 529.828125,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "index": 2,
+        "title": "A year of\nshared stories",
+        "kicker": "ANNUAL CELEBRATION · DEMO",
+        "hero": {
+          "top": 208.265625,
+          "bottom": 598.265625,
+          "left": 18,
+          "right": 302
+        },
+        "copy": {
+          "top": 208.265625,
+          "bottom": 598.265625,
+          "left": 18,
+          "right": 228.15625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 266.359375,
+            "bottom": 383.78125,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          },
+          {
+            "cls": "hero-description",
+            "top": 393.78125,
+            "bottom": 443.28125,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 463.28125,
+            "bottom": 499.28125,
+            "left": 38,
+            "right": 166.53125,
+            "client": 129,
+            "scroll": 129
+          },
+          {
+            "cls": "hero-foot",
+            "top": 518.28125,
+            "bottom": 529.828125,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "index": 3,
+        "title": "A new volume,\na shared story",
+        "kicker": "NEW COLLECTION · DEMO",
+        "hero": {
+          "top": 208.265625,
+          "bottom": 598.265625,
+          "left": 18,
+          "right": 302
+        },
+        "copy": {
+          "top": 208.265625,
+          "bottom": 598.265625,
+          "left": 18,
+          "right": 228.15625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 266.359375,
+            "bottom": 422.921875,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          },
+          {
+            "cls": "hero-description",
+            "top": 432.921875,
+            "bottom": 498.921875,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 518.921875,
+            "bottom": 554.921875,
+            "left": 38,
+            "right": 171.78125,
+            "client": 134,
+            "scroll": 134
+          },
+          {
+            "cls": "hero-foot",
+            "top": 573.921875,
+            "bottom": 585.46875,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "index": 4,
+        "title": "Visit and learn,\nread together",
+        "kicker": "LEARNING VISITS · DEMO",
+        "hero": {
+          "top": 208.265625,
+          "bottom": 598.265625,
+          "left": 18,
+          "right": 302
+        },
+        "copy": {
+          "top": 208.265625,
+          "bottom": 598.265625,
+          "left": 18,
+          "right": 228.15625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 266.359375,
+            "bottom": 422.921875,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          },
+          {
+            "cls": "hero-description",
+            "top": 432.921875,
+            "bottom": 498.921875,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 518.921875,
+            "bottom": 554.921875,
+            "left": 38,
+            "right": 193.59375,
+            "client": 156,
+            "scroll": 156
+          },
+          {
+            "cls": "hero-foot",
+            "top": 573.921875,
+            "bottom": 585.46875,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "index": 5,
+        "title": "Integrity\nbegins at home",
+        "kicker": "INTEGRITY CLASSROOM · DEMO",
+        "hero": {
+          "top": 208.265625,
+          "bottom": 598.265625,
+          "left": 18,
+          "right": 302
+        },
+        "copy": {
+          "top": 208.265625,
+          "bottom": 598.265625,
+          "left": 18,
+          "right": 228.15625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 266.359375,
+            "bottom": 383.78125,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          },
+          {
+            "cls": "hero-description",
+            "top": 393.78125,
+            "bottom": 459.78125,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 479.78125,
+            "bottom": 515.78125,
+            "left": 38,
+            "right": 186.125,
+            "client": 148,
+            "scroll": 148
+          },
+          {
+            "cls": "hero-foot",
+            "top": 534.78125,
+            "bottom": 546.328125,
+            "left": 38,
+            "right": 208.15625,
+            "client": 170,
+            "scroll": 170
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "index": 0,
+        "title": "政策学习\n从家出发",
+        "kicker": "全国政策通知 · 版式样例",
+        "hero": {
+          "top": 164.390625,
+          "bottom": 554.390625,
+          "left": 18,
+          "right": 372
+        },
+        "copy": {
+          "top": 164.390625,
+          "bottom": 554.390625,
+          "left": 18,
+          "right": 251.625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 222.484375,
+            "bottom": 303.484375,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          },
+          {
+            "cls": "hero-description",
+            "top": 313.484375,
+            "bottom": 348.484375,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 368.484375,
+            "bottom": 404.484375,
+            "left": 38,
+            "right": 143.25,
+            "client": 105,
+            "scroll": 105
+          },
+          {
+            "cls": "hero-foot",
+            "top": 424.484375,
+            "bottom": 436.03125,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "index": 1,
+        "title": "让好家风\n代代相传",
+        "kicker": "征稿公告 · 家书征集样例",
+        "hero": {
+          "top": 164.390625,
+          "bottom": 554.390625,
+          "left": 18,
+          "right": 372
+        },
+        "copy": {
+          "top": 164.390625,
+          "bottom": 554.390625,
+          "left": 18,
+          "right": 251.625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 222.484375,
+            "bottom": 303.484375,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          },
+          {
+            "cls": "hero-description",
+            "top": 313.484375,
+            "bottom": 348.484375,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 368.484375,
+            "bottom": 404.484375,
+            "left": 38,
+            "right": 143.25,
+            "client": 105,
+            "scroll": 105
+          },
+          {
+            "cls": "hero-foot",
+            "top": 424.484375,
+            "bottom": 436.03125,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "index": 2,
+        "title": "家风相聚\n薪火相传",
+        "kicker": "年度盛典 · 预告演示",
+        "hero": {
+          "top": 164.390625,
+          "bottom": 554.390625,
+          "left": 18,
+          "right": 372
+        },
+        "copy": {
+          "top": 164.390625,
+          "bottom": 554.390625,
+          "left": 18,
+          "right": 251.625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 222.484375,
+            "bottom": 303.484375,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          },
+          {
+            "cls": "hero-description",
+            "top": 313.484375,
+            "bottom": 348.484375,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 368.484375,
+            "bottom": 404.484375,
+            "left": 38,
+            "right": 143.25,
+            "client": 105,
+            "scroll": 105
+          },
+          {
+            "cls": "hero-foot",
+            "top": 424.484375,
+            "bottom": 436.03125,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "index": 3,
+        "title": "新卷启读\n共续文脉",
+        "kicker": "典籍首发 · 新卷预览",
+        "hero": {
+          "top": 164.390625,
+          "bottom": 554.390625,
+          "left": 18,
+          "right": 372
+        },
+        "copy": {
+          "top": 164.390625,
+          "bottom": 554.390625,
+          "left": 18,
+          "right": 251.625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 222.484375,
+            "bottom": 303.484375,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          },
+          {
+            "cls": "hero-description",
+            "top": 313.484375,
+            "bottom": 348.484375,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 368.484375,
+            "bottom": 404.484375,
+            "left": 38,
+            "right": 143.25,
+            "client": 105,
+            "scroll": 105
+          },
+          {
+            "cls": "hero-foot",
+            "top": 424.484375,
+            "bottom": 436.03125,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "index": 4,
+        "title": "走进书院\n读懂家风",
+        "kicker": "研学活动 · 预约体验",
+        "hero": {
+          "top": 164.390625,
+          "bottom": 554.390625,
+          "left": 18,
+          "right": 372
+        },
+        "copy": {
+          "top": 164.390625,
+          "bottom": 554.390625,
+          "left": 18,
+          "right": 251.625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 222.484375,
+            "bottom": 303.484375,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          },
+          {
+            "cls": "hero-description",
+            "top": 313.484375,
+            "bottom": 348.484375,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 368.484375,
+            "bottom": 404.484375,
+            "left": 38,
+            "right": 143.25,
+            "client": 105,
+            "scroll": 105
+          },
+          {
+            "cls": "hero-foot",
+            "top": 424.484375,
+            "bottom": 436.03125,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "index": 5,
+        "title": "清风润家\n正气传承",
+        "kicker": "廉政课堂 · 家庭共同学习",
+        "hero": {
+          "top": 164.390625,
+          "bottom": 554.390625,
+          "left": 18,
+          "right": 372
+        },
+        "copy": {
+          "top": 164.390625,
+          "bottom": 554.390625,
+          "left": 18,
+          "right": 251.625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 222.484375,
+            "bottom": 303.484375,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          },
+          {
+            "cls": "hero-description",
+            "top": 313.484375,
+            "bottom": 348.484375,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 368.484375,
+            "bottom": 404.484375,
+            "left": 38,
+            "right": 143.25,
+            "client": 105,
+            "scroll": 105
+          },
+          {
+            "cls": "hero-foot",
+            "top": 424.484375,
+            "bottom": 436.03125,
+            "left": 38,
+            "right": 231.625,
+            "client": 194,
+            "scroll": 194
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "index": 0,
+        "title": "Learn and\ngrow together",
+        "kicker": "NATIONAL NOTICES · DEMO",
+        "hero": {
+          "top": 170.96875,
+          "bottom": 560.96875,
+          "left": 18,
+          "right": 372
+        },
+        "copy": {
+          "top": 170.96875,
+          "bottom": 560.96875,
+          "left": 18,
+          "right": 279.953125
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 229.0625,
+            "bottom": 307.34375,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          },
+          {
+            "cls": "hero-description",
+            "top": 317.34375,
+            "bottom": 350.34375,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 370.34375,
+            "bottom": 406.34375,
+            "left": 38,
+            "right": 174.21875,
+            "client": 136,
+            "scroll": 136
+          },
+          {
+            "cls": "hero-foot",
+            "top": 425.34375,
+            "bottom": 436.890625,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "index": 1,
+        "title": "Let family\nvalues endure",
+        "kicker": "CALL FOR STORIES · DEMO",
+        "hero": {
+          "top": 170.96875,
+          "bottom": 560.96875,
+          "left": 18,
+          "right": 372
+        },
+        "copy": {
+          "top": 170.96875,
+          "bottom": 560.96875,
+          "left": 18,
+          "right": 279.953125
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 229.0625,
+            "bottom": 307.34375,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          },
+          {
+            "cls": "hero-description",
+            "top": 317.34375,
+            "bottom": 350.34375,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 370.34375,
+            "bottom": 406.34375,
+            "left": 38,
+            "right": 177.90625,
+            "client": 140,
+            "scroll": 140
+          },
+          {
+            "cls": "hero-foot",
+            "top": 425.34375,
+            "bottom": 436.890625,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "index": 2,
+        "title": "A year of\nshared stories",
+        "kicker": "ANNUAL CELEBRATION · DEMO",
+        "hero": {
+          "top": 170.96875,
+          "bottom": 560.96875,
+          "left": 18,
+          "right": 372
+        },
+        "copy": {
+          "top": 170.96875,
+          "bottom": 560.96875,
+          "left": 18,
+          "right": 279.953125
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 229.0625,
+            "bottom": 307.34375,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          },
+          {
+            "cls": "hero-description",
+            "top": 317.34375,
+            "bottom": 350.34375,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 370.34375,
+            "bottom": 406.34375,
+            "left": 38,
+            "right": 166.53125,
+            "client": 129,
+            "scroll": 129
+          },
+          {
+            "cls": "hero-foot",
+            "top": 425.34375,
+            "bottom": 436.890625,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "index": 3,
+        "title": "A new volume,\na shared story",
+        "kicker": "NEW COLLECTION · DEMO",
+        "hero": {
+          "top": 170.96875,
+          "bottom": 560.96875,
+          "left": 18,
+          "right": 372
+        },
+        "copy": {
+          "top": 170.96875,
+          "bottom": 560.96875,
+          "left": 18,
+          "right": 279.953125
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 229.0625,
+            "bottom": 307.34375,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          },
+          {
+            "cls": "hero-description",
+            "top": 317.34375,
+            "bottom": 350.34375,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 370.34375,
+            "bottom": 406.34375,
+            "left": 38,
+            "right": 171.78125,
+            "client": 134,
+            "scroll": 134
+          },
+          {
+            "cls": "hero-foot",
+            "top": 425.34375,
+            "bottom": 436.890625,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "index": 4,
+        "title": "Visit and learn,\nread together",
+        "kicker": "LEARNING VISITS · DEMO",
+        "hero": {
+          "top": 170.96875,
+          "bottom": 560.96875,
+          "left": 18,
+          "right": 372
+        },
+        "copy": {
+          "top": 170.96875,
+          "bottom": 560.96875,
+          "left": 18,
+          "right": 279.953125
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 229.0625,
+            "bottom": 307.34375,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          },
+          {
+            "cls": "hero-description",
+            "top": 317.34375,
+            "bottom": 350.34375,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 370.34375,
+            "bottom": 406.34375,
+            "left": 38,
+            "right": 193.59375,
+            "client": 156,
+            "scroll": 156
+          },
+          {
+            "cls": "hero-foot",
+            "top": 425.34375,
+            "bottom": 436.890625,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "index": 5,
+        "title": "Integrity\nbegins at home",
+        "kicker": "INTEGRITY CLASSROOM · DEMO",
+        "hero": {
+          "top": 170.96875,
+          "bottom": 560.96875,
+          "left": 18,
+          "right": 372
+        },
+        "copy": {
+          "top": 170.96875,
+          "bottom": 560.96875,
+          "left": 18,
+          "right": 279.953125
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 229.0625,
+            "bottom": 307.34375,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          },
+          {
+            "cls": "hero-description",
+            "top": 317.34375,
+            "bottom": 350.34375,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 370.34375,
+            "bottom": 406.34375,
+            "left": 38,
+            "right": 186.125,
+            "client": 148,
+            "scroll": 148
+          },
+          {
+            "cls": "hero-foot",
+            "top": 425.34375,
+            "bottom": 436.890625,
+            "left": 38,
+            "right": 259.953125,
+            "client": 222,
+            "scroll": 222
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "index": 0,
+        "title": "政策学习\n从家出发",
+        "kicker": "全国政策通知 · 版式样例",
+        "hero": {
+          "top": 265.625,
+          "bottom": 705.625,
+          "left": 160,
+          "right": 1280
+        },
+        "copy": {
+          "top": 265.625,
+          "bottom": 705.625,
+          "left": 160,
+          "right": 798.390625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 332.71875,
+            "bottom": 436.71875,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "hero-description",
+            "top": 448.71875,
+            "bottom": 490.71875,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 512.71875,
+            "bottom": 552.71875,
+            "left": 204,
+            "right": 348.71875,
+            "client": 145,
+            "scroll": 145
+          },
+          {
+            "cls": "hero-foot",
+            "top": 575.71875,
+            "bottom": 590.5625,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "index": 1,
+        "title": "让好家风\n代代相传",
+        "kicker": "征稿公告 · 家书征集样例",
+        "hero": {
+          "top": 265.625,
+          "bottom": 705.625,
+          "left": 160,
+          "right": 1280
+        },
+        "copy": {
+          "top": 265.625,
+          "bottom": 705.625,
+          "left": 160,
+          "right": 798.390625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 332.71875,
+            "bottom": 436.71875,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "hero-description",
+            "top": 448.71875,
+            "bottom": 490.71875,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 512.71875,
+            "bottom": 552.71875,
+            "left": 204,
+            "right": 348.71875,
+            "client": 145,
+            "scroll": 145
+          },
+          {
+            "cls": "hero-foot",
+            "top": 575.71875,
+            "bottom": 590.5625,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "index": 2,
+        "title": "家风相聚\n薪火相传",
+        "kicker": "年度盛典 · 预告演示",
+        "hero": {
+          "top": 265.625,
+          "bottom": 705.625,
+          "left": 160,
+          "right": 1280
+        },
+        "copy": {
+          "top": 265.625,
+          "bottom": 705.625,
+          "left": 160,
+          "right": 798.390625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 332.71875,
+            "bottom": 436.71875,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "hero-description",
+            "top": 448.71875,
+            "bottom": 490.71875,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 512.71875,
+            "bottom": 552.71875,
+            "left": 204,
+            "right": 348.71875,
+            "client": 145,
+            "scroll": 145
+          },
+          {
+            "cls": "hero-foot",
+            "top": 575.71875,
+            "bottom": 590.5625,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "index": 3,
+        "title": "新卷启读\n共续文脉",
+        "kicker": "典籍首发 · 新卷预览",
+        "hero": {
+          "top": 265.625,
+          "bottom": 705.625,
+          "left": 160,
+          "right": 1280
+        },
+        "copy": {
+          "top": 265.625,
+          "bottom": 705.625,
+          "left": 160,
+          "right": 798.390625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 332.71875,
+            "bottom": 436.71875,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "hero-description",
+            "top": 448.71875,
+            "bottom": 490.71875,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 512.71875,
+            "bottom": 552.71875,
+            "left": 204,
+            "right": 348.71875,
+            "client": 145,
+            "scroll": 145
+          },
+          {
+            "cls": "hero-foot",
+            "top": 575.71875,
+            "bottom": 590.5625,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "index": 4,
+        "title": "走进书院\n读懂家风",
+        "kicker": "研学活动 · 预约体验",
+        "hero": {
+          "top": 265.625,
+          "bottom": 705.625,
+          "left": 160,
+          "right": 1280
+        },
+        "copy": {
+          "top": 265.625,
+          "bottom": 705.625,
+          "left": 160,
+          "right": 798.390625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 332.71875,
+            "bottom": 436.71875,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "hero-description",
+            "top": 448.71875,
+            "bottom": 490.71875,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 512.71875,
+            "bottom": 552.71875,
+            "left": 204,
+            "right": 348.71875,
+            "client": 145,
+            "scroll": 145
+          },
+          {
+            "cls": "hero-foot",
+            "top": 575.71875,
+            "bottom": 590.5625,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "index": 5,
+        "title": "清风润家\n正气传承",
+        "kicker": "廉政课堂 · 家庭共同学习",
+        "hero": {
+          "top": 265.625,
+          "bottom": 705.625,
+          "left": 160,
+          "right": 1280
+        },
+        "copy": {
+          "top": 265.625,
+          "bottom": 705.625,
+          "left": 160,
+          "right": 798.390625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 332.71875,
+            "bottom": 436.71875,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "hero-description",
+            "top": 448.71875,
+            "bottom": 490.71875,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 512.71875,
+            "bottom": 552.71875,
+            "left": 204,
+            "right": 348.71875,
+            "client": 145,
+            "scroll": 145
+          },
+          {
+            "cls": "hero-foot",
+            "top": 575.71875,
+            "bottom": 590.5625,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "index": 0,
+        "title": "Learn and\ngrow together",
+        "kicker": "NATIONAL NOTICES · DEMO",
+        "hero": {
+          "top": 256.53125,
+          "bottom": 696.53125,
+          "left": 160,
+          "right": 1280
+        },
+        "copy": {
+          "top": 256.53125,
+          "bottom": 696.53125,
+          "left": 160,
+          "right": 798.390625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 323.625,
+            "bottom": 425,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "hero-description",
+            "top": 437,
+            "bottom": 479,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 501,
+            "bottom": 541,
+            "left": 204,
+            "right": 385.875,
+            "client": 182,
+            "scroll": 182
+          },
+          {
+            "cls": "hero-foot",
+            "top": 564,
+            "bottom": 578.84375,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "index": 1,
+        "title": "Let family\nvalues endure",
+        "kicker": "CALL FOR STORIES · DEMO",
+        "hero": {
+          "top": 256.53125,
+          "bottom": 696.53125,
+          "left": 160,
+          "right": 1280
+        },
+        "copy": {
+          "top": 256.53125,
+          "bottom": 696.53125,
+          "left": 160,
+          "right": 798.390625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 323.625,
+            "bottom": 425,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "hero-description",
+            "top": 437,
+            "bottom": 479,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 501,
+            "bottom": 541,
+            "left": 204,
+            "right": 390.296875,
+            "client": 186,
+            "scroll": 186
+          },
+          {
+            "cls": "hero-foot",
+            "top": 564,
+            "bottom": 578.84375,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "index": 2,
+        "title": "A year of\nshared stories",
+        "kicker": "ANNUAL CELEBRATION · DEMO",
+        "hero": {
+          "top": 256.53125,
+          "bottom": 696.53125,
+          "left": 160,
+          "right": 1280
+        },
+        "copy": {
+          "top": 256.53125,
+          "bottom": 696.53125,
+          "left": 160,
+          "right": 798.390625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 323.625,
+            "bottom": 425,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "hero-description",
+            "top": 437,
+            "bottom": 479,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 501,
+            "bottom": 541,
+            "left": 204,
+            "right": 376.65625,
+            "client": 173,
+            "scroll": 173
+          },
+          {
+            "cls": "hero-foot",
+            "top": 564,
+            "bottom": 578.84375,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "index": 3,
+        "title": "A new volume,\na shared story",
+        "kicker": "NEW COLLECTION · DEMO",
+        "hero": {
+          "top": 256.53125,
+          "bottom": 696.53125,
+          "left": 160,
+          "right": 1280
+        },
+        "copy": {
+          "top": 256.53125,
+          "bottom": 696.53125,
+          "left": 160,
+          "right": 798.390625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 323.625,
+            "bottom": 425,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "hero-description",
+            "top": 437,
+            "bottom": 479,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 501,
+            "bottom": 541,
+            "left": 204,
+            "right": 382.953125,
+            "client": 179,
+            "scroll": 179
+          },
+          {
+            "cls": "hero-foot",
+            "top": 564,
+            "bottom": 578.84375,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "index": 4,
+        "title": "Visit and learn,\nread together",
+        "kicker": "LEARNING VISITS · DEMO",
+        "hero": {
+          "top": 256.53125,
+          "bottom": 696.53125,
+          "left": 160,
+          "right": 1280
+        },
+        "copy": {
+          "top": 256.53125,
+          "bottom": 696.53125,
+          "left": 160,
+          "right": 798.390625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 323.625,
+            "bottom": 425,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "hero-description",
+            "top": 437,
+            "bottom": 479,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 501,
+            "bottom": 541,
+            "left": 204,
+            "right": 409.125,
+            "client": 205,
+            "scroll": 205
+          },
+          {
+            "cls": "hero-foot",
+            "top": 564,
+            "bottom": 578.84375,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          }
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "index": 5,
+        "title": "Integrity\nbegins at home",
+        "kicker": "INTEGRITY CLASSROOM · DEMO",
+        "hero": {
+          "top": 256.53125,
+          "bottom": 696.53125,
+          "left": 160,
+          "right": 1280
+        },
+        "copy": {
+          "top": 256.53125,
+          "bottom": 696.53125,
+          "left": 160,
+          "right": 798.390625
+        },
+        "elements": [
+          {
+            "cls": "hero-title",
+            "top": 323.625,
+            "bottom": 425,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "hero-description",
+            "top": 437,
+            "bottom": 479,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          },
+          {
+            "cls": "wd-button is-primary is-medium hero-button",
+            "top": 501,
+            "bottom": 541,
+            "left": 204,
+            "right": 400.171875,
+            "client": 196,
+            "scroll": 196
+          },
+          {
+            "cls": "hero-foot",
+            "top": 564,
+            "bottom": 578.84375,
+            "left": 204,
+            "right": 754.390625,
+            "client": 550,
+            "scroll": 550
+          }
+        ],
+        "overflow": 0
+      }
+    ],
+    "routes": [
+      {
+        "lang": "zh",
+        "index": 0,
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news&id=national-policy-demo"
+      },
+      {
+        "lang": "zh",
+        "index": 1,
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news&id=notice-autumn"
+      },
+      {
+        "lang": "zh",
+        "index": 2,
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=media&tab=live"
+      },
+      {
+        "lang": "zh",
+        "index": 3,
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news&id=collection-launch-demo"
+      },
+      {
+        "lang": "zh",
+        "index": 4,
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=learning&id=DEMO-ACTIVITY-002"
+      },
+      {
+        "lang": "zh",
+        "index": 5,
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=classroom&id=integrity-home"
+      },
+      {
+        "lang": "en",
+        "index": 0,
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news&id=national-policy-demo"
+      },
+      {
+        "lang": "en",
+        "index": 1,
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news&id=notice-autumn"
+      },
+      {
+        "lang": "en",
+        "index": 2,
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=media&tab=live"
+      },
+      {
+        "lang": "en",
+        "index": 3,
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=news&id=collection-launch-demo"
+      },
+      {
+        "lang": "en",
+        "index": 4,
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=learning&id=DEMO-ACTIVITY-002"
+      },
+      {
+        "lang": "en",
+        "index": 5,
+        "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=classroom&id=integrity-home"
+      }
+    ],
+    "errors": []
+  },
+  "learningIcons": {
+    "checks": [
+      {
+        "lang": "zh",
+        "width": 320,
+        "data": [
+          {
+            "font": "32px",
+            "mark": {
+              "x": 37,
+              "y": 517.5625,
+              "width": 48,
+              "height": 48,
+              "top": 517.5625,
+              "right": 85,
+              "bottom": 565.5625,
+              "left": 37
+            },
+            "card": {
+              "x": 18,
+              "y": 492.78125,
+              "width": 284,
+              "height": 97.578125,
+              "top": 492.78125,
+              "right": 302,
+              "bottom": 590.359375,
+              "left": 18
+            },
+            "copyWidth": 152,
+            "text": "清廉课堂\n学习课程与情景测验"
+          },
+          {
+            "font": "32px",
+            "mark": {
+              "x": 37,
+              "y": 627.140625,
+              "width": 48,
+              "height": 48,
+              "top": 627.140625,
+              "right": 85,
+              "bottom": 675.140625,
+              "left": 37
+            },
+            "card": {
+              "x": 18,
+              "y": 602.359375,
+              "width": 284,
+              "height": 97.578125,
+              "top": 602.359375,
+              "right": 302,
+              "bottom": 699.9375,
+              "left": 18
+            },
+            "copyWidth": 152,
+            "text": "寻找传习阵地\n阵地示意图与场馆导览"
+          }
+        ]
+      },
+      {
+        "lang": "zh",
+        "width": 390,
+        "data": [
+          {
+            "font": "32px",
+            "mark": {
+              "x": 37,
+              "y": 462.484375,
+              "width": 48,
+              "height": 48,
+              "top": 462.484375,
+              "right": 85,
+              "bottom": 510.484375,
+              "left": 37
+            },
+            "card": {
+              "x": 18,
+              "y": 437.703125,
+              "width": 354,
+              "height": 97.578125,
+              "top": 437.703125,
+              "right": 372,
+              "bottom": 535.28125,
+              "left": 18
+            },
+            "copyWidth": 222,
+            "text": "清廉课堂\n学习课程与情景测验"
+          },
+          {
+            "font": "32px",
+            "mark": {
+              "x": 37,
+              "y": 572.0625,
+              "width": 48,
+              "height": 48,
+              "top": 572.0625,
+              "right": 85,
+              "bottom": 620.0625,
+              "left": 37
+            },
+            "card": {
+              "x": 18,
+              "y": 547.28125,
+              "width": 354,
+              "height": 97.578125,
+              "top": 547.28125,
+              "right": 372,
+              "bottom": 644.859375,
+              "left": 18
+            },
+            "copyWidth": 222,
+            "text": "寻找传习阵地\n阵地示意图与场馆导览"
+          }
+        ]
+      },
+      {
+        "lang": "zh",
+        "width": 1440,
+        "data": [
+          {
+            "font": "32px",
+            "mark": {
+              "x": 183,
+              "y": 512.5625,
+              "width": 56,
+              "height": 56,
+              "top": 512.5625,
+              "right": 239,
+              "bottom": 568.5625,
+              "left": 183
+            },
+            "card": {
+              "x": 160,
+              "y": 486.953125,
+              "width": 551,
+              "height": 107.234375,
+              "top": 486.953125,
+              "right": 711,
+              "bottom": 594.1875,
+              "left": 160
+            },
+            "copyWidth": 395,
+            "text": "清廉课堂\n学习课程与情景测验"
+          },
+          {
+            "font": "32px",
+            "mark": {
+              "x": 752,
+              "y": 512.5625,
+              "width": 56,
+              "height": 56,
+              "top": 512.5625,
+              "right": 808,
+              "bottom": 568.5625,
+              "left": 752
+            },
+            "card": {
+              "x": 729,
+              "y": 486.953125,
+              "width": 551,
+              "height": 107.234375,
+              "top": 486.953125,
+              "right": 1280,
+              "bottom": 594.1875,
+              "left": 729
+            },
+            "copyWidth": 395,
+            "text": "寻找传习阵地\n阵地示意图与场馆导览"
+          }
+        ]
+      },
+      {
+        "lang": "en",
+        "width": 320,
+        "data": [
+          {
+            "font": "32px",
+            "mark": {
+              "x": 37,
+              "y": 608.328125,
+              "width": 48,
+              "height": 48,
+              "top": 608.328125,
+              "right": 85,
+              "bottom": 656.328125,
+              "left": 37
+            },
+            "card": {
+              "x": 18,
+              "y": 570.953125,
+              "width": 284,
+              "height": 122.765625,
+              "top": 570.953125,
+              "right": 302,
+              "bottom": 693.71875,
+              "left": 18
+            },
+            "copyWidth": 152,
+            "text": "Integrity classroom\nCourses and scenario quizzes"
+          },
+          {
+            "font": "32px",
+            "mark": {
+              "x": 37,
+              "y": 756.296875,
+              "width": 48,
+              "height": 48,
+              "top": 756.296875,
+              "right": 85,
+              "bottom": 804.296875,
+              "left": 37
+            },
+            "card": {
+              "x": 18,
+              "y": 705.71875,
+              "width": 284,
+              "height": 149.15625,
+              "top": 705.71875,
+              "right": 302,
+              "bottom": 854.875,
+              "left": 18
+            },
+            "copyWidth": 152,
+            "text": "Explore learning venues\nVenue schematic and visit guides"
+          }
+        ]
+      },
+      {
+        "lang": "en",
+        "width": 390,
+        "data": [
+          {
+            "font": "32px",
+            "mark": {
+              "x": 37,
+              "y": 574.9375,
+              "width": 48,
+              "height": 48,
+              "top": 574.9375,
+              "right": 85,
+              "bottom": 622.9375,
+              "left": 37
+            },
+            "card": {
+              "x": 18,
+              "y": 550.15625,
+              "width": 354,
+              "height": 97.578125,
+              "top": 550.15625,
+              "right": 372,
+              "bottom": 647.734375,
+              "left": 18
+            },
+            "copyWidth": 222,
+            "text": "Integrity classroom\nCourses and scenario quizzes"
+          },
+          {
+            "font": "32px",
+            "mark": {
+              "x": 37,
+              "y": 684.515625,
+              "width": 48,
+              "height": 48,
+              "top": 684.515625,
+              "right": 85,
+              "bottom": 732.515625,
+              "left": 37
+            },
+            "card": {
+              "x": 18,
+              "y": 659.734375,
+              "width": 354,
+              "height": 97.578125,
+              "top": 659.734375,
+              "right": 372,
+              "bottom": 757.3125,
+              "left": 18
+            },
+            "copyWidth": 222,
+            "text": "Explore learning venues\nVenue schematic and visit guides"
+          }
+        ]
+      },
+      {
+        "lang": "en",
+        "width": 1440,
+        "data": [
+          {
+            "font": "32px",
+            "mark": {
+              "x": 183,
+              "y": 503.46875,
+              "width": 56,
+              "height": 56,
+              "top": 503.46875,
+              "right": 239,
+              "bottom": 559.46875,
+              "left": 183
+            },
+            "card": {
+              "x": 160,
+              "y": 477.859375,
+              "width": 551,
+              "height": 107.234375,
+              "top": 477.859375,
+              "right": 711,
+              "bottom": 585.09375,
+              "left": 160
+            },
+            "copyWidth": 395,
+            "text": "Integrity classroom\nCourses and scenario quizzes"
+          },
+          {
+            "font": "32px",
+            "mark": {
+              "x": 752,
+              "y": 503.46875,
+              "width": 56,
+              "height": 56,
+              "top": 503.46875,
+              "right": 808,
+              "bottom": 559.46875,
+              "left": 752
+            },
+            "card": {
+              "x": 729,
+              "y": 477.859375,
+              "width": 551,
+              "height": 107.234375,
+              "top": 477.859375,
+              "right": 1280,
+              "bottom": 585.09375,
+              "left": 729
+            },
+            "copyWidth": 395,
+            "text": "Explore learning venues\nVenue schematic and visit guides"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "conversationVisual": {
+    "cases": [
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "assistant",
+        "panelWidth": 284,
+        "panelHeight": 735.765625,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 422,
+        "historyScrollHeight": 420,
+        "historyClientHeight": 420,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 42,
+          "y": 397.46875,
+          "width": 236,
+          "height": 62,
+          "top": 397.46875,
+          "right": 278,
+          "bottom": 459.46875,
+          "left": 42
+        },
+        "scrollWidth": 320,
+        "viewport": 320,
+        "english": false,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": null,
+        "closeWidth": null,
+        "preservedDraft": null
+      },
+      {
+        "width": 320,
+        "lang": "zh",
+        "large": false,
+        "screen": "submit",
+        "panelWidth": 244,
+        "panelHeight": 706.9375,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 342,
+        "historyScrollHeight": 340,
+        "historyClientHeight": 340,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 62,
+          "y": 303.546875,
+          "width": 196,
+          "height": 64,
+          "top": 303.546875,
+          "right": 258,
+          "bottom": 367.546875,
+          "left": 62
+        },
+        "scrollWidth": 320,
+        "viewport": 320,
+        "english": false,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": 244,
+        "closeWidth": 244,
+        "preservedDraft": true
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "assistant",
+        "panelWidth": 284,
+        "panelHeight": 831.453125,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 422,
+        "historyScrollHeight": 420,
+        "historyClientHeight": 420,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 42,
+          "y": 371.5,
+          "width": 236,
+          "height": 62,
+          "top": 371.5,
+          "right": 278,
+          "bottom": 433.5,
+          "left": 42
+        },
+        "scrollWidth": 320,
+        "viewport": 320,
+        "english": true,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": null,
+        "closeWidth": null,
+        "preservedDraft": null
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": false,
+        "screen": "submit",
+        "panelWidth": 244,
+        "panelHeight": 795.40625,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 342,
+        "historyScrollHeight": 340,
+        "historyClientHeight": 340,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 62,
+          "y": 304.171875,
+          "width": 196,
+          "height": 64,
+          "top": 304.171875,
+          "right": 258,
+          "bottom": 368.171875,
+          "left": 62
+        },
+        "scrollWidth": 320,
+        "viewport": 320,
+        "english": true,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": 244,
+        "closeWidth": 244,
+        "preservedDraft": true
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "assistant",
+        "panelWidth": 354,
+        "panelHeight": 735.765625,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 422,
+        "historyScrollHeight": 420,
+        "historyClientHeight": 420,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 42,
+          "y": 397.578125,
+          "width": 306,
+          "height": 62,
+          "top": 397.578125,
+          "right": 348,
+          "bottom": 459.578125,
+          "left": 42
+        },
+        "scrollWidth": 390,
+        "viewport": 390,
+        "english": false,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": null,
+        "closeWidth": null,
+        "preservedDraft": null
+      },
+      {
+        "width": 390,
+        "lang": "zh",
+        "large": false,
+        "screen": "submit",
+        "panelWidth": 314,
+        "panelHeight": 646.65625,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 342,
+        "historyScrollHeight": 340,
+        "historyClientHeight": 340,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 62,
+          "y": 439.375,
+          "width": 266,
+          "height": 64,
+          "top": 439.375,
+          "right": 328,
+          "bottom": 503.375,
+          "left": 62
+        },
+        "scrollWidth": 390,
+        "viewport": 390,
+        "english": false,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": 314,
+        "closeWidth": 314,
+        "preservedDraft": true
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "assistant",
+        "panelWidth": 354,
+        "panelHeight": 831.453125,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 422,
+        "historyScrollHeight": 420,
+        "historyClientHeight": 420,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 42,
+          "y": 372.015625,
+          "width": 306,
+          "height": 62,
+          "top": 372.015625,
+          "right": 348,
+          "bottom": 434.015625,
+          "left": 42
+        },
+        "scrollWidth": 390,
+        "viewport": 390,
+        "english": true,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": null,
+        "closeWidth": null,
+        "preservedDraft": null
+      },
+      {
+        "width": 390,
+        "lang": "en",
+        "large": false,
+        "screen": "submit",
+        "panelWidth": 314,
+        "panelHeight": 733.328125,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 342,
+        "historyScrollHeight": 340,
+        "historyClientHeight": 340,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 62,
+          "y": 304.875,
+          "width": 266,
+          "height": 64,
+          "top": 304.875,
+          "right": 328,
+          "bottom": 368.875,
+          "left": 62
+        },
+        "scrollWidth": 390,
+        "viewport": 390,
+        "english": true,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": 314,
+        "closeWidth": 314,
+        "preservedDraft": true
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "assistant",
+        "panelWidth": 637.015625,
+        "panelHeight": 765.375,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 452,
+        "historyScrollHeight": 450,
+        "historyClientHeight": 450,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 196,
+          "y": 514.328125,
+          "width": 565.015625,
+          "height": 62,
+          "top": 514.328125,
+          "right": 761.015625,
+          "bottom": 576.328125,
+          "left": 196
+        },
+        "scrollWidth": 1440,
+        "viewport": 1440,
+        "english": false,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": null,
+        "closeWidth": null,
+        "preservedDraft": null
+      },
+      {
+        "width": 1440,
+        "lang": "zh",
+        "large": false,
+        "screen": "submit",
+        "panelWidth": 331.125,
+        "panelHeight": 627.96875,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 342,
+        "historyScrollHeight": 340,
+        "historyClientHeight": 340,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 644.875,
+          "y": 439.578125,
+          "width": 283.125,
+          "height": 64,
+          "top": 439.578125,
+          "right": 928,
+          "bottom": 503.578125,
+          "left": 644.875
+        },
+        "scrollWidth": 1440,
+        "viewport": 1440,
+        "english": false,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": 759,
+        "closeWidth": 759,
+        "preservedDraft": true
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "assistant",
+        "panelWidth": 850.71875,
+        "panelHeight": 765.375,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 452,
+        "historyScrollHeight": 450,
+        "historyClientHeight": 450,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 196,
+          "y": 514.484375,
+          "width": 778.71875,
+          "height": 62,
+          "top": 514.484375,
+          "right": 974.71875,
+          "bottom": 576.484375,
+          "left": 196
+        },
+        "scrollWidth": 1440,
+        "viewport": 1440,
+        "english": true,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": null,
+        "closeWidth": null,
+        "preservedDraft": null
+      },
+      {
+        "width": 1440,
+        "lang": "en",
+        "large": false,
+        "screen": "submit",
+        "panelWidth": 331.125,
+        "panelHeight": 733.328125,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 342,
+        "historyScrollHeight": 340,
+        "historyClientHeight": 340,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 644.875,
+          "y": 439.84375,
+          "width": 283.125,
+          "height": 64,
+          "top": 439.84375,
+          "right": 928,
+          "bottom": 503.84375,
+          "left": 644.875
+        },
+        "scrollWidth": 1440,
+        "viewport": 1440,
+        "english": true,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": 759,
+        "closeWidth": 759,
+        "preservedDraft": true
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "assistant",
+        "panelWidth": 284,
+        "panelHeight": 841.671875,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 422,
+        "historyScrollHeight": 420,
+        "historyClientHeight": 420,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 42,
+          "y": 371.71875,
+          "width": 236,
+          "height": 62,
+          "top": 371.71875,
+          "right": 278,
+          "bottom": 433.71875,
+          "left": 42
+        },
+        "scrollWidth": 320,
+        "viewport": 320,
+        "english": true,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": null,
+        "closeWidth": null,
+        "preservedDraft": null
+      },
+      {
+        "width": 320,
+        "lang": "en",
+        "large": true,
+        "screen": "submit",
+        "panelWidth": 244,
+        "panelHeight": 815.84375,
+        "overflows": [],
+        "internal": [],
+        "historyHeight": 342,
+        "historyScrollHeight": 443,
+        "historyClientHeight": 340,
+        "userCount": 1,
+        "assistantCount": 1,
+        "composer": {
+          "x": 62,
+          "y": 287.609375,
+          "width": 196,
+          "height": 64,
+          "top": 287.609375,
+          "right": 258,
+          "bottom": 351.609375,
+          "left": 62
+        },
+        "scrollWidth": 320,
+        "viewport": 320,
+        "english": true,
+        "noOverlay": true,
+        "samePage": true,
+        "beforeWidth": 244,
+        "closeWidth": 244,
+        "preservedDraft": true
+      }
+    ],
+    "errors": [],
+    "screenshots": [
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-assistant-320-zh.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-submit-320-zh.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-assistant-320-en.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-submit-320-en.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-assistant-390-zh.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-submit-390-zh.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-assistant-390-en.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-submit-390-en.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-assistant-1440-zh.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-submit-1440-zh.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-submit-workspace-1440-zh.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-assistant-1440-en.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-submit-1440-en.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-submit-workspace-1440-en.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-assistant-320-en-large.png",
+      "/home/steven/Documents/Codex/2026-09-20/xb/work/conversation-submit-320-en-large.png"
+    ]
+  },
+  "production": {
+    "version": "0.5.1",
+    "base": "http://127.0.0.1:5190/demo/",
+    "fonts": [
+      {
+        "file": "JiafengSans-Regular.woff",
+        "status": 200,
+        "bytes": 420096
+      },
+      {
+        "file": "JiafengSerif-SemiBold.woff",
+        "status": 200,
+        "bytes": 569268
+      }
+    ],
+    "loaded": [
+      {
+        "family": "JiafengSans",
+        "status": "loaded"
+      },
+      {
+        "family": "JiafengSerif",
+        "status": "loaded"
+      }
+    ],
+    "slides": 6,
+    "assistant": true,
+    "inspiration": true,
+    "learningIcons": true,
+    "errors": [],
+    "failed": []
+  },
+  "fonts": {
+    "files": 81,
+    "cjk": 1102,
+    "fonts": {
+      "JiafengSans-Regular.woff": {
+        "bytes": 420096,
+        "codepoints": 2358,
+        "missing": []
+      },
+      "JiafengSerif-SemiBold.woff": {
+        "bytes": 569268,
+        "codepoints": 2358,
+        "missing": []
+      }
+    }
+  },
+  "package": {
+    "mainBytes": 1778156,
+    "contentBytes": 656979,
+    "files": 210
+  }
+}

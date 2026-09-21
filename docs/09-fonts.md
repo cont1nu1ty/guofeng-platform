@@ -6,10 +6,10 @@
 
 | 本地文件                                                   | 官方原字体                           | 当前子集大小  |
 | ---------------------------------------------------------- | ------------------------------------ | ------------- |
-| `apps/miniapp/src/static/fonts/JiafengSans-Regular.woff`   | Source Han Sans SC Regular，2.005R   | 417,884 bytes |
-| `apps/miniapp/src/static/fonts/JiafengSerif-SemiBold.woff` | Source Han Serif SC SemiBold，2.003R | 566,452 bytes |
+| `apps/miniapp/src/static/fonts/JiafengSans-Regular.woff`   | Source Han Sans SC Regular，2.005R   | 420,096 bytes |
+| `apps/miniapp/src/static/fonts/JiafengSerif-SemiBold.woff` | Source Han Serif SC SemiBold，2.003R | 569,268 bytes |
 
-2026-09-21 用户端细节补齐后合计 **984,336 bytes，约 961.3 KiB**，比 `v0.4.0-showcase` 增加 19,900 bytes。每次扩容后的准确大小、SHA256、版本与码位数以 `scripts/font-data/manifest.json` 为准。这里选择 WOFF，避免低版本 iOS 对 WOFF2 的兼容差异。原始 16/24 MB OTF 仅用于构建，未打入应用。构建脚本与元数据位于 `scripts/`，不随 `static/` 打包；运行包内字体目录只保留两份 WOFF。
+2026-09-21 对话与轮播调整后合计 **989,364 bytes，约 966.2 KiB**，比 `v0.5.0-user-frontend` 增加 5,028 bytes。每次扩容后的准确大小、SHA256、版本与码位数以 `scripts/font-data/manifest.json` 为准。这里选择 WOFF，避免低版本 iOS 对 WOFF2 的兼容差异。原始 16/24 MB OTF 仅用于构建，未打入应用。构建脚本与元数据位于 `scripts/`，不随 `static/` 打包；运行包内字体目录只保留两份 WOFF。
 
 字符集合由以下部分并集产生：
 
@@ -17,7 +17,7 @@
 - 构建时 `apps/miniapp/src` 的 Vue、TypeScript、JSON、SCSS 中出现的全部字符，字体工具自身目录除外。
 - 英文大小写、数字、常用中西文标点、全角标点。
 
-当前两份字体各覆盖 **2346 个实际码位**，包括账户认证、证书导出、订阅搜索、全国地区、音视频工具及新增助手文案；本次扫描 `src` 的 79 个 Vue、TypeScript、JSON、SCSS 文件，1080 个不同中文码位均被两份字体覆盖，缺失为 0。中文统计检查 CJK 扩展 A、基本区、兼容区及扩展 B–I 范围，本次源码中文均落在 U+4E00–U+9FFF。码位数从保存后的字体 `cmap` 读取，包含保留竖排特性时带入的额外映射。保留 `vert` / `vrt2` 竖排替代特性，但这不等于已经验证微信竖排排版。未包含的生僻字、用户输入或后续动态内容逐字回退系统字体；新增文案应重新运行裁剪，不能把子集称为完整思源字库。
+当前两份字体各覆盖 **2358 个实际码位**，包括账户认证、证书导出、订阅搜索、全国地区、音视频工具及新增助手文案；本次扫描 `src` 的 81 个 Vue、TypeScript、JSON、SCSS 文件，1102 个不同中文码位均被两份字体覆盖，缺失为 0。中文统计检查 CJK 扩展 A、基本区、兼容区及扩展 B–I 范围，本次源码中文均落在 U+4E00–U+9FFF。码位数从保存后的字体 `cmap` 读取，包含保留竖排特性时带入的额外映射。保留 `vert` / `vrt2` 竖排替代特性，但这不等于已经验证微信竖排排版。未包含的生僻字、用户输入或后续动态内容逐字回退系统字体；新增文案应重新运行裁剪，不能把子集称为完整思源字库。
 
 ## H5 加载与验证
 
@@ -63,9 +63,9 @@ f7a48b2b545acfaa77b2d607ae28747404ce02baefee16396c5d2d7a8ef34b5e
 
 ```text
 JiafengSans-Regular.woff
-d5ee11de2a9366bd715191fccc84f85586d4d93a29c5b88fdd19a9f4e21e3bd8
+741ffcb384f294f83ea23cd5e44eafc4cc2799dcad7c2484b3b0075e761ba1e5
 JiafengSerif-SemiBold.woff
-b23719cd7b5fe2c7f003a4e7844ed11b145b3251cf0a04d52d17276fe59a8303
+2c818b39988f0b8fd8db985d4681c7ef15e5a9799560b800aedd5acd416ab717
 ```
 
 ## 可复现扩容
@@ -80,9 +80,9 @@ python3 -m venv ../../work/font-venv
 
 更新组件文案后重新执行即可覆盖新字。可用 `--common-count 2500` 扩大常用字，但必须再次检查微信包体。脚本会刷新两份 WOFF、`scripts/font-data/charset.txt` 和 `scripts/font-data/manifest.json`；字体源版本升级必须同时更新脚本固定提交、SHA256、许可、第三方声明与本说明。
 
-功能代码冻结后的最终补扫仍为 79 个源文件、1080 个不同中文码位，两份字体均无缺字；媒体文案调整没有新增未收录字。清单中的字节数和 SHA256 与字体文件一致，字表已涵盖当前全部源码字符，因此本次补扫未重新生成字体。
+v0.5 功能代码冻结后的历史补扫为 79 个源文件、1080 个不同中文码位，两份字体均无缺字；媒体文案调整没有新增未收录字。清单中的字节数和 SHA256 与字体文件一致，字表已涵盖当前全部源码字符，因此本次补扫未重新生成字体。
 
-本次字体刷新验证：在相同源码下执行原脚本两次，两份 WOFF、清单和字表的 SHA256 均一致。FontTools 读取内部家族名和字重正常，字形数分别为 2394 / 2395，当前源码的 1080 个中文码位全部覆盖，`vert/vrt2` 均保留。此次仅刷新字体和元数据，新的 H5 生产构建及主包/分包大小由最终集成另行验证。
+v0.5 字体刷新验证：在相同源码下执行原脚本两次，两份 WOFF、清单和字表的 SHA256 均一致。FontTools 读取内部家族名和字重正常，字形数分别为 2394 / 2395，当前源码的 1080 个中文码位全部覆盖，`vert/vrt2` 均保留。该历史刷新后的构建和包体见下方 v0.5 集成记录。
 
 历史阶段 3 的 H5 开发预览与生产 `/demo/` 子目录中，两个字体的 `document.fonts` 状态均为 `loaded`，相对路径请求无失败。该记录对应 `v0.4.0-showcase` 的旧字体，不冒充本次新字体的生产产物验证；微信真机的最终结果仍需单独补充。
 
@@ -118,3 +118,7 @@ python3 -m venv ../../work/font-venv
 ## v0.5 最终分包核对
 
 完成内容分包后，微信发布版主包为1,742,843 bytes，内容分包为656,637 bytes；字体仍仅在主包保留一份。最终生产子路径复查确认两份字体HTTP200且实际loaded。完整检查及微信尚未验证项目见 `07-validation.md`。
+
+## v0.5.1 字符覆盖
+
+六类首页轮播、聊天气泡和连续追问文案更新后重建子集。扫描81个源码文件、1102个不同中文码位，两份字体缺字均为0；每份覆盖2358码位，合计989,364字节。源码中的新字已覆盖，用户输入的未收录字仍回退系统字体。两份当前SHA256以本页上方及 `scripts/font-data/manifest.json` 为准。

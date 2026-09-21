@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
+import ConversationPanel from './ConversationPanel.vue'
+import type { ConversationReply } from '../domain/localConversation'
 import { t, locale } from '../composables/useLocale'
 import { useRouteParams } from '../composables/useNavigation'
 import { repo, region, safely, notify, navigate } from '../composables/useDemo'
@@ -23,10 +25,12 @@ interface ModeState {
   resultLanguage: 'zh' | 'en'
   restoredId: string
   savedError: boolean
+  source: 'preset' | 'rules'
 }
 const local = (value: LocalizedText) => t(value.zh, value.en)
 const params = useRouteParams()
 const mode = ref<AssistantMode>('letter')
+const editorExpanded = ref(false)
 const forms = reactive(
   Object.fromEntries(
     assistantTools.map((tool) => {
@@ -41,6 +45,7 @@ const forms = reactive(
           resultLanguage: locale.value,
           restoredId: '',
           savedError: false,
+          source: 'preset',
         },
       ]
     }),
@@ -70,7 +75,6 @@ function bindEditor(field: EditorField): EditorBinding[] {
   const version = editorVersions[owner][field]
   return [{ owner, field, version, key: `${owner}-${field}-${version}` }]
 }
-const promptEditors = computed(() => bindEditor('prompt'))
 const resultEditors = computed(() => bindEditor('result'))
 function syncEditor(event: unknown, editor: EditorBinding) {
   const value = (event as EditorEvent | undefined)?.detail?.value
@@ -89,11 +93,6 @@ function finishEditor(event: unknown, editor: EditorBinding) {
 const tool = computed(() => getAssistantTool(mode.value))
 const current = computed(() => forms[mode.value])
 const example = computed(() => getAssistantExample(mode.value, current.value.exampleId))
-const inputChanged = computed(
-  () =>
-    current.value.prompt.trim() !== example.value.input.zh.trim() &&
-    current.value.prompt.trim() !== example.value.input.en.trim(),
-)
 const hasResult = computed(() => !!current.value.resultPrompt)
 const isReference = computed(() => ['help', 'knowledge', 'compliance'].includes(mode.value))
 const storyboardFrames = computed(() =>
@@ -128,37 +127,31 @@ const resultCount = computed(() => [...current.value.result].length)
 function chooseMode(value: AssistantMode) {
   resetEditors(value)
   mode.value = value
+  editorExpanded.value = Boolean(forms[value].resultPrompt)
   copyFailed.value = false
   transferFailed.value = false
 }
-function chooseExample(id: string) {
-  const chosen = getAssistantExample(mode.value, id)
-  resetEditors(mode.value)
-  Object.assign(current.value, {
+function useConversationReply(reply: ConversationReply) {
+  if (!reply.content) return
+  const chosen = getAssistantExample(reply.mode, reply.exampleId)
+  resetEditors(reply.mode)
+  mode.value = reply.mode
+  Object.assign(forms[reply.mode], {
     exampleId: chosen.id,
-    prompt: local(chosen.input),
-    result: '',
-    resultPrompt: '',
+    prompt: reply.prompt,
+    result: reply.content,
+    resultPrompt:
+      reply.source === 'preset'
+        ? chosen.input[reply.language]
+        : (reply.language === 'zh' ? '本机对话：' : 'Local conversation: ') + reply.prompt,
+    resultLanguage: reply.language,
     restoredId: '',
     savedError: false,
-    resultLanguage: locale.value,
+    source: reply.source === 'preset' ? 'preset' : 'rules',
   })
   copyFailed.value = false
-}
-function showExample() {
-  if (!current.value.prompt.trim()) {
-    notify(t('请先填写想法或选择一个示例。', 'Enter an idea or select an example first.'))
-    return
-  }
-  resetEditors(mode.value, ['result'])
-  current.value.result = local(example.value.result)
-  // 记录真正对应结果的预设输入，不把固定示例说成对用户自填文字的处理。
-  current.value.resultPrompt = local(example.value.input)
-  current.value.resultLanguage = locale.value
-  current.value.restoredId = ''
-  current.value.savedError = false
-  copyFailed.value = false
   transferFailed.value = false
+  editorExpanded.value = true
 }
 function useProofreadExample() {
   if (!example.value.corrected) return
@@ -256,6 +249,7 @@ watch(
     if (!saved) return
     resetEditors(saved.mode)
     mode.value = saved.mode
+    editorExpanded.value = true
     const match = getAssistantTool(saved.mode).examples.find(
       (item) => item.input.zh === saved.prompt || item.input.en === saved.prompt,
     )
@@ -268,6 +262,7 @@ watch(
       resultLanguage: language,
       restoredId: saved.id,
       savedError: false,
+      source: match ? 'preset' : 'rules',
     })
   },
   { immediate: true },
@@ -280,42 +275,19 @@ watch(
   },
   { immediate: true },
 )
-watch(locale, (next, previous) => {
-  for (const item of assistantTools) {
-    const state = forms[item.id]
-    const selected = getAssistantExample(item.id, state.exampleId)
-    if (!state.result && state.prompt === selected.input[previous]) {
-      resetEditors(item.id, ['prompt'])
-      state.prompt = selected.input[next]
-    }
-  }
-})
 </script>
 <template>
   <view class="assistant-workbench">
     <SectionHeading
       :title="t('让灵感，落在笔尖', 'Turn inspiration into words')"
-      :eyebrow="t('创作助手 · 预设体验', 'WRITING ASSISTANT · PRESET EXPERIENCE')"
+      :eyebrow="t('AI 家风助手 · 对话体验', 'FAMILY-VALUES ASSISTANT · CONVERSATION')"
       :subtitle="
-        t('先看一种写法，再留下自己的声音。', 'Explore a writing approach, then make it your own.')
+        t(
+          '聊一件家里的小事，把想法慢慢写清楚。',
+          'Talk about an everyday family moment and shape it into words.',
+        )
       "
     />
-    <view class="assistant-demo-note">
-      <view class="assistant-demo-mark">✦</view>
-      <view>
-        <text class="assistant-note-title">
-          {{ t('当前是八种工具的交互样例', 'Eight interactive tool samples') }}
-        </text>
-        <text>
-          {{
-            t(
-              '未连接AI模型或OCR引擎。结果来自明确列出的预设文本，不会分析你填写的新内容，也不会上传任何材料。',
-              'No AI model or OCR engine is connected. Results come from the listed preset texts. New input is not analyzed and no materials are uploaded.',
-            )
-          }}
-        </text>
-      </view>
-    </view>
     <view v-if="restoredMissing" class="scope-note">
       {{
         t(
@@ -343,74 +315,31 @@ watch(locale, (next, previous) => {
         <text>{{ local(item.label) }}</text>
       </button>
     </view>
-    <view class="assistant-layout">
-      <view class="assistant-input-panel">
-        <view class="assistant-step-heading">
-          <text class="assistant-step">01</text>
-          <text class="section-title">{{ local(tool.label) }}</text>
-        </view>
-        <text class="assistant-description">{{ local(tool.description) }}</text>
-        <text class="field-label">{{ t('选择一个预设样例', 'Choose a preset') }}</text>
-        <view class="assistant-example-options">
-          <button
-            v-for="item in tool.examples"
-            :key="item.id"
-            :class="['assistant-example-button', { selected: current.exampleId === item.id }]"
-            @click="chooseExample(item.id)"
-          >
-            {{ local(item.label) }}
-            <text>↗</text>
-          </button>
-        </view>
-        <view v-if="mode === 'ocr'" class="assistant-manuscript">
-          <text class="assistant-manuscript-label">
-            {{ t('原创排版手稿样卡 · 非上传图片', 'Original text card · Not an uploaded image') }}
-          </text>
-          <text class="assistant-manuscript-text">{{ manuscriptText }}</text>
-          <text class="assistant-manuscript-seal">{{ t('示例', 'DEMO') }}</text>
-        </view>
-        <text class="field-label">{{ local(tool.promptLabel) }}</text>
-        <textarea
-          v-for="editor in promptEditors"
-          :key="editor.key"
-          :value="forms[editor.owner].prompt"
-          @input="syncEditor($event, editor)"
-          @blur="finishEditor($event, editor)"
-          @confirm="finishEditor($event, editor)"
-          class="assistant-prompt-field"
-          :maxlength="2000"
-          :aria-label="t('助手输入', 'Assistant input')"
-          :placeholder="
-            t('选择样例，或记录自己的写作想法', 'Choose a preset or note your own writing ideas')
-          "
-        />
-        <view class="assistant-input-count">
-          <text>
-            {{ t('只在当前页面填写，不发起模型请求', 'Local input only; no model request') }}
-          </text>
-          <text>{{ current.prompt.length }} / 2000</text>
-        </view>
-        <view v-if="inputChanged" class="assistant-input-warning">
-          {{
-            t(
-              '你已修改输入。右侧仍只展示所选预设的结果，不是对新输入的生成、润色或识别。',
-              'Your input has changed. The result will still be the selected preset, not generated, polished or recognized from your new input.',
-            )
-          }}
-        </view>
-        <wd-button block :disabled="!current.prompt.trim()" @click="showExample">
-          {{ t('查看所选预设结果', 'View selected preset result') }} →
-        </wd-button>
-        <text class="assistant-small-note">
-          {{
-            t(
-              '此操作立即展示本地文本，没有模型等待或识别过程。',
-              'This displays local text immediately, with no model or recognition process.',
-            )
-          }}
-        </text>
+    <view class="assistant-layout assistant-chat-layout">
+      <view class="assistant-chat-primary">
+        <ConversationPanel :mode="mode" @use="useConversationReply" />
       </view>
-      <view class="assistant-result-panel">
+      <view v-if="hasResult" class="assistant-editor-toggle">
+        <view>
+          <text>{{ t('这段内容的后续操作', 'Work with this passage') }}</text>
+          <text>
+            {{
+              t(
+                '编辑、复制、存档，或安全转入投稿',
+                'Edit, copy, save, or safely transfer to Contribute',
+              )
+            }}
+          </text>
+        </view>
+        <wd-button variant="plain" size="small" @click="editorExpanded = !editorExpanded">
+          {{
+            editorExpanded
+              ? t('收起编辑区', 'Collapse work area')
+              : t('打开编辑区', 'Open work area')
+          }}
+        </wd-button>
+      </view>
+      <view v-if="hasResult && editorExpanded" class="assistant-result-panel">
         <view class="assistant-step-heading">
           <text class="assistant-step">02</text>
           <text class="section-title">{{ t('阅读、改写与带走', 'Read, adapt and keep') }}</text>
@@ -435,12 +364,23 @@ watch(locale, (next, previous) => {
               {{
                 current.restoredId
                   ? t('已恢复存档 · 保留原文', 'Archive restored · Original text retained')
-                  : t('预设样例 · 非实时AI生成', 'Preset sample · Not live AI output')
+                  : current.source === 'preset'
+                    ? t('预设样例', 'Prepared example')
+                    : t('本机规则式写作框架／节选', 'Local writing frame / excerpt')
               }}
             </text>
             <text>{{ resultCount }} {{ t('字', 'characters') }}</text>
           </view>
-          <view v-if="mode === 'polish'" class="assistant-comparison-original">
+          <view v-if="mode === 'ocr' && current.source === 'preset'" class="assistant-manuscript">
+            <text class="assistant-manuscript-label">
+              {{ t('原创排版手稿样卡 · 非上传图片', 'Original text card · Not an uploaded image') }}
+            </text>
+            <text class="assistant-manuscript-text">{{ manuscriptText }}</text>
+          </view>
+          <view
+            v-if="mode === 'polish' && current.source === 'preset'"
+            class="assistant-comparison-original"
+          >
             <text class="field-label">
               {{ t('对照原文（所选样例）', 'Original passage (selected preset)') }}
             </text>
@@ -494,7 +434,10 @@ watch(locale, (next, previous) => {
               }}
             </text>
           </view>
-          <view v-if="!current.restoredId || mode === 'ocr'" class="assistant-review-notes">
+          <view
+            v-if="current.source === 'preset' && (!current.restoredId || mode === 'ocr')"
+            class="assistant-review-notes"
+          >
             <text class="field-label">
               {{
                 mode === 'ocr'
@@ -573,8 +516,8 @@ watch(locale, (next, previous) => {
           <text class="assistant-small-note">
             {{
               t(
-                '存档保存所选样例的输入与当前结果。转入投稿不会自动勾选版权，也不会直接提交作品。',
-                'Archiving saves the selected sample input and the current result. Transferring to Contribute does not accept copyright terms or submit the work.',
+                '存档保存来源问题与当前编辑结果。转入投稿不会自动勾选版权，也不会直接提交作品。',
+                'Archiving saves the source question and current edited result. Transferring to Contribute does not accept copyright terms or submit the work.',
               )
             }}
           </text>
@@ -1144,5 +1087,43 @@ watch(locale, (next, previous) => {
   .storyboard-visual {
     min-height: 70px;
   }
+}
+</style>
+
+<style scoped>
+.assistant-layout.assistant-chat-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.assistant-chat-primary {
+  min-width: 0;
+}
+.assistant-editor-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #f5f0e8;
+  border: 1px solid #dfd2bd;
+}
+.assistant-editor-toggle > view {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.assistant-editor-toggle > view text + text {
+  font-size: 12px;
+  font-weight: 400;
+  color: #65615a;
+}
+.assistant-chat-layout .assistant-result-panel {
+  border: 1px solid #dfd2bd;
+  background: #fffdfa;
 }
 </style>

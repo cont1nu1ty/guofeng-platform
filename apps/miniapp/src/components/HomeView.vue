@@ -73,62 +73,108 @@ const entries = computed<{ label: string; sub: string; icon: string; screen: Scr
     screen: 'assistant',
   },
 ])
-const heroSlides = computed<
+interface HeroSlide {
+  id: string
+  kicker: string
+  title: string[]
+  description: string[]
+  action: string
+  foot: string
+  screen: Screen
+  params?: Record<string, string>
+  book: string
+  seal: string
+}
+const heroSlides = computed<HeroSlide[]>((): HeroSlide[] => [
   {
-    id: string
-    kicker: string
-    title: string[]
-    description: string[]
-    action: string
-    foot: string
-    screen: Screen
-    params?: Record<string, string>
-    book: string
-    seal: string
-  }[]
->(() => [
+    id: 'policy',
+    kicker: t('全国政策通知 · 版式样例', 'NATIONAL NOTICES · DEMO'),
+    title: [t('政策学习', 'Learn and'), t('从家出发', 'grow together')],
+    description: [
+      t('以家庭文明为起点，读懂共建共享。', 'Explore family culture and shared values.'),
+      t('预览政策通知与学习导读的呈现方式。', 'Preview a policy notice and reading guide.'),
+    ],
+    action: t('查看通知样例', 'Read sample notice'),
+    foot: t('原创版式样例 · 非正式政策发布', 'Original demo · no official policy issued'),
+    screen: 'news',
+    params: { id: 'national-policy-demo' },
+    book: '政策导读',
+    seal: '共学',
+  },
   {
     id: 'contribute',
-    kicker: t('家风中华行 · 文化共建计划', 'FAMILY VALUES · SHARED HERITAGE'),
+    kicker: t('征稿公告 · 家书征集样例', 'CALL FOR STORIES · DEMO'),
     title: [t('让好家风', 'Let family'), t('代代相传', 'values endure')],
     description: [
       t('以一封家书，珍藏家的温度。', 'Keep the warmth of home in a letter.'),
-      t('以千万个家的故事，续写中华文脉。', 'Let every family add to our shared story.'),
+      t('从身边的故事写起，留下传家的记忆。', 'Share the stories you wish to pass on.'),
     ],
-    action: t('写下我的家风故事', 'Write my family story'),
-    foot: t('八大文学体裁 · 面向全民征集', '8 genres · a story for every family'),
-    screen: 'submit',
+    action: t('阅读征稿说明', 'View the sample call'),
+    foot: t('八大文学体裁 · 本机投稿演示', '8 genres · local submission demo'),
+    screen: 'news',
+    params: { id: 'notice-autumn' },
     book: '一纸家书',
     seal: '传承',
   },
   {
+    id: 'celebration',
+    kicker: t('年度盛典 · 预告演示', 'ANNUAL CELEBRATION · DEMO'),
+    title: [t('家风相聚', 'A year of'), t('薪火相传', 'shared stories')],
+    description: [
+      t('从家书到云端，让家庭故事相互照亮。', 'Bring family stories together online.'),
+      t('体验盛典预告、直播布局与回放入口。', 'Explore a preview and sample replay.'),
+    ],
+    action: t('查看盛典预告', 'Preview the event'),
+    foot: t('虚构活动 · 无真实直播与排期', 'Fictional event · no live stream or date'),
+    screen: 'media',
+    params: { tab: 'live' },
+    book: '万家同心',
+    seal: '共庆',
+  },
+  {
+    id: 'library-launch',
+    kicker: t('典籍首发 · 新卷预览', 'NEW COLLECTION · DEMO'),
+    title: [t('新卷启读', 'A new volume,'), t('共续文脉', 'a shared story')],
+    description: [
+      t('翻开家风新卷，在共读中连接古今。', 'Open a new chapter in family reading.'),
+      t('先读首发介绍，再走进典藏样章。', 'Meet the collection and read a sample.'),
+    ],
+    action: t('查看首发介绍', 'Meet the collection'),
+    foot: t('原创选读样例 · 非正式出版消息', 'Original samples · no formal publication'),
+    screen: 'news',
+    params: { id: 'collection-launch-demo' },
+    book: '家书新卷',
+    seal: '启卷',
+  },
+  {
+    id: 'study-visit',
+    kicker: t('研学活动 · 预约体验', 'LEARNING VISITS · DEMO'),
+    title: [t('走进书院', 'Visit and learn,'), t('读懂家风', 'read together')],
+    description: [
+      t('把阅读带进书院，把家风写进行动。', 'Bring family reading into shared spaces.'),
+      t('查看活动导学，体验预约与签到。', 'Explore a visit, booking and check-in.'),
+    ],
+    action: t('查看研学样例', 'Explore the sample visit'),
+    foot: t('虚构场馆与活动 · 仅作界面体验', 'Fictional venue and event · demo only'),
+    screen: 'learning',
+    params: { id: 'DEMO-ACTIVITY-002' },
+    book: '书院研学',
+    seal: '知行',
+  },
+  {
     id: 'classroom',
-    kicker: t('清廉课堂 · 家庭共同学习', 'INTEGRITY · LEARNING TOGETHER'),
+    kicker: t('廉政课堂 · 家庭共同学习', 'INTEGRITY CLASSROOM · DEMO'),
     title: [t('清风润家', 'Integrity'), t('正气传承', 'begins at home')],
     description: [
       t('从一堂家风课，读懂责任与担当。', 'Discover responsibility in a family lesson.'),
       t('把清廉的约定，写进每一天。', 'Put shared values into daily practice.'),
     ],
-    action: t('走进清廉课堂', 'Explore the classroom'),
-    foot: t('分节学习 · 知识问答 · 证书样例', 'Lessons · questions · sample certificate'),
+    action: t('走进廉政课堂', 'Explore the classroom'),
+    foot: t('分节学习 · 情景问答 · 证书样张', 'Lessons · questions · sample certificate'),
     screen: 'classroom',
     params: { id: 'integrity-home' },
     book: '清廉家风',
     seal: '正气',
-  },
-  {
-    id: 'library',
-    kicker: t('家风典藏 · 共读中华文脉', 'FAMILY COLLECTIONS · READ TOGETHER'),
-    title: [t('一卷家书', 'One letter,'), t('万家共读', 'many stories')],
-    description: [
-      t('在古训与家书中，寻找传家的答案。', 'Explore wisdom in family letters.'),
-      t('以阅读连接古今，让文脉生生不息。', 'Connect generations through reading.'),
-    ],
-    action: t('进入家风典藏', 'Open the collection'),
-    foot: t('总典与地方卷 · 横竖排共读体验', 'National and local volumes · reading'),
-    screen: 'library',
-    book: '家风大典',
-    seal: '文脉',
   },
 ])
 function changeHero(event: { detail: { current: number } }) {
@@ -282,7 +328,8 @@ function topicArticle(id: string) {
           v-for="(slide, index) in heroSlides"
           :key="slide.id"
           :class="['home-carousel-dot', { active: heroIndex === index }]"
-          :aria-label="slide.action"
+          :aria-label="t('切换到：', 'Show: ') + slide.kicker"
+          :aria-current="heroIndex === index ? 'true' : 'false'"
           @click="heroIndex = index"
         >
           <text>0{{ index + 1 }}</text>
@@ -844,7 +891,27 @@ function topicArticle(id: string) {
     margin: 10px 0;
   }
   .home-carousel-tools {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 9px;
     padding-top: 7px;
+  }
+  .home-carousel-dots {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .home-carousel-dot {
+    width: 100%;
+    min-width: 0;
+    height: 32px;
+    padding: 0;
+  }
+  .home-carousel-pause {
+    margin: 0;
+    padding: 5px 0;
+    font-size: 10px;
+    white-space: nowrap;
   }
   .home-topic-section {
     margin-bottom: 28px;

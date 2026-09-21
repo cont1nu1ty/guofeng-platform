@@ -286,6 +286,66 @@ export const newsArticles: NewsArticle[] = [
     relatedScreen: 'library',
     relatedLabel: b('阅读典藏样章', 'Read sample chapters'),
   },
+  {
+    id: 'national-policy-demo',
+    category: 'policy',
+    topic: 'everyday',
+    date: 'DEMO',
+    title: b(
+      '全国政策通知：家庭文明建设学习栏（样例）',
+      'National policy notices: a prototype reading guide',
+    ),
+    excerpt: b(
+      '预览通知摘要、来源说明与学习导读的版式，不发布正式政策文件。',
+      'Preview a notice summary, source notes and reading guide. No official policy document is published here.',
+    ),
+    paragraphs: [
+      b(
+        '这是一篇原创界面样例，用于展示首页“全国政策通知”的进入路径。它不对应任何政府或机构发布的文件，没有真实文号、发布日期或施行时间，不构成政策解释。',
+        'This original interface sample demonstrates the National notices entry on the homepage. It does not represent a document from a government body or institution, has no real document number or effective date, and is not policy guidance.',
+      ),
+      b(
+        '正式内容上线时，本栏应先展示发布单位、原文来源、文号和发布日期，再区分原文摘要与编辑导读。读者应能查看完整原文，避免把学习笔记误认为政策条款。',
+        'A production notice should identify the issuing body, original source, document number and publication date, with clear separation between the source summary and editorial notes. Readers should be able to open the original document.',
+      ),
+      b(
+        '本次演示以家庭阅读、诚实守信和邻里互助作为讨论线索。可以继续浏览家风课堂，体验从内容导读到课程学习的界面衔接；这些内容均为产品原创样例。',
+        'For this demo, family reading, honesty and neighbourly care provide discussion themes. Continue to the classroom to explore the path from a reading guide to learning. All content is original prototype material.',
+      ),
+    ],
+    relatedScreen: 'classroom',
+    relatedLabel: b('浏览家风学习课堂', 'Explore family learning'),
+  },
+  {
+    id: 'collection-launch-demo',
+    category: 'notice',
+    topic: 'classical',
+    date: 'DEMO',
+    title: b(
+      '典籍首发：家书新卷共读介绍（样例）',
+      'A new family collection: sample launch introduction',
+    ),
+    excerpt: b(
+      '从首发介绍走进典藏样章，预览新卷导读、章节阅读与公益下载。',
+      'Meet a sample collection, then explore chapters, reading tools and the text download.',
+    ),
+    paragraphs: [
+      b(
+        '本页为典籍首发栏目的原创展示样例，不是正式出版、发行或销售公告。没有真实出版社、书号、上市日期或发售计划；页面中的新卷名称与介绍仅用于讨论呈现方式。',
+        'This is original prototype content for a collection launch, not a publication, release or sales announcement. It has no real publisher, ISBN, launch date or sales plan. The sample name and introduction illustrate the interface.',
+      ),
+      b(
+        '样卷以家书、家庭约定与共读感悟为线索，把不同章节连接成一段阅读旅程。正式典籍应补齐编者、版本、内容来源及授权说明；当前馆藏为注明演示用途的原创选读。',
+        'The sample volume connects family letters, shared promises and reading reflections across its chapters. A real collection would require editor, edition, source and rights information. Current library selections are original demonstration material.',
+      ),
+      b(
+        '进入家风典藏后，可打开《家书里的中国》等样章，尝试章节切换、横竖排、摘抄和文字下载。下载文件仍是演示内容，不是正式出版物，也不产生出版或版权授权。',
+        'Open the library and try sample chapters such as China in Family Letters, chapter navigation, horizontal or vertical reading, excerpts and text downloads. Downloaded samples are not published editions or grants of publication rights.',
+      ),
+    ],
+    relatedScreen: 'library',
+    relatedLabel: b('阅读典藏样章', 'Read sample chapters'),
+  },
 ]
 
 export interface CourseLesson {

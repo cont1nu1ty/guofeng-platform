@@ -522,7 +522,9 @@ function continueWriting() {
             @change="richChange"
           />
           <WritingInspiration
-            v-if="showInspiration"
+            v-show="showInspiration"
+            :draft-title="form.title"
+            :draft-text="form.content"
             @close="showInspiration = false"
             @append="appendInspiration"
           />

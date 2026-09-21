@@ -326,19 +326,19 @@ function showAllActivities() {
         </view>
       </view>
       <view class="content-learning-shortcuts">
-        <view @click="navigate('classroom')">
-          <wd-icon name="book" />
-          <view>
+        <view class="learning-shortcut-card" @click="navigate('classroom')">
+          <view class="learning-shortcut-mark"><wd-icon name="book" size="32px" /></view>
+          <view class="learning-shortcut-copy">
             <text class="content-panel-title">{{ t('清廉课堂', 'Integrity classroom') }}</text>
             <text class="content-description">
               {{ t('学习课程与情景测验', 'Courses and scenario quizzes') }}
             </text>
           </view>
-          <wd-icon name="arrow-right" />
+          <wd-icon name="arrow-right" size="18px" custom-class="learning-shortcut-arrow" />
         </view>
-        <view @click="navigate('venues')">
-          <wd-icon name="location" />
-          <view>
+        <view class="learning-shortcut-card" @click="navigate('venues')">
+          <view class="learning-shortcut-mark"><wd-icon name="location" size="32px" /></view>
+          <view class="learning-shortcut-copy">
             <text class="content-panel-title">
               {{ t('寻找传习阵地', 'Explore learning venues') }}
             </text>
@@ -346,7 +346,7 @@ function showAllActivities() {
               {{ t('阵地示意图与场馆导览', 'Venue schematic and visit guides') }}
             </text>
           </view>
-          <wd-icon name="arrow-right" />
+          <wd-icon name="arrow-right" size="18px" custom-class="learning-shortcut-arrow" />
         </view>
       </view>
       <view id="audio-recitation-panel"><AudioRecitationPanel /></view>
