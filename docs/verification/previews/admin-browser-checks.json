@@ -1,0 +1,243 @@
+{
+  "checkedAt": "2026-09-21T04:22:49.620Z",
+  "results": [
+    {
+      "route": "overview",
+      "width": 1440,
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "title": "运营工作台",
+      "bodyText": 600,
+      "pass": true
+    },
+    {
+      "route": "submissions",
+      "width": 1440,
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "title": "投稿作品",
+      "bodyText": 871,
+      "pass": true
+    },
+    {
+      "route": "reviews",
+      "width": 1440,
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "title": "评审管理",
+      "bodyText": 837,
+      "pass": true
+    },
+    {
+      "route": "experts",
+      "width": 1440,
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "title": "专家库",
+      "bodyText": 466,
+      "pass": true
+    },
+    {
+      "route": "content",
+      "width": 1440,
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "title": "内容与资讯",
+      "bodyText": 1574,
+      "pass": true
+    },
+    {
+      "route": "collections",
+      "width": 1440,
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "title": "典籍编纂",
+      "bodyText": 455,
+      "pass": true
+    },
+    {
+      "route": "activities",
+      "width": 1440,
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "title": "活动与传习",
+      "bodyText": 653,
+      "pass": true
+    },
+    {
+      "route": "education",
+      "width": 1440,
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "title": "清廉教育",
+      "bodyText": 421,
+      "pass": true
+    },
+    {
+      "route": "welfare",
+      "width": 1440,
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "title": "文创与公益",
+      "bodyText": 413,
+      "pass": true
+    },
+    {
+      "route": "users",
+      "width": 1440,
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "title": "用户与权限",
+      "bodyText": 486,
+      "pass": true
+    },
+    {
+      "route": "ai",
+      "width": 1440,
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "title": "AI 运营中心",
+      "bodyText": 436,
+      "pass": true
+    },
+    {
+      "route": "analytics",
+      "width": 1440,
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "title": "数据智库",
+      "bodyText": 290,
+      "pass": true
+    },
+    {
+      "route": "settings",
+      "width": 1440,
+      "viewport": 1440,
+      "pageWidth": 1440,
+      "title": "系统设置",
+      "bodyText": 381,
+      "pass": true
+    },
+    {
+      "route": "overview",
+      "width": 390,
+      "viewport": 390,
+      "pageWidth": 390,
+      "title": "运营工作台",
+      "bodyText": 600,
+      "pass": true
+    },
+    {
+      "route": "submissions",
+      "width": 390,
+      "viewport": 390,
+      "pageWidth": 390,
+      "title": "投稿作品",
+      "bodyText": 871,
+      "pass": true
+    },
+    {
+      "route": "reviews",
+      "width": 390,
+      "viewport": 390,
+      "pageWidth": 390,
+      "title": "评审管理",
+      "bodyText": 837,
+      "pass": true
+    },
+    {
+      "route": "experts",
+      "width": 390,
+      "viewport": 390,
+      "pageWidth": 390,
+      "title": "专家库",
+      "bodyText": 466,
+      "pass": true
+    },
+    {
+      "route": "content",
+      "width": 390,
+      "viewport": 390,
+      "pageWidth": 390,
+      "title": "内容与资讯",
+      "bodyText": 1574,
+      "pass": true
+    },
+    {
+      "route": "collections",
+      "width": 390,
+      "viewport": 390,
+      "pageWidth": 390,
+      "title": "典籍编纂",
+      "bodyText": 455,
+      "pass": true
+    },
+    {
+      "route": "activities",
+      "width": 390,
+      "viewport": 390,
+      "pageWidth": 390,
+      "title": "活动与传习",
+      "bodyText": 653,
+      "pass": true
+    },
+    {
+      "route": "education",
+      "width": 390,
+      "viewport": 390,
+      "pageWidth": 390,
+      "title": "清廉教育",
+      "bodyText": 421,
+      "pass": true
+    },
+    {
+      "route": "welfare",
+      "width": 390,
+      "viewport": 390,
+      "pageWidth": 390,
+      "title": "文创与公益",
+      "bodyText": 413,
+      "pass": true
+    },
+    {
+      "route": "users",
+      "width": 390,
+      "viewport": 390,
+      "pageWidth": 390,
+      "title": "用户与权限",
+      "bodyText": 486,
+      "pass": true
+    },
+    {
+      "route": "ai",
+      "width": 390,
+      "viewport": 390,
+      "pageWidth": 390,
+      "title": "AI 运营中心",
+      "bodyText": 436,
+      "pass": true
+    },
+    {
+      "route": "analytics",
+      "width": 390,
+      "viewport": 390,
+      "pageWidth": 390,
+      "title": "数据智库",
+      "bodyText": 290,
+      "pass": true
+    },
+    {
+      "route": "settings",
+      "width": 390,
+      "viewport": 390,
+      "pageWidth": 390,
+      "title": "系统设置",
+      "bodyText": 381,
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "failed": [],
+  "external": []
+}

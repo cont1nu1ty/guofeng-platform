@@ -1,0 +1,28 @@
+{
+  "date": "2026-09-21T16:50:18.641301+08:00",
+  "markdownFilesChecked": 36,
+  "localLinksChecked": 259,
+  "anchorsChecked": 1,
+  "linkErrors": [],
+  "movedFiles": 69,
+  "missingDestinations": [],
+  "oldPathsStillPresent": [],
+  "existingEvidenceAssets": 55,
+  "existingEvidenceBytesPreserved": true,
+  "pdfSameBytes": true,
+  "pdfSha256": "20acbce93451b8b74daaea15265e91b6e215b4da75d9f7a260e68ffbb96ab929",
+  "frontendModules": [
+    "F-01",
+    "F-02",
+    "F-03",
+    "F-04",
+    "F-05",
+    "F-06",
+    "F-07",
+    "F-08",
+    "F-09",
+    "F-10"
+  ],
+  "taskCount": 22,
+  "missingTaskReferences": []
+}

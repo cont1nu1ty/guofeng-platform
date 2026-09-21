@@ -1,0 +1,304 @@
+{
+  "started": "2026-09-21T08:07:46.352Z",
+  "origin": "http://localhost:5173",
+  "isolatedContexts": true,
+  "interactionScope": "Read-only navigation and open dialogs; no submission, setting changes or data clearing.",
+  "views": [
+    {
+      "width": 390,
+      "screen": "home",
+      "layout": {
+        "width": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "overflow": false
+      },
+      "slideCount": 6,
+      "entries": [
+        "家风投稿",
+        "典籍馆藏",
+        "清廉课堂",
+        "短视频展播",
+        "线上传习",
+        "先贤名人馆",
+        "文创商城",
+        "AI 家风助手"
+      ],
+      "topics": [
+        "红色家风",
+        "清廉干部家风",
+        "百姓家风",
+        "先贤文脉"
+      ],
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded",
+          "weight": "400"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded",
+          "weight": "600"
+        }
+      ],
+      "mobileNav": {
+        "display": "flex",
+        "position": "fixed"
+      },
+      "screenshot": "/home/steven/Documents/Codex/2026-09-20/xb/work/docs-current-ui/core-home-390.png",
+      "regionChoices": 36,
+      "dialogLayout": {
+        "width": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "overflow": false
+      },
+      "success": true
+    },
+    {
+      "width": 390,
+      "screen": "submit",
+      "layout": {
+        "width": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "overflow": false
+      },
+      "channels": [
+        "党政干部",
+        "校园青少年",
+        "城乡群众",
+        "特色群体"
+      ],
+      "genres": [
+        "家风家书",
+        "家风纪实散文",
+        "家风诗词楹联",
+        "红色家风回忆录",
+        "乡贤家族传记",
+        "家训手记",
+        "最美家庭手记",
+        "家风文论"
+      ],
+      "inspirationExpanded": true,
+      "chatLayout": {
+        "width": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "overflow": false
+      },
+      "faqQuestions": [
+        "怎样保存和找回草稿？",
+        "退回后如何修改重投？",
+        "投稿会上传到真实平台吗？"
+      ],
+      "agreementText": "一、体验范围\n本原型用于需求沟通。文字和附件信息保存在当前设备，不向真实征集平台、云端存储或第三方机构发送。请使用虚构人物和您有权使用的演示内容。\n二、内容与署名\n提交前检查标题、正文、作者署名与所属地区；不填写身份证号、住址、电话等真实敏感资料。引用、改编或提供他人作品时，正式上线流程需核实来源与使用权限。\n三、附件说明\n文件选择不等于文件上传。本演示只保存附件元信息，图片临时预览可能在刷新后失效；PDF 与 Word 展示文件信息，不解析文档正文。\n四、版权确认样例\n勾选仅用于演示您已阅读本说明的交互，不构成正式电子签名、版权转让、独家授权或发布许可。正式征集的展示、出版、改编、撤回与留存规则尚需另行确认。\n五、评审与修改\n作品编号、评语、入围、获奖、典藏与证书均为模拟状态，不代表实际审批或授奖。退回修改可保留同一编号重投，历史评语用于沟通演示。\n六、本机记录\n清理本机存储可能移除草稿、投稿和状态记录。演示无账号同步；正式产品需另行提供账户、隐私、保留期限与撤回渠道。",
+      "agreementShowsSample": true,
+      "dialogLayout": {
+        "width": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "overflow": false
+      },
+      "success": true
+    },
+    {
+      "width": 390,
+      "screen": "review",
+      "layout": {
+        "width": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "overflow": false
+      },
+      "stages": [
+        "区县初审",
+        "市级行业复审",
+        "文史专家评审",
+        "专项终审",
+        "国家级复核",
+        "全国标准审定"
+      ],
+      "publicTabs": [
+        "入围名单",
+        "获奖名单",
+        "典藏名单"
+      ],
+      "standardCount": 3,
+      "queryInput": 1,
+      "success": true
+    },
+    {
+      "width": 390,
+      "screen": "profile",
+      "layout": {
+        "width": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "overflow": false
+      },
+      "tabLabels": "我的投稿\n消息中心\n证书夹\n我的收藏\n预约与签到\n学习记录\n文创记录\n摘抄与创作",
+      "largerTextSwitch": 1,
+      "success": true,
+      "initialHarnessIssue": "Text child was covered by its own parent uni-button; rechecked by clicking the actual button without force.",
+      "privacyText": "隐私与本机数据\n草稿、投稿、收藏、学习、预约和文创演示记录保存在当前设备，未连接真实账户或后台服务。请使用虚构信息体验。\n清理浏览器或小程序存储会清除记录；更换设备不会自动同步。本说明描述演示的数据行为，不是正式服务隐私协议。\n我知道了",
+      "privacyInformationOnly": true,
+      "dialogLayout": {
+        "width": 390,
+        "documentWidth": 390,
+        "overflow": false
+      }
+    },
+    {
+      "width": 1440,
+      "screen": "home",
+      "layout": {
+        "width": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "overflow": false
+      },
+      "slideCount": 6,
+      "entries": [
+        "家风投稿",
+        "典籍馆藏",
+        "清廉课堂",
+        "短视频展播",
+        "线上传习",
+        "先贤名人馆",
+        "文创商城",
+        "AI 家风助手"
+      ],
+      "topics": [
+        "红色家风",
+        "清廉干部家风",
+        "百姓家风",
+        "先贤文脉"
+      ],
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded",
+          "weight": "400"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded",
+          "weight": "600"
+        }
+      ],
+      "mobileNav": {
+        "display": "none",
+        "position": "static"
+      },
+      "regionChoices": 36,
+      "dialogLayout": {
+        "width": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "overflow": false
+      },
+      "success": true
+    },
+    {
+      "width": 1440,
+      "screen": "submit",
+      "layout": {
+        "width": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "overflow": false
+      },
+      "channels": [
+        "党政干部",
+        "校园青少年",
+        "城乡群众",
+        "特色群体"
+      ],
+      "genres": [
+        "家风家书",
+        "家风纪实散文",
+        "家风诗词楹联",
+        "红色家风回忆录",
+        "乡贤家族传记",
+        "家训手记",
+        "最美家庭手记",
+        "家风文论"
+      ],
+      "inspirationExpanded": true,
+      "chatLayout": {
+        "width": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "overflow": false
+      },
+      "screenshot": "/home/steven/Documents/Codex/2026-09-20/xb/work/docs-current-ui/core-submit-1440.png",
+      "faqQuestions": [
+        "怎样保存和找回草稿？",
+        "退回后如何修改重投？",
+        "投稿会上传到真实平台吗？"
+      ],
+      "agreementText": "一、体验范围\n本原型用于需求沟通。文字和附件信息保存在当前设备，不向真实征集平台、云端存储或第三方机构发送。请使用虚构人物和您有权使用的演示内容。\n二、内容与署名\n提交前检查标题、正文、作者署名与所属地区；不填写身份证号、住址、电话等真实敏感资料。引用、改编或提供他人作品时，正式上线流程需核实来源与使用权限。\n三、附件说明\n文件选择不等于文件上传。本演示只保存附件元信息，图片临时预览可能在刷新后失效；PDF 与 Word 展示文件信息，不解析文档正文。\n四、版权确认样例\n勾选仅用于演示您已阅读本说明的交互，不构成正式电子签名、版权转让、独家授权或发布许可。正式征集的展示、出版、改编、撤回与留存规则尚需另行确认。\n五、评审与修改\n作品编号、评语、入围、获奖、典藏与证书均为模拟状态，不代表实际审批或授奖。退回修改可保留同一编号重投，历史评语用于沟通演示。\n六、本机记录\n清理本机存储可能移除草稿、投稿和状态记录。演示无账号同步；正式产品需另行提供账户、隐私、保留期限与撤回渠道。",
+      "agreementShowsSample": true,
+      "dialogLayout": {
+        "width": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "overflow": false
+      },
+      "success": true
+    },
+    {
+      "width": 1440,
+      "screen": "review",
+      "layout": {
+        "width": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "overflow": false
+      },
+      "stages": [
+        "区县初审",
+        "市级行业复审",
+        "文史专家评审",
+        "专项终审",
+        "国家级复核",
+        "全国标准审定"
+      ],
+      "publicTabs": [
+        "入围名单",
+        "获奖名单",
+        "典藏名单"
+      ],
+      "standardCount": 3,
+      "queryInput": 1,
+      "success": true
+    },
+    {
+      "width": 1440,
+      "screen": "profile",
+      "layout": {
+        "width": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "overflow": false
+      },
+      "tabLabels": "我的投稿\n消息中心\n证书夹\n我的收藏\n预约与签到\n学习记录\n文创记录\n摘抄与创作",
+      "largerTextSwitch": 1,
+      "success": true,
+      "initialHarnessIssue": "Text child was covered by its own parent uni-button; rechecked by clicking the actual button without force.",
+      "privacyText": "隐私与本机数据\n草稿、投稿、收藏、学习、预约和文创演示记录保存在当前设备，未连接真实账户或后台服务。请使用虚构信息体验。\n清理浏览器或小程序存储会清除记录；更换设备不会自动同步。本说明描述演示的数据行为，不是正式服务隐私协议。\n我知道了",
+      "privacyInformationOnly": true,
+      "dialogLayout": {
+        "width": 1440,
+        "documentWidth": 1440,
+        "overflow": false
+      }
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "requestFailures": [],
+  "finished": "2026-09-21T08:10:26.115Z"
+}

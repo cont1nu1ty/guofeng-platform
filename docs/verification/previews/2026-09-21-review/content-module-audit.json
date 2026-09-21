@@ -1,0 +1,242 @@
+{
+  "scope": "Read-only initial views in isolated ephemeral context; no form submissions, favorites, settings or user profile writes",
+  "results": [
+    {
+      "name": "library",
+      "width": 390,
+      "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=library&id=DEMO-CLASSIC-001",
+      "expected": [
+        {
+          "text": "横排阅读",
+          "visibleText": true
+        },
+        {
+          "text": "竖排阅读",
+          "visibleText": true
+        },
+        {
+          "text": "听一段家风",
+          "visibleText": true
+        },
+        {
+          "text": "内容来源与使用说明",
+          "visibleText": true
+        }
+      ],
+      "overflow": 0,
+      "notFound": false
+    },
+    {
+      "name": "learning",
+      "width": 390,
+      "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=learning",
+      "expected": [
+        {
+          "text": "音频故事库",
+          "visibleText": true
+        },
+        {
+          "text": "诵读与打卡",
+          "visibleText": true
+        },
+        {
+          "text": "全部活动",
+          "visibleText": true
+        },
+        {
+          "text": "我的预约",
+          "visibleText": true
+        }
+      ],
+      "overflow": 0,
+      "notFound": false
+    },
+    {
+      "name": "media",
+      "width": 390,
+      "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=media&id=lecture-01",
+      "expected": [
+        {
+          "text": "回放文件缓存",
+          "visibleText": true
+        },
+        {
+          "text": "缓存本条样片",
+          "visibleText": true
+        },
+        {
+          "text": "分享卡片",
+          "visibleText": true
+        }
+      ],
+      "overflow": 0,
+      "notFound": false
+    },
+    {
+      "name": "hall",
+      "width": 390,
+      "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=hall&id=zhuge-liang",
+      "expected": [
+        {
+          "text": "人物档案",
+          "visibleText": true
+        },
+        {
+          "text": "拖动全景示意",
+          "visibleText": true
+        },
+        {
+          "text": "家训描摹",
+          "visibleText": true
+        },
+        {
+          "text": "讲解与问答",
+          "visibleText": true
+        }
+      ],
+      "overflow": 0,
+      "notFound": false
+    },
+    {
+      "name": "assistant",
+      "width": 390,
+      "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=assistant&mode=knowledge",
+      "expected": [
+        {
+          "text": "家风知识问答",
+          "visibleText": true
+        },
+        {
+          "text": "本地对话演示",
+          "visibleText": true
+        },
+        {
+          "text": "发送",
+          "visibleText": true
+        }
+      ],
+      "overflow": 0,
+      "notFound": false,
+      "screenshot": "assistant-390.png"
+    },
+    {
+      "name": "library",
+      "width": 1440,
+      "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=library&id=DEMO-CLASSIC-001",
+      "expected": [
+        {
+          "text": "横排阅读",
+          "visibleText": true
+        },
+        {
+          "text": "竖排阅读",
+          "visibleText": true
+        },
+        {
+          "text": "听一段家风",
+          "visibleText": true
+        },
+        {
+          "text": "内容来源与使用说明",
+          "visibleText": true
+        }
+      ],
+      "overflow": 0,
+      "notFound": false,
+      "screenshot": "library-1440.png"
+    },
+    {
+      "name": "learning",
+      "width": 1440,
+      "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=learning",
+      "expected": [
+        {
+          "text": "音频故事库",
+          "visibleText": true
+        },
+        {
+          "text": "诵读与打卡",
+          "visibleText": true
+        },
+        {
+          "text": "全部活动",
+          "visibleText": true
+        },
+        {
+          "text": "我的预约",
+          "visibleText": true
+        }
+      ],
+      "overflow": 0,
+      "notFound": false
+    },
+    {
+      "name": "media",
+      "width": 1440,
+      "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=media&id=lecture-01",
+      "expected": [
+        {
+          "text": "回放文件缓存",
+          "visibleText": true
+        },
+        {
+          "text": "缓存本条样片",
+          "visibleText": true
+        },
+        {
+          "text": "分享卡片",
+          "visibleText": true
+        }
+      ],
+      "overflow": 0,
+      "notFound": false
+    },
+    {
+      "name": "hall",
+      "width": 1440,
+      "url": "http://127.0.0.1:5173/#/pkg-content/pages/index?screen=hall&id=zhuge-liang",
+      "expected": [
+        {
+          "text": "人物档案",
+          "visibleText": true
+        },
+        {
+          "text": "拖动全景示意",
+          "visibleText": true
+        },
+        {
+          "text": "家训描摹",
+          "visibleText": true
+        },
+        {
+          "text": "讲解与问答",
+          "visibleText": true
+        }
+      ],
+      "overflow": 0,
+      "notFound": false
+    },
+    {
+      "name": "assistant",
+      "width": 1440,
+      "url": "http://127.0.0.1:5173/#/pages/explore/index?screen=assistant&mode=knowledge",
+      "expected": [
+        {
+          "text": "家风知识问答",
+          "visibleText": true
+        },
+        {
+          "text": "本地对话演示",
+          "visibleText": true
+        },
+        {
+          "text": "发送",
+          "visibleText": true
+        }
+      ],
+      "overflow": 0,
+      "notFound": false
+    }
+  ],
+  "errors": []
+}

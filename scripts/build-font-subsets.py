@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rebuild OFL subsets. Requires fonttools==4.65.0; see docs/09-fonts.md."""
+"""Rebuild OFL subsets. Requires fonttools==4.65.0; see docs/engineering/fonts.md."""
 import argparse
 import hashlib
 import json

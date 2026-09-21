@@ -29,7 +29,7 @@
     "font": "iconfont.ttf embedded in src/styles/icons.scss for local/offline display"
   },
   "dependencyLock": "apps/miniapp/package-lock.json",
-  "backendStatus": "Not integrated. Candidate evaluation and sources in docs/03-open-source.md and docs/06-backend-roadmap.md",
+  "backendStatus": "Admin UI demo implemented in apps/admin using Element Plus and adapted plus-ui components. Java backend, HTTP data loading, persistence, authentication and WarmFlow engine are not integrated.",
   "fonts": {
     "manifest": "scripts/font-data/manifest.json",
     "families": [
@@ -115,6 +115,62 @@
         "name": "zhuge-liang-zh.mp3",
         "bytes": 42074,
         "sha256": "27a80440352a2f8926ee63818ca8d2b2c7737e1b6aef17a6d5bd9e44ac735abe"
+      }
+    ]
+  },
+  "adminFrontend": {
+    "status": "Interface demo only; in-memory session state, no backend API or persistent storage",
+    "path": "apps/admin",
+    "repository": "https://github.com/CrazyLionCat/plus-ui",
+    "commit": "259325b4eecd715279b66b70f90eb9a2f741133c",
+    "branch": "6.X-Vue",
+    "license": "MIT",
+    "licenseFile": "licenses/plus-ui.MIT.txt",
+    "reuse": [
+      "Vue/Element Plus/Vue Router/ECharts dependency subset from the selected Vue management frontend",
+      "Pagination component adapted to explicit Vue imports, local typed props and responsive layout",
+      "RightToolbar component adapted to search visibility and filter reset without cache or column persistence"
+    ],
+    "notReused": [
+      "Authentication, permission enforcement, API client and dynamic server routes",
+      "Backend workflow engine and database services",
+      "Full upstream layout/application: the family-culture shell and business pages are custom"
+    ],
+    "modifications": "Independent Vite H5 app on 5174; no Java service. Drop unused packages, runtime network services and persistent storage. Domain modules isolate session-only business state and validations.",
+    "dependencyLock": "apps/admin/package-lock.json",
+    "packages": [
+      {
+        "name": "element-plus",
+        "version": "2.14.5",
+        "license": "MIT",
+        "licenseFile": "licenses/element-plus.MIT.txt"
+      },
+      {
+        "name": "@element-plus/icons-vue",
+        "version": "2.3.2",
+        "license": "MIT",
+        "licenseFile": "licenses/element-plus-icons.MIT.txt"
+      },
+      {
+        "name": "echarts",
+        "version": "6.1.0",
+        "license": "Apache-2.0 with bundled third-party notices",
+        "licenseFile": "licenses/echarts.LICENSE.txt",
+        "noticeFile": "licenses/echarts.NOTICE.txt"
+      }
+    ],
+    "upstreamFiles": [
+      {
+        "originalPath": "apps/admin/upstream/plus-ui/Pagination.vue",
+        "originalSha256": "7644b3e801118bfd9c3bd63f865ba520276e2f8a3822671d6cbe2d2ff10d7ec1",
+        "adaptedPath": "apps/admin/src/components/upstream/Pagination.vue",
+        "adaptedSha256": "669a2d4cf883d3af2b76a1450e890c45b8be97964467626c967c9e5e2a3ef46a"
+      },
+      {
+        "originalPath": "apps/admin/upstream/plus-ui/RightToolbar.vue",
+        "originalSha256": "8bc7584a2305dd9499ec4e03fdfe8e05da2e3c076ee5de463678eb75e181dd2e",
+        "adaptedPath": "apps/admin/src/components/upstream/RightToolbar.vue",
+        "adaptedSha256": "b73c656e63eddad7b98fb7c29b1e1425f2fb30c0ce19e9280b0eedb7cc52d5f2"
       }
     ]
   }

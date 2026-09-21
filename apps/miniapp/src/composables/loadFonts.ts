@@ -3,7 +3,7 @@
  * H5: actual local @font-face + FontFaceSet verification.
  * WeChat: register build-time bundled WOFF data URIs globally (SDK 3.7.9+).
  * A failed registration leaves CSS fallbacks active; device rendering still needs validation.
- * See docs/09-fonts.md for coverage, licenses and the deployment alternative.
+ * See docs/engineering/fonts.md for coverage, licenses and the deployment alternative.
  */
 // #ifdef MP-WEIXIN
 import bundledWechatFonts from 'virtual:jiafeng-wechat-fonts'
