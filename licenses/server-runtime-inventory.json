@@ -1,0 +1,2556 @@
+{
+  "checkedAt": "2026-09-26",
+  "scope": "Third-party libraries packaged by pinned upstream Maven build. Jiafeng and RuoYi local modules excluded; embedded license files remain inside original JARs. This is an artifact inventory, not a blanket license grant.",
+  "artifacts": [
+    {
+      "jar": "HdrHistogram-2.2.2.jar",
+      "sha256": "22d1d4316c4ec13a68b559e98c8256d69071593731da96136640f864fa14fad8",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt"
+      ],
+      "declaredLicenses": [
+        {
+          "comments": "\n                * This code was Written by Gil Tene of Azul Systems, and released to the\n                * public domain, as explained at http://creativecommons.org/publicdomain/zero/1.0/\n            ",
+          "name": "Public Domain, per Creative Commons CC0",
+          "url": "http://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        {
+          "name": "BSD-2-Clause",
+          "url": "https://opensource.org/licenses/BSD-2-Clause"
+        }
+      ]
+    },
+    {
+      "jar": "HikariCP-7.0.2.jar",
+      "sha256": "f1e612fa27345be3107a85431e8a8aeb205c15364ab2f2d411e40a9d7bb08095",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "JustAuth-3.0.1.jar",
+      "sha256": "e9b3e82a6e0876e72e863677bc53303dc1cc20bdde26637cad5b6f821e334e6d",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "MIT",
+          "url": "https://gitee.com/AprilWind123/JustAuth/blob/java-17/LICENSE",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "SparseBitSet-1.3.jar",
+      "sha256": "f76b85adb0c00721ae267b7cfde4da7f71d3121cc2160c9fc00c0c89f8c53c8a",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "activation-1.1.1.jar",
+      "sha256": "ae475120e9fcd99b4b00b38329bd61cdc5eb754eee03fe66c01f50e137724f99",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt"
+      ]
+    },
+    {
+      "jar": "angus-activation-2.0.3.jar",
+      "sha256": "a6bd35c538cf90fff941ad6258c40c08fca0b5c9c3f536c657114f27ce0527a7",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ]
+    },
+    {
+      "jar": "annotations-13.0.jar",
+      "sha256": "ace2a10dc8e2d5fd34925ecac03e4988b2c0f851650c94b8cef49ba1bd111478",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo",
+          "comments": "A business-friendly OSS license"
+        }
+      ]
+    },
+    {
+      "jar": "annotations-2.48.1.jar",
+      "sha256": "2bdbdbd8dc4175226c57e0a095576aaa90fd8c65a5e280fdfebc2377db520b20",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "apache5-client-2.48.1.jar",
+      "sha256": "294b765c1f7cf4259360921c5d6cfc211f54b95803e8f81a7c473c3cdcbfe014",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "arns-2.48.1.jar",
+      "sha256": "502c2b7d49fb774554078286d1491b685dd4209e64e29b284d6045dc445a910a",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "asm-9.7.1.jar",
+      "sha256": "8cadd43ac5eb6d09de05faecca38b917a040bb9139c7edeb4cc81c740b713281",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "asm-commons-9.10.jar",
+      "sha256": "4282689aaa9a7023dd7a9ccd0bcca39aca49863e16d1ac709b392a6f36a50bfb",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "asm-tree-9.10.jar",
+      "sha256": "02a58618b38c7748e9ce4adff00d1080ced507f309e50b8643b703532ef347e0",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "aspectjweaver-1.9.25.1.jar",
+      "sha256": "4fe86fdc18faea571f29129c70eaad5d121363504a06d7907be88f6c60ba3116",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "auth-2.48.1.jar",
+      "sha256": "d6abc23c22f5e374e412aaf6909209774eacca4a5fbdd6da8623d440b33c8040",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "aws-core-2.48.1.jar",
+      "sha256": "f41628d6afcebcf9743ce78123bedf6d026e9917281440d2be3d0ee920bea989",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "aws-query-protocol-2.48.1.jar",
+      "sha256": "001257429a0e538f1c3e2d35a72615746508e11c61d25d0c28713371ce116ed0",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "aws-xml-protocol-2.48.1.jar",
+      "sha256": "3556e7c4af3a78b14a997fbf5b916eb99f6de9d9bf4a57a4672c19ff3663b835",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "bcpkix-jdk18on-1.85.jar",
+      "sha256": "c9f82b2d4e99c4bbdfccf684e52cc06ea06a0b567bfd0d08f9c5a3f417055996",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md"
+      ]
+    },
+    {
+      "jar": "bcprov-jdk18on-1.85.jar",
+      "sha256": "20af26bf6060bb8005cc2389916812c1e0e998dc48d2ced7131b89461b54cff7",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md"
+      ]
+    },
+    {
+      "jar": "bcutil-jdk18on-1.85.jar",
+      "sha256": "590f55ed5d68529239898a4a5c4f730b6e37f45d1cfa3fbe51f8485abe32c42d",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md"
+      ]
+    },
+    {
+      "jar": "byte-buddy-1.18.10.jar",
+      "sha256": "8b31f4ea806afaa900b67bffd8498760d1f65464f4c2ea78cdbda2f3e633898b",
+      "embeddedLicenseFiles": [
+        "META-INF/NOTICE",
+        "META-INF/LICENSE"
+      ]
+    },
+    {
+      "jar": "cache-api-1.1.1.jar",
+      "sha256": "9f34e007edfa82a7b2a2e1b969477dcf5099ce7f4f926fb54ce7e27c4a0cd54b",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo",
+          "comments": "A business-friendly OSS license"
+        }
+      ]
+    },
+    {
+      "jar": "caffeine-3.2.4.jar",
+      "sha256": "9d9d2cfd681fd9272ded3d27c9930db12f89f732345975aa113ebc223bbf1224",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE"
+      ]
+    },
+    {
+      "jar": "checksums-2.48.1.jar",
+      "sha256": "d23e090b6be26c94c33cf64c6b40b00e59fdb3f67d128e128403084f9f183130",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "checksums-spi-2.48.1.jar",
+      "sha256": "84d1127c989c2dc979c18ed93619422ef7e62e6e1826546752874a42fa19cbaa",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "classmate-1.7.3.jar",
+      "sha256": "75fbda45456f123fb6e2028a6189442d8d0730b357adce4c0a6d7e789f70669b",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "Apache License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "com.sun.xml.bind-jaxb-core-4.0.9.jar",
+      "sha256": "209eb94452d89644380e398e4ac126974718eeb3aa94ed1786654837ebcd3097",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ]
+    },
+    {
+      "jar": "commons-beanutils-1.9.4.jar",
+      "sha256": "7d938c81789028045c08c065e94be75fc280527620d5bd62b519d5838532368a",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "commons-codec-1.21.0.jar",
+      "sha256": "4da851cb6abfb98bfe9eb77c5e5fc47f5414fa28b94e21b7fd9a646705dc167f",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "commons-collections-3.2.2.jar",
+      "sha256": "eeeae917917144a68a741d4c0dff66aa5c5c5fd85593ff217bced3fc8ca783b8",
+      "embeddedLicenseFiles": [
+        "META-INF/NOTICE.txt",
+        "META-INF/LICENSE.txt"
+      ]
+    },
+    {
+      "jar": "commons-collections4-4.5.0.jar",
+      "sha256": "00f93263c267be201b8ae521b44a7137271b16688435340bf629db1bac0a5845",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "commons-compiler-3.1.12.jar",
+      "sha256": "17ea25d860225f4b59d0a512b4995f2e4711bdae5e15736cbcd5f6ce4dda8f7c",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "commons-compress-1.28.0.jar",
+      "sha256": "e1522945218456f3649a39bc4afd70ce4bd466221519dba7d378f2141a4642ca",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "commons-csv-1.14.1.jar",
+      "sha256": "32be0e1e76673092f5d12cb790bd2acb6c2ab04c4ea6efc69ea5ee17911c24fe",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "commons-io-2.20.0.jar",
+      "sha256": "df90bba0fe3cb586b7f164e78fe8f8f4da3f2dd5c27fa645f888100ccc25dd72",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "commons-lang3-3.20.0.jar",
+      "sha256": "69e5c9fa35da7a51a5fd2099dfe56a2d8d32cf233e2f6d770e796146440263f4",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "commons-logging-1.3.6.jar",
+      "sha256": "f8ead8943401081dea0aa824b5b1ba40a0e4ed297a572a0f02258150a0b62357",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "commons-math3-3.6.1.jar",
+      "sha256": "1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "commons-text-1.14.0.jar",
+      "sha256": "121fce2282910c8f0c3ba793a5436b31beb710423cbe2d574a3fb7a73c508e92",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "crt-core-2.48.1.jar",
+      "sha256": "692eb8350022668cd183a50994e1f9c6f082583b46a13572838dda7c048f3f46",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "curvesapi-1.08.jar",
+      "sha256": "ad95b08b8bbf9d7d17e5e00814898fa23324f32bc5b62f1a37801e6a56ce0079",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "BSD License",
+          "url": "http://opensource.org/licenses/BSD-3-Clause",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "dom4j-2.1.4.jar",
+      "sha256": "235a9167a8a199be04b5326d92927ca0adeb90d11f69fe2e821b34ce8433b591",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "dynamic-datasource-creator-4.5.0.jar",
+      "sha256": "66ac561c010136d12d1ebe2f7a7a2b7cb3a6ccff22d9beeb24df7caae4f02b0c",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "dynamic-datasource-spring-4.5.0.jar",
+      "sha256": "c1d8d6b965cf5a21107ecbe427cf11dff340141551549ad16c2223395ad43d64",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "dynamic-datasource-spring-boot-common-4.5.0.jar",
+      "sha256": "81a7958e672d67ba39e43225eb1a59fa861538e00bcd6c093818ed18b79a12ee",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "dynamic-datasource-spring-boot4-starter-4.5.0.jar",
+      "sha256": "67847d2b3ddad391869ce1f0afa976e4db2d00a71d56d75426668d59c15cde46",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "ehcache-3.12.0.jar",
+      "sha256": "b8313aeff14294dac6cd0f7d18d2797afb23b1cc7fba452fa2e30369bd9791cf",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        },
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        },
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        },
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        },
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        },
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        },
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        },
+        {
+          "name": "The Apache License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        },
+        {
+          "name": "The Apache License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        },
+        {
+          "name": "The Apache License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "jar": "endpoints-spi-2.48.1.jar",
+      "sha256": "b85d1f18b62d594cbd61b058e84c582e68c7f9ac1be85bbaabc020b2de63cdc6",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "error_prone_annotations-2.49.0.jar",
+      "sha256": "3b1003e51b8ae56fdbd7c71073e81d1683b97e6c4dff5a9151164d59b769d13c",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "jar": "eventstream-1.0.1.jar",
+      "sha256": "0c37d8e696117f02c302191b8110b0d0eb20fa412fce34c3a269ec73c16ce822",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache License, Version 2.0",
+          "url": "https://aws.amazon.com/apache2.0",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "fesod-common-2.0.2-incubating.jar",
+      "sha256": "5000edf822d7ce50cc1c133b1bc69da6e23400f9067dd6d6ce839c9a4da13b47",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "Apache License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0"
+        }
+      ]
+    },
+    {
+      "jar": "fesod-shaded-2.0.2-incubating.jar",
+      "sha256": "f1668c036cbd4bf2711c20eaee76175dca38b56c445a3d7fbb017e070ce1eb80",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "Apache License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0"
+        }
+      ]
+    },
+    {
+      "jar": "fesod-sheet-2.0.2-incubating.jar",
+      "sha256": "39d43ea6e6fcb26b712181869859c035d1cb0742a842e2758c8c58e79c112b4e",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "Apache License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0"
+        }
+      ]
+    },
+    {
+      "jar": "fory-core-1.3.0.jar",
+      "sha256": "6450221caabc524a819aeed172ace0aab51c91f102ecf10609d25ad5e492548a",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "hibernate-validator-9.1.0.Final.jar",
+      "sha256": "4dea20c780d12e8ad6e1fe7d695460af74f8668df9eb58910991919194412188",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "Apache License 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "jar": "http-auth-2.48.1.jar",
+      "sha256": "ed61aa282c6391385b7e45f20789030464198241a50630d7a5cbffcbe6b37709",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "http-auth-aws-2.48.1.jar",
+      "sha256": "caa655f87b144be0495341a5495e7e3e68f1d0ae2a51fbe449dac1eefba92fc7",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "http-auth-aws-eventstream-2.48.1.jar",
+      "sha256": "2d13925fd79c656c0f622b9b0240d41ee6264c33f701a73cd7173c9e895f9759",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "http-auth-spi-2.48.1.jar",
+      "sha256": "99b46766d8a85ab2c18db4dedc87d2a5482b295e39093ea45a9d80800e6157b3",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "http-client-spi-2.48.1.jar",
+      "sha256": "5fc00724413617845f7f14c7cd91813d532d06764949bb8f106504f9161473ad",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "httpclient5-5.6.1.jar",
+      "sha256": "1e3d8444c3c27772e4b9d42a790f06b3345a8ece4fd16d00981f2f2460e1e772",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "httpcore5-5.4.2.jar",
+      "sha256": "7c34a25506e7207b6748cef9e91163ed03081bee805cef930d82e1d8761d62f1",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "httpcore5-h2-5.4.2.jar",
+      "sha256": "a70da7280f63ddbb7da2869a2e7aba7d8bde3f2aff050e1324ef60ea1d9fab43",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "hutool-captcha-5.8.47.jar",
+      "sha256": "47e14035c811dae2685975e98c307fa58554b61e03c68758e8383e7990de30f8",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "hutool-core-5.8.47.jar",
+      "sha256": "7cc076ad4ed9846dc129edcd2a5e4e01b61a9d715bf0d3b9a7fa707d4f637266",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "hutool-crypto-5.8.47.jar",
+      "sha256": "e850a3f18e9aeecf58b81b5c7d17c1cd1140a865936decf51a0d81b948b43cbf",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "hutool-extra-5.8.47.jar",
+      "sha256": "51ca5ea84143c0fa9b63a1308f575ddac038f0a66e30eb8b66e611beb7979607",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "hutool-http-5.8.47.jar",
+      "sha256": "0f1ef06be5773b5e65f6ecbdf660506d08e9802c41a008380505195202c02ca1",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "hutool-json-5.8.47.jar",
+      "sha256": "e9c5c38218e535eb2e8b940cfc74a1b06d7c4f977dd999d18d0f4084279c43be",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "hutool-jwt-5.8.47.jar",
+      "sha256": "5deb4a360cb328dd60ea3558f6ede885c09ee49a1e703630c8799868529cd7d0",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "hutool-log-5.8.47.jar",
+      "sha256": "59ad10e7b67fee7a801ce22a475f8c42b24757634d9d60e5913ad351a546246f",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "hutool-setting-5.8.47.jar",
+      "sha256": "f87732963735bc642e7209841a1dffbc4dc4a3f3f15547c888a3e55e4015e882",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "identity-spi-2.48.1.jar",
+      "sha256": "e622b729610c31146b581a629336fcfdf9fa26f2a1fb781f7fd21ce80a188849",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "ip2region-3.3.7.jar",
+      "sha256": "0d8f392d55b6fd4acb6b33fc26e851b2717ac870c758dba74b61303efed54cab",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "istack-commons-runtime-4.1.2.jar",
+      "sha256": "7fd6792361f4dd00f8c56af4a20cecc0066deea4a8f3dec38348af23fc2296ee",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jackson-annotations-2.21.jar",
+      "sha256": "53ca085f4a150f703f49e1aabd935bd03b43e1ea3d55d135438292af22cef56b",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jackson-core-2.21.4.jar",
+      "sha256": "4b40a06396f239f8de2da57419adde6e94e5edc18a2171d471ea05eeed4e5c2d",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jackson-core-3.1.4.jar",
+      "sha256": "3bda1cd6eff0a8d47bdfcaeae7c2bd5311d6c8ed494ef5f3e51029bb44aa9bdf",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jackson-databind-2.21.4.jar",
+      "sha256": "3888e9e69ab66fbacaacc9aea0e9ffbf15368288e4aca468b024dba11c09fbf9",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jackson-databind-3.1.4.jar",
+      "sha256": "14034bfdf392b6ebec1b4bb6c1de29d604f0aa97251259a19d5f19af8719bb20",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jackson-dataformat-yaml-2.21.4.jar",
+      "sha256": "055eb4c008ab12f0cb63e93a6454463d032fde0fca85943d69f8dc7469489e4b",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "jackson-datatype-jsr310-2.21.4.jar",
+      "sha256": "d1ac4b98b70304e56448423589fde5e775b100889643ad1ead62cc7811633684",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "jackson-module-kotlin-2.21.4.jar",
+      "sha256": "f9fe2ad3927dbff6c604b122977302fd83f9c3d52d48381db0f40560dec516ca",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jakarta.activation-api-2.1.4.jar",
+      "sha256": "c9db52100ce6c8aac95cc39075f95720d2e561b11f8051b81c121ad4effd7004",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "EDL 1.0",
+          "url": "http://www.eclipse.org/org/documents/edl-v10.php",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jakarta.annotation-api-3.0.0.jar",
+      "sha256": "b01f55552284cfb149411e64eabca75e942d26d2e1786b32914250e4330afaa2",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "EPL 2.0",
+          "url": "https://www.eclipse.org/legal/epl-2.0",
+          "distribution": "repo"
+        },
+        {
+          "name": "GPL2 w/ CPE",
+          "url": "https://www.gnu.org/software/classpath/license.html",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jakarta.enterprise.cdi-api-4.1.0.jar",
+      "sha256": "c42c808f17925129a0800f618febe050d966e181a4c7384c8a5e7a0283d68699",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.md"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "Apache License 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jakarta.enterprise.lang-model-4.1.0.jar",
+      "sha256": "bb56f571f60d2862b2387d5468fe8f5540f8094727283ed991f89082708095ee",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.md"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "Apache License 2.0",
+          "url": "https://apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jakarta.inject-api-2.0.1.jar",
+      "sha256": "f7dc98062fccf14126abb751b64fab12c312566e8cbdc8483598bffcea93af7c",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.md"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jakarta.interceptor-api-2.2.0.jar",
+      "sha256": "d240d72b4dd38a2e431c804079810010cb97903678fa5f987fb7434878b04398",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "EPL 2.0",
+          "url": "http://www.eclipse.org/legal/epl-2.0",
+          "distribution": "repo"
+        },
+        {
+          "name": "GPL2 w/ CPE",
+          "url": "https://www.gnu.org/software/classpath/license.html",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jakarta.mail-2.0.5.jar",
+      "sha256": "f48001755a4a591bb1b602965337fcf316d794c43783052f88ede05130539358",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "EPL 2.0",
+          "url": "http://www.eclipse.org/legal/epl-2.0",
+          "distribution": "repo"
+        },
+        {
+          "name": "GPL2 w/ CPE",
+          "url": "https://www.gnu.org/software/classpath/license.html",
+          "distribution": "repo"
+        },
+        {
+          "name": "EDL 1.0",
+          "url": "http://www.eclipse.org/org/documents/edl-v10.php",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jakarta.mail-api-2.1.5.jar",
+      "sha256": "aa493753acb7a8c45ba8f4c9cf1230a74e20237056dd5b5c8bc86c583e8cfa0e",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "EPL 2.0",
+          "url": "http://www.eclipse.org/legal/epl-2.0",
+          "distribution": "repo"
+        },
+        {
+          "name": "GPL2 w/ CPE",
+          "url": "https://www.gnu.org/software/classpath/license.html",
+          "distribution": "repo"
+        },
+        {
+          "name": "EDL 1.0",
+          "url": "http://www.eclipse.org/org/documents/edl-v10.php",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jakarta.servlet-api-6.1.0.jar",
+      "sha256": "8a31f465f3593bf2351531a5c952014eb839da96a605b5825b93dd54714c48c4",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "EPL 2.0",
+          "url": "http://www.eclipse.org/legal/epl-2.0",
+          "distribution": "repo"
+        },
+        {
+          "name": "GPL2 w/ CPE",
+          "url": "https://www.gnu.org/software/classpath/license.html",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jakarta.transaction-api-2.0.1.jar",
+      "sha256": "50c0a7c760c13ae6c042acf182b28f0047413db95b4636fb8879bcffab5ba875",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "EPL 2.0",
+          "url": "http://www.eclipse.org/legal/epl-2.0",
+          "distribution": "repo"
+        },
+        {
+          "name": "GPL2 w/ CPE",
+          "url": "https://www.gnu.org/software/classpath/license.html",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jakarta.validation-api-3.1.1.jar",
+      "sha256": "63ce00156388c365f3ac1be71fcfaf114682fc0c452020b5df6e7ec236e142ab",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache License 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "jar": "jakarta.websocket-api-2.2.0.jar",
+      "sha256": "541d00436cbca0a5e1f6a457c9f70a64f00bd2f83e10ed89c2b372bc34843b7e",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ]
+    },
+    {
+      "jar": "jakarta.websocket-client-api-2.2.0.jar",
+      "sha256": "aa6fa9331a3f470daee0dbfcf084abfbd7a49507297575d5bb8bfbf3d62fe8c0",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ]
+    },
+    {
+      "jar": "jakarta.xml.bind-api-4.0.5.jar",
+      "sha256": "5e489b6c874c4119e003ff1403db523ee3a8959ec499f3de29e77245efccf216",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ]
+    },
+    {
+      "jar": "janino-3.1.12.jar",
+      "sha256": "5699878c31e71c9a94cf472f95a2dad52ca7b0449c099276b8bd7e992a43595b",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jaxb-api-2.3.0.jar",
+      "sha256": "883007989d373d19f352ba9792b25dec21dc7d0e205a710a93a3815101bb3d03",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt"
+      ]
+    },
+    {
+      "jar": "jaxb-impl-4.0.9.jar",
+      "sha256": "6ec4361ade0b7e0267ee4d1ef495928bf722570af25904e1618c9949b67fdd86",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ]
+    },
+    {
+      "jar": "jaxb-runtime-4.0.9.jar",
+      "sha256": "93e09b7316b6af68d6e2083e4c297daf28e8957f45d725077af812c0b12c39ab",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ]
+    },
+    {
+      "jar": "jboss-logging-3.6.3.Final.jar",
+      "sha256": "7c12ee575508f81e22b1db9334b969d0ec54ef0fd1dcba24eeab1a44235fc366",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache License 2.0",
+          "url": "https://repository.jboss.org/licenses/apache-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jetty-alpn-client-12.1.10.jar",
+      "sha256": "4eed96763ac18fe310ad162d3266cf64ec718d86f5ac87b19a91f3f62a2c4520",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-annotations-12.1.10.jar",
+      "sha256": "b10d017a3ee94fa446c4d1756daf9571adc9e510a6dd4c97c96c952d748a06da",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-client-12.1.10.jar",
+      "sha256": "6e72623ef6ef1ed39a77934452e9d0340d7977882f3d8e9184ed8a2176330c68",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-compression-common-12.1.10.jar",
+      "sha256": "7c02e58d5589549a5e9b19a903134a0e868fdb9ee38459b2c4495a6a3b342ba0",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-compression-gzip-12.1.10.jar",
+      "sha256": "8c112b9ebb3413626026ba6782afde5e22575eb6fb071c98ae3541cb8d2dc79e",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-compression-server-12.1.10.jar",
+      "sha256": "83197998a68192694870bacd65d8f5eb061bcb5d0de3fecff63f4bf5e26367fb",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-ee-webapp-12.1.10.jar",
+      "sha256": "a75c0f3ec4aff18295e8ebeba5de07e67c22892f511e7637e6e51ba7b01f35e1",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-ee11-annotations-12.1.10.jar",
+      "sha256": "0f5ea662cf1835bf312e6935b3a935d47e616c0495fd07be546dfa442d167c00",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-ee11-plus-12.1.10.jar",
+      "sha256": "3a190d91396ee0fdf6f4fd72c5be155d99937a40b8b6e9f413543f5706a82e2b",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-ee11-servlet-12.1.10.jar",
+      "sha256": "668b12749f2043d15953beb0b9fbd2ba6f863b61de5b4682ff12778034c6895a",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-ee11-webapp-12.1.10.jar",
+      "sha256": "a0e30b909c6653f94a2af93fff865413a52e86b82bd2c53f21e2388ebb7b0064",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-ee11-websocket-jakarta-client-12.1.10.jar",
+      "sha256": "65165fa83e24362c03a0617d70503acb05f4ae4141dbdbd39815b560c00a3695",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-ee11-websocket-jakarta-common-12.1.10.jar",
+      "sha256": "f9c5b829fcd6bef1cb7594c1230d0b71333a4c541428c25c6bae9b5bf2a52c1b",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-ee11-websocket-jakarta-server-12.1.10.jar",
+      "sha256": "0c8de85e674fdb81e430f6830fc6b2f88d4ca3e6127d1d4637d43055937e227b",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-ee11-websocket-jetty-server-12.1.10.jar",
+      "sha256": "71f1124a57daebceb0ca1f70a8f3e4c3909a37ff78fe3a141ea3d14110d342e3",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-ee11-websocket-servlet-12.1.10.jar",
+      "sha256": "2473da8b3583d0b375690ea9030bd4e4ff2c7831d80400bc750989ed6ce06bc8",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-http-12.1.10.jar",
+      "sha256": "090f276739fd9bf8c30511007caec669ea3804b1df1061c37f44467474bee71d",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-io-12.1.10.jar",
+      "sha256": "448fc0f8f6f5f7251fc46de8e3aae7da14bd7c571a8043dac3dc381d08228fa0",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-plus-12.1.10.jar",
+      "sha256": "d2cbf417d2f196ecc041e13cae0b801fc71fddf39ebab320c61e5919de05cdb5",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-security-12.1.10.jar",
+      "sha256": "2f34b7895cec4e3547a1b52e12e7e92b3f3a110bf3c17637f8743ca3f4e42f0c",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-server-12.1.10.jar",
+      "sha256": "4b0108e87abada7027123deca17186249413232dad0a2bd58a4e70a987b5354a",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-session-12.1.10.jar",
+      "sha256": "164649123d15a3f2be5c196e82aa652dff05c75362db71b0f4ab6bb35165020a",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-util-12.1.10.jar",
+      "sha256": "c52b4ff62cdacca8a399c611231129e6bd1074db7e3892e78cd106725cdd0ef1",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-websocket-core-client-12.1.10.jar",
+      "sha256": "10ee92d90fe1d112a6d6d612083de853f28935310902443bdbe5daea84e530f5",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-websocket-core-common-12.1.10.jar",
+      "sha256": "bc6397bf67feeb18d7851b5fbf817c4ed11016024481202e8db790bb5a8321e1",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-websocket-core-server-12.1.10.jar",
+      "sha256": "ca9e5cdecde06d21d0637f7b0c15e40b90463290fa8c75d2c66b4bad6910608d",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-websocket-jetty-api-12.1.10.jar",
+      "sha256": "f3b33c3c284c12917bef8a5af9b347dfecfbcb3b1a416a7d00041f5ad1b2b76f",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-websocket-jetty-common-12.1.10.jar",
+      "sha256": "b7b6766b0f5eec268b17e971cd8ac8058cffba350aed53e5bf120c00081be4cf",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-websocket-jetty-server-12.1.10.jar",
+      "sha256": "e9fb2d66de7edd797f95089afad93717f24e8948097f238fb2bb94bbc1718584",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jetty-xml-12.1.10.jar",
+      "sha256": "d4660c9fa82eabfa9e5996eff5b36ae22e5e14430c3dcc485920aef889149a89",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jodd-util-6.3.0.jar",
+      "sha256": "e5c676715897124101f74900dd1f98ebbcad9da3ab2dffbac6e7712612094427",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE"
+      ]
+    },
+    {
+      "jar": "json-utils-2.48.1.jar",
+      "sha256": "37f3b9b9d12d73ec7aa88495e5b9e4c27756989384371122344ab8d1c005abd7",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "jspecify-1.0.0.jar",
+      "sha256": "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "jsqlparser-5.2.jar",
+      "sha256": "e10ade9feefcfb9ab1b8e33d9222b992b4ef2f494537edc4180494188a0c39a5",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "GNU Library or Lesser General Public License (LGPL) V2.1",
+          "url": "http://www.gnu.org/licenses/lgpl-2.1.html",
+          "distribution": "repo"
+        },
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "jul-to-slf4j-2.0.18.jar",
+      "sha256": "cbb7d1aaaa9e871eb1a06594abd911bf97027152976edf1edc315be75239204e",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt"
+      ]
+    },
+    {
+      "jar": "kotlin-reflect-2.3.21.jar",
+      "sha256": "33e37d9dfa86c7a29ab34e975b5f4a1287b458878611051f3485652220c1a2cb",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "kotlin-stdlib-2.3.21.jar",
+      "sha256": "6f64eac736db9434dd6925b4a518b9d1d17177652320c37916cf9ba3ce7d7d7a",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "kryo-5.6.2.jar",
+      "sha256": "4e8b1d2f4977187af8a51a957329722dc1cdc56a7c94fbb5a791e82897629cff",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "liteflow-core-2.16.1.2.jar",
+      "sha256": "a8ebda685e15f1125acddb94157166189cb0c00b5cca06c060a256ed7974ac60",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache-2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "liteflow-metrics-2.16.1.2.jar",
+      "sha256": "08796392791a274eb24be82cc30850407094a61c25211c62c39dca0fb30cb3c7",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache-2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "liteflow-spring-2.16.1.2.jar",
+      "sha256": "c242664a45c40cd4f827e647b9ce03bad96f8e9c58a15c206e6e25eff1e60dc5",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache-2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "liteflow-spring-boot-starter-2.16.1.2.jar",
+      "sha256": "73979f11fbcbe7291bf0182bce96c893f9c48421871b8309eaf8002b449a3e43",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache-2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "lock4j-core-2.2.7.jar",
+      "sha256": "213e63236f68aede8179c57356599e80de54e1115c39100e2e7b803c6649e343",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "lock4j-redisson-spring-boot-starter-2.2.7.jar",
+      "sha256": "612aff3029184d909d0d993983346bcf23c27a6af9f90aa37563f7aeb6f83a12",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "log4j-api-2.25.4.jar",
+      "sha256": "c4b642a7f047275215de117e0e3847eb2c7711d84a0aa7433e7b3c096daf341d",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "Apache-2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "log4j-to-slf4j-2.25.4.jar",
+      "sha256": "d7b78fc0aaaa5e8ada388b29d718b0ab187e512965bed0b259bb4ab299f13db2",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "Apache-2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "logback-classic-1.5.34.jar",
+      "sha256": "b65e05076a5c1aadb659b4fe4bc5fee31cb26cd70390292eb03e4a7a24cff10f",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "logback-core-1.5.34.jar",
+      "sha256": "42eda264c0c650c2bec59e66151a88b708a8663dc1b49d788202d53e78b8caae",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "lombok-1.18.46.jar",
+      "sha256": "01f7b1a015e33e2b62d5f5f37053306357ab1415fd181fcba7794f5d198c1126",
+      "embeddedLicenseFiles": [
+        "LICENSE"
+      ]
+    },
+    {
+      "jar": "mapstruct-1.6.3.jar",
+      "sha256": "00b52467f31d482f8673b0b74306f4be0a305cdce31e587bc1b3d7bf779f1dbf",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt"
+      ]
+    },
+    {
+      "jar": "mapstruct-plus-1.5.1.jar",
+      "sha256": "c91827a94ba201b0dc7d90088a49946c43bffcc106833811c38941431a8d00e1",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo,manual"
+        }
+      ]
+    },
+    {
+      "jar": "mapstruct-plus-object-convert-1.5.1.jar",
+      "sha256": "d08b797dfa8b7c603f6101e9eb128727202fa3bf6834666ebdf5cbe39b4020b8",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo,manual"
+        }
+      ]
+    },
+    {
+      "jar": "mapstruct-plus-spring-boot-starter-1.5.1.jar",
+      "sha256": "16eeb75fb6a068777c8cb07cfdd5d068afbc66b8eab588196c7d37bee6457932",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo,manual"
+        }
+      ]
+    },
+    {
+      "jar": "metrics-spi-2.48.1.jar",
+      "sha256": "e53dc4d18cf7c94eb805aa03d8c4f9e1a8e8428643d8dd134cb857be4bb3b65a",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "micrometer-commons-1.17.0.jar",
+      "sha256": "03919dc71e2417ec4b5c254c4ba924963c972e124190f73cdcb68ed51c6eede6",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "micrometer-core-1.17.0.jar",
+      "sha256": "73503e701a377fafeaf33b71b9b8910a8d7884cbba88ab27971b33b3753b65aa",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "micrometer-jakarta9-1.17.0.jar",
+      "sha256": "4ae9dbc9072fea8c36684a745e0e944b9540fd15027dfe7af0a186f8df43272c",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "micrometer-observation-1.17.0.jar",
+      "sha256": "2fc95a327578d3b2a81c3ff40e646a4a21e46b0153ccbbf91690142bf80d9661",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "minlog-1.3.1.jar",
+      "sha256": "5d4d632cfbebfe0a7644501cc303570b691406181bee65e9916b921c767d7c72",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "3-Clause BSD License",
+          "url": "https://opensource.org/licenses/BSD-3-Clause",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "mybatis-3.5.19.jar",
+      "sha256": "93eea616ae355751bd5fbabb57f0732713fbe79f3196f33c51a0aeeb4255862a",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        },
+        {
+          "name": "MPL 1.1",
+          "url": "https://www.mozilla.org/en-US/MPL/1.1/"
+        },
+        {
+          "name": "LGPL 2.1",
+          "url": "https://www.gnu.org/licenses/lgpl-2.1.html"
+        },
+        {
+          "name": "Apache License 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0"
+        }
+      ]
+    },
+    {
+      "jar": "mybatis-plus-3.5.17.jar",
+      "sha256": "705c760bbc52387fb566c8db6b58f5e904c6c12ce9a2dc3e3d572b284cb92f8d",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "mybatis-plus-annotation-3.5.17.jar",
+      "sha256": "372bcc91fe6b9071f7b85f95262957835b6975813179cac97392817771a8b56e",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "mybatis-plus-core-3.5.15.jar",
+      "sha256": "e3c18157b856c0ff7d464b9a2614865c7c81b1434c2e26756614bb998203e092",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "The Apache License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "jar": "mybatis-plus-extension-3.5.15.jar",
+      "sha256": "f5a781ed0f991c784d67dd30bd81933074a4d58bdbd4b242e77f95d06f679e37",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE"
+      ],
+      "declaredLicenses": [
+        {
+          "name": "The Apache License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "jar": "mybatis-plus-join-adapter-base-1.5.9.jar",
+      "sha256": "db92f6751e2671cb11e6e058139bbe6ea7192ce6ef74bdd1fff9ae8cd74b61ec",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "jar": "mybatis-plus-join-adapter-jsqlparser-1.5.9.jar",
+      "sha256": "0a734c4c2cc6c013f9eb0b4065a32ffd0f7705b0f28ee0063fd6c140af317a66",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "jar": "mybatis-plus-join-annotation-1.5.9.jar",
+      "sha256": "ff28870d68b45b7f05c5fa840d5ea753e2e581874cab23e469fe4a5d8c08a165",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "jar": "mybatis-plus-join-boot-starter-1.5.9.jar",
+      "sha256": "9f8414f211dff50851e6fc9f66c0adae2778a2e0b871c5dcdc2f7a4ea6ff641e",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "jar": "mybatis-plus-join-core-1.5.9.jar",
+      "sha256": "8c4ac2c1fd315d644685a79625c5ddedff47b44ffc9ea3324bd712e4f6c094fb",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "jar": "mybatis-plus-join-extension-1.5.9.jar",
+      "sha256": "f64c67b36ef25365b69912a725f5f287b02bb5af86c6a0dd297e0f235fa74cb8",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "The Apache License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "jar": "mybatis-plus-join-wrapper-ext-1.5.9.jar",
+      "sha256": "c3432f65803e5fde1cb98914537bc70d6ceec38b3c59698f54ae91979f5b025f",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "mybatis-plus-jsqlparser-3.5.17.jar",
+      "sha256": "2462329aadf4bf3a1a5aa5e24fad40e917bee89d28f0691a75df15eae39ab9ac",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "mybatis-plus-jsqlparser-common-3.5.17.jar",
+      "sha256": "003640b765ab7c5af5009b7c864516160ad255d6934531b46446c25fd67c0d95",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "mybatis-plus-spring-3.5.17.jar",
+      "sha256": "285a96eac3bc9006e2e0d9c847bd09e9857e0a40542a3fa82e36dc0ddfc34f3a",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "mybatis-plus-spring-boot-autoconfigure-3.5.17.jar",
+      "sha256": "86990fbd8cca5c2a7132ad33bf145b7820108958826323c044f88e2f51c21973",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "mybatis-plus-spring-boot-native-image-3.5.17.jar",
+      "sha256": "530a1b83e4d4d7600d07fcdafa898f3e2770bbd2cf95aa49fce039f2945ab8d1",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "mybatis-plus-spring-boot4-starter-3.5.17.jar",
+      "sha256": "f5acd6b50729528596882b708d89f51e45423640965dce20265d2239651d3efe",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "mybatis-spring-4.0.0.jar",
+      "sha256": "53d57084e5c6c6fae60b25576f35ab69cd24c2ecd03c420dbfa98819cba7ff08",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "mysql-connector-j-9.7.0.jar",
+      "sha256": "0353648eaa1c91e0f4020c959abf756bc866ffd583df22ae6b6f6e0cbd43eb44",
+      "embeddedLicenseFiles": [
+        "LICENSE"
+      ]
+    },
+    {
+      "jar": "netty-buffer-4.2.15.Final.jar",
+      "sha256": "1361fd9c9ba85b9831cf54a1b2e45ddc3ce34a768931726c099d3f5ef0efe4a3",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-codec-4.2.15.Final.jar",
+      "sha256": "153b11a166459733af79fb0d4667f30bfa39792896f689b21c93a4a4091387ea",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-codec-base-4.2.15.Final.jar",
+      "sha256": "2c6d39d7270628b8cfc3166fbd7a93d595958e59c461bc32ddb383c8c91bf811",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-codec-compression-4.2.15.Final.jar",
+      "sha256": "4adaa5cdd4d2e9b50b23e4c3eff42e73de6eb40848718b3aa84cd5b454da6ce8",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-codec-dns-4.2.15.Final.jar",
+      "sha256": "c5e2c05b4faeba3cf374cc6af29d6f4a7e969d7ca222be958e0800c79a02ee4e",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-codec-http-4.2.15.Final.jar",
+      "sha256": "76ae57e87af37b3c4107140f50b9244b1456163a6a225510838f7c5a4458ec22",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-codec-http2-4.2.15.Final.jar",
+      "sha256": "4a9b052bd815c765d9c05e27b32abbd32a2c7c3e3364ccb992ce71da1a26bc0d",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-codec-marshalling-4.2.15.Final.jar",
+      "sha256": "bbc655b5253387f566b25d4185152951f0121fb3afef2c352e7aa52b9fb965d3",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-codec-protobuf-4.2.15.Final.jar",
+      "sha256": "ecf3a24695374b3544700d94db56875da90c1dfbe1e43c744dcc15e1e8998a01",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-common-4.2.15.Final.jar",
+      "sha256": "78206aa7f6d197caa926291408c01889b6b910ca0f74017d3fcbdaccf9562959",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "netty-handler-4.2.15.Final.jar",
+      "sha256": "99b59e4bea72220d2aed52df8baf37d97431b06ade0b135226cdf73168975eab",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-nio-client-2.48.1.jar",
+      "sha256": "5d470f6bae3ba97859d50e9d6aa02a96439aa06e19009ed19ee76bc11d100a04",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "netty-resolver-4.2.15.Final.jar",
+      "sha256": "24318497f2a3a645964fed418f48879ba11365cab8e1f8d66c47fa7da15ef19a",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-resolver-dns-4.2.15.Final.jar",
+      "sha256": "2e8dd2d861775483d689329ab2546045647c8f8bf5ae3ed2dd48eefbb748952d",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-transport-4.2.15.Final.jar",
+      "sha256": "9fb671e96651066cf1a28dad3f1382c7c99df5b8326d4a214d9a375b311f8dc1",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-transport-classes-epoll-4.2.15.Final.jar",
+      "sha256": "be509407fd71a4b83378567c613420db544d659bb522df7b253a1dbe8ca297fe",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "netty-transport-native-unix-common-4.2.15.Final.jar",
+      "sha256": "b9ea9fc5ad5eba04e99afdff75b2eb97b5ddfb2ad772e2f2ef5d8f277f3cbd76",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "objenesis-3.3.jar",
+      "sha256": "02dfd0b0439a5591e35b708ed2f5474eb0948f53abf74637e959b8e4ef69bfeb",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "ojdbc11-23.26.2.0.0.jar",
+      "sha256": "dbc0ff940bc056d5d9b8f42c0946ded4ebbc08c25cecf6ec1e521b2c8216956b",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt"
+      ]
+    },
+    {
+      "jar": "oracle-spring-boot-starter-ucp-23.4.0.jar",
+      "sha256": "3f2d5bd526c2aea226023a54eb5f9a40358cba5bccb8dfc825eb7ac4cfd966a7",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Oracle Free Use Terms and Conditions (FUTC)",
+          "comments": "\n                https://www.oracle.com/downloads/licenses/oracle-free-license.html\n            "
+        }
+      ]
+    },
+    {
+      "jar": "org.glassfish.jaxb-jaxb-core-4.0.9.jar",
+      "sha256": "6b014df25d22c8446cc2df0a378c5b2137747f197a731d99eb24c756b26f7e8d",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ]
+    },
+    {
+      "jar": "poi-5.5.1.jar",
+      "sha256": "6c52e876ca75775a11b56e4b36a7541f682827f56406725fcd87560b792ee3d8",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "poi-ooxml-5.5.1.jar",
+      "sha256": "bd7be2fdfe3fd2c1684fa813351c2798fd636b44f6236e0674500d4f8ff1c2f9",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "poi-ooxml-lite-5.5.1.jar",
+      "sha256": "e6e37adeb6d6ee8b40ec491ad955d934d8f99827ab050f105b18286e59b1d9e7",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "profiles-2.48.1.jar",
+      "sha256": "38e808301e6ac373d1bbaef646fd32b2f952eb369f5dfef7bf5e6a6c9e9ea942",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "protocol-core-2.48.1.jar",
+      "sha256": "cbdd13976a9dd5168490789f98782c0b9bfbb9f76b29ffb824b1f61b372f5324",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "qlexpress4-4.1.0.jar",
+      "sha256": "b62e6ce8dc1177f694e888f2f6b11af1fa3136520ab043066b31338670eaab49",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache 2",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo",
+          "comments": "A business-friendly OSS license"
+        }
+      ]
+    },
+    {
+      "jar": "reactive-streams-1.0.4.jar",
+      "sha256": "f75ca597789b3dac58f61857b9ac2e1034a68fa672db35055a8fb4509e325f28",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "reactor-core-3.8.6.jar",
+      "sha256": "ffc646b225465efce55d3ea350f1bcd1d27d4a56e912323e316dd8e6d04bff11",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE"
+      ]
+    },
+    {
+      "jar": "redisson-4.6.1.jar",
+      "sha256": "d5224140b4eb38e8aff12379f91d914ab07edcea37dfb0f6907007811a7e166a",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "redisson-spring-boot-starter-4.6.1.jar",
+      "sha256": "9aa05dcfd1a7f9b7799ef881cd504c86e9ff5b975cdc1e45dd8be61facddf401",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "redisson-spring-cache-4.6.1.jar",
+      "sha256": "f43aefc7b956d58ea2c13624bc3b0692445c9a9239e433e09373c4738552344a",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "redisson-spring-data-41-4.6.1.jar",
+      "sha256": "37f5fecd25c141f99d07cf04a98e6fba027c9016f730cc36275807742255c419",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "reflectasm-1.11.9.jar",
+      "sha256": "712b44da79a5b7f47a28cbfcb3d8ecfc872fae349c48aa4d3e38a5d69956afce",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "3-Clause BSD License",
+          "url": "https://opensource.org/licenses/BSD-3-Clause",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "regions-2.48.1.jar",
+      "sha256": "5d2c848b117f5913a9a8e2db6de45747e855bd3c9a282f72246a8211d0979ec3",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "retries-2.48.1.jar",
+      "sha256": "a235474af8ffbf5e37ae5710512ae64af5ed3c8064568f0f1eea849286e34bbe",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "retries-spi-2.48.1.jar",
+      "sha256": "4bfa9d06ced06343a3ceecfd77725cbede5b3049ad18cfb96cdba602f68bc1e5",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "rxjava-3.1.12.jar",
+      "sha256": "1808a433ef55dcc2965523e512ab914a5d0d727228a2683ed7559d7cccf44e37",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE"
+      ]
+    },
+    {
+      "jar": "s3-2.48.1.jar",
+      "sha256": "6030575c4cf61087880867bf28024ab3e894394d680bd5a435e5806d371069ce",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "s3-transfer-manager-2.48.1.jar",
+      "sha256": "a5f53cd351fd465548592b11236290eeed251f56ad8cbb93335b69264fd9ad3c",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "sa-token-core-1.45.0.jar",
+      "sha256": "39dede10e9a811141d4629dd9ecf23ad0981aeb4c6dfc4bea75ba4998a64cc78",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "sa-token-jackson3-1.45.0.jar",
+      "sha256": "92fae8cebe6e03786e835e3fa4d8c5fa7d6059d3895946fcb740deda4a5a51e2",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "sa-token-jakarta-servlet-1.45.0.jar",
+      "sha256": "3c6542c71f428f9302c62a95f1be769b4accf096cdf43f44cd2d098369aa837e",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "sa-token-jwt-1.45.0.jar",
+      "sha256": "c2682db2155172b6583c9e477feb67824d750f327fa4882a888de6fc45eaee7c",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "sa-token-spring-boot-webmvc-reactor-v2v3v4-common-1.45.0.jar",
+      "sha256": "f5d1192673e3ddec5a8be913d76dd1a91e516e45c533831d2e0764278d952295",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "sa-token-spring-boot-webmvc-v3v4-common-1.45.0.jar",
+      "sha256": "30c3d5fbaa566f870275a70a0d382d310b02d30469ec36ecad7d0d9c847240bf",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "sa-token-spring-boot4-starter-1.45.0.jar",
+      "sha256": "49b7f38bbe7905609ac01a2b1ea1ea51aa322147440348f1d6a179c25712d9bf",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "sdk-core-2.48.1.jar",
+      "sha256": "0ee1368ce66d83332ce98e1023f29b2e05f51a250bdaf24095f5962bb79afa15",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "simple-http-1.0.5.jar",
+      "sha256": "e42d851b4d05b9ead5f712e479fa7e647cc9d47a185b0f3117a0b9aa2693ff2b",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "GNU Lesser General Public License v3.0",
+          "url": "https://www.gnu.org/licenses/lgpl-3.0.html",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "slf4j-api-2.0.18.jar",
+      "sha256": "44508fd1576500688c790b190acdd16fec4f8c79a3e0b900afd70503cf055f55",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt"
+      ]
+    },
+    {
+      "jar": "sms4j-api-3.3.5.jar",
+      "sha256": "ac215c11a7ff6053f428e09b39c636a92e8d7916ae1348502cdcfc58009645a9",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache 2",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo",
+          "comments": "A business-friendly OSS license"
+        }
+      ]
+    },
+    {
+      "jar": "sms4j-comm-3.3.5.jar",
+      "sha256": "e8cf994dd42185877b6909ae5ab9c37f3082c492e10ad64328f929d470f1cd44",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache 2",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo",
+          "comments": "A business-friendly OSS license"
+        }
+      ]
+    },
+    {
+      "jar": "sms4j-core-3.3.5.jar",
+      "sha256": "8acf6f7288991555384be0ab8a305d675d16559f13fbc869c925abb2c05bfc48",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache 2",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo",
+          "comments": "A business-friendly OSS license"
+        }
+      ]
+    },
+    {
+      "jar": "sms4j-provider-3.3.5.jar",
+      "sha256": "eb92105fddc2e06b402c2657b0fc13ad8f65b4627f6f1e03670ff42f439535d9",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache 2",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo",
+          "comments": "A business-friendly OSS license"
+        }
+      ]
+    },
+    {
+      "jar": "sms4j-spring-boot-starter-3.3.5.jar",
+      "sha256": "a4a6634188398d91fe4c45277fcc0e7dec26dd742fa8a2ec9b7e9eab96f4cc00",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache 2",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo",
+          "comments": "A business-friendly OSS license"
+        }
+      ]
+    },
+    {
+      "jar": "snakeyaml-2.6.jar",
+      "sha256": "c8f7a98e7394adda02f6317249710e4d1b4c7a25aa8c7eace0c2eea52eb8bf85",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "spring-aop-7.0.8.jar",
+      "sha256": "1178f039e087884174e2affc46e484f4a8bd7f2a4e011d33dd9137709f740f80",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt",
+        "META-INF/notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-beans-7.0.8.jar",
+      "sha256": "6ec2e361a8872a71d8b1ff66f1bcb8cfa29fcc437931998919da7cecfb59b45b",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt",
+        "META-INF/notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-4.1.0.jar",
+      "sha256": "b23951a3a7f867e38db4729b8594e1b72374516f386b1dd9cf4d5317d6d3f91f",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-actuator-4.1.0.jar",
+      "sha256": "10279d87ab47a9a41cb69c56fc69494a54a3b84f25c853141ed234d4832e85b4",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-actuator-autoconfigure-4.1.0.jar",
+      "sha256": "1124c22bc848e5ed557fe4543698056ef7090f134f2ccbcafb3d6c18a5613b13",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-autoconfigure-4.1.0.jar",
+      "sha256": "0fcaa3050ba835ca6b3879f81cd48dc590a6262f53bbf10d2a95c70bf7c048ac",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-configuration-metadata-4.1.0.jar",
+      "sha256": "2da7ce0e83db6d3b56c1503a73f0cd614fb912dbfcf72ae545f8f785068bd709",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-data-commons-4.1.0.jar",
+      "sha256": "44613292a91c231d81d39d05b10550b9988e7dcaf3b931b700e86fb0ac029937",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-data-redis-4.1.0.jar",
+      "sha256": "a3cee050807b8e0b437678ab40319930dfcffc7eb1da9bb57bf8e10900967e24",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-health-4.1.0.jar",
+      "sha256": "cbd92b42254fe264a5d4556538049139aabbfdc367f5d06fb5b4cf97aa70fc18",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-http-converter-4.1.0.jar",
+      "sha256": "f82c8913ea17a60630a5d26fa006cf79f28c7d920dbbef8760f5bc7053706fea",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-jackson-4.1.0.jar",
+      "sha256": "10b6e63a40b257168854093f413eaab8b8a9afb7e989fcc7f6732b42c3f173d1",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-jarmode-tools-4.1.0.jar",
+      "sha256": "20b66fc7cffe830b51ce2cc36df77a0dd695cf197828902503e04492087c84b6",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-jdbc-4.1.0.jar",
+      "sha256": "3b5aab97e72d8a15a40546c31365ed2090cf25451e18762add8ed22cbb4ead43",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-jetty-4.1.0.jar",
+      "sha256": "6b022ef267ddce9e596b4117e5f2f44e66cda8be7230990007f8e5ce53c57537",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-micrometer-metrics-4.1.0.jar",
+      "sha256": "2030f79dbc59c9d84f1f4d6d2a423b46a8ba5cc277cbda75ac54a436b3ea96fb",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-micrometer-observation-4.1.0.jar",
+      "sha256": "1f4a7a9755b38470157316dcec8a9f19b1b89864c5f742149b8db0c517f41853",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-netty-4.1.0.jar",
+      "sha256": "397e145402d1c556b1ac2ea154218ba88a83153adac9a7e5a4534dc6cc7d780c",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-persistence-4.1.0.jar",
+      "sha256": "d9d926224c738bd6152718c078134e3aea1057db4d6a452c37ad120893e0e4d6",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-properties-migrator-4.1.0.jar",
+      "sha256": "50c2e011af2666eec3cf200a92b2944b72cca631d046d84bdc454c18523e7d53",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-servlet-4.1.0.jar",
+      "sha256": "5f694a7c6c357a87032bc92db0e7e0e03b64010f77892e5992c86b10f568a5ae",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-sql-4.1.0.jar",
+      "sha256": "2826a5380675337f4c5b3e90db02279e68a2c9a7eb2b2ac312828c05fb827a9a",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-transaction-4.1.0.jar",
+      "sha256": "5402dfeef5d6633b485d6ce8d1cfb2116c7a55e70f8f5dbd31b69ca43e006f13",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-validation-4.1.0.jar",
+      "sha256": "38e3409dc8050e14afcfe14b7bb09f10d1077c7fbd33150ba2698d53dd79b4cc",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-web-server-4.1.0.jar",
+      "sha256": "a8541ccbd29f5a8db7e6092fa83463aa4d1c002fac07b8b5babe118ad6c4a3d3",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-webmvc-4.1.0.jar",
+      "sha256": "ab21735a550cbfefaa4ad6ffbb1a891592580ef05ad729cd2025bc0245862b55",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-boot-websocket-4.1.0.jar",
+      "sha256": "42030c67492fbafe2215a0b241ddd6398bbc1ebb1320f3aad628653ca42992e2",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "spring-context-7.0.8.jar",
+      "sha256": "1eb7d552414ebac00e30ab3e809138d810785f6d2c4271db77cdf0181f308f19",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt",
+        "META-INF/notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-context-support-7.0.8.jar",
+      "sha256": "9ab80715682c47ad66a1a2c0e9ab2be9ec3d828276f281597f12c5208147b92e",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt",
+        "META-INF/notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-core-7.0.8.jar",
+      "sha256": "726ba2a5130833644bdf267a55ff26e1f52e8dcc9aa1ffa06904ca9c14619f25",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt",
+        "META-INF/notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-data-commons-4.1.0.jar",
+      "sha256": "c9e41d45b30aacc0ce50c4426f0650a3544c066ab5d6d0304840e6f878388c5c",
+      "embeddedLicenseFiles": [
+        "license.txt",
+        "notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-data-keyvalue-4.1.0.jar",
+      "sha256": "1cab6685ee820428a9fb48eab4a5cb48ddcab1dfdb2467b9afb3c47f5455d19b",
+      "embeddedLicenseFiles": [
+        "license.txt",
+        "notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-data-redis-4.1.0.jar",
+      "sha256": "c9f7c6d38c98e4240250c0c3969758b26763c4e0e87726915a71855062ae6cb2",
+      "embeddedLicenseFiles": [
+        "license.txt",
+        "notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-expression-7.0.8.jar",
+      "sha256": "3c97c38ab59c77ee886e08ccf8096f6bb58a1245f68dfed7a40e93f41c435f9a",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt",
+        "META-INF/notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-jdbc-7.0.8.jar",
+      "sha256": "7d6bbf130ed919d5f4f01ec0ea771ab59ac3936ab29f50fd3a705c0119871e32",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt",
+        "META-INF/notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-messaging-7.0.8.jar",
+      "sha256": "0f96694ebb88fed6bf4aef608010c23ee922a476dd71e0fab76ca9ed0eaa70b0",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt",
+        "META-INF/notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-oxm-7.0.8.jar",
+      "sha256": "67f91ffb41a94cf0e443f02ee6f740d52e10a84cabae218cdb0de65f87a82172",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt",
+        "META-INF/notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-tx-7.0.8.jar",
+      "sha256": "57e8fdb6de949e7ec2617683fec03af0253bdbdf4bf3d2651a926a94413df283",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt",
+        "META-INF/notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-web-7.0.8.jar",
+      "sha256": "4d4ed7ecb0453d25d735ea27d025ea36b003c3d29cb7d006bedd6d5188a2f5c0",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt",
+        "META-INF/notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-webmvc-7.0.8.jar",
+      "sha256": "48f7e1e2d0d46e98ed3fa30d5a64cb1f7ed2aa339a82edcd87289ed8ff216f04",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt",
+        "META-INF/notice.txt"
+      ]
+    },
+    {
+      "jar": "spring-websocket-7.0.8.jar",
+      "sha256": "5127c9bd1d565b9081b07743496c892424a19e2f42a81ec1480cbc98fb3dd2a5",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt",
+        "META-INF/notice.txt"
+      ]
+    },
+    {
+      "jar": "springdoc-openapi-starter-common-3.0.3.jar",
+      "sha256": "a0b5a6a5384b4a36718fd7a69efbd48311fd5f404c96ce286a6c285c5d0038e6",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE"
+      ]
+    },
+    {
+      "jar": "springdoc-openapi-starter-webmvc-api-3.0.3.jar",
+      "sha256": "c7e0221797240037eaf20c834f2d03fabec3f26051bd7052be8bf169f2c02876",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE"
+      ]
+    },
+    {
+      "jar": "swagger-annotations-jakarta-2.2.47.jar",
+      "sha256": "9b30b319f1c31993e6128d22e12652be9a688589e30c67819ed84e95b96e7f88",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "swagger-core-jakarta-2.2.47.jar",
+      "sha256": "e63b78c1e5b049e6670ca9bb43c3f35cf362ecc08ac59a783994a6a732a7d7eb",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "swagger-models-jakarta-2.2.47.jar",
+      "sha256": "15d10f4f7eac1e02a8ff940b430c634fc9dfe08368a54dffa3216cc2dc811aa2",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "therapi-runtime-javadoc-0.15.0.jar",
+      "sha256": "9cdcc9b96de1d0077e9df14a637bea96ad564730159e256f250ce72c4c105d34",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "MIT License",
+          "url": "http://opensource.org/licenses/MIT",
+          "distribution": "repo"
+        }
+      ]
+    },
+    {
+      "jar": "third-party-jackson-core-2.48.1.jar",
+      "sha256": "1780d6eb90cda45103153f855742f692d2c5ce729cb6ca10952d43d3e8785b7d",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt",
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "tomcat-embed-el-11.0.22.jar",
+      "sha256": "1b34c33b858c141df36c501b4d809e68036c406bca3671a86facae297917c7de",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE",
+        "META-INF/NOTICE"
+      ]
+    },
+    {
+      "jar": "transmittable-thread-local-2.14.5.jar",
+      "sha256": "b7873215661fc84d870b1639544bcd32b5933c3ab450664cd8363e0e1b1b7ad1",
+      "embeddedLicenseFiles": [],
+      "declaredLicenses": [
+        {
+          "name": "Apache 2",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "distribution": "repo",
+          "comments": "A business-friendly OSS license"
+        },
+        {
+          "name": "MPL 1.1",
+          "url": "https://www.mozilla.org/en-US/MPL/1.1/"
+        },
+        {
+          "name": "LGPL 2.1",
+          "url": "https://www.gnu.org/licenses/lgpl-2.1.html"
+        },
+        {
+          "name": "Apache License 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0"
+        }
+      ]
+    },
+    {
+      "jar": "txw2-4.0.9.jar",
+      "sha256": "d6343e5945d87266ca4e8974a0a2a876e1bd147a00fb65ed3f2e1a3a00f3a82a",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.md",
+        "META-INF/NOTICE.md"
+      ]
+    },
+    {
+      "jar": "ucp-23.26.2.0.0.jar",
+      "sha256": "6cb6442fa49a8e6520020c21554d85c9840660b2cb4decf32b41c7c973da0f0c",
+      "embeddedLicenseFiles": [
+        "META-INF/license.txt"
+      ]
+    },
+    {
+      "jar": "utils-2.48.1.jar",
+      "sha256": "a6a48419a50c6ab92cbbecfb7c6261a9d77f02e1a3418bd765e92cffc9d2dab5",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "utils-lite-2.48.1.jar",
+      "sha256": "6227805bf919474afda2531cef8702e08cc87b108cf89dc55c623ffeb221ab51",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    },
+    {
+      "jar": "warm-flow-core-1.8.9.jar",
+      "sha256": "8469d937291e19ac0e84688f9bab25dfe80c7164608a12d95c1ec0c26c09d83e",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "warm-flow-mybatis-plus-core-1.8.9.jar",
+      "sha256": "c7a4a52ae1e0812e8f8cf85e913852d30007b419df5a2bf8fd25ab6f7dbead9b",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "warm-flow-mybatis-plus-sb-starter-1.8.9.jar",
+      "sha256": "55f9350d29fe5a87790f853e8a680f8796ae8139504c2b2dc0bda968db45cd19",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "warm-flow-mybatis-plus-sb4-starter-1.8.9.jar",
+      "sha256": "69d23bb25c4e79e48cd251feef1f79ee24523199424c5bfdf1f3b3c6d28615a9",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "warm-flow-plugin-json-jackson3-1.8.9.jar",
+      "sha256": "f62bffa9bc772668d9d8b5ee959daf1eb8490df6c56f09e940252f1db6e6f659",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "warm-flow-plugin-json-v1-1.8.9.jar",
+      "sha256": "d1ad9c8735af2cb9f48923352a8f6aa8543da3ed3a1a5a9b55ffae0e0cd66d8c",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "warm-flow-plugin-modes-sb-1.8.9.jar",
+      "sha256": "7d04fac9a51fa2df269ae10c5828496e62d7cf0dbcde28253cdf01330643d673",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "warm-flow-plugin-ui-core-1.8.9.jar",
+      "sha256": "6af31dc1be1b15aa687c11ffb74815f591fb051fb13ae9423b3019a6946a18bc",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "warm-flow-plugin-ui-sb-web-1.8.9.jar",
+      "sha256": "934bf9445d930eafa95842a25c9dcf7e250a19eb313bd1d194b665c1bb29c81b",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "warm-flow-plugin-vue3-ui-1.8.9.jar",
+      "sha256": "ae169477e580756b029bf97a844e0a3a488631cc8829d09732cf3d03eae8a5c8",
+      "embeddedLicenseFiles": []
+    },
+    {
+      "jar": "xmlbeans-5.3.0.jar",
+      "sha256": "6cc69da3b4d35b83c5e477cd4daba204e44109833e34af2b9a8a2c8788289917",
+      "embeddedLicenseFiles": [
+        "META-INF/LICENSE.txt",
+        "META-INF/NOTICE.txt"
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # 第三方来源与许可
 
-本项目为内部需求沟通原型，原创业务代码尚未替用户选择对外开源许可。第三方软件保留其原许可；`private: true` 不替代许可证义务。
+本项目包含需求沟通界面及本机真实服务试点，原创业务代码尚未替用户选择对外开源许可。第三方软件保留其原许可；`private: true` 不替代许可证义务。
 
 | 内容                                                      | 本次使用方式                                                                                       | 来源与许可证                                                                                                                                                                                                                |
 | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -17,7 +17,7 @@
 | Quill 1.3.7 | Uni H5 富文本编辑器所用上游版本随项目本地加载，免外部 CDN 请求；只移除 sourcemap 引用 | [上游](https://github.com/quilljs/quill/tree/v1.3.7)，BSD-3-Clause，完整许可 `licenses/quill-BSD-3-Clause.txt` |
 | 八份双语音频 | 原创虚构故事、清廉日常和名人馆讲解；本机离线合成，不是真人/历史录音 | 脚本与生成过程见 `scripts/audio-sample-manifest.json`；构建工具 [eSpeak NG 1.52.0](https://github.com/espeak-ng/espeak-ng) 与 FFmpeg 的二进制没有分发，项目无运行时语音服务依赖 |
 
-准确来源见 `source-lock.json`。RuoYi-Vue-Plus Java、芋道、流程引擎、OCR、全景、AI平台仍为选型研究，当前源码没有导入这些后端项目；plus-ui前端局部复用另见下表。未来每次引入都应记录对应提交与许可证，不能把一个项目的许可套用于其素材、模型或所有依赖。
+准确来源见 `source-lock.json`。2026-09-26 已实际引入固定提交的 RuoYi-Vue-Plus Java、WarmFlow 及数据库/S3容器；plus-ui 继续按需复用。芋道、OCR、全景和模型平台仍未引入。不能把一个项目的许可套用于其素材、模型或全部依赖。
 
 2026-09-21 新增的 [后台候选快照](projects/backend/upstream-candidates.json) 仅记录当时调研版本与官方证据，不是已安装依赖。具体代码、配套SQL、商业模块、镜像与模型许可边界见 [后台选型](projects/backend/selection.md)；该次调研未引入源码，随后后台界面实际采用内容见下表。
 
@@ -28,8 +28,31 @@
 | plus-ui Vue                            | 固定提交的依赖组合子集，实际裁剪Pagination与RightToolbar；原始组件存于`apps/admin/upstream/plus-ui`，适配版存于`src/components/upstream`；未引入完整框架 | [固定上游](https://github.com/CrazyLionCat/plus-ui/tree/259325b4eecd715279b66b70f90eb9a2f741133c)，MIT，保留`licenses/plus-ui.MIT.txt` |
 | Element Plus 2.14.5                    | 后台按钮、表格、表单、弹层、导航控件等npm组件                                                                                                            | MIT，`licenses/element-plus.MIT.txt`                                                                                                   |
 | Element Plus Icons 2.3.2               | 后台功能图标                                                                                                                                             | MIT，`licenses/element-plus-icons.MIT.txt`                                                                                             |
-| Apache ECharts 6.1.0                   | 后台折线、环图、区域条形图；数据为示例                                                                                                                   | Apache-2.0及包内第三方声明，保留`licenses/echarts.LICENSE.txt`、`licenses/echarts.NOTICE.txt`                                          |
+| Apache ECharts 6.1.0                   | 后台折线、环图、区域条形图；HTTP模式读取服务统计，Mock模式为示例                                                                                         | Apache-2.0及包内第三方声明，保留`licenses/echarts.LICENSE.txt`、`licenses/echarts.NOTICE.txt`                                          |
 | Vue / Vue Router / Vite / TypeScript等 | 管理站独立npm依赖；未升级用户端Uni-app组合                                                                                                               | 精确版本和完整性见`apps/admin/package-lock.json`，以每个安装包自身LICENSE为准                                                          |
 | 思源宋体/黑体子集                      | 后台引用用户端现有WOFF，由Vite构建复制至后台产物                                                                                                         | 沿用原OFL及根字体来源记录，未新增外部字体或运行时CDN                                                                                   |
 
 后台布局、家风业务页面、图形装饰与所有示例内容为本项目编写。页面用到浏览器API属于独立H5工程，不主张为小程序跨端实现。
+
+## 2026-09-26 · 真实服务与部署实际使用
+
+| 内容 | 实际使用范围 | 原始来源与保留许可 |
+| --- | --- | --- |
+| RuoYi-Vue-Plus 6.X | 完整固定源码保留于 `apps/server`；应用装配复用system、Sa-Token、MyBatis、OSS、workflow，排除AI/MCP/demo/生成器/外部调度与监控客户端；新增独立家风模块与Compose配置 | [固定提交](https://github.com/dromara/RuoYi-Vue-Plus/tree/de394a0e21f1e0648ef229d027c3a927d98200a2)，MIT；`apps/server/LICENSE`、归档校验与修改文件清单 `apps/server/UPSTREAM.lock.json` |
+| 上游系统与流程SQL | 原样保留并在空MySQL卷首次导入 `script/sql/ry_vue.sql`、`ry_workflow.sql`；独立后置SQL禁用上游演示用户，业务迁移另建 | 系统SQL随固定若依MIT源码保留；流程SQL注明WarmFlow来源，其Apache-2.0许可另行保留 |
+| WarmFlow 1.8.9 | 官方Maven流程引擎、任务、定义、轨迹及若依工作流模块；本项目未复制自造通用流程引擎 | [版本源码与许可](https://github.com/dromara/warm-flow/blob/v1.8.9/LICENSE)，`licenses/warm-flow-1.8.9.Apache-2.0.txt`；Maven包内第三方声明随原JAR保留 |
+| plus-ui 登录与权限适配 | 在原固定提交基础上新增6份只读源码快照；适配token存取、请求错误/Bearer边界、登录生命周期、权限匹配和Element Plus登录表单；保留自有布局与业务DTO，不引入完整动态路由/加密协议 | [同一固定提交](https://github.com/CrazyLionCat/plus-ui/tree/259325b4eecd715279b66b70f90eb9a2f741133c)，MIT；`apps/admin/upstream/plus-ui/README.md` 逐项映射，`source-lock.json` 原始/适配SHA-256 |
+| MySQL Community Server 8.4.9 | 独立官方数据库镜像；未修改MySQL程序 | [该版本完整许可](https://github.com/mysql/mysql-server/blob/mysql-8.4.9/LICENSE)，GPLv2与指定附加许可及组件例外；完整文本 `licenses/mysql-8.4.9.LICENSE.txt` |
+| MySQL Connector/J 9.7.0 | 固定若依/Spring Boot依赖管理实际解析的JDBC驱动，打包在Java应用中；不是若依MIT的一部分 | 从实际JAR原样保存 `licenses/mysql-connector-j-9.7.0.LICENSE.txt`；GPLv2、附加许可和Universal FOSS Exception按该文本适用 |
+| Redis 8.6.3 | 独立官方缓存/会话镜像；不修改Redis本体 | [Redis 8.6.3许可](https://github.com/redis/redis/blob/8.6.3/LICENSE.txt) 为RSALv2 / SSPLv1 / AGPLv3三选一，本项目采用AGPLv3选项；保留完整 `licenses/redis-8.6.3.LICENSE.txt` 与历史BSD贡献说明 `licenses/redis-8.6.3.CONTRIBUTIONS.txt`，不标为BSD或MIT |
+| SeaweedFS 4.47 | 原镜像以单节点mini运行私有S3桶；未修改存储程序 | [固定版本许可](https://github.com/seaweedfs/seaweedfs/blob/4.47/LICENSE)，Apache-2.0；`licenses/seaweedfs-4.47.Apache-2.0.txt` |
+| Nginx 1.29.6 | 静态站点与同源反向代理镜像，项目仅添加站点配置 | [版本许可](https://github.com/nginx/nginx/blob/release-1.29.6/LICENSE)，BSD-2-Clause；`licenses/nginx-1.29.6.BSD-2-Clause.txt` |
+| Eclipse Temurin Java 21 | Maven构建JDK与运行JRE镜像，未修改JDK；运行镜像摘要已锁定 | 从实际JRE镜像保留 `licenses/temurin-21.GPL-2-with-Classpath-Exception.txt`、`ADDITIONAL_LICENSE_INFO`、`ASSEMBLY_EXCEPTION`；其它JDK组件保留镜像内各模块legal文件 |
+| Maven 3.9.11 / Node 22 | 多阶段镜像中的构建工具，不进入最终Nginx站点产物 | 实际镜像提取 `licenses/maven-3.9.11.LICENSE.txt`、`maven-3.9.11.NOTICE.txt`、`node-22-image.LICENSE.txt`；Node文件含其MIT及捆绑第三方声明 |
+| AWS SDK S3 2.48.1 / Sa-Token 1.45.0 / MyBatis 3.5.19 / MyBatis-Plus / Redisson 4.6.1 / LiteFlow 2.16.1.2 | 随固定上游的Java依赖组合使用，保留原JAR；MyBatis-Plus starter实际3.5.17、core/extension实际3.5.15，不改写成统一版本 | 对应原许可/NOTICE已保存在 `licenses/`；LiteFlow版本发布POM声明与通用Apache-2.0文本同存。实际303个第三方运行JAR的哈希及内嵌许可位置见 `licenses/server-runtime-inventory.json` |
+
+所有部署镜像的完整tag和digest见 `deploy/images.lock.json`；源码归档、SQL、许可文件和前端适配哈希见 `source-lock.json`。原镜像内OS包、JDK模块、npm/Maven传递依赖按自身许可保留，上表不将整个镜像或应用概括为单一MIT许可。构建没有移除运行JAR内的LICENSE/NOTICE。
+
+## 2026-09-26 首页与内容目录接入
+
+轮播、首页配置、媒体/阵地/人物目录、订阅与咨询的业务代码和 `deploy/fixtures/catalog_content.json` 场景文案为本项目原创，未引入新第三方库。后台继续复用既有 Element Plus、RuoYi认证/数据库层及 AWS S3 SDK；用户端继续使用 Uni-app、Wot UI。私有存储展示文件复用 `apps/miniapp/src/pkg-content/static/media/README.md` 已登记的三组原创静音文字动画与封面，不是第三方盛典视频、真人录音或AI生成内容。数据与主要新增模块摘要登记在 `source-lock.json` 的 `catalogManagement`。

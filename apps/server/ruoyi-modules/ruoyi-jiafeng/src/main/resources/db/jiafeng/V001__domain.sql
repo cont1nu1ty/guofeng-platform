@@ -1,0 +1,49 @@
+CREATE TABLE IF NOT EXISTS jf_account (
+ user_id BIGINT PRIMARY KEY, realm VARCHAR(16) NOT NULL, region_ids JSON NOT NULL,
+ roles JSON NOT NULL, enabled BOOLEAN NOT NULL DEFAULT TRUE, profile JSON NOT NULL,
+ version BIGINT NOT NULL DEFAULT 1, created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
+);
+CREATE TABLE IF NOT EXISTS jf_entity (
+ id VARCHAR(64) PRIMARY KEY, kind VARCHAR(40) NOT NULL, owner_id BIGINT NULL,
+ region_id VARCHAR(40) NOT NULL, status VARCHAR(40) NOT NULL,
+ payload JSON NOT NULL, version BIGINT NOT NULL DEFAULT 1,
+ created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3), updated_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+ INDEX jf_entity_scope(kind,region_id,status), INDEX jf_entity_owner(kind,owner_id)
+);
+CREATE TABLE IF NOT EXISTS jf_revision (
+ id VARCHAR(64) PRIMARY KEY, submission_id VARCHAR(64) NOT NULL, revision_number INT NOT NULL,
+ payload JSON NOT NULL, created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+ UNIQUE KEY jf_revision_unique(submission_id,revision_number),
+ CONSTRAINT jf_revision_submission FOREIGN KEY(submission_id) REFERENCES jf_entity(id)
+);
+CREATE TABLE IF NOT EXISTS jf_draft (
+ user_id BIGINT PRIMARY KEY, payload JSON NULL, version BIGINT NOT NULL DEFAULT 0,
+ updated_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
+);
+CREATE TABLE IF NOT EXISTS jf_file (
+ id VARCHAR(64) PRIMARY KEY, owner_id BIGINT NOT NULL, region_id VARCHAR(40) NOT NULL,
+ object_key VARCHAR(250) NOT NULL UNIQUE, name VARCHAR(255) NOT NULL, mime_type VARCHAR(120) NOT NULL,
+ file_type VARCHAR(16) NOT NULL, size BIGINT NOT NULL, sha256 VARCHAR(64) NOT NULL,
+ created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
+);
+CREATE TABLE IF NOT EXISTS jf_registration (
+ id VARCHAR(64) PRIMARY KEY, activity_id VARCHAR(64) NOT NULL, user_id BIGINT NOT NULL,
+ status VARCHAR(20) NOT NULL, checked_in BOOLEAN NOT NULL DEFAULT FALSE,
+ created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3), version BIGINT NOT NULL DEFAULT 1,
+ UNIQUE KEY jf_registration_unique(activity_id,user_id),
+ CONSTRAINT jf_registration_activity FOREIGN KEY(activity_id) REFERENCES jf_entity(id)
+);
+CREATE TABLE IF NOT EXISTS jf_idempotency (
+ account_id BIGINT NOT NULL, operation VARCHAR(120) NOT NULL, idem_key VARCHAR(128) NOT NULL,
+ request_hash VARCHAR(64) NOT NULL, response JSON NOT NULL,
+ created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+ PRIMARY KEY(account_id,operation,idem_key)
+);
+CREATE TABLE IF NOT EXISTS jf_audit (
+ id VARCHAR(64) PRIMARY KEY, actor_id BIGINT NOT NULL, region_id VARCHAR(40) NOT NULL,
+ action VARCHAR(80) NOT NULL, target_id VARCHAR(120) NOT NULL, detail JSON NOT NULL,
+ created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3), INDEX jf_audit_region(region_id,created_at)
+);
+CREATE TABLE IF NOT EXISTS jf_login_attempt (
+ identity_hash VARCHAR(64) PRIMARY KEY, failures INT NOT NULL DEFAULT 0, last_failure TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
+);

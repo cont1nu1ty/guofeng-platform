@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-09-21",
+  "checkedAt": "2026-09-26",
   "frontendTemplate": {
     "repository": "https://github.com/wot-ui/wot-starter",
     "commit": "c9813573b73f45fc08b0eb249f0f28c5ca0fe401",
@@ -29,7 +29,7 @@
     "font": "iconfont.ttf embedded in src/styles/icons.scss for local/offline display"
   },
   "dependencyLock": "apps/miniapp/package-lock.json",
-  "backendStatus": "Admin UI demo implemented in apps/admin using Element Plus and adapted plus-ui components. Java backend, HTTP data loading, persistence, authentication and WarmFlow engine are not integrated.",
+  "backendStatus": "Implemented local persistent backend in apps/server, HTTP adapters, MySQL, Redis and private S3-compatible storage in Docker Compose. Runtime and permission acceptance is recorded separately in docs/verification; formal WeChat login, model inference and production-scale deployment remain future work.",
   "fonts": {
     "manifest": "scripts/font-data/manifest.json",
     "families": [
@@ -119,7 +119,7 @@
     ]
   },
   "adminFrontend": {
-    "status": "Interface demo only; in-memory session state, no backend API or persistent storage",
+    "status": "Existing H5 interface retained with explicit HTTP mode and separate mock mode; production container builds select HTTP mode.",
     "path": "apps/admin",
     "repository": "https://github.com/CrazyLionCat/plus-ui",
     "commit": "259325b4eecd715279b66b70f90eb9a2f741133c",
@@ -129,14 +129,16 @@
     "reuse": [
       "Vue/Element Plus/Vue Router/ECharts dependency subset from the selected Vue management frontend",
       "Pagination component adapted to explicit Vue imports, local typed props and responsive layout",
-      "RightToolbar component adapted to search visibility and filter reset without cache or column persistence"
+      "RightToolbar component adapted to search visibility and filter reset without cache or column persistence",
+      "Adapted plus-ui token get/set/remove helpers, login/session lifecycle and permission matching",
+      "Adapted plus-ui request Bearer/error boundary using fetch and the shared business DTO contract",
+      "Adapted plus-ui Element Plus login validation and submission lifecycle"
     ],
     "notReused": [
-      "Authentication, permission enforcement, API client and dynamic server routes",
-      "Backend workflow engine and database services",
-      "Full upstream layout/application: the family-culture shell and business pages are custom"
+      "Full upstream layout/application: family-culture shell and business pages remain custom",
+      "Dynamic native server-route generation, captcha, social login, remember-password and upstream encrypted request protocol"
     ],
-    "modifications": "Independent Vite H5 app on 5174; no Java service. Drop unused packages, runtime network services and persistent storage. Domain modules isolate session-only business state and validations.",
+    "modifications": "Independent Vue H5 admin retained; add asynchronous HTTP adapters, server-backed session/permissions and explicit mock mode. Source snapshots retained unchanged; request envelope adapted to Jiafeng /api/v1, frontend permissions only control visibility.",
     "dependencyLock": "apps/admin/package-lock.json",
     "packages": [
       {
@@ -171,6 +173,429 @@
         "originalSha256": "8bc7584a2305dd9499ec4e03fdfe8e05da2e3c076ee5de463678eb75e181dd2e",
         "adaptedPath": "apps/admin/src/components/upstream/RightToolbar.vue",
         "adaptedSha256": "b73c656e63eddad7b98fb7c29b1e1425f2fb30c0ce19e9280b0eedb7cc52d5f2"
+      },
+      {
+        "upstreamPath": "src/utils/auth.ts",
+        "originalPath": "apps/admin/upstream/plus-ui/auth.ts",
+        "originalSha256": "37b91ed5dac986e3238d601d36ca64f177312fdf2776a22a6d715b2621b55607",
+        "adaptedFiles": [
+          {
+            "path": "apps/admin/src/utils/auth.ts",
+            "sha256": "a982d786979fc9675296ad915171163fe87422d7f14198a8879b747046c958ae"
+          }
+        ]
+      },
+      {
+        "upstreamPath": "src/utils/request.ts",
+        "originalPath": "apps/admin/upstream/plus-ui/request.ts",
+        "originalSha256": "1d6839e67166d7538b48f6c7c72466947569a21c21d678338657b16a23d288eb",
+        "adaptedFiles": [
+          {
+            "path": "apps/admin/src/services/http.ts",
+            "sha256": "5f4917ae2fcac99dff194f096abd001d9c918f9d6b4d2129a2e807784cb317bd"
+          }
+        ]
+      },
+      {
+        "upstreamPath": "src/directive/permission/index.ts",
+        "originalPath": "apps/admin/upstream/plus-ui/permission-directive.ts",
+        "originalSha256": "7fd784ee78dfb00bf319abe82c87491baa6793d573dfdea234a71d08bed5518c",
+        "adaptedFiles": [
+          {
+            "path": "apps/admin/src/services/session.ts",
+            "sha256": "59e5fcef50a44801d1267022c3ef63a99264ff38ef7e547c108e9230db43ae11"
+          }
+        ]
+      },
+      {
+        "upstreamPath": "src/plugins/auth.ts",
+        "originalPath": "apps/admin/upstream/plus-ui/auth-plugin.ts",
+        "originalSha256": "cea76650cc047fca445a889a6bec0aca40f97b9dbc4067e077f519d8b3cf8fe1",
+        "adaptedFiles": [
+          {
+            "path": "apps/admin/src/services/session.ts",
+            "sha256": "59e5fcef50a44801d1267022c3ef63a99264ff38ef7e547c108e9230db43ae11"
+          }
+        ]
+      },
+      {
+        "upstreamPath": "src/store/modules/user.ts",
+        "originalPath": "apps/admin/upstream/plus-ui/user-store.ts",
+        "originalSha256": "6f464351a8676c369cb924a0e85a8b13373ec078d6b3b97f1abbb00228406c32",
+        "adaptedFiles": [
+          {
+            "path": "apps/admin/src/services/session.ts",
+            "sha256": "59e5fcef50a44801d1267022c3ef63a99264ff38ef7e547c108e9230db43ae11"
+          }
+        ]
+      },
+      {
+        "upstreamPath": "src/views/login.vue",
+        "originalPath": "apps/admin/upstream/plus-ui/login.vue",
+        "originalSha256": "bb21814e0b4afe7977bcc75e0d72501f887e27da3f83106ec52a291b040f81ca",
+        "adaptedFiles": [
+          {
+            "path": "apps/admin/src/views/LoginView.vue",
+            "sha256": "413edd0ff5587a95827f6a2865f4691a418021eec7a5ad9cd7138126c47ee634"
+          }
+        ]
+      }
+    ]
+  },
+  "backendServer": {
+    "repository": "https://github.com/dromara/RuoYi-Vue-Plus",
+    "commit": "de394a0e21f1e0648ef229d027c3a927d98200a2",
+    "sourceArchive": "https://codeload.github.com/dromara/RuoYi-Vue-Plus/tar.gz/de394a0e21f1e0648ef229d027c3a927d98200a2",
+    "sourceArchiveSha256": "a52f01a1f60748582ae54616589bb26ae7123912bcb1afcc14058682aa754517",
+    "license": "MIT",
+    "licenseFile": "apps/server/LICENSE",
+    "licenseSha256": "e175f7e0248508916cd20e20d1b301a7c1079efcc57fadb93ddd7bfce3a432b3",
+    "modifiedUpstreamFiles": [
+      "pom.xml",
+      "ruoyi-admin/pom.xml",
+      "ruoyi-common/pom.xml",
+      "ruoyi-modules/pom.xml"
+    ],
+    "additions": [
+      "ruoyi-modules/ruoyi-jiafeng",
+      "ruoyi-admin/src/main/resources/application-compose.yml"
+    ],
+    "path": "apps/server",
+    "sourceLock": "apps/server/UPSTREAM.lock.json",
+    "reuse": [
+      "Native system account tables, Sa-Token session framework, role/menu infrastructure and audit facilities",
+      "MyBatis/dynamic datasource and MySQL driver; original SQL/bootstrap schema",
+      "Existing OSS AWS SDK and upload client plus explicit public-endpoint S3Presigner",
+      "WarmFlow engine and workflow module; immutable Jiafeng business review/rubric versions"
+    ],
+    "removedFromApplicationReactor": [
+      "AI",
+      "MCP",
+      "demo",
+      "generator",
+      "external job scheduler",
+      "monitor client"
+    ],
+    "retainedSourceScope": "Complete upstream source tree retained; unused source folders are not runtime features.",
+    "sqlInputs": [
+      {
+        "path": "apps/server/script/sql/ry_vue.sql",
+        "sha256": "7aad4cdbd50de11abf32202a7a5fc0609e3d281f4b4aa69099d5cee26899bb16",
+        "modified": false,
+        "licenseBasis": "Covered by the retained pinned RuoYi source license; workflow SQL also identifies its WarmFlow origin."
+      },
+      {
+        "path": "apps/server/script/sql/ry_workflow.sql",
+        "sha256": "7a5279079614d0de80ab3677d1177aa9d2ed2f90daf2ea6b020c1f6da43a6cb3",
+        "modified": false,
+        "licenseBasis": "Covered by the retained pinned RuoYi source license; workflow SQL also identifies its WarmFlow origin."
+      }
+    ],
+    "dependencyManagement": "apps/server/pom.xml",
+    "runtimeJarInventory": "licenses/server-runtime-inventory.json",
+    "businessModule": "apps/server/ruoyi-modules/ruoyi-jiafeng",
+    "runtimeJarInventorySha256": "53af51b03d59f253bc4d0ac36bf4b97e93949521201933d565585317aaf700d7"
+  },
+  "containerRuntime": {
+    "manifest": "deploy/compose.yaml",
+    "imageLock": "deploy/images.lock.json",
+    "deploymentEntry": "deploy/dev",
+    "images": {
+      "mysql:8.4.9": [
+        "mysql@sha256:c36050afdca850f23cef85703f84c7531a5ae155a11b5ee1c60acb09937c4084"
+      ],
+      "redis:8.6.3": [
+        "redis@sha256:4d25e2fe601f7ffaeb4437cb6ced3518bc36edf34ebe98863c80836943d94529"
+      ],
+      "chrislusf/seaweedfs:4.47": [
+        "chrislusf/seaweedfs@sha256:ce9e796f1fe6f06968f4c04bdaf8f678dad9c8acdfef3d244133d71bfa6bf882"
+      ],
+      "nginx:1.29.6-alpine": [
+        "nginx@sha256:f46cb72c7df02710e693e863a983ac42f6a9579058a59a35f1ae36c9958e4ce0"
+      ],
+      "maven:3.9.11-eclipse-temurin-21": [
+        "maven@sha256:6fdc855a6ed81d288ca7ca37ac6ff5e9308b612485c0801d70b25a858c83d237"
+      ],
+      "eclipse-temurin:21-jre-alpine": [
+        "eclipse-temurin@sha256:51ab5e3302e7141ce665ca3ea85e8b5cd648eafbc3c0c90dd79d6537684e4555"
+      ],
+      "node:22-alpine": [
+        "node@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402"
+      ]
+    },
+    "redisLicenseChoice": "AGPL-3.0 option from Redis 8.6.3 tri-license (RSALv2 OR SSPLv1 OR AGPLv3); Redis itself is unmodified and runs in its own official container.",
+    "licenseScope": "Main component license records and actual runtime jar inventory; OS packages, bundled components and transitive dependencies retain their own license terms.",
+    "imageLockSha256": "2340dccb6bcb53ab62b620222b5ccb350e49a560d36bbc7ade486a9386efa093"
+  },
+  "backendLicenseEvidence": [
+    {
+      "name": "WarmFlow",
+      "version": "1.8.9",
+      "license": "Apache-2.0",
+      "evidenceSource": "https://raw.githubusercontent.com/dromara/warm-flow/v1.8.9/LICENSE",
+      "retainedFiles": [
+        {
+          "path": "licenses/warm-flow-1.8.9.Apache-2.0.txt",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        }
+      ]
+    },
+    {
+      "name": "MySQL Server",
+      "version": "8.4.9",
+      "license": "GPL-2.0 with documented additional permissions/component exceptions",
+      "evidenceSource": "https://raw.githubusercontent.com/mysql/mysql-server/mysql-8.4.9/LICENSE",
+      "retainedFiles": [
+        {
+          "path": "licenses/mysql-8.4.9.LICENSE.txt",
+          "sha256": "b971ab677d232904fc158f196e8b9dbc0cf3fee4501ba08285260a37841be25a"
+        }
+      ]
+    },
+    {
+      "name": "MySQL Connector/J",
+      "version": "9.7.0",
+      "license": "GPL-2.0 with Universal FOSS Exception and documented additional permissions",
+      "evidenceSource": "BOOT-INF/lib/mysql-connector-j-9.7.0.jar!/LICENSE",
+      "retainedFiles": [
+        {
+          "path": "licenses/mysql-connector-j-9.7.0.LICENSE.txt",
+          "sha256": "75d3a92b08c7bf9476bab5a8661e3abedc081463d85c93251aab60a5e0ad92ce"
+        }
+      ]
+    },
+    {
+      "name": "Redis",
+      "version": "8.6.3",
+      "license": "AGPL-3.0 option; full tri-license and historical BSD contributions retained",
+      "evidenceSource": "https://raw.githubusercontent.com/redis/redis/8.6.3/LICENSE.txt",
+      "retainedFiles": [
+        {
+          "path": "licenses/redis-8.6.3.LICENSE.txt",
+          "sha256": "4a0e416b9537688f30dfe69ddaceb2ca64d96b7df02a0a6760d376890ddc4e40"
+        },
+        {
+          "path": "licenses/redis-8.6.3.CONTRIBUTIONS.txt",
+          "sha256": "aa6a56234e5ca27f09010693d1c31ca83988d7a0dc80fb253603e052d1d7f0d1"
+        }
+      ]
+    },
+    {
+      "name": "SeaweedFS",
+      "version": "4.47",
+      "license": "Apache-2.0",
+      "evidenceSource": "https://raw.githubusercontent.com/seaweedfs/seaweedfs/4.47/LICENSE",
+      "retainedFiles": [
+        {
+          "path": "licenses/seaweedfs-4.47.Apache-2.0.txt",
+          "sha256": "d789d433cc11da163273d1e39be2e8fa67642f9a58ef220d3f258fa9c14ef613"
+        }
+      ]
+    },
+    {
+      "name": "Nginx",
+      "version": "1.29.6",
+      "license": "BSD-2-Clause",
+      "evidenceSource": "https://raw.githubusercontent.com/nginx/nginx/release-1.29.6/LICENSE",
+      "retainedFiles": [
+        {
+          "path": "licenses/nginx-1.29.6.BSD-2-Clause.txt",
+          "sha256": "08845fe39e06b51dad7685c28140ab49577a86e947523e16b536a46caf89ad5c"
+        }
+      ]
+    },
+    {
+      "name": "Eclipse Temurin",
+      "version": "21 (runtime 21.0.12.1+1-LTS)",
+      "license": "GPL-2.0 with Classpath Exception and per-component terms",
+      "evidenceSource": "eclipse-temurin:21-jre-alpine, /opt/java/openjdk/legal/java.base",
+      "retainedFiles": [
+        {
+          "path": "licenses/temurin-21.GPL-2-with-Classpath-Exception.txt",
+          "sha256": "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726"
+        },
+        {
+          "path": "licenses/temurin-21.ADDITIONAL_LICENSE_INFO.txt",
+          "sha256": "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916"
+        },
+        {
+          "path": "licenses/temurin-21.ASSEMBLY_EXCEPTION.txt",
+          "sha256": "75292f03bf23d3db7c985aecc191029b93883200721ed23ed34a2e601463df33"
+        }
+      ]
+    },
+    {
+      "name": "Maven",
+      "version": "3.9.11",
+      "license": "Apache-2.0 and bundled component notices",
+      "evidenceSource": "maven:3.9.11-eclipse-temurin-21, /usr/share/maven/LICENSE and NOTICE",
+      "retainedFiles": [
+        {
+          "path": "licenses/maven-3.9.11.LICENSE.txt",
+          "sha256": "34ad6c700586294f56b50a7cf7120d5f031a6f68099d86c7de6e860dbe8523ad"
+        },
+        {
+          "path": "licenses/maven-3.9.11.NOTICE.txt",
+          "sha256": "9739dd84556b9458e60c049a24f4c78f3146b0d57cddaf5b4fbfb2f71da259eb"
+        }
+      ]
+    },
+    {
+      "name": "Node",
+      "version": "22 (image digest locked)",
+      "license": "MIT and bundled component licenses",
+      "evidenceSource": "node:22-alpine, /usr/local/LICENSE",
+      "retainedFiles": [
+        {
+          "path": "licenses/node-22-image.LICENSE.txt",
+          "sha256": "c738ae413cf561f174e34f6961f8ca458aae2369a73640dda6234c629b98bcc4"
+        }
+      ]
+    },
+    {
+      "name": "AWS SDK S3",
+      "version": "2.48.1",
+      "license": "Apache-2.0",
+      "evidenceSource": "BOOT-INF/lib/s3-2.48.1.jar!/META-INF",
+      "retainedFiles": [
+        {
+          "path": "licenses/aws-sdk-s3-2.48.1.LICENSE.txt",
+          "sha256": "14c6a5fbdbd6b87244abeb494712b9922d43f53afb658a42014c66da8e0c4403"
+        },
+        {
+          "path": "licenses/aws-sdk-s3-2.48.1.NOTICE.txt",
+          "sha256": "21290a3b8fa10c01b1a68704cb824d6e0aaedaec4d4373ddeeaf6173c864e340"
+        }
+      ]
+    },
+    {
+      "name": "Sa-Token",
+      "version": "1.45.0",
+      "license": "Apache-2.0",
+      "evidenceSource": "https://raw.githubusercontent.com/dromara/Sa-Token/v1.45.0/LICENSE",
+      "retainedFiles": [
+        {
+          "path": "licenses/sa-token-1.45.0.Apache-2.0.txt",
+          "sha256": "22571b8c26cfd36d898c1ef0adc5878abbdab77eb801440c3ee873927543ff56"
+        }
+      ]
+    },
+    {
+      "name": "MyBatis",
+      "version": "3.5.19",
+      "license": "Apache-2.0",
+      "evidenceSource": "BOOT-INF/lib/mybatis-3.5.19.jar!/META-INF",
+      "retainedFiles": [
+        {
+          "path": "licenses/mybatis-3.5.19.LICENSE.txt",
+          "sha256": "91b00d08eb9c5cb1bc6370d42b63c4874032caf26b9641bfab636827cff9c5d3"
+        },
+        {
+          "path": "licenses/mybatis-3.5.19.NOTICE.txt",
+          "sha256": "057c335c9565b5b8df6eb56ce585c99b248eb2c21f4ad29d4a8f71f373afaef8"
+        }
+      ]
+    },
+    {
+      "name": "MyBatis-Plus",
+      "version": "starter 3.5.17; core/extension 3.5.15",
+      "license": "Apache-2.0",
+      "evidenceSource": "BOOT-INF/lib/mybatis-plus-core-3.5.15.jar!/META-INF/LICENSE",
+      "retainedFiles": [
+        {
+          "path": "licenses/mybatis-plus-core-3.5.15.LICENSE.txt",
+          "sha256": "22e63765a5387c328a1ecc6d45487b654bcc0303a08d58fc0d93a1b40aeeba1a"
+        }
+      ]
+    },
+    {
+      "name": "Redisson",
+      "version": "4.6.1",
+      "license": "Apache-2.0",
+      "evidenceSource": "BOOT-INF/lib/redisson-4.6.1.jar!/META-INF",
+      "retainedFiles": [
+        {
+          "path": "licenses/redisson-4.6.1.LICENSE.txt",
+          "sha256": "cbffe3b306657591a5409c39ac4af07b7df9fc9f8d36e1a7dfd288f0fa60dcc2"
+        },
+        {
+          "path": "licenses/redisson-4.6.1.NOTICE.txt",
+          "sha256": "0540a04349c99bb80c294693d5d7424fada767c807324326fb2b5251dbc49407"
+        }
+      ]
+    },
+    {
+      "name": "LiteFlow",
+      "version": "2.16.1.2",
+      "license": "Apache-2.0",
+      "evidenceSource": "https://repo.maven.apache.org/maven2/com/yomahub/liteflow-core/2.16.1.2/liteflow-core-2.16.1.2.pom",
+      "retainedFiles": [
+        {
+          "path": "licenses/liteflow-2.16.1.2.pom.xml",
+          "sha256": "40c47be92a1f91bd322a9de0baed057a9f7017bcc90cfaadb2f6ac3ca704da71"
+        },
+        {
+          "path": "licenses/Apache-2.0.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ]
+    }
+  ],
+  "showcaseData": {
+    "datasetId": "jiafeng-neighborhood-2026-autumn",
+    "origin": "Original fictional content and local seed/reset tooling authored for this project; no external text or private personal data imported.",
+    "scope": "Local HTTP showcase; model logs and formal certificates are not fabricated.",
+    "files": [
+      {
+        "path": "deploy/fixtures/showcase_content.json",
+        "sha256": "c1c4cfaa4a97ac8c0200fc54ef4d0a798ec50f96a672a5b5340744d4e9f862cb"
+      },
+      {
+        "path": "deploy/seed-showcase.py",
+        "sha256": "364540bb4010551812a272dfb8ad9a0e829dac371fa60f27be864bbdb0724404"
+      },
+      {
+        "path": "deploy/mysql/reset-demo.sql",
+        "sha256": "cc7ddc35d9d368037fd636573e5e21f54e77c132b19bb69c7db74bbc5989bfb9"
+      },
+      {
+        "path": "deploy/fixtures/files/匿名评审工作说明.pdf",
+        "sha256": "7eb1b6341a976802b08adf0eff2164195dfc0a5f0e53bac8fa13b80c243a819e"
+      },
+      {
+        "path": "deploy/fixtures/files/投稿附页.pdf",
+        "sha256": "757b0c95e67d1aa0ccb1649cd116c3a95c3eb69d33acd14febd7f8e499a53c73"
+      },
+      {
+        "path": "deploy/fixtures/files/资料使用指南.pdf",
+        "sha256": "86b485d127fa0597a60109f7bc0aeec81ff4bee89414962c59b1b15be195014b"
+      }
+    ]
+  },
+  "catalogManagement": {
+    "checkedAt": "2026-09-26",
+    "origin": "Original Jiafeng catalog business code, UI adapters and fictional catalog data; no new third-party library introduced.",
+    "reuse": [
+      "Existing RuoYi auth, JDBC business store, Element Plus, Wot UI and AWS S3 SDK",
+      "Three existing original silent typography MP4/JPEG pairs; copied into private S3 using the authenticated upload API"
+    ],
+    "scope": "Six carousel categories, homepage sections/stats, media publication/submission, venues, hall records, news subscriptions and support tickets; no inference/transcoding/live streaming added.",
+    "files": [
+      {
+        "path": "deploy/fixtures/catalog_content.json",
+        "sha256": "098af6c8cc5d34bdcbbb38b8c9593c88fe5cc35a61fe19645cd47be3e912ed11"
+      },
+      {
+        "path": "deploy/seed-catalog.py",
+        "sha256": "94b6bec117f6a017009806a7c2b0b20f88613c243685fdd080777a674ccbdd51"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfCatalog.java",
+        "sha256": "b5f65549d40ec8874aeb9ea0e28080c2efe4ecf81f4fd2c3104a8c43a0b3a460"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfMultipartErrors.java",
+        "sha256": "01dac404e577eb495bc677a245d1ba53561de4630ebb7bdddecdd84cce121e8e"
       }
     ]
   }

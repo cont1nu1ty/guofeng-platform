@@ -1,0 +1,19 @@
+{
+  "repository": "https://github.com/dromara/RuoYi-Vue-Plus",
+  "commit": "de394a0e21f1e0648ef229d027c3a927d98200a2",
+  "sourceArchive": "https://codeload.github.com/dromara/RuoYi-Vue-Plus/tar.gz/de394a0e21f1e0648ef229d027c3a927d98200a2",
+  "sourceArchiveSha256": "a52f01a1f60748582ae54616589bb26ae7123912bcb1afcc14058682aa754517",
+  "license": "MIT",
+  "licenseFile": "LICENSE",
+  "licenseSha256": "e175f7e0248508916cd20e20d1b301a7c1079efcc57fadb93ddd7bfce3a432b3",
+  "modifiedUpstreamFiles": [
+    "pom.xml",
+    "ruoyi-admin/pom.xml",
+    "ruoyi-common/pom.xml",
+    "ruoyi-modules/pom.xml"
+  ],
+  "additions": [
+    "ruoyi-modules/ruoyi-jiafeng",
+    "ruoyi-admin/src/main/resources/application-compose.yml"
+  ]
+}

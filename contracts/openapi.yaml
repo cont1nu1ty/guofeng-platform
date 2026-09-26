@@ -1,627 +1,3007 @@
 openapi: 3.0.3
 info:
-  title: 家风中华行后端衔接草案
-  version: 0.1.0-draft
-  description: |
-    仅供讨论和后续开发的契约；当前应用是本机单用户 Mock 演示，没有这些 HTTP 服务。
-    字段对照 apps/miniapp/src/domain/types.ts；生产接入需异步仓库和 DTO 适配。
-    tenant 由服务端基于可信身份路由，region 只是展示过滤，不能扩大数据访问权限。
-    当前地区与状态枚举是演示子集；六级评审配置未定。AI 和评审接口均为后期设计。
-    此版本不包含鉴权服务、附件上传/预签名、AI 结果查询、详情拆分或多租户同步接口。
+  title: 家风中华行本机真实业务接口
+  version: 1.1.0-local
+  description: 已实现的HTTP契约。采用若依Sa-Token会话，家风模块返回直接DTO；原生若依系统接口保留但不作为本契约。单库服务端地区/归属/任务授权。开发账号仅开发配置启用；微信、模型推理、支付、电子签章与全国容量未交付。数据库保存业务ID、S3对象键和版本；公开发布、处理状态、最终结果独立。
 servers:
-  - url: https://api.example.invalid/v1
-    description: 保留域名占位，不是可调用服务
+- url: http://127.0.0.1:18080/api/v1
+  description: 默认Compose入口；局域网需修改绑定与S3公共端点
 security:
-  - bearerAuth: []
-tags:
-  - name: works
-    description: 作品与草稿
-  - name: content
-    description: 典籍与活动
-  - name: me
-    description: 当前认证用户的记录
-  - name: future
-    description: 后期能力，尚未实现
+- bearerAuth: []
 paths:
-  /works:
+  /health:
     get:
-      tags: [works]
-      operationId: listWorks
-      summary: 查询公开作品或我的作品
-      description: |
-        scope=public 仅返回已批准公开内容；scope=mine 必须认证，归属由服务端身份确定。
-        region 不改变授权范围。当前草案含正文，正式长文列表需拆为摘要/详情契约。
-      security:
-        - {}
-        - bearerAuth: []
-      parameters:
-        - name: scope
-          in: query
-          schema: { type: string, enum: [public, mine], default: public }
-        - $ref: '#/components/parameters/Region'
-        - $ref: '#/components/parameters/Cursor'
-        - $ref: '#/components/parameters/Limit'
-        - name: genre
-          in: query
-          schema: { $ref: '#/components/schemas/GenreId' }
-        - name: channel
-          in: query
-          schema: { $ref: '#/components/schemas/ChannelId' }
+      operationId: health
+      summary: 数据库迁移完成后的就绪检查
       responses:
         '200':
-          description: 作品分页
+          description: 成功
           content:
             application/json:
               schema:
                 type: object
-                required: [items, nextCursor]
                 properties:
-                  items: { type: array, items: { $ref: '#/components/schemas/Work' } }
-                  nextCursor: { type: string, nullable: true }
-        default: { $ref: '#/components/responses/Error' }
+                  status:
+                    enum:
+                    - ok
+                    type: string
+                  schemaVersion:
+                    type: integer
+        default:
+          $ref: '#/components/responses/Error'
+        '503':
+          description: 初始化未完成
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - {}
+      - bearerAuth: []
+  /auth/login:
     post:
-      tags: [works]
-      operationId: submitWork
-      summary: 提交作品
-      description: |
-        本草案仅接受正文，不支持附件。服务端验证字段、身份、地区归属及协议记录。
-        copyrightAccepted 不等于完成正式电子签署；上线前还需协议版本和确认凭证契约。
-        幂等同键同载荷返回首次响应；同键不同载荷 409。提交成功是否清草稿需与前端协调。
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
+      operationId: login
+      summary: 开发账号登录（仅开发配置启用）
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        default:
+          $ref: '#/components/responses/Error'
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/SubmissionInput' }
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+                client:
+                  type: string
+                  enum:
+                  - admin
+                  - member
+              required:
+              - username
+              - password
+              - client
+      security:
+      - {}
+      - bearerAuth: []
+  /auth/me:
+    get:
+      operationId: currentUser
+      summary: 当前会话及最新授权
       responses:
-        '201':
-          description: 作品受理成功，状态不表示完成评审
+        '200':
+          description: 成功
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Work' }
-        default: { $ref: '#/components/responses/Error' }
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          $ref: '#/components/responses/Error'
+  /auth/logout:
+    post:
+      operationId: logout
+      summary: 退出当前会话
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResult'
+        default:
+          $ref: '#/components/responses/Error'
+  /auth/wechat:
+    post:
+      operationId: wechatAdapter
+      summary: 微信登录适配入口，尚未启用
+      security: []
+      responses:
+        '503':
+          description: WECHAT_NOT_CONFIGURED；未执行code交换
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /workspace:
+    get:
+      operationId: memberWorkspace
+      summary: 公开内容及当前账号本人数据
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberWorkspace'
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - {}
+      - bearerAuth: []
+      description: 未登录只返回已发布公开内容。带有效会话时额外返回本人稿件、消息、报名和学习记录；专家仅取得分配给自己的脱敏材料。草稿、下架内容及其他用户私有数据不可见。列表暂为本机规模完整集合，没有分页或容量承诺。
+  /admin/workspace:
+    get:
+      operationId: adminWorkspace
+      summary: 按岗位和地区裁剪的后台工作区
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminWorkspace'
+        default:
+          $ref: '#/components/responses/Error'
+      description: 区域筛选由客户端在已授权集合上缩小；接口不接受扩大权限的region参数。专家只取得本人任务和脱敏材料。后台原有13页共享一次聚合读取。
   /me/draft:
     get:
-      tags: [works, me]
-      operationId: getMyDraft
-      summary: 读取当前用户唯一草稿
-      description: 无草稿返回 draft=null，同时返回用于首次写入的初始 ETag。
+      operationId: getDraft
+      summary: 本人草稿及ETag
       responses:
         '200':
-          description: 草稿及并发版本
-          headers:
-            ETag:
-              description: 当前用户草稿槽版本，包括空槽
-              schema: { type: string }
+          description: 成功
           content:
             application/json:
               schema:
-                type: object
-                required: [draft]
-                properties:
-                  draft:
-                    type: object
-                    nullable: true
-                    additionalProperties: false
-                    required: [title, content, genre, channel, region, copyrightAccepted]
-                    properties:
-                      title: { type: string }
-                      content: { type: string }
-                      genre: { $ref: '#/components/schemas/GenreId' }
-                      channel: { $ref: '#/components/schemas/ChannelId' }
-                      region: { $ref: '#/components/schemas/RegionId' }
-                      author: { type: string }
-                      copyrightAccepted: { type: boolean }
-        default: { $ref: '#/components/responses/Error' }
+                $ref: '#/components/schemas/DraftEnvelope'
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: 带双引号的槽版本；即使draft=null也有版本，如 "0"。
+        default:
+          $ref: '#/components/responses/Error'
     put:
-      tags: [works, me]
-      operationId: saveMyDraft
-      summary: 保存草稿，允许未完成内容
-      description: 先 GET 获取 ETag；If-Match 过期返回 412，缺失返回 428。
-      parameters:
-        - $ref: '#/components/parameters/IfMatch'
+      operationId: saveDraft
+      summary: 条件保存本人草稿
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftEnvelope'
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: 带双引号的槽版本；即使draft=null也有版本，如 "0"。
+        default:
+          $ref: '#/components/responses/Error'
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/DraftInput' }
+            schema:
+              $ref: '#/components/schemas/SubmissionInput'
+      parameters:
+      - $ref: '#/components/parameters/IfMatch'
+    delete:
+      operationId: clearDraft
+      summary: 确认提交成功后条件清除编辑状态
       responses:
         '200':
-          description: 已保存草稿
-          headers:
-            ETag:
-              schema: { type: string }
-              description: 保存后的版本
+          description: 成功
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/DraftInput' }
-        default: { $ref: '#/components/responses/Error' }
-    delete:
-      tags: [works, me]
-      operationId: clearMyDraft
-      summary: 清空当前用户草稿
+              schema:
+                $ref: '#/components/schemas/DraftEnvelope'
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: 带双引号的槽版本；即使draft=null也有版本，如 "0"。
+        default:
+          $ref: '#/components/responses/Error'
       parameters:
-        - $ref: '#/components/parameters/IfMatch'
-      responses:
-        '204': { description: 已清空或原本为空 }
-        default: { $ref: '#/components/responses/Error' }
-  /works/{workId}/progress:
-    get:
-      tags: [works]
-      operationId: getWorkProgress
-      summary: 按作品编号查询允许查看的进度
-      description: |
-        仅作品本人或有权限运营可查询完整进度；不存在和不可见均可返回 404 以免泄露。
-        公开公示名单另行设计；这里不允许通过猜编号查看他人私人稿件。
-        stages 来自服务端流程版本，当前六级仅为待确认示意。
-      parameters:
-        - name: workId
-          in: path
-          required: true
-          schema: { type: string }
+      - $ref: '#/components/parameters/IfMatch'
+  /files:
+    post:
+      operationId: uploadFile
+      summary: multipart上传到私有S3，返回永久fileId
       responses:
         '200':
-          description: 可见的进度
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+        default:
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+              - file
+      description: 默认每文件1字节至10MiB，PNG/JPEG/PDF/DOC/DOCX；purpose=media接受MP4/MP3/WAV≤50MiB及图片≤10MiB。校验扩展名和文件头，DOCX验证容器结构。只接受已登录账号；失败不产生可提交的fileId。不属于病毒扫描、媒体解码兼容或文档内容安全鉴定。小程序通过uni.uploadFile。
+      parameters:
+      - name: purpose
+        in: query
+        schema:
+          type: string
+          enum:
+          - manuscript
+          - media
+        description: 省略或manuscript：原图/PDF/Word限制10MiB；media：MP4/MP3/WAV≤50MiB，图片≤10MiB。后端校验实际文件头；不能把媒体绑定为稿件附件。
+  /files/{id}/download:
+    get:
+      operationId: downloadFile
+      summary: 校验附件业务权限后签发五分钟URL
+      responses:
+        '200':
+          description: 成功
           content:
             application/json:
               schema:
                 type: object
-                required: [workId, status, progressIndex, stages, tentative]
                 properties:
-                  workId: { type: string }
-                  status: { $ref: '#/components/schemas/WorkStatus' }
-                  progressIndex: { type: integer, minimum: 0 }
-                  tentative: { type: boolean, description: 是否仍为示意流程 }
-                  stages:
+                  url:
+                    type: string
+                    format: uri
+                  expiresIn:
+                    type: integer
+                    enum:
+                    - 300
+                  name:
+                    type: string
+        default:
+          $ref: '#/components/responses/Error'
+      parameters:
+      - $ref: '#/components/parameters/Id'
+      description: 本人或获准地区运营读取关联稿件；专家不能取得原始附件。数据库不存签名地址。URL在有效期内为持有者凭据。
+  /files/{id}/url:
+    get:
+      operationId: downloadFileAlias
+      summary: 校验附件业务权限后签发五分钟URL
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                  expiresIn:
+                    type: integer
+                    enum:
+                    - 300
+                  name:
+                    type: string
+        default:
+          $ref: '#/components/responses/Error'
+      parameters:
+      - $ref: '#/components/parameters/Id'
+      description: 本人或获准地区运营读取关联稿件；专家不能取得原始附件。数据库不存签名地址。URL在有效期内为持有者凭据。
+  /submissions:
+    post:
+      operationId: submitWork
+      summary: 受理新稿并生成不可变版本
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        default:
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmissionInput'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+  /submissions/{id}/revisions:
+    post:
+      operationId: reviseWork
+      summary: 退修重投：保留作品ID、新增版本、回到初审
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        default:
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmissionInput'
+      parameters:
+      - $ref: '#/components/parameters/Id'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/IfMatch'
+  /submissions/{id}/progress:
+    get:
+      operationId: workProgress
+      summary: 本人或获准运营读取进度及历史版本
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  work:
+                    $ref: '#/components/schemas/Work'
+                  revisions:
                     type: array
                     items:
-                      type: object
-                      required: [id, label, description, tentative]
-                      properties:
-                        id: { type: string }
-                        label: { type: string }
-                        description: { type: string }
-                        tentative: { type: boolean }
-        default: { $ref: '#/components/responses/Error' }
-  /classics:
-    get:
-      tags: [content]
-      operationId: listClassics
-      summary: 查询公开典籍
-      security: []
+                      $ref: '#/components/schemas/Revision'
+        default:
+          $ref: '#/components/responses/Error'
       parameters:
-        - $ref: '#/components/parameters/Region'
-        - $ref: '#/components/parameters/Cursor'
-        - $ref: '#/components/parameters/Limit'
-      responses:
-        '200':
-          description: 典籍分页；长篇正文后续拆分章节
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [items, nextCursor]
-                properties:
-                  items: { type: array, items: { $ref: '#/components/schemas/Classic' } }
-                  nextCursor: { type: string, nullable: true }
-        default: { $ref: '#/components/responses/Error' }
-  /activities:
-    get:
-      tags: [content]
-      operationId: listActivities
-      summary: 查询公开活动
-      security: []
-      parameters:
-        - $ref: '#/components/parameters/Region'
-        - $ref: '#/components/parameters/Cursor'
-        - $ref: '#/components/parameters/Limit'
-      responses:
-        '200':
-          description: 活动分页
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [items, nextCursor]
-                properties:
-                  items: { type: array, items: { $ref: '#/components/schemas/Activity' } }
-                  nextCursor: { type: string, nullable: true }
-        default: { $ref: '#/components/responses/Error' }
-  /me/registrations:
-    get:
-      tags: [me]
-      operationId: listMyRegistrations
-      summary: 查询我的预约
-      parameters:
-        - $ref: '#/components/parameters/Cursor'
-        - $ref: '#/components/parameters/Limit'
-      responses:
-        '200':
-          description: 当前认证用户的预约分页
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [items, nextCursor]
-                properties:
-                  items: { type: array, items: { $ref: '#/components/schemas/Registration' } }
-                  nextCursor: { type: string, nullable: true }
-        default: { $ref: '#/components/responses/Error' }
+      - $ref: '#/components/parameters/Id'
+  /commands:
     post:
-      tags: [me]
-      operationId: registerActivity
-      summary: 预约活动
-      description: |
-        不接受 userId 或 tenantId；服务端校验活动开放、时间及名额并原子扣减。
-        已预约时返回已有记录 200；新预约 201；满额或状态冲突 409。
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
+      operationId: memberCommand
+      summary: 执行本人业务动作
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    additionalProperties: true
+                  workspace:
+                    $ref: '#/components/schemas/MemberWorkspace'
+        default:
+          $ref: '#/components/responses/Error'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              additionalProperties: false
-              required: [activityId]
-              properties:
-                activityId: { type: string }
-      responses:
-        '201':
-          description: 新预约成功
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/Registration' }
-        '200':
-          description: 返回已有预约
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/Registration' }
-        default: { $ref: '#/components/responses/Error' }
-  /me/registrations/{activityId}:
-    delete:
-      tags: [me]
-      operationId: cancelMyRegistration
-      summary: 取消我的预约
-      description: 只能取消本人记录；取消时间规则待业务确认，状态不允许取消返回 409。
+              $ref: '#/components/schemas/MemberCommand'
       parameters:
-        - name: activityId
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        '204': { description: 预约已取消或不存在，重试不产生重复影响 }
-        default: { $ref: '#/components/responses/Error' }
-  /me/favorites:
-    get:
-      tags: [me]
-      operationId: listMyFavorites
-      summary: 查询我的收藏
-      description: 内容失效或不再可见时不能泄露正文；移除或返回占位策略后续确认。
-      parameters:
-        - $ref: '#/components/parameters/Cursor'
-        - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/IdempotencyKey'
+  /admin/commands:
+    post:
+      operationId: adminCommand
+      summary: 执行授权后台业务动作
       responses:
         '200':
-          description: 收藏引用分页；内容详情由后续详情契约读取
+          description: 成功
           content:
             application/json:
               schema:
                 type: object
-                required: [items, nextCursor]
                 properties:
-                  items: { type: array, items: { $ref: '#/components/schemas/Favorite' } }
-                  nextCursor: { type: string, nullable: true }
-        default: { $ref: '#/components/responses/Error' }
-  /me/favorites/{contentId}:
-    parameters:
-      - name: contentId
+                  result:
+                    type: object
+                    additionalProperties: true
+                  workspace:
+                    $ref: '#/components/schemas/AdminWorkspace'
+        default:
+          $ref: '#/components/responses/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCommand'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      description: 写入在数据库事务内执行。更新已有记录必须携带workspace.lockVersion；batchApproveSubmissions使用data.versions。首次请求需幂等键，同键同载荷重放结果，工作区按当前权限重新投影；同键不同载荷409。认证、权限、校验失败不会演示回退。
+  /files/{id}/public:
+    get:
+      operationId: publishedAsset
+      summary: 已发布目录引用的公开素材，撤回后不可申请新链接
+      security: []
+      parameters:
+      - name: id
         in: path
         required: true
-        schema: { type: string }
-      - name: contentType
-        in: query
-        required: true
-        schema: { type: string, enum: [work, classic] }
-    put:
-      tags: [me]
-      operationId: addMyFavorite
-      summary: 设为已收藏
-      description: 幂等设置状态，不是 toggle；只能收藏本人有权查看的内容。
+        schema:
+          type: string
       responses:
-        '200':
-          description: 已收藏或已存在
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/Favorite' }
-        default: { $ref: '#/components/responses/Error' }
-    delete:
-      tags: [me]
-      operationId: removeMyFavorite
-      summary: 取消收藏
-      responses:
-        '204': { description: 已取消或原本未收藏 }
-        default: { $ref: '#/components/responses/Error' }
-  /ai/tasks:
-    post:
-      tags: [future]
-      operationId: createAiTask
-      summary: 后期 AI 任务受理草案
-      description: |
-        尚未实现。不表示接入外网模型；按原文私有部署要求另行选型。
-        本版仅约定受理，结果查询、取消和流式输出需后续契约，不能据此完成整套 AI 接入。
-        服务端校验任务授权、输入长度、配额、内容处理及审计策略。
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKey'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties: false
-              required: [taskType, input]
-              properties:
-                taskType: { type: string, enum: [qa, family_letter, polish] }
-                input: { type: string, minLength: 1, maxLength: 10000 }
-      responses:
-        '202':
-          description: 仅已受理，不表示推理完成
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [id, status, createdAt]
-                properties:
-                  id: { type: string }
-                  status: { type: string, enum: [queued] }
-                  createdAt: { type: string, format: date-time }
-        default: { $ref: '#/components/responses/Error' }
-  /review/tasks:
-    get:
-      tags: [future]
-      operationId: listMyReviewTasks
-      summary: 后期本人评审任务列表草案
-      description: |
-        服务端按专家身份和分配记录筛选；盲审不返回作者等受限字段。
-        各条 version 是提交评分时的 If-Match 值；规则和层级尚待确认。
-      parameters:
-        - $ref: '#/components/parameters/Cursor'
-        - $ref: '#/components/parameters/Limit'
-      responses:
-        '200':
-          description: 授权任务分页
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [items, nextCursor]
-                properties:
-                  items: { type: array, items: { $ref: '#/components/schemas/ReviewTask' } }
-                  nextCursor: { type: string, nullable: true }
-        default: { $ref: '#/components/responses/Error' }
-  /review/tasks/{taskId}/score:
-    put:
-      tags: [future]
-      operationId: submitReviewScore
-      summary: 后期提交评审评分草案
-      description: |
-        服务端验证分配、任务状态、窗口、ruleVersion 和每个评分维度的范围。
-        If-Match 使用任务 version；版本冲突 412，缺失 428。仅 UI 校验不构成有效鉴权。
-      parameters:
-        - name: taskId
-          in: path
-          required: true
-          schema: { type: string }
-        - $ref: '#/components/parameters/IfMatch'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties: false
-              required: [ruleVersion, scores, comment]
-              properties:
-                ruleVersion: { type: string }
-                scores:
-                  type: array
-                  minItems: 1
-                  items:
-                    type: object
-                    additionalProperties: false
-                    required: [dimensionId, value]
-                    properties:
-                      dimensionId: { type: string }
-                      value: { type: number }
-                comment: { type: string, minLength: 1, maxLength: 5000 }
-      responses:
-        '200':
-          description: 评分已记录；后续晋级由确认的流程规则决定
+        '302':
+          description: 转到五分钟S3签名链接
           headers:
-            ETag:
-              description: 最新任务版本
-              schema: { type: string }
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/ReviewTask' }
-        default: { $ref: '#/components/responses/Error' }
+            Location:
+              schema:
+                type: string
+                format: uri
+            Cache-Control:
+              schema:
+                type: string
+        default:
+          $ref: '#/components/responses/Error'
+      description: 只有当前有效已发布轮播或媒体绑定的资产可读取；原稿附件、未审核会员视频、草稿和下架目录不自动公开。已经取得的签名URL在最长五分钟内仍有效。
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
-      description: 服务端验证的会话凭据；本项目未实现登录和凭据服务，格式待后端决定。
   parameters:
-    Region:
-      name: region
-      in: query
-      description: 仅展示过滤；all 不扩大身份或租户权限。当前为演示地区子集。
-      schema: { $ref: '#/components/schemas/RegionId' }
-    Cursor:
-      name: cursor
-      in: query
-      description: 与筛选及身份范围绑定的不透明游标，首次省略
-      schema: { type: string }
-    Limit:
-      name: limit
-      in: query
-      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
-    IdempotencyKey:
-      name: Idempotency-Key
-      in: header
+    Id:
+      name: id
+      in: path
       required: true
-      description: |
-        每次逻辑提交唯一；重试复用相同值。按认证身份、可信租户和路径隔离。
-        同键同载荷重放首次响应，不同载荷 409；保留窗口待上线前确认。
-      schema: { type: string, minLength: 8, maxLength: 128 }
+      schema:
+        type: string
     IfMatch:
       name: If-Match
       in: header
       required: true
-      description: 上次读取的 ETag/任务版本；过期 412，缺失 428，禁止通配绕过版本校验。
-      schema: { type: string }
+      schema:
+        type: string
+      example: '"3"'
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 128
+      description: 同一逻辑操作失败重试保持相同键；新的操作必须换键。
   responses:
     Error:
-      description: |
-        统一错误：401 未认证，403 无权限，404 不存在或不可见，409 状态或幂等冲突，
-        412 版本过期，422 字段错误，428 缺少并发条件，429 限流，503 暂时不可用。
-        其他错误同样遵循该结构，不向客户端暴露内部实现或私密数据。
+      description: 400请求格式；401会话；403岗位；404不可见；409业务/幂等冲突；412版本冲突；413文件大小；422校验；428缺版本/幂等键；429登录限流；500内部错误；503未启用适配。
       content:
         application/json:
-          schema: { $ref: '#/components/schemas/ApiError' }
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        requestId:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+      - code
+      - message
+      - requestId
+    ActionResult:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        message:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        username:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+            enum:
+            - member
+            - expert
+            - regional_admin
+            - national_admin
+        regionIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/RegionId'
+        permissions:
+          type: array
+          items:
+            type: string
+        version:
+          type: integer
+      required:
+      - id
+      - name
+      - roles
+      - regionIds
+      - permissions
+      - version
     RegionId:
       type: string
-      enum: [all, beijing, zhejiang, sichuan]
-      description: 当前演示枚举；正式行政区字典待设计。all 不代表全部租户权限。
-    GenreId:
-      type: string
-      enum: [letter, essay, poetry, memoir, biography, family-rules, family-notes, commentary]
-    ChannelId:
-      type: string
-      enum: [public-service, school, community, special]
-    WorkStatus:
-      type: string
-      enum: [pending_initial_review, in_review, collected]
-      description: 当前模型子集，正式退回/撤回/拒绝等状态待业务确认后补充。
-    DraftInput:
+      enum:
+      - all
+      - beijing
+      - tianjin
+      - hebei
+      - shanxi
+      - inner-mongolia
+      - liaoning
+      - jilin
+      - heilongjiang
+      - shanghai
+      - jiangsu
+      - zhejiang
+      - anhui
+      - fujian
+      - jiangxi
+      - shandong
+      - henan
+      - hubei
+      - hunan
+      - guangdong
+      - guangxi
+      - hainan
+      - chongqing
+      - sichuan
+      - guizhou
+      - yunnan
+      - xizang
+      - shaanxi
+      - gansu
+      - qinghai
+      - ningxia
+      - xinjiang
+      - hong-kong
+      - macao
+      - taiwan
+      - overseas
+    File:
       type: object
-      additionalProperties: false
-      required: [title, content, genre, channel, region, copyrightAccepted]
       properties:
-        title: { type: string, description: 草稿允许为空 }
-        content: { type: string, description: 草稿允许为空 }
-        genre: { $ref: '#/components/schemas/GenreId' }
-        channel: { $ref: '#/components/schemas/ChannelId' }
-        region: { $ref: '#/components/schemas/RegionId' }
-        author: { type: string }
-        copyrightAccepted: { type: boolean, description: 草稿布尔状态，不是电子签署凭证 }
+        fileId:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        size:
+          type: integer
+        type:
+          type: string
+          enum:
+          - image
+          - word
+          - pdf
+        mimeType:
+          type: string
+      required:
+      - fileId
+      - id
+      - name
+      - size
+      - type
+      - mimeType
     SubmissionInput:
       type: object
-      additionalProperties: false
-      required: [title, content, genre, channel, region, copyrightAccepted]
       properties:
-        title: { type: string, minLength: 2, maxLength: 50, description: 去除首尾空白后按 Unicode 字符校验 }
-        content: { type: string, minLength: 20, description: 去除首尾空白后至少 20 个 Unicode 字符 }
-        genre: { $ref: '#/components/schemas/GenreId' }
-        channel: { $ref: '#/components/schemas/ChannelId' }
-        region: { $ref: '#/components/schemas/RegionId' }
-        author: { type: string, description: 显示作者不等于投稿账户；正式关系需业务确认 }
-        copyrightAccepted: { type: boolean, enum: [true], description: 仅声明确认标记，正式协议版本及证据另行扩展 }
+        title:
+          type: string
+          maxLength: 50
+        author:
+          type: string
+          maxLength: 100
+        content:
+          type: string
+          maxLength: 10000
+        contentDelta:
+          type: object
+          description: 仅文本insert与bold/italic/underline/header(2,3)/list(ordered,bullet)，纯文本须与content一致。
+        region:
+          $ref: '#/components/schemas/RegionId'
+        genre:
+          type: string
+          enum:
+          - letter
+          - essay
+          - poetry
+          - memoir
+          - biography
+          - family-rules
+          - family-notes
+          - commentary
+        channel:
+          type: string
+          enum:
+          - public-service
+          - school
+          - community
+          - special
+        themes:
+          type: array
+          maxItems: 3
+          items:
+            type: string
+            enum:
+            - integrity
+            - filial
+            - neighbor
+            - patriotism
+            - heritage
+            - family-history
+        copyrightAccepted:
+          type: boolean
+        overseasLocation:
+          type: string
+        attachments:
+          type: array
+          maxItems: 5
+          items:
+            type: object
+            properties:
+              fileId:
+                type: string
+              id:
+                type: string
+        editingWorkId:
+          type: string
+      required:
+      - title
+      - content
+      - region
+      - genre
+      - channel
+      - themes
+      - copyrightAccepted
+      - attachments
+    DraftEnvelope:
+      type: object
+      properties:
+        draft:
+          allOf:
+          - $ref: '#/components/schemas/SubmissionInput'
+          nullable: true
+      required:
+      - draft
     Work:
       type: object
-      required: [id, title, content, excerpt, author, genre, channel, region, status, statusLabel, submittedAt, progressIndex, tags, isMine, isDemo]
       properties:
-        id: { type: string, readOnly: true }
-        title: { type: string }
-        content: { type: string }
-        excerpt: { type: string }
-        author: { type: string }
-        genre: { $ref: '#/components/schemas/GenreId' }
-        channel: { $ref: '#/components/schemas/ChannelId' }
-        region: { $ref: '#/components/schemas/RegionId' }
-        status: { $ref: '#/components/schemas/WorkStatus' }
-        statusLabel: { type: string, readOnly: true, description: 展示文案不是状态判断依据 }
-        submittedAt: { type: string, format: date-time, readOnly: true }
-        progressIndex: { type: integer, minimum: 0, readOnly: true, description: 展示位置，不替代流程权限判断 }
-        tags: { type: array, items: { type: string } }
-        isMine: { type: boolean, readOnly: true, description: 按服务端认证身份计算 }
-        isDemo: { type: boolean, readOnly: true, description: 当前 TS 类型固定 true，生产接入需明确适配 }
-    Classic:
-      type: object
-      required: [id, title, subtitle, author, excerpt, content, region, category, coverColor, chapterCount, isDemo]
-      properties:
-        id: { type: string }
-        title: { type: string }
-        subtitle: { type: string }
-        author: { type: string }
-        excerpt: { type: string }
-        content: { type: string }
-        region: { $ref: '#/components/schemas/RegionId' }
-        category: { type: string }
-        coverColor: { type: string, pattern: '^#[0-9A-Fa-f]{6}$' }
-        chapterCount: { type: integer, minimum: 0 }
-        isDemo: { type: boolean, readOnly: true }
-    Activity:
-      type: object
-      required: [id, title, excerpt, content, region, location, organizer, date, time, category, capacity, registeredCount, isDemo]
-      properties:
-        id: { type: string }
-        title: { type: string }
-        excerpt: { type: string }
-        content: { type: string }
-        region: { $ref: '#/components/schemas/RegionId' }
-        location: { type: string }
-        organizer: { type: string }
-        date: { type: string, format: date }
-        time: { type: string, description: 当前为展示时段，正式时区及起止时间另行扩展 }
-        category: { type: string }
-        capacity: { type: integer, minimum: 0 }
-        registeredCount: { type: integer, minimum: 0, readOnly: true }
-        isDemo: { type: boolean, readOnly: true }
-    Registration:
-      type: object
-      required: [activityId, registeredAt, isDemo]
-      properties:
-        activityId: { type: string }
-        registeredAt: { type: string, format: date-time, readOnly: true }
-        isDemo: { type: boolean, readOnly: true }
-    Favorite:
-      type: object
-      required: [contentId, contentType]
-      properties:
-        contentId: { type: string }
-        contentType: { type: string, enum: [work, classic] }
-    ReviewTask:
-      type: object
-      required: [id, workId, title, status, ruleVersion, version, dimensions]
-      description: 后期任务投影；不返回作者身份等盲审受限字段，正文详情契约待补充。
-      properties:
-        id: { type: string }
-        workId: { type: string }
-        title: { type: string }
-        status: { type: string, enum: [pending, submitted] }
-        ruleVersion: { type: string }
-        version: { type: string, description: 可用作 If-Match 的带引号 ETag 值 }
-        dimensions:
+        id:
+          type: string
+        title:
+          type: string
+        author:
+          type: string
+        content:
+          type: string
+        contentDelta:
+          type: object
+        region:
+          $ref: '#/components/schemas/RegionId'
+        version:
+          type: integer
+        lockVersion:
+          type: integer
+        revisionNumber:
+          type: integer
+        status:
+          type: string
+          enum:
+          - pending_initial_review
+          - in_review
+          - returned
+          - shortlisted
+          - rejected
+          - awarded
+          - collected
+        published:
+          type: boolean
+        isMine:
+          type: boolean
+        isDemo:
+          type: boolean
+          enum:
+          - false
+        submittedAt:
+          type: string
+          format: date-time
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/File'
+        reviews:
           type: array
           items:
             type: object
-            required: [id, label, min, max]
-            properties:
-              id: { type: string }
-              label: { type: string }
-              min: { type: number }
-              max: { type: number }
-    ApiError:
+        history:
+          type: array
+          items:
+            type: object
+      required:
+      - id
+      - title
+      - content
+      - region
+      - version
+      - status
+      - published
+      - isMine
+      - isDemo
+    Revision:
       type: object
-      required: [code, message, requestId]
       properties:
-        code: { type: string, example: VALIDATION_FAILED }
-        message: { type: string, example: 请检查投稿字段。 }
-        requestId: { type: string }
-        fieldErrors:
+        id:
+          type: string
+        revisionNumber:
+          type: integer
+        content:
+          $ref: '#/components/schemas/SubmissionInput'
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - revisionNumber
+      - content
+      - createdAt
+    Entity:
+      type: object
+      description: 各业务DTO的稳定元信息；新增业务字段由domain适配层处理，页面不解析若依原生响应。
+      properties:
+        id:
+          type: string
+        regionId:
+          $ref: '#/components/schemas/RegionId'
+        region:
+          type: string
+          description: 后台展示名称；不是授权来源
+        status:
+          type: string
+        lockVersion:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      additionalProperties: true
+    Dimension:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        min:
+          type: integer
+        max:
+          type: integer
+          enum:
+          - 15
+          - 25
+          - 30
+    ReviewTask:
+      type: object
+      properties:
+        id:
+          type: string
+        submissionId:
+          type: string
+        version:
+          type: integer
+        ruleVersion:
+          type: string
+          enum:
+          - jiafeng-four-v1
+        status:
+          type: string
+          enum:
+          - pending
+          - submitted
+        title:
+          type: string
+        content:
+          type: string
+          description: 经运营确认的脱敏正文
+        dueAt:
+          type: string
+          format: date-time
+        dimensions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dimension'
+        scores:
+          type: array
+          minItems: 4
+          maxItems: 4
+          items:
+            type: integer
+        comment:
+          type: string
+    MemberWorkspace:
+      type: object
+      properties:
+        reviewRuleVersion:
+          type: string
+          description: 当前公示量表版本；实例任务另行冻结所属版本。
+        scoringDimensions:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              label:
+                type: string
+              min:
+                type: integer
+              max:
+                type: integer
+        classics:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        activities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        news:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        registrations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        certificates:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        commerceRequests:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        excerpts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        aiArchives:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        works:
+          type: array
+          items:
+            $ref: '#/components/schemas/Work'
+        reviewTasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewTask'
+        favorites:
+          type: array
+          items:
+            type: string
+        mediaFavorites:
+          type: array
+          items:
+            type: string
+        mediaLikes:
+          type: array
+          items:
+            type: string
+        learning:
           type: object
-          additionalProperties: { type: string }
+          properties:
+            courses:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  lessons:
+                    type: array
+                    items:
+                      type: string
+                  quizPassed:
+                    type: boolean
+                  completedAt:
+                    type: string
+                    format: date-time
+            checkIns:
+              type: object
+              additionalProperties:
+                type: string
+        platformConfig:
+          type: object
+        banners:
+          type: array
+          items:
+            $ref: '#/components/schemas/Banner'
+        mediaItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/Media'
+        venues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Venue'
+        hallPeople:
+          type: array
+          items:
+            $ref: '#/components/schemas/HallPerson'
+        supportTickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupportTicket'
+        homepageConfig:
+          $ref: '#/components/schemas/HomepageConfig'
+        homeStats:
+          $ref: '#/components/schemas/HomeStats'
+        mediaSubmissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Media'
+        newsPreferences:
+          $ref: '#/components/schemas/NewsPreferences'
+      required:
+      - classics
+      - activities
+      - news
+      - courses
+      - products
+      - registrations
+      - notifications
+      - certificates
+      - commerceRequests
+      - excerpts
+      - aiArchives
+      - works
+      - reviewTasks
+      - favorites
+      - mediaFavorites
+      - mediaLikes
+      - learning
+      - platformConfig
+    AdminWorkspace:
+      type: object
+      properties:
+        submissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        experts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        contents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        collections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        activities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        welfareClaims:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        learningGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        knowledgeBases:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        aiRecords:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        dictionaryWords:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        notificationDrafts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        activityLog:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        reviewFlow:
+          type: object
+          properties:
+            enabled:
+              type: array
+              minItems: 6
+              maxItems: 6
+              items:
+                type: boolean
+            blind:
+              type: boolean
+            deadlineDays:
+              type: integer
+            flowVersion:
+              type: integer
+            ruleVersion:
+              type: string
+            lockVersion:
+              type: integer
+        scoringDimensions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dimension'
+        platformConfig:
+          $ref: '#/components/schemas/Entity'
+        permissions:
+          type: array
+          items:
+            type: string
+        roles:
+          type: array
+          items:
+            type: string
+        banners:
+          type: array
+          items:
+            $ref: '#/components/schemas/Banner'
+        mediaItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/Media'
+        venues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Venue'
+        hallPeople:
+          type: array
+          items:
+            $ref: '#/components/schemas/HallPerson'
+        supportTickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupportTicket'
+        homepageConfig:
+          $ref: '#/components/schemas/HomepageConfig'
+      required:
+      - submissions
+      - experts
+      - tasks
+      - contents
+      - collections
+      - activities
+      - users
+      - products
+      - welfareClaims
+      - courses
+      - learningGroups
+      - knowledgeBases
+      - aiRecords
+      - dictionaryWords
+      - notificationDrafts
+      - activityLog
+      - reviewFlow
+      - scoringDimensions
+      - platformConfig
+      - permissions
+      - roles
+    AdminApproveSubmissionCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - approveSubmission
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    AdminBatchApproveSubmissionsCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - batchApproveSubmissions
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            ids:
+              type: array
+              items:
+                type: string
+            versions:
+              type: object
+              additionalProperties:
+                type: integer
+      required:
+      - command
+      - data
+    AdminReturnSubmissionCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - returnSubmission
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            reason:
+              type: string
+      required:
+      - command
+      - data
+    AdminAssignReviewCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - assignReview
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            expertId:
+              type: string
+            dueAt:
+              type: string
+              format: date-time
+      required:
+      - command
+      - data
+    AdminSubmitReviewCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - submitReview
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            scores:
+              type: array
+              minItems: 4
+              maxItems: 4
+              items:
+                type: integer
+            comment:
+              type: string
+      required:
+      - command
+      - data
+    AdminUpdateExpertCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - updateExpert
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            group:
+              type: string
+            availability:
+              type: string
+      required:
+      - command
+      - data
+    AdminConfigureReviewFlowCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - configureReviewFlow
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            blind:
+              type: boolean
+              enum:
+              - true
+            deadlineDays:
+              type: integer
+            enabled:
+              type: array
+              minItems: 6
+              maxItems: 6
+              items:
+                type: boolean
+      required:
+      - command
+      - data
+    AdminPrepareBlindMaterialCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - prepareBlindMaterial
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            content:
+              type: string
+            confirmed:
+              type: boolean
+              enum:
+              - true
+      required:
+      - command
+      - data
+    AdminDecideSubmissionCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - decideSubmission
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            result:
+              type: string
+              enum:
+              - shortlisted
+              - rejected
+              - awarded
+              - collected
+            note:
+              type: string
+      required:
+      - command
+      - data
+    AdminPublishSubmissionCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - publishSubmission
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            published:
+              type: boolean
+      required:
+      - command
+      - data
+    AdminSaveContentCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveContent
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            title:
+              type: string
+            category:
+              type: string
+              enum:
+              - 资讯
+              - 公告
+              - Banner
+              - 专题
+              - 政策解读
+              - 活动报道
+              - 榜样人物
+              - 行业动态
+            topic:
+              type: string
+              description: 首页专区；新增默认 everyday，编辑未提供时保留现有值。
+              enum:
+              - red
+              - integrity
+              - everyday
+              - classical
+            region:
+              type: string
+            language:
+              type: string
+              enum:
+              - 中文
+              - 英文
+              - 简体中文
+              - English
+              - zh
+              - en
+            summary:
+              type: string
+            body:
+              type: string
+      required:
+      - command
+      - data
+    AdminSetContentStatusCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - setContentStatus
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+              - 草稿
+              - 已发布
+              - 已下架
+      required:
+      - command
+      - data
+    AdminSaveCollectionCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveCollection
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            title:
+              type: string
+            subtitle:
+              type: string
+            region:
+              type: string
+            theme:
+              type: string
+      required:
+      - command
+      - data
+    AdminSaveChapterCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveChapter
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            chapterId:
+              type: string
+            title:
+              type: string
+            author:
+              type: string
+            body:
+              type: string
+      required:
+      - command
+      - data
+    AdminMoveChapterCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - moveChapter
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            index:
+              type: integer
+            direction:
+              type: integer
+              enum:
+              - -1
+              - 1
+      required:
+      - command
+      - data
+    AdminImportChapterCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - importChapter
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            submissionId:
+              type: string
+      required:
+      - command
+      - data
+    AdminCollectVolumeCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - collectVolume
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    AdminSaveActivityCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveActivity
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            title:
+              type: string
+            type:
+              type: string
+            region:
+              type: string
+            location:
+              type: string
+            startAt:
+              type: string
+              format: date-time
+            endAt:
+              type: string
+              format: date-time
+            capacity:
+              type: integer
+            summary:
+              type: string
+      required:
+      - command
+      - data
+    AdminSetActivityStatusCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - setActivityStatus
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+              - 报名中
+              - 进行中
+              - 已结束
+      required:
+      - command
+      - data
+    AdminToggleAttendanceCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - toggleAttendance
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            registrationId:
+              type: string
+            checkedIn:
+              type: boolean
+      required:
+      - command
+      - data
+    AdminSaveUserRolesCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveUserRoles
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            roles:
+              type: array
+              items:
+                type: string
+      required:
+      - command
+      - data
+    AdminToggleUserCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - toggleUser
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+      required:
+      - command
+      - data
+    AdminApproveUserCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - approveUser
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    AdminSaveProductCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveProduct
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            title:
+              type: string
+            region:
+              type: string
+            stock:
+              type: integer
+            quota:
+              type: integer
+            description:
+              type: string
+            category:
+              type: string
+      required:
+      - command
+      - data
+    AdminToggleProductCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - toggleProduct
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+              - 已上架
+              - 已下架
+      required:
+      - command
+      - data
+    AdminProcessClaimCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - processClaim
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            action:
+              type: string
+              enum:
+              - approve
+              - return
+              - deliver
+            note:
+              type: string
+      required:
+      - command
+      - data
+    AdminSaveCourseCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveCourse
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            title:
+              type: string
+            category:
+              type: string
+            duration:
+              type: integer
+            region:
+              type: string
+              description: 稳定地区ID；编辑未提供时保留当前地区。
+            chapters:
+              type: integer
+            lessons:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  body:
+                    type: string
+                  practice:
+                    type: string
+                required:
+                - id
+                - title
+                - body
+            description:
+              type: string
+            teacher:
+              type: string
+      required:
+      - command
+      - data
+    AdminToggleCourseCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - toggleCourse
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+              - 已上架
+              - 已下架
+      required:
+      - command
+      - data
+    AdminSaveDictionaryWordCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveDictionaryWord
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            word:
+              type: string
+            type:
+              type: string
+            action:
+              type: string
+            note:
+              type: string
+      required:
+      - command
+      - data
+    AdminToggleDictionaryWordCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - toggleDictionaryWord
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+      required:
+      - command
+      - data
+    AdminSaveKnowledgeDocumentCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveKnowledgeDocument
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            fileId:
+              type: string
+            title:
+              type: string
+            category:
+              type: string
+            region:
+              type: string
+            description:
+              type: string
+      required:
+      - command
+      - data
+    AdminSavePlatformConfigCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - savePlatformConfig
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            name:
+              type: string
+            subtitle:
+              type: string
+            contact:
+              type: string
+            language:
+              type: string
+            regionLabel:
+              type: string
+            notice:
+              type: string
+            reviewReminder:
+              type: boolean
+            draftNotice:
+              type: boolean
+      required:
+      - command
+      - data
+    AdminSaveNotificationDraftCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveNotificationDraft
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            title:
+              type: string
+            audience:
+              type: string
+            content:
+              type: string
+      required:
+      - command
+      - data
+    AdminPublishNotificationCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - publishNotification
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    AdminCommand:
+      oneOf:
+      - $ref: '#/components/schemas/AdminApproveSubmissionCommand'
+      - $ref: '#/components/schemas/AdminBatchApproveSubmissionsCommand'
+      - $ref: '#/components/schemas/AdminReturnSubmissionCommand'
+      - $ref: '#/components/schemas/AdminAssignReviewCommand'
+      - $ref: '#/components/schemas/AdminSubmitReviewCommand'
+      - $ref: '#/components/schemas/AdminUpdateExpertCommand'
+      - $ref: '#/components/schemas/AdminConfigureReviewFlowCommand'
+      - $ref: '#/components/schemas/AdminPrepareBlindMaterialCommand'
+      - $ref: '#/components/schemas/AdminDecideSubmissionCommand'
+      - $ref: '#/components/schemas/AdminPublishSubmissionCommand'
+      - $ref: '#/components/schemas/AdminSaveContentCommand'
+      - $ref: '#/components/schemas/AdminSetContentStatusCommand'
+      - $ref: '#/components/schemas/AdminSaveCollectionCommand'
+      - $ref: '#/components/schemas/AdminSaveChapterCommand'
+      - $ref: '#/components/schemas/AdminMoveChapterCommand'
+      - $ref: '#/components/schemas/AdminImportChapterCommand'
+      - $ref: '#/components/schemas/AdminCollectVolumeCommand'
+      - $ref: '#/components/schemas/AdminSaveActivityCommand'
+      - $ref: '#/components/schemas/AdminSetActivityStatusCommand'
+      - $ref: '#/components/schemas/AdminToggleAttendanceCommand'
+      - $ref: '#/components/schemas/AdminSaveUserRolesCommand'
+      - $ref: '#/components/schemas/AdminToggleUserCommand'
+      - $ref: '#/components/schemas/AdminApproveUserCommand'
+      - $ref: '#/components/schemas/AdminSaveProductCommand'
+      - $ref: '#/components/schemas/AdminToggleProductCommand'
+      - $ref: '#/components/schemas/AdminProcessClaimCommand'
+      - $ref: '#/components/schemas/AdminSaveCourseCommand'
+      - $ref: '#/components/schemas/AdminToggleCourseCommand'
+      - $ref: '#/components/schemas/AdminSaveDictionaryWordCommand'
+      - $ref: '#/components/schemas/AdminToggleDictionaryWordCommand'
+      - $ref: '#/components/schemas/AdminSaveKnowledgeDocumentCommand'
+      - $ref: '#/components/schemas/AdminSavePlatformConfigCommand'
+      - $ref: '#/components/schemas/AdminSaveNotificationDraftCommand'
+      - $ref: '#/components/schemas/AdminPublishNotificationCommand'
+      - $ref: '#/components/schemas/AdminSaveBannerCommand'
+      - $ref: '#/components/schemas/AdminSetBannerStatusCommand'
+      - $ref: '#/components/schemas/AdminSaveMediaCommand'
+      - $ref: '#/components/schemas/AdminSetMediaStatusCommand'
+      - $ref: '#/components/schemas/AdminSaveVenueCommand'
+      - $ref: '#/components/schemas/AdminSetVenueStatusCommand'
+      - $ref: '#/components/schemas/AdminSaveHallPersonCommand'
+      - $ref: '#/components/schemas/AdminSetHallPersonStatusCommand'
+      - $ref: '#/components/schemas/AdminSaveHomepageConfigCommand'
+      - $ref: '#/components/schemas/AdminReplySupportTicketCommand'
+      discriminator:
+        propertyName: command
+        mapping:
+          approveSubmission: '#/components/schemas/AdminApproveSubmissionCommand'
+          batchApproveSubmissions: '#/components/schemas/AdminBatchApproveSubmissionsCommand'
+          returnSubmission: '#/components/schemas/AdminReturnSubmissionCommand'
+          assignReview: '#/components/schemas/AdminAssignReviewCommand'
+          submitReview: '#/components/schemas/AdminSubmitReviewCommand'
+          updateExpert: '#/components/schemas/AdminUpdateExpertCommand'
+          configureReviewFlow: '#/components/schemas/AdminConfigureReviewFlowCommand'
+          prepareBlindMaterial: '#/components/schemas/AdminPrepareBlindMaterialCommand'
+          decideSubmission: '#/components/schemas/AdminDecideSubmissionCommand'
+          publishSubmission: '#/components/schemas/AdminPublishSubmissionCommand'
+          saveContent: '#/components/schemas/AdminSaveContentCommand'
+          setContentStatus: '#/components/schemas/AdminSetContentStatusCommand'
+          saveCollection: '#/components/schemas/AdminSaveCollectionCommand'
+          saveChapter: '#/components/schemas/AdminSaveChapterCommand'
+          moveChapter: '#/components/schemas/AdminMoveChapterCommand'
+          importChapter: '#/components/schemas/AdminImportChapterCommand'
+          collectVolume: '#/components/schemas/AdminCollectVolumeCommand'
+          saveActivity: '#/components/schemas/AdminSaveActivityCommand'
+          setActivityStatus: '#/components/schemas/AdminSetActivityStatusCommand'
+          toggleAttendance: '#/components/schemas/AdminToggleAttendanceCommand'
+          saveUserRoles: '#/components/schemas/AdminSaveUserRolesCommand'
+          toggleUser: '#/components/schemas/AdminToggleUserCommand'
+          approveUser: '#/components/schemas/AdminApproveUserCommand'
+          saveProduct: '#/components/schemas/AdminSaveProductCommand'
+          toggleProduct: '#/components/schemas/AdminToggleProductCommand'
+          processClaim: '#/components/schemas/AdminProcessClaimCommand'
+          saveCourse: '#/components/schemas/AdminSaveCourseCommand'
+          toggleCourse: '#/components/schemas/AdminToggleCourseCommand'
+          saveDictionaryWord: '#/components/schemas/AdminSaveDictionaryWordCommand'
+          toggleDictionaryWord: '#/components/schemas/AdminToggleDictionaryWordCommand'
+          saveKnowledgeDocument: '#/components/schemas/AdminSaveKnowledgeDocumentCommand'
+          savePlatformConfig: '#/components/schemas/AdminSavePlatformConfigCommand'
+          saveNotificationDraft: '#/components/schemas/AdminSaveNotificationDraftCommand'
+          publishNotification: '#/components/schemas/AdminPublishNotificationCommand'
+          saveBanner: '#/components/schemas/AdminSaveBannerCommand'
+          setBannerStatus: '#/components/schemas/AdminSetBannerStatusCommand'
+          saveMedia: '#/components/schemas/AdminSaveMediaCommand'
+          setMediaStatus: '#/components/schemas/AdminSetMediaStatusCommand'
+          saveVenue: '#/components/schemas/AdminSaveVenueCommand'
+          setVenueStatus: '#/components/schemas/AdminSetVenueStatusCommand'
+          saveHallPerson: '#/components/schemas/AdminSaveHallPersonCommand'
+          setHallPersonStatus: '#/components/schemas/AdminSetHallPersonStatusCommand'
+          saveHomepageConfig: '#/components/schemas/AdminSaveHomepageConfigCommand'
+          replySupportTicket: '#/components/schemas/AdminReplySupportTicketCommand'
+    MemberFavoriteToggleCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - favorite.toggle
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    MemberActivityRegisterCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - activity.register
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    MemberActivityCancelCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - activity.cancel
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    MemberActivityCheckInCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - activity.checkIn
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    MemberNotificationReadCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - notification.read
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    MemberReviewSubmitCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - review.submit
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            scores:
+              type: array
+              minItems: 4
+              maxItems: 4
+              items:
+                type: integer
+            comment:
+              type: string
+      required:
+      - command
+      - data
+    MemberCourseProgressCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - course.progress
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            lessonId:
+              type: string
+            answer:
+              type: integer
+      required:
+      - command
+      - data
+    MemberWelfareClaimCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - welfare.claim
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            kind:
+              type: string
+              enum:
+              - public
+              - custom
+            organization:
+              type: string
+            quantity:
+              type: integer
+            purpose:
+              type: string
+      required:
+      - command
+      - data
+    MemberWelfareCancelCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - welfare.cancel
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    MemberArchiveExcerptSaveCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - archive.excerpt.save
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          additionalProperties: true
+      required:
+      - command
+      - data
+    MemberArchiveExcerptRemoveCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - archive.excerpt.remove
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    MemberArchiveAiSaveCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - archive.ai.save
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          additionalProperties: true
+      required:
+      - command
+      - data
+    MemberArchiveAiRemoveCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - archive.ai.remove
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    MemberMediaFavoriteCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - media.favorite
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    MemberMediaLikeCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - media.like
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - data
+    MemberCommand:
+      oneOf:
+      - $ref: '#/components/schemas/MemberFavoriteToggleCommand'
+      - $ref: '#/components/schemas/MemberActivityRegisterCommand'
+      - $ref: '#/components/schemas/MemberActivityCancelCommand'
+      - $ref: '#/components/schemas/MemberActivityCheckInCommand'
+      - $ref: '#/components/schemas/MemberNotificationReadCommand'
+      - $ref: '#/components/schemas/MemberReviewSubmitCommand'
+      - $ref: '#/components/schemas/MemberCourseProgressCommand'
+      - $ref: '#/components/schemas/MemberWelfareClaimCommand'
+      - $ref: '#/components/schemas/MemberWelfareCancelCommand'
+      - $ref: '#/components/schemas/MemberArchiveExcerptSaveCommand'
+      - $ref: '#/components/schemas/MemberArchiveExcerptRemoveCommand'
+      - $ref: '#/components/schemas/MemberArchiveAiSaveCommand'
+      - $ref: '#/components/schemas/MemberArchiveAiRemoveCommand'
+      - $ref: '#/components/schemas/MemberMediaFavoriteCommand'
+      - $ref: '#/components/schemas/MemberMediaLikeCommand'
+      - $ref: '#/components/schemas/MemberMediaSubmitCommand'
+      - $ref: '#/components/schemas/MemberMediaResubmitCommand'
+      - $ref: '#/components/schemas/MemberNewsPreferencesCommand'
+      - $ref: '#/components/schemas/MemberSupportCreateCommand'
+      discriminator:
+        propertyName: command
+        mapping:
+          favorite.toggle: '#/components/schemas/MemberFavoriteToggleCommand'
+          activity.register: '#/components/schemas/MemberActivityRegisterCommand'
+          activity.cancel: '#/components/schemas/MemberActivityCancelCommand'
+          activity.checkIn: '#/components/schemas/MemberActivityCheckInCommand'
+          notification.read: '#/components/schemas/MemberNotificationReadCommand'
+          review.submit: '#/components/schemas/MemberReviewSubmitCommand'
+          course.progress: '#/components/schemas/MemberCourseProgressCommand'
+          welfare.claim: '#/components/schemas/MemberWelfareClaimCommand'
+          welfare.cancel: '#/components/schemas/MemberWelfareCancelCommand'
+          archive.excerpt.save: '#/components/schemas/MemberArchiveExcerptSaveCommand'
+          archive.excerpt.remove: '#/components/schemas/MemberArchiveExcerptRemoveCommand'
+          archive.ai.save: '#/components/schemas/MemberArchiveAiSaveCommand'
+          archive.ai.remove: '#/components/schemas/MemberArchiveAiRemoveCommand'
+          media.favorite: '#/components/schemas/MemberMediaFavoriteCommand'
+          media.like: '#/components/schemas/MemberMediaLikeCommand'
+          media.submit: '#/components/schemas/MemberMediaSubmitCommand'
+          media.resubmit: '#/components/schemas/MemberMediaResubmitCommand'
+          news.preferences: '#/components/schemas/MemberNewsPreferencesCommand'
+          support.create: '#/components/schemas/MemberSupportCreateCommand'
+    BannerDraft:
+      type: object
+      properties:
+        title: &id001
+          type: string
+        language: &id002
+          type: string
+          enum:
+          - zh
+          - en
+        region: &id003
+          type: string
+          description: 稳定地区ID；区域运营只能使用已授权地区
+        sortOrder: &id004
+          type: integer
+          minimum: 0
+          maximum: 9999
+        sample: &id005
+          type: boolean
+        category:
+          type: string
+          enum:
+          - policy
+          - contribution
+          - celebration
+          - collection
+          - study
+          - integrity
+        subtitle:
+          type: string
+        description:
+          type: string
+        actionLabel:
+          type: string
+        footnote:
+          type: string
+        coverFileId:
+          type: string
+        targetScreen:
+          type: string
+          enum:
+          - news
+          - submit
+          - library
+          - learning
+          - classroom
+          - media
+          - hall
+          - venues
+          - review
+        targetId:
+          type: string
+          description: 可选关联业务ID；发布时验证公开状态与地区；目标下架后轮播自动隐藏
+        startsAt:
+          type: string
+          format: date-time
+        endsAt:
+          type: string
+          format: date-time
+      required:
+      - title
+      - language
+      - region
+    Banner:
+      allOf:
+      - $ref: '#/components/schemas/Entity'
+      - $ref: '#/components/schemas/BannerDraft'
+      description: 后台/本人记录。公开投影不包含所有者、文件ID和审核意见；媒体source/poster、轮播cover返回经发布权限校验的稳定资源链接。
+    MediaDraft:
+      type: object
+      properties:
+        title: *id001
+        language: *id002
+        region: *id003
+        sortOrder: *id004
+        sample: *id005
+        category:
+          type: string
+          enum:
+          - letter
+          - documentary
+          - lecture
+          - recitation
+        type:
+          type: string
+          enum:
+          - short
+          - replay
+          - audio
+        collection:
+          type: string
+        excerpt:
+          type: string
+        duration:
+          type: string
+        transcript:
+          type: string
+          description: 以换行分隔的文字稿
+        sourceFileId:
+          type: string
+          description: 当前作者拥有的音视频文件；后台可保留已授权本区条目的原绑定
+        posterFileId:
+          type: string
+          description: 图片文件ID
+        reviewNote:
+          type: string
+          description: 只供本人及授权后台查看
+      required:
+      - title
+      - language
+      - region
+    Media:
+      allOf:
+      - $ref: '#/components/schemas/Entity'
+      - $ref: '#/components/schemas/MediaDraft'
+      description: 后台/本人记录。公开投影不包含所有者、文件ID和审核意见；媒体source/poster、轮播cover返回经发布权限校验的稳定资源链接。
+    VenueDraft:
+      type: object
+      properties:
+        title: *id001
+        language: *id002
+        region: *id003
+        sortOrder: *id004
+        sample: *id005
+        category:
+          type: string
+          enum:
+          - hall
+          - practice
+          - integrity
+        city:
+          type: string
+        address:
+          type: string
+        hours:
+          type: string
+        description:
+          type: string
+        highlights:
+          type: string
+          description: 换行分隔
+        stops:
+          type: string
+          description: 换行分隔
+        activityId:
+          type: string
+          description: 同地区已公开活动；无有效关联时预约不可用
+        latitude:
+          type: number
+          minimum: -90
+          maximum: 90
+        longitude:
+          type: number
+          minimum: -180
+          maximum: 180
+        contact:
+          type: string
+        visitorNotice:
+          type: string
+      required:
+      - title
+      - language
+      - region
+    Venue:
+      allOf:
+      - $ref: '#/components/schemas/Entity'
+      - $ref: '#/components/schemas/VenueDraft'
+      description: 后台/本人记录。公开投影不包含所有者、文件ID和审核意见；媒体source/poster、轮播cover返回经发布权限校验的稳定资源链接。
+    HallPersonDraft:
+      type: object
+      properties:
+        title: *id001
+        language: *id002
+        region: *id003
+        sortOrder: *id004
+        sample: *id005
+        era:
+          type: string
+        theme:
+          type: string
+        book:
+          type: string
+        quote:
+          type: string
+        introduction:
+          type: string
+        notes:
+          type: string
+        sourceTitle:
+          type: string
+        sourceUrl:
+          type: string
+          description: 可选HTTPS资料来源
+        panoramaUrl:
+          type: string
+          description: 可选HTTPS外部全景；不代表系统生成了VR资源
+      required:
+      - title
+      - language
+      - region
+    HallPerson:
+      allOf:
+      - $ref: '#/components/schemas/Entity'
+      - $ref: '#/components/schemas/HallPersonDraft'
+      description: 后台/本人记录。公开投影不包含所有者、文件ID和审核意见；媒体source/poster、轮播cover返回经发布权限校验的稳定资源链接。
+    HomepageConfig:
+      type: object
+      properties:
+        lockVersion:
+          type: integer
+        sections:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                enum:
+                - entries
+                - topics
+                - news
+                - works
+                - venues
+                - stats
+              enabled:
+                type: boolean
+              order:
+                type: integer
+            required:
+            - id
+            - enabled
+            - order
+    HomeStats:
+      type: object
+      description: submissions=库中稿件数（不同正文版本不重复计数）；participants=不同投稿作者数；regions=实际投稿地区数，不含全国all；asOf=聚合时间。本机虚构记录不代表全国运营指标。
+      properties:
+        submissions:
+          type: integer
+        participants:
+          type: integer
+        regions:
+          type: integer
+        asOf:
+          type: string
+          format: date-time
+    NewsPreferences:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            type: string
+            enum:
+            - notice
+            - policy
+            - industry
+            - activity
+            - role-model
+        updates:
+          type: boolean
+        digest:
+          type: string
+          enum:
+          - instant
+          - daily
+          - weekly
+        quietHours:
+          type: boolean
+      description: 按账户保存。当前只有即时站内订阅消息，daily/weekly及微信推送尚未启用。
+    SupportTicket:
+      allOf:
+      - $ref: '#/components/schemas/Entity'
+      - type: object
+        properties:
+          subject:
+            type: string
+          body:
+            type: string
+          category:
+            type: string
+            enum:
+            - submission
+            - review
+            - activity
+            - other
+          reply:
+            type: string
+          status:
+            type: string
+            enum:
+            - 待处理
+            - 已回复
+            - 已关闭
+    AdminSaveBannerCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveBanner
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          $ref: '#/components/schemas/BannerDraft'
+      required:
+      - command
+      - data
+      description: 新增为草稿；修改必须带当前lockVersion，保存不自动发布。
+    AdminSetBannerStatusCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - setBannerStatus
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+              - 草稿
+              - 已发布
+              - 已下架
+            reviewNote:
+              type: string
+          required:
+          - status
+      required:
+      - command
+      - data
+      - entityId
+      - version
+      description: 发布检查目标/资产合法性；媒体退回需填写reviewNote。
+    AdminSaveMediaCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveMedia
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          $ref: '#/components/schemas/MediaDraft'
+      required:
+      - command
+      - data
+      description: 新增为草稿；修改必须带当前lockVersion，保存不自动发布。
+    AdminSetMediaStatusCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - setMediaStatus
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+              - 草稿
+              - 已发布
+              - 已下架
+              - 已退回
+            reviewNote:
+              type: string
+          required:
+          - status
+      required:
+      - command
+      - data
+      - entityId
+      - version
+      description: 发布检查目标/资产合法性；媒体退回需填写reviewNote。
+    AdminSaveVenueCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveVenue
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          $ref: '#/components/schemas/VenueDraft'
+      required:
+      - command
+      - data
+      description: 新增为草稿；修改必须带当前lockVersion，保存不自动发布。
+    AdminSetVenueStatusCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - setVenueStatus
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+              - 草稿
+              - 已发布
+              - 已下架
+            reviewNote:
+              type: string
+          required:
+          - status
+      required:
+      - command
+      - data
+      - entityId
+      - version
+      description: 发布检查目标/资产合法性；媒体退回需填写reviewNote。
+    AdminSaveHallPersonCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveHallPerson
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          $ref: '#/components/schemas/HallPersonDraft'
+      required:
+      - command
+      - data
+      description: 新增为草稿；修改必须带当前lockVersion，保存不自动发布。
+    AdminSetHallPersonStatusCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - setHallPersonStatus
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+              - 草稿
+              - 已发布
+              - 已下架
+            reviewNote:
+              type: string
+          required:
+          - status
+      required:
+      - command
+      - data
+      - entityId
+      - version
+      description: 发布检查目标/资产合法性；媒体退回需填写reviewNote。
+    AdminSaveHomepageConfigCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - saveHomepageConfig
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          $ref: '#/components/schemas/HomepageConfig'
+      required:
+      - command
+      - data
+      description: 仅全国管理员；配置由初始化创建，始终携带返回的lockVersion。六个栏目必须完整且不能重复。
+    AdminReplySupportTicketCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - replySupportTicket
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            reply:
+              type: string
+            status:
+              type: string
+              enum:
+              - 已回复
+              - 已关闭
+          required:
+          - reply
+          - status
+      required:
+      - command
+      - data
+      - entityId
+      - version
+    MemberMediaSubmitCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - media.submit
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          $ref: '#/components/schemas/MediaDraft'
+      required:
+      - command
+      - data
+      description: 提交本人合法音视频文件，区域取账号授权，初始待审核；本人无发布权限。
+    MemberMediaResubmitCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - media.resubmit
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          $ref: '#/components/schemas/MediaDraft'
+      required:
+      - command
+      - data
+      - entityId
+      - version
+      description: 仅本人已退回稿件可重投。
+    MemberNewsPreferencesCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - news.preferences
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          $ref: '#/components/schemas/NewsPreferences'
+      required:
+      - command
+      - data
+    MemberSupportCreateCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - support.create
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+          properties:
+            subject:
+              type: string
+            body:
+              type: string
+            category:
+              type: string
+              enum:
+              - submission
+              - review
+              - activity
+              - other
+          required:
+          - subject
+          - body
+          - category
+      required:
+      - command
+      - data

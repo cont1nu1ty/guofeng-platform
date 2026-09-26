@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent><groupId>org.dromara</groupId><artifactId>ruoyi-modules</artifactId><version>${revision}</version></parent>
+  <artifactId>ruoyi-jiafeng</artifactId>
+  <description>Family culture domain, API and persistent application services</description>
+  <dependencies>
+    <dependency><groupId>org.dromara</groupId><artifactId>ruoyi-system</artifactId><version>${revision}</version></dependency>
+    <dependency><groupId>org.dromara</groupId><artifactId>ruoyi-workflow</artifactId><version>${revision}</version></dependency>
+    <dependency><groupId>org.springframework</groupId><artifactId>spring-jdbc</artifactId></dependency>
+  </dependencies>
+</project>

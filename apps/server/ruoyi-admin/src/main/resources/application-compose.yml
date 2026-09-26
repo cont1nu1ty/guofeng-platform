@@ -1,0 +1,110 @@
+# 家风本机容器环境；不包含上游演示凭据或外部服务。
+server:
+  port: 8080
+  shutdown: graceful
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  application:
+    name: jiafeng-platform
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    dynamic:
+      primary: master
+      strict: true
+      datasource:
+        master:
+          type: com.zaxxer.hikari.HikariDataSource
+          driverClassName: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://${DB_HOST:mysql}:${DB_PORT:3306}/${DB_NAME:jiafeng}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia%2FShanghai&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&nullCatalogMeansCurrent=true
+          username: ${DB_USERNAME:jiafeng}
+          password: ${DB_PASSWORD}
+      hikari:
+        maxPoolSize: 12
+        minIdle: 2
+        connectionTimeout: 30000
+  data:
+    redis:
+      host: redis
+      port: 6379
+      database: 0
+      password: ${REDIS_PASSWORD}
+      timeout: 10s
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 52MB
+  boot:
+    admin:
+      client:
+        enabled: false
+        username: health
+        password: ${JIAFENG_HEALTH_PASSWORD}
+  ai:
+    mcp:
+      server:
+        enabled: false
+      client:
+        enabled: false
+redisson:
+  keyPrefix: "jiafeng:"
+  threads: 4
+  nettyThreads: 4
+  singleServerConfig:
+    clientName: jiafeng-platform
+    connectionMinimumIdleSize: 2
+    connectionPoolSize: 12
+    idleConnectionTimeout: 10000
+    timeout: 3000
+    subscriptionConnectionPoolSize: 8
+captcha:
+  enable: false
+api-decrypt:
+  enabled: false
+sa-token:
+  jwt-secret-key: ${JIAFENG_TOKEN_SECRET}
+security:
+  excludes:
+    - /error
+    - /favicon.ico
+    - /api/v1/**
+    - /actuator/health
+springdoc:
+  api-docs:
+    enabled: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+warm-flow:
+  enabled: true
+  ui: false
+mybatis-plus:
+  sql-log:
+    enabled: false
+snail-job:
+  enabled: false
+snail-ai:
+  enabled: false
+mail:
+  enabled: false
+message:
+  enabled: true
+sms:
+  config-type: yaml
+jiafeng:
+  dev-login: ${JIAFENG_DEV_ACCOUNTS_ENABLED:true}
+  dev-password: ${JIAFENG_DEV_PASSWORD}
+  s3:
+    endpoint: ${JIAFENG_S3_ENDPOINT:http://storage:8333}
+    public-endpoint: ${JIAFENG_S3_PUBLIC_ENDPOINT:http://127.0.0.1:18333}
+    access-key: ${JIAFENG_S3_ACCESS_KEY}
+    secret-key: ${JIAFENG_S3_SECRET_KEY}
+    bucket: ${JIAFENG_S3_BUCKET:jiafeng-private}
+    region: us-east-1
