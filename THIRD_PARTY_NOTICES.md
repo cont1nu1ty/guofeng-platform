@@ -56,3 +56,5 @@
 ## 2026-09-26 首页与内容目录接入
 
 轮播、首页配置、媒体/阵地/人物目录、订阅与咨询的业务代码和 `deploy/fixtures/catalog_content.json` 场景文案为本项目原创，未引入新第三方库。后台继续复用既有 Element Plus、RuoYi认证/数据库层及 AWS S3 SDK；用户端继续使用 Uni-app、Wot UI。私有存储展示文件复用 `apps/miniapp/src/pkg-content/static/media/README.md` 已登记的三组原创静音文字动画与封面，不是第三方盛典视频、真人录音或AI生成内容。数据与主要新增模块摘要登记在 `source-lock.json` 的 `catalogManagement`。
+
+演示数据分支的显式导入、数据库安装标记、项目隔离清单及验证工具为本项目原创，使用Python标准库和既有部署组件，没有新增运行依赖。可重建JSON、三份原创PDF和既有原创媒体随仓库提供；来源清单的 `showcaseData` 同步登记导入工具及摘要。运行数据库、密码和会话不属于此数据包。

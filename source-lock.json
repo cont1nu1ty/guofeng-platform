@@ -552,7 +552,7 @@
       },
       {
         "path": "deploy/seed-showcase.py",
-        "sha256": "364540bb4010551812a272dfb8ad9a0e829dac371fa60f27be864bbdb0724404"
+        "sha256": "11c1ff54c4d5b51dd910966a7c0dd137ca3d5512b428bc1b358aaf5d50b1bdd4"
       },
       {
         "path": "deploy/mysql/reset-demo.sql",
@@ -569,8 +569,31 @@
       {
         "path": "deploy/fixtures/files/资料使用指南.pdf",
         "sha256": "86b485d127fa0597a60109f7bc0aeec81ff4bee89414962c59b1b15be195014b"
+      },
+      {
+        "path": "deploy/dev",
+        "sha256": "4ab86567c68a65b023936eee885ae720802925a8ebb0eab9591d7101fc169ed5"
+      },
+      {
+        "path": "deploy/demo_state.py",
+        "sha256": "6dfaf047a7e3037ff343af54bb5a41c01fa86ee24bcc30e91b0ca16a57e8c699"
+      },
+      {
+        "path": "deploy/tests/test_demo_seed.py",
+        "sha256": "79d93b01ef6cacb2858e9243919f202c5da93bc65fc400ed6a495468287abe28"
+      },
+      {
+        "path": "deploy/tests/demo_bootstrap_probe.py",
+        "sha256": "5c619eb4d6d57ee273d78a385b2f5f233ff741514aac842deb8889e3d95458f4"
       }
-    ]
+    ],
+    "installation": {
+      "entrypoint": "./deploy/dev seed-demo",
+      "automaticOnStartup": false,
+      "method": "Explicit host-side Python command against the running isolated Compose stack",
+      "state": "Database-owned dataset fingerprint and phase receipts; per-project local manifests are disposable",
+      "dataScope": "Repository-defined fictional initial scenarios and source attachments; not a local runtime database snapshot"
+    }
   },
   "catalogManagement": {
     "checkedAt": "2026-09-26",
@@ -587,7 +610,7 @@
       },
       {
         "path": "deploy/seed-catalog.py",
-        "sha256": "94b6bec117f6a017009806a7c2b0b20f88613c243685fdd080777a674ccbdd51"
+        "sha256": "a861b2c2ce84700556ae23646b8f370c0678054a79b6212608ce2c5be65d1c82"
       },
       {
         "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfCatalog.java",

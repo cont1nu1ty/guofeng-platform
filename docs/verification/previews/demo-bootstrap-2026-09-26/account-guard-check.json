@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-09-26T04:38:48.235795+00:00",
+  "project": "jiafeng-demo-bootstrap-accounts",
+  "checks": [
+    "Changed initial account is rejected before any import writes"
+  ],
+  "passed": true,
+  "businessRecordsAfter": 0,
+  "accountsAfter": 6,
+  "ownSimulatedAccountChangeRestored": true,
+  "scope": "Simulate disabling an initial account with a version increment before first import; ensure rejection has no import writes.",
+  "untouchedInitialAccountsAccepted": true
+}

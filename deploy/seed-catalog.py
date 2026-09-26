@@ -2,7 +2,7 @@
 """Add the original catalog showcase without replacing any existing user content.
 
 Requires the real local backend. Every save/upload uses the authenticated API.
-A per-project checkpoint and deterministic command keys make retries additive.
+Database checkpoints and deterministic command keys make retries additive.
 """
 from __future__ import annotations
 import datetime as dt
@@ -54,32 +54,70 @@ def main():
     if not re.fullmatch(r'jiafeng-(?:dev|demo-[a-z0-9][a-z0-9_-]*)', PROJECT) or base.ENV.get('JIAFENG_DEV_ACCOUNTS_ENABLED') != 'true':
         raise ValueError('Catalog examples require the isolated local development project')
     fixture = json.loads(FIXTURE.read_text())
+    state_module = base.state_module
+    digest = state_module.fingerprint(HERE)
+    receipt = state_module.Receipt(base.sql, PROJECT, digest, state_module.CATALOG_ID)
+    installed = receipt.read()
+    if installed and installed.get('phase') == 'complete':
+        print(json.dumps({'catalogExamplesAdded': False, 'alreadyInstalled': True,
+                          'project': PROJECT, 'preservedExistingData': True}))
+        return
     admin = Client('devadmin', 'admin')
     initial = admin.workspace(True)
     if 'banners' not in initial:
         raise ValueError('Deploy the catalog backend before adding its examples')
-    legacy_path = HERE / '.local/showcase-manifest.json'
-    legacy = json.loads(legacy_path.read_text())['refs'] if legacy_path.exists() else {}
-    previous = json.loads(STATE.read_text()) if STATE.exists() else {}
-    # A reset or isolated restore can have new IDs. Never overwrite existing rows;
-    # only discard stale checkpoint references which are absent from this database.
-    live = {x['id'] for group in initial.values() if isinstance(group, list)
-            for x in group if isinstance(x, dict) and 'id' in x}
-    refs = {kind: {key: row for key, row in values.items() if row.get('id') in live}
-            for kind, values in previous.get('refs', {}).items()}
-    files = previous.get('files', {}) if any(refs.values()) else {}
+    base_receipt = state_module.Receipt(base.sql, PROJECT, digest).read()
+    if base_receipt:
+        if state_module.next_phase(base_receipt) not in ('catalog', 'done'):
+            raise ValueError('Complete the base showcase before installing catalog examples')
+        legacy = base_receipt['baseManifest']['refs']
+    else:
+        # Old matching-project manifests locate foreign keys only. They cannot
+        # establish that a database installation completed or authorize rewrites.
+        legacy = state_module.local_reference(base.MANIFEST, PROJECT)
+        if not legacy:
+            legacy = state_module.local_reference(HERE / '.local/showcase-manifest.json', PROJECT)
+    if not installed and any(initial.get(kind) for kind in ('banners', 'mediaItems', 'venues', 'hallPeople', 'supportTickets')):
+        raise ValueError('Catalog records exist without a database import receipt; existing data was not changed. '
+                         'This legacy environment needs a reviewed receipt migration, not another import. '
+                         'Use a new empty demo environment to try the portable dataset')
+    previous = installed.get('manifest', {}) if installed else {}
+    refs = previous.get('refs', {})
+    files = previous.get('files', {})
     manifest = {'datasetVersion': fixture['datasetVersion'], 'project': PROJECT,
                 'fictional': True, 'fixtureSha256': hashlib.sha256(FIXTURE.read_bytes()).hexdigest(),
                 'seededAt': previous.get('seededAt', dt.datetime.now(dt.timezone.utc).isoformat()),
                 'refs': refs, 'files': files}
+    if not installed:
+        installed = receipt.create('catalog-running', manifest=manifest)
     def checkpoint():
+        installed['manifest'] = manifest
+        receipt.save(installed)
+        # The file is useful for humans, but loss of it never resets the import.
         STATE.parent.mkdir(parents=True, exist_ok=True)
-        STATE.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
+        temporary = STATE.with_suffix('.json.tmp')
+        temporary.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
+        temporary.replace(STATE)
     def file(client, filename):
         key = client.name + ':' + filename
+        path = ASSETS / filename
         if key not in files:
-            saved = client.upload(ASSETS / filename)
-            files[key] = {**saved, 'sha256': hashlib.sha256((ASSETS / filename).read_bytes()).hexdigest()}
+            files[key] = {'ownerId': client.user['id'], 'name': filename,
+                          'sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+                          'startedAtMillis': int(dt.datetime.now(dt.timezone.utc).timestamp() * 1000)}
+            checkpoint()
+        if not files[key].get('fileId'):
+            pending = files[key]
+            # If upload succeeded immediately before a checkpoint failure, reuse
+            # that exact owner/hash/name instead of uploading another object.
+            recovered = base.sql("SELECT JSON_OBJECT('id',id,'fileId',id,'name',name,'size',size,"
+                "'type',file_type,'mimeType',mime_type) FROM jf_file WHERE owner_id="
+                + str(int(client.user['id'])) + ' AND name=' + base.lit(filename)
+                + ' AND sha256=' + base.lit(pending['sha256'])
+                + ' AND UNIX_TIMESTAMP(created_at)*1000>=' + str(pending['startedAtMillis'])
+                + ' ORDER BY created_at,id LIMIT 1;')
+            saved = json.loads(recovered) if recovered else client.upload(path)
+            files[key] = {**saved, 'sha256': pending['sha256']}
             checkpoint()
         return files[key]['fileId']
     def ref(kind, key):
@@ -161,6 +199,7 @@ def main():
         checkpoint()
     manifest['completedAt'] = dt.datetime.now(dt.timezone.utc).isoformat()
     manifest['counts'] = {kind: len(items) for kind, items in refs.items()}
+    installed['phase'] = 'complete'
     checkpoint()
     print(json.dumps({'catalogExamplesAdded': True, 'project': PROJECT, 'counts': manifest['counts'],
                       'preservedExistingData': True}, ensure_ascii=False))

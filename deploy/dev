@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import datetime as dt
+import contextlib
 import fcntl
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -116,6 +118,54 @@ def query(sql):
         capture_output=True, text=True).stdout.strip()
 
 
+def demo_state_module():
+    spec = importlib.util.spec_from_file_location('jiafeng_demo_state', HERE / 'demo_state.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@contextlib.contextmanager
+def demo_lifecycle_lock():
+    # Match reset-demo's existing lock so import and cleanup cannot overlap.
+    lock_path = HERE / '.local' / 'reset-demo.lock'
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open('a') as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            raise ValueError('Another demo import or reset is already running') from None
+        yield
+
+
+def seed_demo(values, *, already_locked=False):
+    """Explicit opt-in import. Never reset or replace a populated database."""
+    if not already_locked:
+        with demo_lifecycle_lock():
+            return seed_demo(values, already_locked=True)
+    reset_scope(values)  # Read-only ownership/development checks, no cleanup.
+    state = demo_state_module()
+    receipt = state.Receipt(query, values['COMPOSE_PROJECT_NAME'], state.fingerprint(HERE))
+    phase = state.next_phase(receipt.read())
+    if phase == 'done':
+        print('Demo dataset already installed; existing data and user edits were preserved.')
+        return
+    child_env = {**os.environ, 'JIAFENG_ENV_FILE': str(ENV_FILE)}
+    if phase == 'base':
+        run([sys.executable, HERE / 'seed-showcase.py'], env=child_env)
+    # The database receipt is authoritative even if a local manifest was lost.
+    installed = receipt.read()
+    if state.next_phase(installed) != 'catalog':
+        raise ValueError('Base import did not record successful completion; catalog was not started')
+    run([sys.executable, HERE / 'seed-catalog.py'], env=child_env)
+    catalog = state.Receipt(query, values['COMPOSE_PROJECT_NAME'], state.fingerprint(HERE), state.CATALOG_ID).read()
+    if not catalog or catalog.get('phase') != 'complete':
+        raise ValueError('Catalog import did not record successful completion; retry seed-demo to resume')
+    installed.update(phase='complete', completedAt=dt.datetime.now(dt.timezone.utc).isoformat())
+    receipt.save(installed)
+    print('Demo dataset installed through the real API; database and S3 data persist across restarts.')
+
+
 def reset_scope(values):
     """Refuse foreign containers/volumes, restored environments and production flags."""
     project = values["COMPOSE_PROJECT_NAME"]
@@ -215,8 +265,7 @@ def reset_demo(values, *, empty=False):
             report_path = HERE / ".local" / "reset-demo.json"
             report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
             if not empty:
-                run([sys.executable, seed_script], env={**os.environ, "JIAFENG_ENV_FILE": str(ENV_FILE)})
-                run([sys.executable, HERE / "seed-catalog.py"], env={**os.environ, "JIAFENG_ENV_FILE": str(ENV_FILE)})
+                seed_demo(values, already_locked=True)
                 report["seedCompleted"] = True
                 report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
         except Exception:
@@ -264,7 +313,7 @@ def restore(source):
 def main():
     command = sys.argv[1] if len(sys.argv) > 1 else "help"
     if command == "help":
-        print("Usage: ./deploy/dev {up|init|build|down|status|logs [service]|backup|restore BACKUP_DIR|reset-demo [--empty]|seed-catalog}")
+        print("Usage: ./deploy/dev {up|init|build|down|status|logs [service]|backup|restore BACKUP_DIR|seed-demo|reset-demo [--empty]|seed-catalog}")
         return
     if command == "restore":
         if len(sys.argv) != 3:
@@ -289,8 +338,16 @@ def main():
         compose("logs", "--tail", "120", *sys.argv[2:])
     elif command == "backup":
         backup(values)
+    elif command == "seed-demo":
+        if sys.argv[2:]:
+            raise ValueError('Usage: ./deploy/dev seed-demo')
+        seed_demo(values)
     elif command == "seed-catalog":
-        run([sys.executable, HERE / "seed-catalog.py"], env={**os.environ, "JIAFENG_ENV_FILE": str(ENV_FILE)})
+        if sys.argv[2:]:
+            raise ValueError('Usage: ./deploy/dev seed-catalog')
+        with demo_lifecycle_lock():
+            reset_scope(values)
+            run([sys.executable, HERE / "seed-catalog.py"], env={**os.environ, "JIAFENG_ENV_FILE": str(ENV_FILE)})
     elif command == "reset-demo":
         if sys.argv[2:] not in ([], ["--empty"]):
             raise ValueError("Usage: ./deploy/dev reset-demo [--empty]")

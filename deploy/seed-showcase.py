@@ -24,7 +24,8 @@ BASE = 'http://127.0.0.1:' + ENV['JIAFENG_HTTP_PORT'] + '/api/v1'
 HTTP = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 NOW = dt.datetime.now(dt.timezone.utc)
 FIXTURE = HERE / 'fixtures/showcase_content.json'
-MANIFEST = HERE / '.local/showcase-manifest.json'
+MANIFEST = HERE / '.local' / (ENV['COMPOSE_PROJECT_NAME'] + '-showcase-manifest.json')
+state_module = deploy.demo_state_module()
 ACCOUNTS = [
     (10001, 'devadmin', '全国展示运营', 'staff', 'all', 'national_admin', '家风展示项目组', '已通过', True),
     (10002, 'region_zj', '沈书宁', 'staff', 'zhejiang', 'regional_admin', '浙江展示运营组', '已通过', True),
@@ -165,20 +166,49 @@ def validate_fixture(dataset):
             raise ValueError('Course must contain actual chapters: ' + item['key'])
 
 
+def initial_accounts_unchanged():
+    raw = sql("SELECT JSON_OBJECT('id',user_id,'version',version,'enabled',enabled,"
+              "'realm',realm,'regions',region_ids,'roles',roles) FROM jf_account ORDER BY user_id;")
+    actual = {int(row['id']): row for row in (json.loads(line) for line in raw.splitlines())}
+    expected = {uid: {'id': uid, 'version': 1, 'enabled': 1, 'realm': realm,
+                      'regions': [region], 'roles': [role]}
+                for uid, _, _, realm, region, role, *_ in ACCOUNTS if uid < 11000}
+    return actual == expected
+
+
 def main():
     if ENV.get('JIAFENG_DEV_ACCOUNTS_ENABLED', '').lower() != 'true':
         raise ValueError('Showcase data can only be installed when development accounts are enabled')
     project = ENV['COMPOSE_PROJECT_NAME']
     if project != 'jiafeng-dev' and not project.startswith('jiafeng-demo-'):
         raise ValueError('Only the isolated jiafeng-dev/jiafeng-demo-* deployment can be seeded')
+    receipt = state_module.Receipt(sql, project, state_module.fingerprint(HERE))
+    phase = state_module.next_phase(receipt.read())
+    if phase in ('done', 'catalog'):
+        print('Base showcase already installed; preserved existing data and user edits')
+        return
     dataset = json.loads(FIXTURE.read_text())
     validate_fixture(dataset)
     for path in ('投稿附页.pdf', '资料使用指南.pdf', '匿名评审工作说明.pdf'):
         if not (HERE / 'fixtures/files' / path).exists():
             raise ValueError('Missing committed sample attachment: ' + path)
-    occupied = int(sql("SELECT COUNT(*) FROM jf_entity WHERE kind NOT IN ('setting','expert');"))
-    if occupied or int(sql('SELECT COUNT(*) FROM jf_file;')) or int(sql('SELECT COUNT(*) FROM jf_account;')) != 6:
-        raise ValueError('Business data already exists; use ./deploy/dev reset-demo to back up and rebuild instead of adding duplicates')
+    occupied = int(sql("SELECT COUNT(*) FROM jf_entity WHERE NOT "
+                       "((kind='setting' AND id IN ('reviewFlow','platformConfig','homepageConfig') AND version=1) "
+                       "OR (kind='expert' AND id='10004' AND version=1));"))
+    business_rows = int(sql('SELECT (SELECT COUNT(*) FROM jf_file)+(SELECT COUNT(*) FROM jf_draft)'
+                            '+(SELECT COUNT(*) FROM jf_revision)+(SELECT COUNT(*) FROM jf_registration);'))
+    if occupied or business_rows:
+        raise ValueError('Business data already exists without a matching import receipt; no data was changed. '
+                         'Use a new empty demo environment, or explicitly reset-demo only if a backed-up rebuild is intended')
+    if not initial_accounts_unchanged():
+        raise ValueError('Initial development accounts were changed or are missing; no data was changed. '
+                         'The demo import requires the untouched six-account bootstrap. '
+                         'Use a new empty demo environment instead of overwriting account changes')
+    # Confirm that the API is ready before creating the durable in-progress flag.
+    with HTTP.open(BASE + '/health', timeout=30) as response:
+        if json.load(response).get('status') != 'ok':
+            raise ValueError('Backend is not ready; run ./deploy/dev up first')
+    installed = receipt.create('base-running')
     bootstrap_accounts()
     clients = {row[1]: Client(row[1], 'admin' if row[3] == 'staff' else 'member')
                for row in ACCOUNTS if row[-1]}
@@ -356,7 +386,9 @@ def main():
         'fictional': True, 'refs': refs, 'checks': checks,
         'accounts': [{'username': r[1], 'name': r[2], 'role': r[5], 'region': r[4], 'enabled': r[-1]} for r in ACCOUNTS],
         'counts': json.loads(sql("SELECT JSON_OBJECT('accounts',(SELECT COUNT(*) FROM jf_account),'manuscripts',(SELECT COUNT(*) FROM jf_entity WHERE kind='submission'),'revisions',(SELECT COUNT(*) FROM jf_revision),'tasks',(SELECT COUNT(*) FROM jf_entity WHERE kind='task'),'files',(SELECT COUNT(*) FROM jf_file),'registrations',(SELECT COUNT(*) FROM jf_registration WHERE status='registered'),'claims',(SELECT COUNT(*) FROM jf_entity WHERE kind='claim'));"))}
-    MANIFEST.parent.mkdir(exist_ok=True)
+    installed.update(phase='base-complete', baseManifest=manifest)
+    receipt.save(installed)
+    MANIFEST.parent.mkdir(parents=True, exist_ok=True)
     MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+'\n')
     print(json.dumps({'status': 'ready', 'counts': manifest['counts'], 'verifiedChecks': len(checks), 'manifest': str(MANIFEST)}, ensure_ascii=False, indent=2))
 

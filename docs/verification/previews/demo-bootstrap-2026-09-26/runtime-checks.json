@@ -1,0 +1,58 @@
+{
+  "checkedAt": "2026-09-26T04:34:12.800088+00:00",
+  "project": "jiafeng-demo-bootstrap-check",
+  "checks": [
+    "Default Compose startup has no demo business records",
+    "Default startup has six accounts and no files",
+    "Unseeded public workspace has empty content catalogs",
+    "Unrecognized nonempty data is rejected without changes",
+    "First import includes submissions, review tasks and all catalog branches",
+    "First import retains thirteen accounts and seventeen immutable revisions",
+    "Published catalogs appear through real user APIs",
+    "Imported Chinese-named PDF downloads with original checksum",
+    "Completed import is a no-op and preserves later edits",
+    "Per-project manifests can be discarded for this test",
+    "Database receipt prevents reimport after local manifests are lost",
+    "Catalog-stage retry resumes from database receipts without duplicates",
+    "Container recreation preserves seeded data and later edits",
+    "Import stays a no-op after container recreation"
+  ],
+  "passed": true,
+  "entityCounts": {
+    "activity": 6,
+    "banner": 10,
+    "checkin": 2,
+    "claim": 6,
+    "collection": 3,
+    "content": 10,
+    "course": 3,
+    "dictionary": 5,
+    "excerpt": 2,
+    "expert": 3,
+    "favorite": 2,
+    "hallPerson": 3,
+    "knowledge": 2,
+    "learning": 4,
+    "media": 7,
+    "notice": 3,
+    "notification": 29,
+    "product": 4,
+    "setting": 5,
+    "submission": 16,
+    "supportTicket": 2,
+    "task": 51,
+    "venue": 4
+  },
+  "publicCounts": {
+    "banners": 7,
+    "mediaItems": 4,
+    "venues": 4,
+    "hallPeople": 2,
+    "news": 7
+  },
+  "preservedBusinessSha256": "0040fc494d37e975e69b6780fda2ec28b3e107c15b86c73a74aa99a7444f026e",
+  "containerRecreation": "down then up --no-build; no volume deletion",
+  "limits": [
+    "Dedicated local Compose test; no production or physical WeChat evidence."
+  ]
+}

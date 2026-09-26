@@ -1,0 +1,27 @@
+test_catalog_failure_does_not_mark_import_complete (test_demo_seed.DemoSeedTest.test_catalog_failure_does_not_mark_import_complete) ... ok
+test_changed_dataset_refuses_overwrite (test_demo_seed.DemoSeedTest.test_changed_dataset_refuses_overwrite) ... ok
+test_completed_install_is_read_only_even_after_user_edits (test_demo_seed.DemoSeedTest.test_completed_install_is_read_only_even_after_user_edits) ... ok
+test_foreign_database_receipt_refuses_import (test_demo_seed.DemoSeedTest.test_foreign_database_receipt_refuses_import) ... ok
+test_fresh_import_runs_base_before_catalog (test_demo_seed.DemoSeedTest.test_fresh_import_runs_base_before_catalog) ... ok
+test_interrupted_base_never_retries_or_cleans_data (test_demo_seed.DemoSeedTest.test_interrupted_base_never_retries_or_cleans_data) ... ok
+test_legacy_manifest_only_provides_matching_project_references (test_demo_seed.DemoSeedTest.test_legacy_manifest_only_provides_matching_project_references) ... ok
+test_missing_receipt_during_checkpoint_is_not_success (test_demo_seed.DemoSeedTest.test_missing_receipt_during_checkpoint_is_not_success) ... ok
+test_partial_catalog_resumes_without_replaying_base (test_demo_seed.DemoSeedTest.test_partial_catalog_resumes_without_replaying_base) ... ok
+test_up_never_requests_demo_data (test_demo_seed.DemoSeedTest.test_up_never_requests_demo_data) ... ok
+test_base_rejects_existing_cloud_draft_without_writes (test_demo_seed.ScriptBoundaryTest.test_base_rejects_existing_cloud_draft_without_writes) ... ok
+test_catalog_completion_survives_missing_local_manifest (test_demo_seed.ScriptBoundaryTest.test_catalog_completion_survives_missing_local_manifest) ... ok
+test_catalog_recovers_uploaded_file_from_database_without_local_manifest (test_demo_seed.ScriptBoundaryTest.test_catalog_recovers_uploaded_file_from_database_without_local_manifest) ... ok
+test_changed_account_cannot_start_import_or_write_receipt (test_demo_seed.ScriptBoundaryTest.test_changed_account_cannot_start_import_or_write_receipt) ... ok
+test_unmarked_legacy_catalog_is_preserved (test_demo_seed.ScriptBoundaryTest.test_unmarked_legacy_catalog_is_preserved) ... ok
+test_backup_failure_cannot_reach_cleanup (test_reset_safety.ResetSafetyTest.test_backup_failure_cannot_reach_cleanup) ... ok
+test_corrupt_backup_cannot_reach_cleanup (test_reset_safety.ResetSafetyTest.test_corrupt_backup_cannot_reach_cleanup) ... ok
+test_missing_seed_stops_before_backup (test_reset_safety.ResetSafetyTest.test_missing_seed_stops_before_backup) ... ok
+test_rejects_disabled_development_accounts (test_reset_safety.ResetSafetyTest.test_rejects_disabled_development_accounts) ... ok
+test_rejects_foreign_container (test_reset_safety.ResetSafetyTest.test_rejects_foreign_container) ... ok
+test_rejects_foreign_volume (test_reset_safety.ResetSafetyTest.test_rejects_foreign_volume) ... ok
+test_rejects_non_development_projects_before_docker_access (test_reset_safety.ResetSafetyTest.test_rejects_non_development_projects_before_docker_access) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.081s
+
+OK
