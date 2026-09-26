@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { isHttpMode, modeText } from "../services/mode";
+
+import { saveUserRoles, toggleUser, approveUser } from "../services/actions";
+
 import { computed, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
@@ -13,9 +17,6 @@ import {
   demoUsers,
   staffRoles,
   regions,
-  saveUserRoles,
-  toggleUser,
-  approveUser,
   type DemoUser,
 } from "../domain/operations";
 import { matchesRegion, workspace } from "../domain/workspace";
@@ -54,9 +55,9 @@ function editRoles(user: DemoUser) {
   editedRoles.value = [...user.roles];
   roleOpen.value = true;
 }
-function saveRoles() {
+async function saveRoles() {
   if (!selected.value) return;
-  const result = saveUserRoles(selected.value.id, editedRoles.value);
+  const result = await saveUserRoles(selected.value.id, editedRoles.value);
   if (!result.ok) return ElMessage.warning(result.message);
   ElMessage.success(result.message);
   roleOpen.value = false;
@@ -64,7 +65,7 @@ function saveRoles() {
 async function changeStatus(user: DemoUser) {
   try {
     await ElMessageBox.confirm(
-      `${user.enabled ? "停用" : "启用"}“${user.name}”的示例账号？仅改变本次会话的界面状态。`,
+      `${user.enabled ? "停用" : "启用"}“${user.name}”的账号？${modeText("这将改变其登录访问状态。", "仅改变本次演示状态。")}`,
       "确认账号状态",
       {
         confirmButtonText: "确认调整",
@@ -72,15 +73,15 @@ async function changeStatus(user: DemoUser) {
         type: "warning",
       },
     );
-    toggleUser(user.id);
-    ElMessage.success("示例账号状态已更新");
+    await toggleUser(user.id);
+    ElMessage.success("账号状态已更新");
   } catch {
     /* cancelled */
   }
 }
-function approve(user: DemoUser) {
-  approveUser(user.id);
-  ElMessage.success("示例入驻状态已更新，不代表实际资质核验");
+async function approve(user: DemoUser) {
+  await approveUser(user.id);
+  ElMessage.success("入驻状态已更新，不代表实名或资质核验");
 }
 function reset() {
   query.value = "";
@@ -88,6 +89,9 @@ function reset() {
   region.value = "";
   status.value = "";
 }
+const availableRoles = isHttpMode
+  ? ["全国管理员", "区域运营", "专家", "投稿用户"]
+  : staffRoles;
 </script>
 
 <template>
@@ -147,7 +151,10 @@ function reset() {
     <div class="panel-header">
       <div>
         <h2 class="section-title">参与者名册</h2>
-        <p class="muted">{{ workspace.region }} · 虚构账号，仅用于界面演示</p>
+        <p class="muted">
+          {{ workspace.region }} ·
+          {{ modeText("已授权账号范围", "虚构账号，仅用于界面演示") }}
+        </p>
       </div>
       <el-tag effect="plain" type="info">岗位与地区分别管理</el-tag>
     </div>
@@ -164,7 +171,7 @@ function reset() {
         clearable
         aria-label="筛选岗位"
         ><el-option
-          v-for="item in staffRoles"
+          v-for="item in availableRoles"
           :key="item"
           :value="item"
           :label="item" /></el-select
@@ -237,9 +244,14 @@ function reset() {
         ><template #default="{ row }"
           ><el-button link type="primary" @click="openDetail(row)"
             >详情</el-button
-          ><el-button link type="primary" @click="editRoles(row)"
+          ><el-button
+            v-has-permi="'users:write'"
+            link
+            type="primary"
+            @click="editRoles(row)"
             >岗位</el-button
           ><el-button
+            v-has-permi="'users:write'"
             link
             :type="row.enabled ? 'danger' : 'success'"
             @click="changeStatus(row)"
@@ -250,8 +262,10 @@ function reset() {
         ><el-empty description="没有符合条件的用户，请调整筛选" /></template
     ></el-table>
     <div class="table-tools">
-      <span class="muted">共 {{ filtered.length }} 位示例用户</span
-      ><span class="muted">地区筛选不代表真实权限隔离</span>
+      <span class="muted">共 {{ filtered.length }} 位用户</span
+      ><span class="muted">{{
+        modeText("服务端校验账号与地区权限", "地区筛选不代表真实权限隔离")
+      }}</span>
     </div>
   </section>
   <div class="permission-note">
@@ -259,7 +273,12 @@ function reset() {
     <div>
       <b>为后续权限接入保留清晰边界</b>
       <p>
-        当前岗位用于展示职责。真实账号认证、数据授权和操作审计由后续服务端实现；在这里调整示例岗位不会授予实际访问权限。
+        {{
+          modeText(
+            "岗位变更将更新服务端授权，权限和地区范围由服务端统一验证。",
+            "当前岗位用于展示职责。真实账号认证、数据授权和操作审计由后续服务端实现；在这里调整岗位不会授予实际访问权限。",
+          )
+        }}
       </p>
     </div>
   </div>
@@ -289,39 +308,49 @@ function reset() {
         ></el-descriptions
       ><el-alert
         class="detail-alert"
-        title="这是虚构资料，未核验真实身份或专家资质。"
+        title="资料记录不等于已核验真实身份或专家资质。"
         type="info"
         :closable="false"
       /><el-button
+        v-has-permi="'users:write'"
         v-if="selected.status === '待审核'"
         type="primary"
         @click="approve(selected)"
-        >模拟通过入驻</el-button
-      ><el-button v-else type="primary" @click="editRoles(selected)"
+        >通过入驻审核</el-button
+      ><el-button
+        v-has-permi="'users:write'"
+        v-else
+        type="primary"
+        @click="editRoles(selected)"
         >调整岗位</el-button
       ></template
     >
   </el-drawer>
-  <el-dialog v-model="roleOpen" title="调整示例岗位" width="min(540px, 92vw)"
+  <el-dialog v-model="roleOpen" title="调整岗位" width="min(540px, 92vw)"
     ><template v-if="selected"
       ><p class="muted">
         为 {{ selected.name }} 选择岗位，可同时承担多项职责。
       </p>
       <el-checkbox-group v-model="editedRoles" class="role-options"
         ><el-checkbox
-          v-for="item in staffRoles"
+          v-for="item in availableRoles"
           :key="item"
           :value="item"
           border
           >{{ item }}</el-checkbox
         ></el-checkbox-group
       ><el-alert
-        title="仅修改内存中的演示资料，不构成真实权限授权。"
+        :title="
+          modeText(
+            '保存将改变此账号的实际岗位权限，请核对后操作。',
+            '仅修改内存中的演示资料，不构成真实权限授权。',
+          )
+        "
         :closable="false"
         type="info" /></template
     ><template #footer
       ><el-button @click="roleOpen = false">取消</el-button
-      ><el-button type="primary" @click="saveRoles"
+      ><el-button v-has-permi="'users:write'" type="primary" @click="saveRoles"
         >保存岗位</el-button
       ></template
     ></el-dialog

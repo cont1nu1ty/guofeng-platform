@@ -1,7 +1,9 @@
 import { reactive } from "vue";
-import { recordActivity } from "./workspace";
+import { recordActivity, regions as workspaceRegions } from "./workspace";
+import { isHttpMode } from "../services/mode";
+import { demoRegionNames } from "./regions";
 
-export const regions = ["北京市", "浙江省", "四川省", "江苏省", "广东省"];
+export const regions = isHttpMode ? workspaceRegions : demoRegionNames;
 export const staffRoles = [
   "内容运营",
   "评审管理",
@@ -524,7 +526,7 @@ export interface AiRecord {
   output: string;
   source: string;
 }
-export const aiRecords: AiRecord[] = [
+export const aiRecords = reactive<AiRecord[]>([
   {
     id: "AI20260921001",
     user: "演示用户 01",
@@ -583,7 +585,7 @@ export const aiRecords: AiRecord[] = [
     output: "原文样卡与手工校对文本并排呈现，未进行图像识别或 OCR。",
     source: "原创手稿文字样卡 · 无 OCR 调用",
   },
-];
+]);
 export interface DictionaryWord {
   id: string;
   word: string;
@@ -675,6 +677,8 @@ export function savePlatformConfig(input: PlatformConfig) {
   return { ok: true, message: "平台配置已保存至本次会话，刷新后恢复预置值" };
 }
 export interface NotificationDraft {
+  status?: string;
+  lockVersion?: number;
   id: string;
   title: string;
   audience: string;

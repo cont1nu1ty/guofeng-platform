@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { isHttpMode, modeText } from "../services/mode";
+
+import { saveCourse, toggleCourse } from "../services/actions";
+
 import { computed, reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import {
@@ -12,8 +16,6 @@ import PageHeading from "../components/PageHeading.vue";
 import {
   courses,
   learningGroups,
-  saveCourse,
-  toggleCourse,
   type Course,
   type LearningGroup,
 } from "../domain/operations";
@@ -73,15 +75,15 @@ function editCourse(course?: Course) {
   );
   courseOpen.value = true;
 }
-function submit() {
-  const result = saveCourse(form);
+async function submit() {
+  const result = await saveCourse(form);
   if (!result.ok) return ElMessage.warning(result.message);
   ElMessage.success(result.message);
   courseOpen.value = false;
 }
-function changeCourse(course: Course) {
-  toggleCourse(course.id);
-  ElMessage.success("课程示例状态已更新");
+async function changeCourse(course: Course) {
+  await toggleCourse(course.id);
+  ElMessage.success("课程状态已更新");
 }
 function openGroup(group: LearningGroup) {
   selectedGroup.value = group;
@@ -97,7 +99,11 @@ function titleFor(id: string) {
     description="以清廉家风涵养清正作风，做好课程、班组与学习台账管理。"
     eyebrow="INTEGRITY EDUCATION"
     ><template #actions
-      ><el-button type="primary" :icon="Plus" @click="editCourse()"
+      ><el-button
+        v-has-permi="'education:write'"
+        type="primary"
+        :icon="Plus"
+        @click="editCourse()"
         >新建课程</el-button
       ></template
     ></PageHeading
@@ -114,7 +120,7 @@ function titleFor(id: string) {
   </div>
   <div class="stat-grid education-stats">
     <div class="stat-card">
-      <span class="muted">示例课程</span
+      <span class="muted">课程</span
       ><strong>{{ courses.length }}<small>门</small></strong
       ><el-icon><Collection /></el-icon>
     </div>
@@ -124,12 +130,12 @@ function titleFor(id: string) {
       ><el-icon><User /></el-icon>
     </div>
     <div class="stat-card">
-      <span class="muted">示例参与人数</span
+      <span class="muted">参与人数</span
       ><strong>{{ learners }}<small>人</small></strong
       ><el-icon><Reading /></el-icon>
     </div>
     <div class="stat-card">
-      <span class="muted">预置完成记录</span
+      <span class="muted">完成记录</span
       ><strong>{{ completed }}<small>条</small></strong
       ><el-icon><Collection /></el-icon>
     </div>
@@ -193,10 +199,19 @@ function titleFor(id: string) {
             </div>
           </div>
           <div class="course-actions">
-            <el-button @click="editCourse(course)">编辑课程</el-button
-            ><el-button link type="primary" @click="changeCourse(course)">{{
-              course.status === "已上架" ? "下架课程" : "上架课程"
-            }}</el-button>
+            <el-button
+              v-has-permi="'education:write'"
+              @click="editCourse(course)"
+              >编辑课程</el-button
+            ><el-button
+              v-has-permi="'education:write'"
+              link
+              type="primary"
+              @click="changeCourse(course)"
+              >{{
+                course.status === "已上架" ? "下架课程" : "上架课程"
+              }}</el-button
+            >
           </div>
         </article>
       </div>
@@ -207,7 +222,12 @@ function titleFor(id: string) {
     <template v-else
       ><el-alert
         class="ledger-note"
-        title="台账数值为预置样例，不代表实际学习、实名核验或承诺书签署。"
+        :title="
+          modeText(
+            '台账汇总用户学习记录，不代表实名核验或正式承诺书签署。',
+            '台账数值为预置样例，不代表实际学习、实名核验或承诺书签署。',
+          )
+        "
         type="info"
         :closable="false"
         show-icon
@@ -225,7 +245,7 @@ function titleFor(id: string) {
         ><el-table-column
           prop="members"
           label="人数"
-          width="70" /><el-table-column label="示例进度" width="155"
+          width="70" /><el-table-column label="进度" width="155"
           ><template #default="{ row }"
             ><el-progress
               :percentage="Math.round((row.completed / row.members) * 100)"
@@ -295,7 +315,9 @@ function titleFor(id: string) {
     </p>
     <template #footer
       ><el-button @click="courseOpen = false">取消</el-button
-      ><el-button type="primary" @click="submit">保存课程</el-button></template
+      ><el-button v-has-permi="'education:write'" type="primary" @click="submit"
+        >保存课程</el-button
+      ></template
     ></el-dialog
   >
   <el-drawer v-model="groupOpen" title="学习班组台账" size="min(640px, 100vw)"
@@ -310,11 +332,11 @@ function titleFor(id: string) {
         </div>
         <div>
           <strong>{{ selectedGroup.completed }}</strong
-          ><span>预置完成记录</span>
+          ><span>完成记录</span>
         </div>
         <div>
           <strong>{{ selectedGroup.declarations }}</strong
-          ><span>预置承诺书记录</span>
+          ><span>承诺书记录</span>
         </div>
       </div>
       <h3 class="section-title">学习安排</h3>
@@ -325,9 +347,9 @@ function titleFor(id: string) {
         ><el-timeline-item timestamp="学习材料" color="#b99a63"
           >课程章节、讨论问题与情景练习（结构示例）</el-timeline-item
         ><el-timeline-item
-          :timestamp="`样例更新于 ${selectedGroup.date}`"
+          :timestamp="`更新于 ${selectedGroup.date}`"
           color="#7d967e"
-          >显示预置进度，不通过点击“已读”生成完成记录</el-timeline-item
+          >进度来自学习台账，课程完成不等于已完成正式签署</el-timeline-item
         ></el-timeline
       ><el-alert
         title="正式接入时需关联身份、学习证据与签署记录；本页不产生真实学习或签署证明。"

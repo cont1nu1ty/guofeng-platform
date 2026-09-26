@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { isHttpMode, modeText } from "../services/mode";
+
+import { saveDictionaryWord, toggleDictionaryWord } from "../services/actions";
+
 import { computed, reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import {
@@ -14,12 +18,42 @@ import {
   knowledgeBases,
   aiRecords,
   dictionaryWords,
-  saveDictionaryWord,
-  toggleDictionaryWord,
   type AiRecord,
   type DictionaryWord,
 } from "../domain/operations";
 import { matchesRegion } from "../domain/workspace";
+import { command } from "../services/workspaceData";
+import { uploadFile } from "../services/files";
+import { regions } from "../domain/workspace";
+import type { UploadFile } from "element-plus";
+const documentOpen = ref(false),
+  documentBusy = ref(false);
+const documentFile = ref<File>();
+const documentForm = reactive({
+  title: "",
+  category: "典籍文献",
+  region: "全国",
+});
+function chooseDocument(file: UploadFile) {
+  documentFile.value = file.raw;
+}
+async function saveDocument() {
+  if (!documentFile.value || documentForm.title.trim().length < 2)
+    return ElMessage.warning("请填写资料标题并选择文件");
+  documentBusy.value = true;
+  try {
+    const uploaded = await uploadFile(documentFile.value);
+    await command("saveKnowledgeDocument", {
+      ...documentForm,
+      fileId: uploaded.fileId,
+    });
+    documentOpen.value = false;
+    documentFile.value = undefined;
+    ElMessage.success("资料已保存，检索索引尚未建立");
+  } finally {
+    documentBusy.value = false;
+  }
+}
 const tab = ref("knowledge"),
   query = ref(""),
   mode = ref("");
@@ -76,15 +110,15 @@ function editWord(item?: DictionaryWord) {
   );
   wordOpen.value = true;
 }
-function submitWord() {
-  const result = saveDictionaryWord(wordForm);
+async function submitWord() {
+  const result = await saveDictionaryWord(wordForm);
   if (!result.ok) return ElMessage.warning(result.message);
   ElMessage.success(result.message);
   wordOpen.value = false;
 }
-function toggleWord(item: DictionaryWord) {
-  toggleDictionaryWord(item.id);
-  ElMessage.success("词条示例状态已更新，未执行实际内容审核");
+async function toggleWord(item: DictionaryWord) {
+  await toggleDictionaryWord(item.id);
+  ElMessage.success("词条状态已更新，未执行模型审核");
 }
 </script>
 <template>
@@ -92,7 +126,16 @@ function toggleWord(item: DictionaryWord) {
     title="AI 运营中心"
     description="围绕知识来源、内容追溯与人工复核，准备可持续的助手运营体系。"
     eyebrow="AI OPERATIONS"
-  />
+    ><template #actions
+      ><el-button
+        v-if="isHttpMode"
+        v-has-permi="'ai:write'"
+        type="primary"
+        @click="documentOpen = true"
+        >添加资料</el-button
+      ></template
+    ></PageHeading
+  >
   <div class="ai-banner">
     <div class="ai-orbit">
       <el-icon><Connection /></el-icon>
@@ -101,10 +144,15 @@ function toggleWord(item: DictionaryWord) {
       <span class="service-label"><i></i>服务状态 · 尚未接入模型</span>
       <h2>可信的回答，从有据可循开始</h2>
       <p>
-        此处展示预置知识库结构、输入输出样例及词库配置。没有模型推理、OCR、检索或自动审核调用。
+        {{
+          modeText(
+            "当前支持资料与词库管理，调用记录仅记录实际请求。模型推理、OCR 与检索索引暂不可用。",
+            "此处展示预置知识库结构、输入输出样例及词库配置。没有模型推理、OCR、检索或自动审核调用。",
+          )
+        }}
       </p>
     </div>
-    <span class="ai-badge">原型预览</span>
+    <span class="ai-badge">{{ modeText("模型不可用", "原型预览") }}</span>
   </div>
   <section class="panel">
     <el-tabs
@@ -115,7 +163,7 @@ function toggleWord(item: DictionaryWord) {
       "
       ><el-tab-pane name="knowledge" label="知识库" /><el-tab-pane
         name="records"
-        label="调用记录样例" /><el-tab-pane name="dictionary" label="内容词库"
+        label="调用记录" /><el-tab-pane name="dictionary" label="内容词库"
     /></el-tabs>
     <div class="filter-bar">
       <el-input
@@ -148,6 +196,7 @@ function toggleWord(item: DictionaryWord) {
           :value="item"
           :label="item" /></el-select
       ><el-button
+        v-has-permi="'ai:write'"
         v-if="tab === 'dictionary'"
         type="primary"
         :icon="Plus"
@@ -179,7 +228,7 @@ function toggleWord(item: DictionaryWord) {
           <div class="knowledge-footer">
             <div>
               <strong>{{ base.documents }}</strong
-              ><small>份预置资料数</small>
+              ><small>份资料</small>
             </div>
             <el-button link type="primary" @click="openBase(base)"
               >查看资料结构 →</el-button
@@ -189,7 +238,7 @@ function toggleWord(item: DictionaryWord) {
       </div>
       <el-empty
         v-if="!visibleBases.length"
-        description="没有符合条件的知识库样例"
+        description="没有符合条件的知识资料"
       />
       <div class="knowledge-note">
         <el-icon><Document /></el-icon>
@@ -210,7 +259,7 @@ function toggleWord(item: DictionaryWord) {
           ></el-table-column
         ><el-table-column
           prop="user"
-          label="示例用户"
+          label="用户"
           width="125" /><el-table-column
           prop="region"
           label="地区"
@@ -236,11 +285,16 @@ function toggleWord(item: DictionaryWord) {
             ></template
           ></el-table-column
         ><template #empty
-          ><el-empty description="当前地区没有匹配的预置记录" /></template
+          ><el-empty description="当前地区没有匹配的调用记录" /></template
       ></el-table>
       <div class="table-tools muted">
-        共 {{ visibleRecords.length }} 条预置记录 ·
-        以下输入输出均是编写的样例，无真实用户对话。
+        共 {{ visibleRecords.length }} 条调用记录 ·
+        {{
+          modeText(
+            "仅显示实际请求记录；未调用模型时不会生成对话结果。",
+            "以下输入输出均是编写的样例，无真实用户对话。",
+          )
+        }}
       </div></template
     >
     <template v-else
@@ -269,15 +323,20 @@ function toggleWord(item: DictionaryWord) {
           width="110" /><el-table-column
           prop="note"
           label="配置备注"
-          min-width="260" /><el-table-column label="示例状态" width="110"
+          min-width="260" /><el-table-column label="状态" width="110"
           ><template #default="{ row }"
             ><el-switch
+              v-has-permi="'ai:write'"
               :model-value="row.enabled"
               :aria-label="`${row.word}启用状态`"
               @change="toggleWord(row)" /></template></el-table-column
         ><el-table-column label="操作" width="90" fixed="right"
           ><template #default="{ row }"
-            ><el-button link type="primary" @click="editWord(row)"
+            ><el-button
+              v-has-permi="'ai:write'"
+              link
+              type="primary"
+              @click="editWord(row)"
               >编辑</el-button
             ></template
           ></el-table-column
@@ -286,7 +345,7 @@ function toggleWord(item: DictionaryWord) {
             description="没有匹配的词条，可添加新词条或调整搜索" /></template
       ></el-table>
       <div class="table-tools muted">
-        共 {{ visibleWords.length }} 个示例词条
+        共 {{ visibleWords.length }} 个词条
       </div></template
     >
   </section>
@@ -299,7 +358,7 @@ function toggleWord(item: DictionaryWord) {
       <p class="drawer-text">{{ selectedBase.description }}</p>
       <el-descriptions :column="1" border
         ><el-descriptions-item label="资料数量"
-          >{{ selectedBase.documents }} 份（预置数值）</el-descriptions-item
+          >{{ selectedBase.documents }} 份（资料记录）</el-descriptions-item
         ><el-descriptions-item label="更新日期">{{
           selectedBase.updated
         }}</el-descriptions-item
@@ -334,10 +393,7 @@ function toggleWord(item: DictionaryWord) {
         type="info"
         :closable="false" /></template
   ></el-drawer>
-  <el-drawer
-    v-model="recordOpen"
-    title="预置输入输出详情"
-    size="min(680px, 100vw)"
+  <el-drawer v-model="recordOpen" title="输入输出详情" size="min(680px, 100vw)"
     ><template v-if="selectedRecord"
       ><div class="record-header">
         <el-tag>{{ selectedRecord.mode }}</el-tag
@@ -347,10 +403,10 @@ function toggleWord(item: DictionaryWord) {
         {{ selectedRecord.id }} · {{ selectedRecord.region }} ·
         {{ selectedRecord.user }}
       </p>
-      <h3 class="drawer-subtitle">输入样例</h3>
+      <h3 class="drawer-subtitle">请求内容</h3>
       <div class="conversation-input">{{ selectedRecord.input }}</div>
       <h3 class="drawer-subtitle">
-        <el-icon><EditPen /></el-icon> 预置回复
+        <el-icon><EditPen /></el-icon> 回复记录
       </h3>
       <div class="conversation-output">{{ selectedRecord.output }}</div>
       <el-descriptions :column="1" border
@@ -362,7 +418,12 @@ function toggleWord(item: DictionaryWord) {
         }}</el-descriptions-item></el-descriptions
       ><el-alert
         class="drawer-note"
-        title="以上是预先编写的对话样例，不是 AI 生成或审核结果。"
+        :title="
+          modeText(
+            '调用状态以服务端记录为准，未接模型时不会生成结果。',
+            '以上是编写的样例，不是 AI 生成结果。',
+          )
+        "
         type="warning"
         :closable="false"
         show-icon /></template
@@ -400,8 +461,49 @@ function toggleWord(item: DictionaryWord) {
           placeholder="说明使用场景与人工处理要点" /></el-form-item></el-form
     ><template #footer
       ><el-button @click="wordOpen = false">取消</el-button
-      ><el-button type="primary" @click="submitWord"
+      ><el-button v-has-permi="'ai:write'" type="primary" @click="submitWord"
         >保存词条</el-button
+      ></template
+    ></el-dialog
+  >
+  <el-dialog v-model="documentOpen" title="添加知识资料" width="min(540px,92vw)"
+    ><el-form label-position="top"
+      ><el-form-item label="标题" required
+        ><el-input v-model="documentForm.title" maxlength="100" /></el-form-item
+      ><el-form-item label="分类"
+        ><el-select v-model="documentForm.category"
+          ><el-option
+            v-for="c in ['典籍文献', '红色史料', '平台知识']"
+            :key="c"
+            :value="c" /></el-select></el-form-item
+      ><el-form-item label="地区"
+        ><el-select v-model="documentForm.region"
+          ><el-option
+            v-for="r in regions"
+            :key="r"
+            :value="r" /></el-select></el-form-item
+      ><el-form-item label="资料文件（PNG/JPEG/PDF/Word，10MB以内）" required
+        ><el-upload
+          :auto-upload="false"
+          :limit="1"
+          :on-change="chooseDocument"
+          :on-remove="() => (documentFile = undefined)"
+          accept=".pdf,.docx,.doc,.png,.jpg,.jpeg"
+          ><el-button>选择文件</el-button></el-upload
+        ></el-form-item
+      ></el-form
+    ><el-alert
+      title="文件进入私有存储；上传不代表已建立检索索引或已获得使用许可。"
+      type="info"
+      :closable="false"
+    /><template #footer
+      ><el-button @click="documentOpen = false">取消</el-button
+      ><el-button
+        v-has-permi="'ai:write'"
+        type="primary"
+        :loading="documentBusy"
+        @click="saveDocument"
+        >保存资料</el-button
       ></template
     ></el-dialog
   >

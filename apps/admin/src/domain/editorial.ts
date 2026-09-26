@@ -1,15 +1,9 @@
 import { reactive } from "vue";
-import { recordActivity } from "./workspace";
+import { recordActivity, regions } from "./workspace";
 
-export const editorialRegions = [
-  "全国",
-  "北京市",
-  "浙江省",
-  "四川省",
-  "江苏省",
-  "广东省",
-];
-export const contentCategories = ["资讯", "公告", "Banner", "专题"] as const;
+export const editorialRegions = regions;
+export const contentCategories = ["资讯", "公告", "政策解读", "行业动态", "活动报道", "榜样人物", "Banner", "专题"] as const;
+export const contentTopics = { red: "红色家风", integrity: "清廉家风", everyday: "百姓家风", classical: "先贤文脉" } as const;
 export type ContentCategory = (typeof contentCategories)[number];
 export type PublishStatus = "草稿" | "已发布" | "已下架";
 export interface ContentItem {
@@ -24,10 +18,11 @@ export interface ContentItem {
   author: string;
   updatedAt: string;
   views: number;
+  topic?: keyof typeof contentTopics;
 }
 export type ContentDraft = Pick<
   ContentItem,
-  "title" | "category" | "region" | "language" | "summary" | "body"
+  "title" | "category" | "region" | "language" | "summary" | "body" | "topic"
 >;
 export interface Chapter {
   id: string;
@@ -344,12 +339,13 @@ const required = (value: string, label: string, min = 1, max = 100) =>
 
 export function validateContent(draft: ContentDraft): string {
   return (
-    required(draft.title, "标题", 2, 60) ||
+    required(draft.title, "标题", 2, 100) ||
     (!contentCategories.includes(draft.category) ? "请选择栏目" : "") ||
     (!editorialRegions.includes(draft.region) ? "请选择地区" : "") ||
-    (!["简体中文", "English"].includes(draft.language) ? "请选择语言" : "") ||
-    required(draft.summary, "摘要", 5, 180) ||
-    required(draft.body, "正文", 10, 10000)
+    (!["简体中文", "中文", "英文", "English", "zh", "en"].includes(draft.language) ? "请选择语言" : "") ||
+    (draft.topic && !(draft.topic in contentTopics) ? "请选择家风专区" : "") ||
+    required(draft.summary, "摘要", 1, 500) ||
+    required(draft.body, "正文", 1, 50000)
   );
 }
 export function saveContent(draft: ContentDraft, id?: string): ContentItem {

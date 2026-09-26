@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, onUnmounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import {
   Bell,
@@ -21,6 +21,71 @@ import {
   workspace,
 } from "./domain/workspace";
 
+import LoginView from "./views/LoginView.vue";
+import { isHttpMode, modeText } from "./services/mode";
+import {
+  session,
+  restoreSession,
+  logout,
+  expireSession,
+  canVisit,
+} from "./services/session";
+import { loadWorkspace, clearWorkspace } from "./services/workspaceData";
+import { connection, reportError } from "./services/http";
+const initialized = ref(!isHttpMode);
+const hasWorkspace = ref(!isHttpMode);
+async function authenticate() {
+  try {
+    await loadWorkspace();
+    hasWorkspace.value = true;
+  } catch {
+    hasWorkspace.value = false;
+  }
+}
+watch(
+  () => session.user,
+  (user) => {
+    if (isHttpMode && user) void authenticate();
+  },
+  { flush: "sync" },
+);
+async function boot() {
+  try {
+    await restoreSession();
+  } catch (error) {
+    reportError(error);
+  } finally {
+    initialized.value = true;
+  }
+}
+async function signOut() {
+  try {
+    await logout();
+    clearWorkspace();
+    hasWorkspace.value = false;
+  } catch (error) {
+    reportError(error);
+  }
+}
+function expired() {
+  expireSession();
+  clearWorkspace();
+  hasWorkspace.value = false;
+}
+onMounted(() => {
+  if (isHttpMode) {
+    window.addEventListener("jiafeng:session-expired", expired);
+    void boot();
+  }
+});
+onUnmounted(() =>
+  window.removeEventListener("jiafeng:session-expired", expired),
+);
+function accountCommand(command: string) {
+  if (command === "logout") return signOut();
+  if (command === "reset") return reset();
+  helpOpen.value = true;
+}
 const route = useRoute();
 const router = useRouter();
 const current = computed(() =>
@@ -30,11 +95,17 @@ const searchOpen = ref(false);
 const search = ref("");
 const helpOpen = ref(false);
 const menuMatches = computed(() =>
-  navigation.filter((item) =>
-    item.title.toLowerCase().includes(search.value.trim().toLowerCase()),
-  ),
+  navigation
+    .filter((item) => canVisit(item.path))
+    .filter((item) =>
+      item.title.toLowerCase().includes(search.value.trim().toLowerCase()),
+    ),
 );
-const miniappUrl = `${window.location.protocol}//${window.location.hostname}:5173/`;
+const miniappUrl =
+  import.meta.env.VITE_MINIAPP_URL ||
+  (isHttpMode
+    ? "/miniapp/"
+    : `${window.location.protocol}//${window.location.hostname}:5173/`);
 function navigate(path: string) {
   router.push(path);
   searchOpen.value = false;
@@ -58,7 +129,16 @@ async function reset() {
 }
 </script>
 <template>
-  <div class="admin-layout">
+  <div v-if="!initialized" class="connection-screen" v-loading="true">
+    正在恢复登录状态…
+  </div>
+  <LoginView v-else-if="isHttpMode && !session.user" />
+  <div
+    v-else
+    class="admin-layout"
+    v-loading="connection.pending > 0"
+    element-loading-text="正在提交，请稍候…"
+  >
     <aside class="sidebar">
       <router-link to="/overview" class="brand" aria-label="家风中华行运营首页"
         ><span class="brand-seal">家</span>
@@ -67,13 +147,14 @@ async function reset() {
         </div></router-link
       >
       <div class="workspace-label">
-        <span class="status-dot" /> 全国运营中心 <span>工作空间</span>
+        <span class="status-dot" />
+        {{ isHttpMode ? "授权运营中心" : "全国运营中心" }} <span>工作空间</span>
       </div>
       <SidebarNav />
       <div class="sidebar-footer">
         <el-button text @click="helpOpen = true"
           ><el-icon><QuestionFilled /></el-icon> 使用说明</el-button
-        ><span>界面预览 v0.1</span>
+        ><span>{{ modeText("服务已连接", "界面预览 v0.1") }}</span>
       </div>
     </aside>
     <div class="main-shell">
@@ -122,7 +203,10 @@ async function reset() {
                 ><span class="unread-dot" /></el-button
             ></template>
             <div class="popover-heading">
-              本次操作动态 <el-tag size="small" type="info">示例</el-tag>
+              本次操作动态
+              <el-tag size="small" type="info">{{
+                modeText("业务记录", "示例")
+              }}</el-tag>
             </div>
             <div
               v-for="item in activityLog.slice(0, 4)"
@@ -138,25 +222,26 @@ async function reset() {
             >
           </el-popover>
           <div class="topbar-divider" />
-          <el-dropdown
-            trigger="click"
-            @command="
-              (command: string) =>
-                command === 'reset' ? reset() : (helpOpen = true)
-            "
-          >
-            <button class="account-button" aria-label="演示管理员菜单">
+          <el-dropdown trigger="click" @command="accountCommand">
+            <button class="account-button" aria-label="管理员菜单">
               <span class="account-avatar">管</span
               ><span class="account-copy"
-                ><b>运营管理员</b><small>演示身份</small></span
+                ><b>{{ session.user?.name || "运营管理员" }}</b
+                ><small>{{ modeText("已登录", "演示身份") }}</small></span
               ><el-icon><ArrowDown /></el-icon>
             </button>
             <template #dropdown
               ><el-dropdown-menu
                 ><el-dropdown-item command="help"
-                  >演示范围与说明</el-dropdown-item
-                ><el-dropdown-item command="reset" :icon="Refresh" divided
+                  >使用范围与说明</el-dropdown-item
+                ><el-dropdown-item
+                  v-if="!isHttpMode"
+                  command="reset"
+                  :icon="Refresh"
+                  divided
                   >重置全部示例</el-dropdown-item
+                ><el-dropdown-item v-if="isHttpMode" command="logout" divided
+                  >退出登录</el-dropdown-item
                 ></el-dropdown-menu
               ></template
             >
@@ -165,13 +250,46 @@ async function reset() {
       </header>
       <div class="demo-ribbon">
         <span
-          ><span class="ribbon-mark">预览</span>
-          当前为界面演示，数据均为示例，修改仅在本次会话有效。</span
+          ><span class="ribbon-mark">{{ modeText("在线", "预览") }}</span>
+          {{
+            modeText(
+              "已连接业务服务，数据按当前账号授权范围显示。",
+              "当前为界面演示，数据均为示例，修改仅在本次会话有效。",
+            )
+          }}</span
         ><a :href="miniappUrl" target="_blank" rel="noopener"
           >查看用户端 <el-icon><TopRight /></el-icon
         ></a>
       </div>
-      <main class="page-content" id="main-content"><router-view /></main>
+      <main
+        class="page-content"
+        id="main-content"
+        v-loading="connection.loading"
+      >
+        <el-alert
+          v-if="connection.error"
+          type="error"
+          :closable="false"
+          show-icon
+          class="connection-alert"
+          ><template #title>{{ connection.error }}</template>
+          <p v-if="connection.requestId">
+            请求编号：{{ connection.requestId }}
+          </p>
+          <el-button size="small" @click="authenticate"
+            >重新加载数据</el-button
+          ></el-alert
+        >
+        <router-view v-if="hasWorkspace && canVisit(route.path)" />
+        <el-empty
+          v-else-if="hasWorkspace"
+          description="当前账号没有此功能的访问权限"
+        />
+        <el-empty
+          v-else-if="!connection.loading"
+          description="尚未加载业务数据，请检查服务后重试"
+        />
+      </main>
       <footer class="main-footer">
         <span>家风中华行 · 文化共建共享平台</span
         ><span>让优良家风，走进万千家庭</span>
@@ -221,7 +339,12 @@ async function reset() {
       <div class="help-seal">家</div>
       <h2 class="serif">以家风，涵养时代新风</h2>
       <p class="help-intro">
-        这里是家风中华行运营后台的界面演示，可用于讨论工作流程、页面结构与操作方式。
+        {{
+          modeText(
+            "这里是家风中华行运营工作空间，业务操作由服务端验证并保存。",
+            "这里是家风中华行运营后台的界面演示，可用于讨论工作流程、页面结构与操作方式。",
+          )
+        }}
       </p>
       <el-divider />
       <h3>可以体验</h3>
@@ -230,11 +353,21 @@ async function reset() {
       </p>
       <h3>数据如何保留</h3>
       <p>
-        所有业务记录只存在于当前页面会话。刷新页面或选择“重置全部示例”后恢复初始数据；不读取或修改5173用户端的数据。
+        {{
+          modeText(
+            "记录由数据库持久保存，附件存储于私有 S3 桶；刷新页面会重新读取当前账号有权访问的数据。",
+            "所有业务记录只存在于当前页面会话。刷新页面或选择‘重置全部示例’后恢复初始数据；不读取或修改5173用户端的数据。",
+          )
+        }}
       </p>
       <h3>尚未连接的能力</h3>
       <p>
-        真实登录权限、文件上传、消息发送、数据库、AI推理、电子签章及工作流服务均未接入。六级评审仅供流程讨论。
+        {{
+          modeText(
+            "AI 模型推理、正式电子签章与微信登录尚未接入。当前开发测试账号不代表正式实名验证。",
+            "真实登录权限、文件上传、消息发送、数据库、AI推理、电子签章及工作流服务均未接入。六级评审仅供流程讨论。",
+          )
+        }}
       </p>
       <el-button type="primary" @click="helpOpen = false">开始体验</el-button>
     </el-drawer>

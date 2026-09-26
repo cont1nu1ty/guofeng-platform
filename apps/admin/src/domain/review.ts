@@ -1,7 +1,14 @@
 import { reactive } from "vue";
 import { recordActivity } from "./workspace";
 
-export type SubmissionStatus = "待初审" | "评审中" | "退回修改" | "已入围";
+export type SubmissionStatus =
+  | "待初审"
+  | "评审中"
+  | "退回修改"
+  | "已入围"
+  | "已获奖"
+  | "已入藏"
+  | "未入围";
 export interface Submission {
   id: string;
   title: string;
@@ -16,6 +23,12 @@ export interface Submission {
   content: string;
   version: number;
   attachments: string[];
+  files?: { fileId: string; name: string }[];
+  blindContent?: string;
+  blindConfirmed?: boolean;
+  result?: string;
+  published?: boolean;
+  lockVersion?: number;
   history: { time: string; title: string; detail: string }[];
 }
 export interface Expert {
@@ -37,7 +50,9 @@ export interface ReviewTask {
   stage: string;
   assignedAt: string;
   dueAt: string;
-  status: "待评分" | "已完成";
+  status: "待评分" | "已完成" | "已取消";
+  canScore?: boolean;
+  ruleVersion?: string;
   scores?: number[];
   comment?: string;
   completedAt?: string;
@@ -51,6 +66,9 @@ export const submissionStatuses: SubmissionStatus[] = [
   "评审中",
   "退回修改",
   "已入围",
+  "已获奖",
+  "已入藏",
+  "未入围",
 ];
 export const expertGroups = ["文史研究组", "文学创作组", "家风教育组"];
 export const scoringDimensions = [

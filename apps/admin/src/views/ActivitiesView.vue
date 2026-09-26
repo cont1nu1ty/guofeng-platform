@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import { isHttpMode, modeText } from "../services/mode";
+
+import {
+  saveActivity,
+  setActivityStatus,
+  toggleAttendance,
+} from "../services/actions";
+
 import { computed, reactive, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
@@ -17,10 +25,7 @@ import {
   editorialState,
   editorialRegions,
   activityTypes,
-  saveActivity,
   validateActivity,
-  setActivityStatus,
-  toggleAttendance,
   type ActivityItem,
   type ActivityDraft,
   type ActivityStatus,
@@ -109,15 +114,15 @@ function edit(item?: ActivityItem) {
   );
   dialog.value = true;
 }
-function save() {
+async function save() {
   error.value = validateActivity(
     draft,
     editorialState.activities.find((item) => item.id === editingId.value),
   );
   if (error.value) return;
-  saveActivity(draft, editingId.value);
+  await saveActivity(draft, editingId.value);
   dialog.value = false;
-  ElMessage.success("活动已保存到本次演示会话");
+  ElMessage.success("活动已保存");
 }
 function openRegistrations(item: ActivityItem) {
   selected.value = item;
@@ -134,25 +139,25 @@ async function transition(item: ActivityItem, next: ActivityStatus) {
         : "结束活动";
   try {
     await ElMessageBox.confirm(
-      `将“${item.title}”设为“${next}”？仅更新本次演示状态，不会对外发布或发送通知。`,
-      `模拟${label}`,
+      `将“${item.title}”设为“${next}”？${modeText("将影响用户端活动与报名状态。", "仅更新本次演示状态。")}`,
+      modeText(label, `模拟${label}`),
       {
         confirmButtonText: `确认${label.slice(0, 2)}`,
         cancelButtonText: "取消",
         type: next === "已结束" ? "warning" : "info",
       },
     );
-    setActivityStatus(item, next);
-    ElMessage.success(`活动已设为${next}（当前会话）`);
+    await setActivityStatus(item, next);
+    ElMessage.success(`活动已设为${next}`);
   } catch (reason) {
     if (reason instanceof Error) ElMessage.error(reason.message);
   }
 }
-function checkIn(row: Registration) {
+async function checkIn(row: Registration) {
   if (!selected.value) return;
   try {
-    toggleAttendance(selected.value, row);
-    ElMessage.success(row.checkedIn ? "示例签到完成" : "已撤销示例签到");
+    await toggleAttendance(selected.value, row);
+    ElMessage.success(row.checkedIn ? "签到完成" : "已撤销签到");
   } catch (reason) {
     if (reason instanceof Error) ElMessage.error(reason.message);
   }
@@ -183,7 +188,11 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
       title="活动与传习"
       description="连接一方水土，让家风文化在参与和相遇中生长。"
       ><template #actions
-        ><el-button type="primary" :icon="Plus" @click="edit()"
+        ><el-button
+          v-has-permi="'activities:write'"
+          type="primary"
+          :icon="Plus"
+          @click="edit()"
           >创建活动</el-button
         ></template
       ></PageHeading
@@ -213,7 +222,7 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
           ><el-icon><User /></el-icon
         ></span>
         <p>
-          示例报名<strong>{{ registrationCount }}<small>人次</small></strong>
+          报名<strong>{{ registrationCount }}<small>人次</small></strong>
         </p>
       </div>
       <div>
@@ -221,7 +230,7 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
           ><el-icon><CircleCheck /></el-icon
         ></span>
         <p>
-          示例签到<strong>{{ attendanceCount }}<small>人次</small></strong>
+          签到<strong>{{ attendanceCount }}<small>人次</small></strong>
         </p>
       </div>
     </div>
@@ -300,20 +309,28 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
           </div>
           <div class="activity-footer">
             <div>
-              <el-button link type="primary" @click="edit(item)">编辑</el-button
+              <el-button
+                v-has-permi="'activities:write'"
+                link
+                type="primary"
+                @click="edit(item)"
+                >编辑</el-button
               ><el-button
+                v-has-permi="'activities:write'"
                 v-if="item.status === '草稿'"
                 link
                 type="primary"
                 @click="transition(item, '报名中')"
                 >发布</el-button
               ><el-button
+                v-has-permi="'activities:write'"
                 v-if="item.status === '报名中'"
                 link
                 type="success"
                 @click="transition(item, '进行中')"
                 >开始</el-button
               ><el-button
+                v-has-permi="'activities:write'"
                 v-if="item.status === '进行中' || item.status === '报名中'"
                 link
                 type="warning"
@@ -340,7 +357,12 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
       >
     </section>
     <p class="activity-note">
-      活动与报名名单均为虚构样例，操作仅在本次会话有效；不连接真实报名、消息推送或直播服务。
+      {{
+        modeText(
+          "活动与报名名单由服务端保存，报名和签到遵循名额与状态校验；暂未接入直播服务。",
+          "活动与报名名单均为虚构样例，操作仅在本次会话有效；不连接真实报名、消息推送或直播服务。",
+        )
+      }}
     </p>
 
     <el-dialog
@@ -423,9 +445,12 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
       ></el-form>
       <template #footer
         ><el-button @click="dialog = false">取消</el-button
-        ><el-button type="primary" @click="save">{{
-          editingId ? "保存修改" : "保存草稿"
-        }}</el-button></template
+        ><el-button
+          v-has-permi="'activities:write'"
+          type="primary"
+          @click="save"
+          >{{ editingId ? "保存修改" : "保存草稿" }}</el-button
+        ></template
       >
     </el-dialog>
 
@@ -447,7 +472,7 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
         <div class="registration-stats">
           <div>
             <strong>{{ selected.registrations.length }}</strong
-            ><span>示例报名</span>
+            ><span>报名</span>
           </div>
           <div>
             <strong>{{
@@ -463,8 +488,8 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
         <el-alert
           :title="
             selected.status === '进行中'
-              ? '可操作示例签到或撤销签到，名单仅在当前会话更新。'
-              : '活动设为进行中后可操作签到。此处名单均为虚构示例。'
+              ? '可操作签到或撤销签到，请核对参与记录。'
+              : '活动设为进行中后可操作签到。'
           "
           type="info"
           :closable="false"
@@ -488,7 +513,7 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
         <el-table
           :data="selectedRegistrations"
           row-key="id"
-          empty-text="暂无匹配的示例报名记录"
+          empty-text="暂无匹配的报名记录"
           ><el-table-column
             prop="name"
             label="参与者"
@@ -508,6 +533,7 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
           ><el-table-column label="操作" width="95"
             ><template #default="{ row }"
               ><el-button
+                v-has-permi="'activities:write'"
                 link
                 :disabled="selected?.status !== '进行中'"
                 type="primary"
@@ -524,10 +550,11 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
       <template #footer
         ><el-button @click="detailOpen = false">关闭</el-button
         ><el-button
+          v-has-permi="'activities:write'"
           v-if="selected?.status === '报名中'"
           type="primary"
           @click="transition(selected, '进行中')"
-          >模拟开始活动</el-button
+          >开始活动</el-button
         ></template
       >
     </el-drawer>

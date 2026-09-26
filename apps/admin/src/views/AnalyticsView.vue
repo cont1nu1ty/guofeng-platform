@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { isHttpMode, modeText } from "../services/mode";
+
 import { computed, ref } from "vue";
 import { Download, Document, DataAnalysis } from "@element-plus/icons-vue";
 import PageHeading from "../components/PageHeading.vue";
 import ChartPanel from "../components/ChartPanel.vue";
-import { workspace, recordActivity, regions } from "../domain/workspace";
+import { workspace, recordActivity } from "../domain/workspace";
+import { analyticsRegionNames } from "../domain/regions";
+import { session } from "../services/session";
 import { reviewState } from "../domain/review";
 import {
   scopedSubmissions,
@@ -17,13 +21,13 @@ import {
   downloadSampleCsv,
 } from "../domain/analytics";
 const reportOpen = ref(false);
-const reportPeriod = ref("2026年9月");
+const reportPeriod = ref(
+  isHttpMode
+    ? new Date().toLocaleDateString("zh-CN", { year: "numeric", month: "long" })
+    : "2026年9月",
+);
 const regionRows = computed(() =>
-  regions
-    .slice(1)
-    .filter(
-      (region) => workspace.region === "全国" || workspace.region === region,
-    )
+  analyticsRegionNames(isHttpMode, session.user, workspace.region)
     .map((region) => ({
       region,
       works: reviewState.submissions.filter((item) => item.region === region)
@@ -77,16 +81,18 @@ const barOption = computed(() => ({
 }));
 function exportData() {
   downloadSampleCsv();
-  recordActivity("导出示例统计CSV", workspace.region);
+  if (!isHttpMode) recordActivity("导出示例统计CSV", workspace.region);
 }
 </script>
 <template>
   <PageHeading
     title="数据智库"
-    description="从征集、评审到传习，观察文化共建的每一步。所有图表均为示例。"
+    description="从征集、评审到传习，观察文化共建的每一步。图表按当前数据范围汇总。"
     eyebrow="INSIGHTS / 数据观察"
     ><template #actions
-      ><el-button :icon="Download" @click="exportData">导出示例数据</el-button
+      ><el-button :icon="Download" @click="exportData">{{
+        modeText("导出业务数据", "导出示例数据")
+      }}</el-button
       ><el-button type="primary" :icon="Document" @click="reportOpen = true"
         >报告预览</el-button
       ></template
@@ -94,7 +100,7 @@ function exportData() {
   >
   <div class="stat-grid">
     <div class="stat-card">
-      <span>当前示例稿件</span
+      <span>当前稿件</span
       ><strong>{{ scopedSubmissions.length }} <small>篇</small></strong>
       <p>覆盖当前筛选地区</p>
     </div>
@@ -113,7 +119,7 @@ function exportData() {
         >{{ scopedTasks.filter((item) => item.status === "已完成").length }}
         <small>项</small></strong
       >
-      <p>共 {{ scopedTasks.length }} 项示例任务</p>
+      <p>共 {{ scopedTasks.length }} 项任务</p>
     </div>
     <div class="stat-card">
       <span>活动参与人次</span
@@ -126,23 +132,36 @@ function exportData() {
         }}
         <small>人次</small></strong
       >
-      <p>当前 {{ scopedActivities.length }} 场示例活动</p>
+      <p>当前 {{ scopedActivities.length }} 场活动</p>
     </div>
   </div>
   <section class="panel">
     <div class="panel-header">
       <div>
         <h2>征集与初审趋势</h2>
-        <p>预设历史样例，不与当前稿件库合并计数 · {{ workspace.region }}</p>
+        <p>
+          {{
+            modeText(
+              "按业务记录实际日期汇总，暂无记录时显示空态",
+              "预设历史样例，不与当前稿件库合并计数",
+            )
+          }}
+          · {{ workspace.region }}
+        </p>
       </div>
       <el-radio-group v-model="trendPeriod" size="small"
         ><el-radio-button value="7">近7日</el-radio-button
         ><el-radio-button value="14">近14日</el-radio-button></el-radio-group
       >
     </div>
-    <ChartPanel
+    <el-empty
+      v-if="isHttpMode && !historyTrend.length"
+      description="暂无历史业务记录"
+      :image-size="80"
+    /><ChartPanel
+      v-else
       :option="trendOption"
-      label="预设历史投稿量与初审量折线图"
+      :label="modeText('实际投稿量与初审量折线图', '预设历史趋势图')"
       height="300px"
     />
   </section>
@@ -154,8 +173,8 @@ function exportData() {
       </div>
       <ChartPanel
         :option="barOption"
-        label="各地区当前示例稿件数量"
-        height="235px"
+        label="各地区当前稿件数量"
+        :height="`${Math.max(235, regionRows.length * 24 + 16)}px`"
       />
     </section>
     <section class="panel">
@@ -165,7 +184,7 @@ function exportData() {
       </div>
       <ChartPanel
         :option="channelOption"
-        label="示例稿件的投稿通道占比"
+        label="稿件的投稿通道占比"
         height="235px"
       />
       <div class="empty-note">党政干部 / 校园青少年 / 城乡群众 / 特色群体</div>
@@ -175,10 +194,19 @@ function exportData() {
     <div class="panel-header">
       <div>
         <h2>区域明细</h2>
-        <p>数字来自当前会话中的示例稿件，审核操作会同步改变统计。</p>
+        <p>
+          {{
+            modeText(
+              "数字来自当前账号授权范围内的稿件，审核操作会更新统计。",
+              "数字来自当前会话中的稿件，审核操作会同步改变统计。",
+            )
+          }}
+        </p>
       </div>
     </div>
-    <el-table :data="regionRows" empty-text="当前地区暂无示例"
+    <el-table
+      :data="regionRows"
+      :empty-text="modeText('当前筛选范围无授权地区', '当前地区暂无示例')"
       ><el-table-column
         prop="region"
         label="地区"
@@ -190,7 +218,7 @@ function exportData() {
         label="评审中"
         min-width="100" /><el-table-column
         prop="selected"
-        label="示例入围"
+        label="入围"
         min-width="100"
     /></el-table>
   </section>
@@ -199,45 +227,51 @@ function exportData() {
     title="文化共建报告 · 预览"
     size="min(650px, 100vw)"
     ><div class="report-sheet">
-      <span class="report-eyebrow">JIAFENG / 示例报告</span>
+      <span class="report-eyebrow">JIAFENG / 统计报告</span>
       <h2>家风文化共建观察</h2>
       <div class="report-scope">
         {{ reportPeriod }} · {{ workspace.region }}
       </div>
       <el-divider />
       <p>
-        本报告为界面演示模板，由当前示例记录汇总，不是实际运营报告或AI生成结果。
+        {{
+          modeText(
+            "本报告由当前账号授权范围内的业务记录汇总，不使用 AI 生成。",
+            "本报告为界面演示模板，由当前示例记录汇总，不是实际运营报告或AI生成结果。",
+          )
+        }}
       </p>
       <h3>一、征集与评审</h3>
       <p>
-        当前范围内共有 {{ scopedSubmissions.length }} 篇示例稿件，初审处理进度为
+        当前范围内共有 {{ scopedSubmissions.length }} 篇稿件，初审处理进度为
         {{ progress }}%。{{
           scopedTasks.filter((item) => item.status === "已完成").length
         }}
-        项专家任务已完成示例评分。
+        项专家任务已完成评分。
       </p>
       <h3>二、内容与传习</h3>
       <p>
         已发布
-        {{
-          scopedContents.filter((item) => item.status === "已发布").length
-        }}
-        条示例内容；{{ scopedActivities.length }} 场活动累计记录
+        {{ scopedContents.filter((item) => item.status === "已发布").length }}
+        条内容；{{ scopedActivities.length }} 场活动累计记录
         {{
           scopedActivities.reduce(
             (sum, item) => sum + item.registrations.length,
             0,
           )
         }}
-        人次示例报名。
+        人次报名。
       </p>
-      <h3>三、历史趋势样例</h3>
+      <h3>三、历史趋势</h3>
       <p>
         所选
+        {{ historyTrend.length }}
         {{
-          historyTrend.length
+          modeText(
+            "日趋势由业务记录汇总；未采集的传播指标不作估算。",
+            "日趋势为预设数据，仅用于讨论报表展示方式。传播、文创及研学指标尚未接入。",
+          )
         }}
-        日趋势为预设数据，仅用于讨论报表展示方式。传播、文创及研学指标尚未接入。
       </p>
       <el-divider /><span class="muted small"
         >正式报告将按已确认的指标口径、授权范围和实际业务记录生成。</span

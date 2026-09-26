@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { isHttpMode, modeText } from "../services/mode";
+
+import { updateExpert, assignReview } from "../services/actions";
+
 import { computed, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import {
@@ -11,13 +15,8 @@ import {
 import PageHeading from "../components/PageHeading.vue";
 import Pagination from "../components/upstream/Pagination.vue";
 import { workspace, matchesRegion } from "../domain/workspace";
-import {
-  reviewState,
-  expertGroups,
-  updateExpert,
-  assignReview,
-  type Expert,
-} from "../domain/review";
+import { reviewState, expertGroups, type Expert } from "../domain/review";
+import { hasBlockingReviewTask } from "../domain/assignment";
 
 const search = ref(""),
   group = ref(""),
@@ -34,6 +33,7 @@ const draftGroup = ref(""),
 const submissionId = ref(""),
   dueAt = ref(""),
   assignmentError = ref("");
+const assignmentOpenedAt = ref(Date.now());
 const active = computed(() =>
   reviewState.experts.find((item) => item.id === activeId.value),
 );
@@ -65,9 +65,12 @@ const availableSubmissions = computed(() =>
     (item) =>
       item.status === "评审中" &&
       matchesRegion(item.region) &&
-      !reviewState.tasks.some(
-        (task) =>
-          task.submissionId === item.id && task.expertId === activeId.value,
+      !hasBlockingReviewTask(
+        reviewState.tasks,
+        item.id,
+        activeId.value,
+        isHttpMode,
+        assignmentOpenedAt.value,
       ),
   ),
 );
@@ -86,9 +89,9 @@ function edit(expert: Expert) {
   editError.value = "";
   editOpen.value = true;
 }
-function save() {
+async function save() {
   if (!active.value) return;
-  const result = updateExpert(
+  const result = await updateExpert(
     active.value.id,
     draftGroup.value,
     draftAvailability.value,
@@ -101,14 +104,19 @@ function save() {
   editOpen.value = false;
 }
 function openAssignment(expert: Expert) {
+  assignmentOpenedAt.value = Date.now();
   activeId.value = expert.id;
   submissionId.value = "";
   dueAt.value = "";
   assignmentError.value = "";
   assignmentOpen.value = true;
 }
-function assign() {
-  const result = assignReview(submissionId.value, activeId.value, dueAt.value);
+async function assign() {
+  const result = await assignReview(
+    submissionId.value,
+    activeId.value,
+    dueAt.value,
+  );
   if (!result.ok) {
     assignmentError.value = result.message;
     return;
@@ -126,7 +134,7 @@ function assign() {
       eyebrow="评审中心 / 专家库"
       ><template #actions
         ><el-tag type="info" effect="plain"
-          >{{ workspace.region }} · 示例档案</el-tag
+          >{{ workspace.region }} · 专家档案</el-tag
         ></template
       ></PageHeading
     >
@@ -271,8 +279,14 @@ function assign() {
         >
         <el-table-column label="操作" fixed="right" width="160"
           ><template #default="{ row }"
-            ><el-button type="primary" link @click="edit(row)">编辑</el-button
             ><el-button
+              v-has-permi="'experts:write'"
+              type="primary"
+              link
+              @click="edit(row)"
+              >编辑</el-button
+            ><el-button
+              v-has-permi="'experts:write'"
               type="primary"
               link
               :disabled="row.availability !== '可分配'"
@@ -293,7 +307,12 @@ function assign() {
       <div>
         <h3>专家资料与分组先行，真实审核与授权后续接入</h3>
         <p>
-          当前专家及机构均为虚构示例。编辑仅调整本次会话的分组和接单状态，不处理真实入驻审核；暂停接单不会撤销已有任务。
+          {{
+            modeText(
+              "编辑将更新专家分组与接单状态；暂停接单不会撤销已有任务。开发专家档案不代表正式身份认证。",
+              "当前专家及机构均为虚构示例。编辑仅调整本次会话的分组和接单状态，不处理真实入驻审核；暂停接单不会撤销已有任务。",
+            )
+          }}
         </p>
       </div>
     </div>
@@ -354,15 +373,25 @@ function assign() {
         />
         <el-alert
           class="profile-alert"
-          title="专家档案为演示信息，不代表真实身份认证、正式聘任或授权。"
+          :title="
+            modeText(
+              '专家资料不代表已完成实名核验或正式聘任。',
+              '专家档案为演示信息，不代表真实身份认证、正式聘任或授权。',
+            )
+          "
           type="info"
           :closable="false"
           show-icon
         /> </template
       ><template #footer
         ><div v-if="active">
-          <el-button :icon="EditPen" @click="edit(active)">编辑档案</el-button
+          <el-button
+            v-has-permi="'experts:write'"
+            :icon="EditPen"
+            @click="edit(active)"
+            >编辑档案</el-button
           ><el-button
+            v-has-permi="'experts:write'"
             type="primary"
             :disabled="active.availability !== '可分配'"
             @click="openAssignment(active)"
@@ -373,9 +402,12 @@ function assign() {
     </el-drawer>
     <el-dialog v-model="editOpen" title="编辑专家档案" width="min(620px, 92vw)"
       ><p class="dialog-description">
-        {{ active?.name }} · {{ active?.title }}<br /><span
-          >本次仅演示分组与接单状态，修改后刷新恢复。</span
-        >
+        {{ active?.name }} · {{ active?.title }}<br /><span>{{
+          modeText(
+            "分组与接单状态保存至服务端。",
+            "本次仅演示分组与接单状态，修改后刷新恢复。",
+          )
+        }}</span>
       </p>
       <el-form label-position="top"
         ><el-form-item label="专业分组" required
@@ -398,7 +430,9 @@ function assign() {
         :closable="false"
       /><template #footer
         ><el-button @click="editOpen = false">取消</el-button
-        ><el-button type="primary" @click="save">保存修改</el-button></template
+        ><el-button v-has-permi="'experts:write'" type="primary" @click="save"
+          >保存修改</el-button
+        ></template
       ></el-dialog
     >
     <el-dialog
@@ -407,7 +441,10 @@ function assign() {
       width="min(620px, 92vw)"
       ><p class="dialog-description">
         为 {{ active?.name }} 分配稿件<br /><span
-          >仅显示当前地区已通过初审、尚未分配给此专家的作品。</span
+          >{{ modeText(
+            "仅显示当前地区评审中且没有有效待评分任务的作品；已完成、取消或到期后可重新分配。",
+            "仅显示当前地区已通过初审、尚未分配给此专家的作品。",
+          ) }}</span
         >
       </p>
       <el-form label-position="top"
@@ -438,6 +475,7 @@ function assign() {
       /><template #footer
         ><el-button @click="assignmentOpen = false">取消</el-button
         ><el-button
+          v-has-permi="'experts:write'"
           type="primary"
           :disabled="!availableSubmissions.length"
           @click="assign"

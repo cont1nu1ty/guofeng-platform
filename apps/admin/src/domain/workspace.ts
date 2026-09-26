@@ -1,12 +1,10 @@
 import { reactive } from "vue";
+import { isHttpMode } from "../services/mode";
+import { allRegionNames, demoRegionNames } from "./regions";
 
 export const regions = [
   "全国",
-  "北京市",
-  "浙江省",
-  "四川省",
-  "江苏省",
-  "广东省",
+  ...(isHttpMode ? allRegionNames : demoRegionNames),
 ];
 export const workspace = reactive({ region: "全国", sidebarOpen: false });
 export const matchesRegion = (region: string) =>

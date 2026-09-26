@@ -6,4 +6,17 @@ import "./styles/main.css";
 import App from "./App.vue";
 import { router } from "./router";
 
-createApp(App).use(router).use(ElementPlus, { locale: zhCn }).mount("#app");
+import { hasPermi } from "./services/session";
+import { ApiError, reportError } from "./services/http";
+import { ElMessage } from "element-plus";
+const app = createApp(App).use(router).use(ElementPlus, { locale: zhCn });
+app.directive("has-permi", hasPermi);
+app.config.errorHandler = (error) => {
+  if (error instanceof ApiError) {
+    reportError(error);
+    ElMessage.error(error.message);
+  } else {
+    console.error(error);
+  }
+};
+app.mount("#app");

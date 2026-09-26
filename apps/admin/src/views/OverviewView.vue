@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { isHttpMode, modeText } from "../services/mode";
+
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import {
@@ -22,11 +24,13 @@ import {
   scopedActivities,
   scopedContents,
   trendOption,
+  historyTrend,
   trendPeriod,
   channelDistribution,
   channelOption,
 } from "../domain/analytics";
 
+import { canVisit } from "../services/session";
 const router = useRouter();
 const pending = computed(() =>
   scopedSubmissions.value.filter((item) => item.status === "待初审"),
@@ -59,7 +63,7 @@ const metrics = computed(() => [
       ["报名中", "进行中"].includes(item.status),
     ).length,
     unit: "场",
-    detail: `${scopedActivities.value.reduce((sum, item) => sum + item.registrations.length, 0)} 人次示例报名`,
+    detail: `${scopedActivities.value.reduce((sum, item) => sum + item.registrations.length, 0)} 人次报名`,
     icon: Calendar,
     color: "green",
     path: "/activities",
@@ -112,9 +116,16 @@ const quickLinks = [
     :description="`${workspace.region}视角 · 让每一份家风故事，都被认真对待。`"
     eyebrow="WORKSPACE / 运营总览"
     ><template #actions
-      ><el-button :icon="Calendar" @click="router.push('/activities')"
+      ><el-button
+        v-if="canVisit('/activities')"
+        :icon="Calendar"
+        @click="router.push('/activities')"
         >活动日历</el-button
-      ><el-button type="primary" :icon="Plus" @click="router.push('/content')"
+      ><el-button
+        v-if="canVisit('/content')"
+        type="primary"
+        :icon="Plus"
+        @click="router.push('/content')"
         >内容管理</el-button
       ></template
     ></PageHeading
@@ -124,7 +135,7 @@ const quickLinks = [
       <div class="welcome-kicker"><span /> 家风相传 · 文脉共续</div>
       <h2>以一方家风，涵养万家新风</h2>
       <p>从一封家书开始，让真挚的故事被记录，让优良的家风被传承。</p>
-      <button @click="router.push('/submissions')">
+      <button v-if="canVisit('/submissions')" @click="router.push('/submissions')">
         今日待审 <b>{{ pending.length }}</b> 篇
         <el-icon><ArrowRight /></el-icon>
       </button>
@@ -140,7 +151,7 @@ const quickLinks = [
   </section>
   <div class="stat-grid overview-metrics">
     <button
-      v-for="metric in metrics"
+      v-for="metric in metrics.filter((item) => canVisit(item.path))"
       :key="metric.label"
       class="stat-card metric-button"
       @click="router.push(metric.path)"
@@ -161,11 +172,14 @@ const quickLinks = [
     </button>
   </div>
   <div class="overview-main-grid">
-    <section class="panel trend-panel">
+    <section v-if="canVisit('/analytics')" class="panel trend-panel">
       <div class="panel-header">
         <div>
           <h2><span class="heading-rule" />征集与初审趋势</h2>
-          <p>预设历史样例 · {{ workspace.region }}</p>
+          <p>
+            {{ modeText("按实际业务日期汇总", "预设历史样例") }} ·
+            {{ workspace.region }}
+          </p>
         </div>
         <el-radio-group v-model="trendPeriod" size="small"
           ><el-radio-button value="7">近 7 日</el-radio-button
@@ -174,13 +188,18 @@ const quickLinks = [
           ></el-radio-group
         >
       </div>
-      <ChartPanel
+      <el-empty
+        v-if="isHttpMode && !historyTrend.length"
+        description="暂无历史业务记录"
+        :image-size="80"
+      /><ChartPanel
+        v-else
         :option="trendOption"
-        label="预设投稿与初审历史趋势，非真实运营数据"
+        :label="modeText('实际投稿与初审历史趋势', '预设历史趋势，非运营数据')"
         height="236px"
       />
     </section>
-    <section class="panel channel-panel">
+    <section v-if="canVisit('/analytics')" class="panel channel-panel">
       <div class="panel-header">
         <div>
           <h2><span class="heading-rule" />投稿通道分布</h2>
@@ -190,7 +209,7 @@ const quickLinks = [
       </div>
       <ChartPanel
         :option="channelOption"
-        label="四类投稿通道的当前示例稿件分布"
+        label="四类投稿通道的当前稿件分布"
         height="186px"
       />
       <div class="channel-legend">
@@ -204,7 +223,7 @@ const quickLinks = [
         </div>
       </div>
     </section>
-    <section class="panel pending-panel">
+    <section v-if="canVisit('/submissions')" class="panel pending-panel">
       <div class="panel-header">
         <h2>
           <span class="heading-rule" />待办事项
@@ -292,14 +311,14 @@ const quickLinks = [
           </div>
         </div>
       </div>
-      <el-button text class="all-log-button" @click="router.push('/settings')"
+      <el-button v-if="canVisit('/settings')" text class="all-log-button" @click="router.push('/settings')"
         >查看全部操作日志 <el-icon><ArrowRight /></el-icon
       ></el-button>
     </section>
   </div>
   <div class="quick-links">
     <button
-      v-for="item in quickLinks"
+      v-for="item in quickLinks.filter(item=>canVisit(item.path))"
       :key="item.path"
       @click="router.push(item.path)"
     >

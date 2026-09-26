@@ -4,10 +4,19 @@ import { fileURLToPath } from "node:url";
 
 export default defineConfig({
   plugins: [vue()],
+  base:
+    process.env.VITE_BASE_URL ||
+    (process.env.VITE_DATA_MODE === "http" ? "/admin/" : "/"),
   server: {
     host: "0.0.0.0",
     port: 5174,
     strictPort: true,
+    proxy: {
+      "/api": {
+        target: process.env.VITE_API_PROXY || "http://127.0.0.1:18080",
+        changeOrigin: true,
+      },
+    },
     fs: {
       allow: [
         fileURLToPath(new URL(".", import.meta.url)),

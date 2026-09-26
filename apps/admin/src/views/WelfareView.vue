@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { isHttpMode, modeText } from "../services/mode";
+
+import { toggleProduct, saveProduct, processClaim } from "../services/actions";
+
 import { computed, reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { Search, Box, Present, Van } from "@element-plus/icons-vue";
@@ -7,13 +11,31 @@ import {
   products,
   welfareClaims,
   productTitle,
-  toggleProduct,
-  saveProduct,
-  processClaim,
   type Product,
   type WelfareClaim,
 } from "../domain/operations";
 import { matchesRegion } from "../domain/workspace";
+import { command } from "../services/workspaceData";
+import { regions } from "../domain/workspace";
+const newProductOpen = ref(false);
+const productForm = reactive({
+  title: "",
+  type: "公益文创",
+  description: "",
+  stock: 0,
+  quota: 1,
+  region: "全国",
+});
+async function createProduct() {
+  if (
+    productForm.title.trim().length < 2 ||
+    productForm.description.trim().length < 5
+  )
+    return ElMessage.warning("请填写商品名称（至少2字）及介绍（至少5字）");
+  await command("saveProduct", { ...productForm });
+  newProductOpen.value = false;
+  ElMessage.success("商品已保存");
+}
 const tab = ref("products"),
   query = ref(""),
   category = ref(""),
@@ -47,9 +69,9 @@ function editStock(item: Product) {
   stockForm.quota = item.quota;
   stockOpen.value = true;
 }
-function saveStock() {
+async function saveStock() {
   if (!currentProduct.value) return;
-  const result = saveProduct(
+  const result = await saveProduct(
     currentProduct.value.id,
     stockForm.stock,
     stockForm.quota,
@@ -58,9 +80,9 @@ function saveStock() {
   ElMessage.success(result.message);
   stockOpen.value = false;
 }
-function changeProduct(item: Product) {
-  toggleProduct(item.id);
-  ElMessage.success(`“${item.title}”示例状态已更新`);
+async function changeProduct(item: Product) {
+  await toggleProduct(item.id);
+  ElMessage.success(`“${item.title}”状态已更新`);
 }
 const claimOpen = ref(false),
   currentClaim = ref<WelfareClaim | null>(null),
@@ -70,9 +92,13 @@ function openClaim(item: WelfareClaim) {
   returnNote.value = "";
   claimOpen.value = true;
 }
-function act(action: "approve" | "return" | "deliver") {
+async function act(action: "approve" | "return" | "deliver") {
   if (!currentClaim.value) return;
-  const result = processClaim(currentClaim.value.id, action, returnNote.value);
+  const result = await processClaim(
+    currentClaim.value.id,
+    action,
+    returnNote.value,
+  );
   if (!result.ok) return ElMessage.warning(result.message);
   ElMessage.success(result.message);
   claimOpen.value = false;
@@ -83,7 +109,16 @@ function act(action: "approve" | "return" | "deliver") {
     title="文创与公益"
     description="让家风文化走进日常，让每一份公益心意有所抵达。"
     eyebrow="CULTURE & PUBLIC WELFARE"
-  />
+    ><template #actions
+      ><el-button
+        v-if="isHttpMode"
+        v-has-permi="'welfare:write'"
+        type="primary"
+        @click="newProductOpen = true"
+        >新建文创资源</el-button
+      ></template
+    ></PageHeading
+  >
   <div class="welfare-banner">
     <div>
       <span class="mini-label">以文化人 · 以物传情</span>
@@ -94,7 +129,7 @@ function act(action: "approve" | "return" | "deliver") {
   </div>
   <div class="stat-grid welfare-stats">
     <div class="stat-card">
-      <el-icon><Present /></el-icon><span>示例文创品类</span
+      <el-icon><Present /></el-icon><span>文创品类</span
       ><strong>{{ products.length }}<small>款</small></strong>
     </div>
     <div class="stat-card">
@@ -172,17 +207,24 @@ function act(action: "approve" | "return" | "deliver") {
             <p>{{ item.subtitle }}</p>
             <div class="product-metrics">
               <div>
-                <small>示例库存</small><b>{{ item.stock }}<em>件</em></b>
+                <small>库存</small><b>{{ item.stock }}<em>件</em></b>
               </div>
               <div>
                 <small>单次申领额度</small><b>{{ item.quota }}<em>件</em></b>
               </div>
             </div>
             <div class="product-actions">
-              <el-button @click="editStock(item)">库存与额度</el-button
-              ><el-button link type="primary" @click="changeProduct(item)">{{
-                item.status === "上架中" ? "下架" : "上架"
-              }}</el-button>
+              <el-button v-has-permi="'welfare:write'" @click="editStock(item)"
+                >库存与额度</el-button
+              ><el-button
+                v-has-permi="'welfare:write'"
+                link
+                type="primary"
+                @click="changeProduct(item)"
+                >{{
+                  ["上架中", "已上架"].includes(item.status) ? "下架" : "上架"
+                }}</el-button
+              >
             </div>
           </div>
         </article>
@@ -192,7 +234,12 @@ function act(action: "approve" | "return" | "deliver") {
         description="没有找到文创资源，请调整筛选"
       />
       <p class="empty-note">
-        商品与库存均为预置样例。定制文创暂展示资源，不涉及报价、支付和实际订单。
+        {{
+          modeText(
+            "商品、库存和申领记录由服务端保存。定制文创暂不涉及报价、支付和订单。",
+            "商品与库存均为预置样例。定制文创暂展示资源，不涉及报价、支付和实际订单。",
+          )
+        }}
       </p></template
     >
     <template v-else
@@ -245,15 +292,20 @@ function act(action: "approve" | "return" | "deliver") {
           ><el-empty description="当前地区没有符合条件的申领记录" /></template
       ></el-table>
       <div class="table-tools muted">
-        共 {{ visibleClaims.length }} 笔示例申领 ·
-        模拟发放会同步扣减本次会话库存，不产生实际配送。
+        共 {{ visibleClaims.length }} 笔申领 ·
+        {{
+          modeText(
+            "确认发放会扣减库存并记录台账，物流配送不在当前系统处理。",
+            "模拟发放会同步扣减本次会话库存，不产生实际配送。",
+          )
+        }}
       </div></template
     >
   </section>
   <el-dialog v-model="stockOpen" title="库存与公益额度" width="min(520px, 92vw)"
     ><p v-if="currentProduct" class="muted">{{ currentProduct.title }}</p>
     <el-form label-position="top"
-      ><el-form-item label="示例库存（件）"
+      ><el-form-item label="库存（件）"
         ><el-input-number
           v-model="stockForm.stock"
           :min="0"
@@ -266,12 +318,20 @@ function act(action: "approve" | "return" | "deliver") {
           :max="10000"
           :precision="0" /></el-form-item></el-form
     ><el-alert
-      title="这里只调整本次会话中的示例数值。"
+      :title="
+        modeText(
+          '保存后更新真实库存与单次申领额度。',
+          '这里只调整本次会话中的示例数值。',
+        )
+      "
       type="info"
       :closable="false"
     /><template #footer
       ><el-button @click="stockOpen = false">取消</el-button
-      ><el-button type="primary" @click="saveStock"
+      ><el-button
+        v-has-permi="'welfare:write'"
+        type="primary"
+        @click="saveStock"
         >保存调整</el-button
       ></template
     ></el-dialog
@@ -312,22 +372,78 @@ function act(action: "approve" | "return" | "deliver") {
           show-word-limit
         />
         <div class="drawer-actions">
-          <el-button @click="act('return')">退回补充</el-button
-          ><el-button type="primary" @click="act('approve')"
-            >模拟通过审核</el-button
+          <el-button v-has-permi="'welfare:write'" @click="act('return')"
+            >退回补充</el-button
+          ><el-button
+            v-has-permi="'welfare:write'"
+            type="primary"
+            @click="act('approve')"
+            >通过审核</el-button
           >
         </div></template
       ><template v-else-if="currentClaim.status === '待发放'"
         ><el-alert
           class="delivery-note"
-          title="处理后扣减示例库存并更新台账，无实际物流。"
+          :title="
+            modeText(
+              '确认后扣减库存并更新台账，不会自动创建物流单。',
+              '处理后扣减库存并更新台账，无实际物流。',
+            )
+          "
           type="info"
           :closable="false"
-        /><el-button type="primary" @click="act('deliver')"
-          >完成示例发放</el-button
+        /><el-button
+          v-has-permi="'welfare:write'"
+          type="primary"
+          @click="act('deliver')"
+          >确认发放</el-button
         ></template
       ></template
     ></el-drawer
+  >
+  <el-dialog
+    v-model="newProductOpen"
+    title="新建文创资源"
+    width="min(540px,92vw)"
+    ><el-form label-position="top"
+      ><el-form-item label="名称" required
+        ><el-input v-model="productForm.title" maxlength="60" /></el-form-item
+      ><el-form-item label="类别"
+        ><el-select v-model="productForm.type"
+          ><el-option label="公益文创" value="公益文创" /><el-option
+            label="定制文创"
+            value="定制文创" /></el-select></el-form-item
+      ><el-form-item label="地区"
+        ><el-select v-model="productForm.region"
+          ><el-option
+            v-for="r in regions"
+            :key="r"
+            :label="r"
+            :value="r" /></el-select></el-form-item
+      ><el-form-item label="介绍" required
+        ><el-input
+          v-model="productForm.description"
+          type="textarea"
+          maxlength="500" /></el-form-item
+      ><el-form-item label="库存"
+        ><el-input-number
+          v-model="productForm.stock"
+          :min="0"
+          :precision="0" /></el-form-item
+      ><el-form-item label="单次申领额度"
+        ><el-input-number
+          v-model="productForm.quota"
+          :min="1"
+          :precision="0" /></el-form-item></el-form
+    ><template #footer
+      ><el-button @click="newProductOpen = false">取消</el-button
+      ><el-button
+        v-has-permi="'welfare:write'"
+        type="primary"
+        @click="createProduct"
+        >保存文创资源</el-button
+      ></template
+    ></el-dialog
   >
 </template>
 <style scoped>

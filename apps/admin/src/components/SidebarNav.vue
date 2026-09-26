@@ -17,6 +17,15 @@ import {
   Setting,
 } from "@element-plus/icons-vue";
 import { navGroups, workspace } from "../domain/workspace";
+import { canVisit } from "../services/session";
+const visibleGroups = computed(() =>
+  navGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => canVisit(item.path)),
+    }))
+    .filter((group) => group.items.length),
+);
 const route = useRoute();
 const icons = {
   Odometer,
@@ -37,7 +46,7 @@ const currentPath = computed(() => route.path);
 </script>
 <template>
   <nav class="sidebar-nav" aria-label="后台功能导航">
-    <div v-for="group in navGroups" :key="group.label" class="nav-group">
+    <div v-for="group in visibleGroups" :key="group.label" class="nav-group">
       <div class="nav-group-label">{{ group.label }}</div>
       <router-link
         v-for="item in group.items"

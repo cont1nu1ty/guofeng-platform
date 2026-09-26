@@ -1,27 +1,41 @@
 <script setup lang="ts">
+import { isHttpMode, modeText } from "../services/mode";
+
+import { saveContent, setContentStatus } from "../services/actions";
+
 import { computed, reactive, ref, watch } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import {
-  Plus,
-  Search,
-  Document,
-  Edit,
-  Promotion,
-} from "@element-plus/icons-vue";
+import { Plus, Search, Document, Edit, Promotion } from "@element-plus/icons-vue";
 import PageHeading from "../components/PageHeading.vue";
+import CatalogManager from "../components/catalog/CatalogManager.vue";
+import HomepageEditor from "../components/catalog/HomepageEditor.vue";
+import SupportTickets from "../components/catalog/SupportTickets.vue";
+import type { CatalogSection } from "../domain/catalog";
+import { command, versionOf } from "../services/workspaceData";
+import { connection } from "../services/http";
 import Pagination from "../components/upstream/Pagination.vue";
 import { workspace, matchesRegion } from "../domain/workspace";
 import {
   editorialState,
   editorialRegions,
   contentCategories,
-  saveContent,
-  setContentStatus,
+  contentTopics,
   validateContent,
   type ContentItem,
   type ContentDraft,
   type ContentCategory,
 } from "../domain/editorial";
+
+const workspaceTab = ref<"articles" | CatalogSection>("articles");
+const workspaceTabs = {
+  articles: "文章资讯",
+  banners: "首页轮播",
+  homepage: "首页布局",
+  mediaItems: "媒体素材",
+  venues: "传习阵地",
+  hallPeople: "名人馆档案",
+  supportTickets: "人工咨询",
+};
 
 const category = ref<ContentCategory | "全部">("全部");
 const query = ref("");
@@ -42,10 +56,7 @@ const filtered = computed(() =>
   ),
 );
 const visible = computed(() =>
-  filtered.value.slice(
-    (page.value - 1) * limit.value,
-    page.value * limit.value,
-  ),
+  filtered.value.slice((page.value - 1) * limit.value, page.value * limit.value),
 );
 const published = computed(
   () => scoped.value.filter((item) => item.status === "已发布").length,
@@ -56,14 +67,12 @@ watch([category, query, status, () => workspace.region, limit], () => {
 watch(
   () => filtered.value.length,
   (total) => {
-    page.value = Math.min(
-      page.value,
-      Math.max(1, Math.ceil(total / limit.value)),
-    );
+    page.value = Math.min(page.value, Math.max(1, Math.ceil(total / limit.value)));
   },
 );
 const dialog = ref(false);
 const editingId = ref<string>();
+const editingVersion = ref<number>();
 const error = ref("");
 const draft = reactive<ContentDraft>({
   title: "",
@@ -72,11 +81,13 @@ const draft = reactive<ContentDraft>({
   language: "简体中文",
   summary: "",
   body: "",
+  topic: "everyday",
 });
 const preview = ref<ContentItem>();
 const previewOpen = ref(false);
 function edit(item?: ContentItem) {
   editingId.value = item?.id;
+  editingVersion.value = versionOf(item?.id, "contents");
   error.value = "";
   Object.assign(
     draft,
@@ -85,9 +96,12 @@ function edit(item?: ContentItem) {
           title: item.title,
           category: item.category,
           region: item.region,
-          language: item.language,
+          language: ["en", "英文", "English"].includes(item.language)
+            ? "English"
+            : "简体中文",
           summary: item.summary,
           body: item.body,
+          topic: item.topic || "everyday",
         }
       : {
           title: "",
@@ -96,16 +110,24 @@ function edit(item?: ContentItem) {
           language: "简体中文",
           summary: "",
           body: "",
+          topic: "everyday",
         },
   );
   dialog.value = true;
 }
-function save() {
+async function save() {
   error.value = validateContent(draft);
   if (error.value) return;
-  saveContent(draft, editingId.value);
-  dialog.value = false;
-  ElMessage.success("内容已保存到本次演示会话");
+  try {
+    if (isHttpMode)
+      await command("saveContent", { ...draft }, editingId.value, editingVersion.value);
+    else await saveContent(draft, editingId.value);
+    dialog.value = false;
+    ElMessage.success("内容已保存");
+  } catch (reason) {
+    error.value =
+      reason instanceof Error ? reason.message : "保存失败，编辑内容已保留。";
+  }
 }
 function openPreview(item: ContentItem) {
   preview.value = item;
@@ -116,19 +138,17 @@ async function togglePublish(item: ContentItem) {
   try {
     await ElMessageBox.confirm(
       publishing
-        ? `将“${item.title}”标记为已发布？仅更新本次演示，不会发布到小程序。`
-        : `将“${item.title}”标记为已下架？仅更新本次演示状态。`,
-      publishing ? "模拟发布内容" : "模拟下架内容",
+        ? `发布“${item.title}”？${modeText("发布后用户端可见。", "仅更新本次演示。")}`
+        : `下架“${item.title}”？${modeText("下架后用户端不可见。", "仅更新本次演示。")}`,
+      publishing ? "发布内容" : "下架内容",
       {
         confirmButtonText: publishing ? "确认发布" : "确认下架",
         cancelButtonText: "取消",
         type: "warning",
       },
     );
-    setContentStatus(item, publishing ? "已发布" : "已下架");
-    ElMessage.success(
-      publishing ? "已标记为已发布（当前会话）" : "已标记为已下架（当前会话）",
-    );
+    await setContentStatus(item, publishing ? "已发布" : "已下架");
+    ElMessage.success(publishing ? "内容已发布" : "内容已下架");
   } catch (reason) {
     if (reason instanceof Error) ElMessage.error(reason.message);
   }
@@ -145,259 +165,318 @@ const tagType = (value: string) =>
       description="从一篇文章到一个专题，让家风故事被更多人看见。"
     >
       <template #actions
-        ><el-button type="primary" :icon="Plus" @click="edit()"
+        ><el-button
+          v-if="workspaceTab === 'articles'"
+          v-has-permi="'content:write'"
+          type="primary"
+          :icon="Plus"
+          @click="edit()"
           >新建内容</el-button
         ></template
       >
     </PageHeading>
-    <div class="content-summary">
-      <div>
-        <span class="summary-icon"
-          ><el-icon><Document /></el-icon
-        ></span>
-        <p>
-          <small>内容总量</small><strong>{{ scoped.length }}<em>篇</em></strong>
-        </p>
+    <el-tabs v-model="workspaceTab" class="workspace-tabs"
+      ><el-tab-pane
+        v-for="(label, key) in workspaceTabs"
+        :key="key"
+        :name="key"
+        :label="label"
+    /></el-tabs>
+    <template v-if="workspaceTab !== 'articles'">
+      <el-alert
+        v-if="!isHttpMode"
+        title="这些目录使用真实服务维护，请在 HTTP 模式连接后台后操作。"
+        type="info"
+        :closable="false"
+      />
+      <HomepageEditor v-else-if="workspaceTab === 'homepage'" />
+      <SupportTickets v-else-if="workspaceTab === 'supportTickets'" />
+      <CatalogManager v-else :key="workspaceTab" :kind="workspaceTab" />
+    </template>
+    <template v-else>
+      <div class="content-summary">
+        <div>
+          <span class="summary-icon"
+            ><el-icon><Document /></el-icon
+          ></span>
+          <p>
+            <small>内容总量</small><strong>{{ scoped.length }}<em>篇</em></strong>
+          </p>
+        </div>
+        <div>
+          <span class="summary-icon green"
+            ><el-icon><Promotion /></el-icon
+          ></span>
+          <p>
+            <small>已发布</small><strong>{{ published }}<em>篇</em></strong>
+          </p>
+        </div>
+        <div>
+          <span class="summary-icon gold"
+            ><el-icon><Edit /></el-icon
+          ></span>
+          <p>
+            <small>待完善草稿</small
+            ><strong
+              >{{ scoped.filter((item) => item.status === "草稿").length
+              }}<em>篇</em></strong
+            >
+          </p>
+        </div>
+        <div class="summary-note">
+          <span class="note-dot"></span>
+          <p>
+            内容工作区<small>{{
+              modeText("业务数据 · 服务端保存", "示例数据 · 当前会话可编辑")
+            }}</small>
+          </p>
+        </div>
       </div>
-      <div>
-        <span class="summary-icon green"
-          ><el-icon><Promotion /></el-icon
-        ></span>
-        <p>
-          <small>已发布</small><strong>{{ published }}<em>篇</em></strong>
-        </p>
-      </div>
-      <div>
-        <span class="summary-icon gold"
-          ><el-icon><Edit /></el-icon
-        ></span>
-        <p>
-          <small>待完善草稿</small
-          ><strong
-            >{{ scoped.filter((item) => item.status === "草稿").length
-            }}<em>篇</em></strong
+      <section class="panel content-panel">
+        <div class="content-tabs">
+          <el-tabs v-model="category"
+            ><el-tab-pane
+              v-for="tab in ['全部', ...contentCategories.filter((item) => !isHttpMode || item !== 'Banner' || scoped.some((record) => record.category === 'Banner'))]"
+              :key="tab"
+              :name="tab"
+              :label="`${tab} ${scoped.filter((item) => tab === '全部' || item.category === tab).length}`"
+          /></el-tabs>
+        </div>
+        <div class="filter-bar content-filter">
+          <el-input
+            v-model="query"
+            aria-label="搜索内容"
+            placeholder="搜索标题、内容编号或摘要"
+            :prefix-icon="Search"
+            clearable
+            class="search-field"
+          />
+          <el-select v-model="status" aria-label="内容状态" class="status-field"
+            ><el-option
+              v-for="option in ['全部状态', '草稿', '已发布', '已下架']"
+              :key="option"
+              :label="option"
+              :value="option"
+          /></el-select>
+          <span class="filter-total">共 {{ filtered.length }} 条内容</span>
+        </div>
+        <el-table
+          :data="visible"
+          class="content-table"
+          row-key="id"
+          empty-text="暂无匹配内容，试试调整筛选或新建内容"
+        >
+          <el-table-column label="内容标题" min-width="290"
+            ><template #default="{ row }"
+              ><div class="title-cell">
+                <span class="category-mark">{{
+                  row.category === "Banner" ? "图" : row.category.slice(0, 1)
+                }}</span>
+                <div>
+                  <button class="text-title" @click="openPreview(row)">
+                    {{ row.title }}</button
+                  ><small>{{ row.id }} · {{ row.author }}</small>
+                </div>
+              </div></template
+            ></el-table-column
           >
-        </p>
-      </div>
-      <div class="summary-note">
-        <span class="note-dot"></span>
-        <p>内容工作区<small>示例数据 · 当前会话可编辑</small></p>
-      </div>
-    </div>
-    <section class="panel content-panel">
-      <div class="content-tabs">
-        <el-tabs v-model="category"
-          ><el-tab-pane
-            v-for="tab in ['全部', ...contentCategories]"
-            :key="tab"
-            :name="tab"
-            :label="`${tab} ${scoped.filter((item) => tab === '全部' || item.category === tab).length}`"
-        /></el-tabs>
-      </div>
-      <div class="filter-bar content-filter">
-        <el-input
-          v-model="query"
-          aria-label="搜索内容"
-          placeholder="搜索标题、内容编号或摘要"
-          :prefix-icon="Search"
-          clearable
-          class="search-field"
+          <el-table-column prop="category" label="栏目" width="95" />
+          <el-table-column prop="region" label="发布范围" width="105" />
+          <el-table-column label="状态" width="105"
+            ><template #default="{ row }"
+              ><el-tag :type="tagType(row.status)" effect="light">{{
+                row.status
+              }}</el-tag></template
+            ></el-table-column
+          >
+          <el-table-column prop="language" label="语言" width="115" />
+          <el-table-column prop="updatedAt" label="最近编辑" min-width="160" />
+          <el-table-column label="操作" width="190" fixed="right"
+            ><template #default="{ row }"
+              ><el-button
+                v-has-permi="'content:write'"
+                link
+                type="primary"
+                @click="edit(row)"
+                >编辑</el-button
+              ><el-button link @click="openPreview(row)">预览</el-button
+              ><el-button
+                v-has-permi="'content:write'"
+                link
+                :type="row.status === '已发布' ? 'warning' : 'primary'"
+                @click="togglePublish(row)"
+                >{{ row.status === "已发布" ? "下架" : "发布" }}</el-button
+              ></template
+            ></el-table-column
+          >
+        </el-table>
+        <div class="content-mobile-list">
+          <article v-for="item in visible" :key="item.id" class="mobile-content-card">
+            <div class="mobile-content-meta">
+              <span>{{ item.category }} · {{ item.region }}</span
+              ><el-tag :type="tagType(item.status)" size="small">{{
+                item.status
+              }}</el-tag>
+            </div>
+            <button class="text-title" @click="openPreview(item)">
+              {{ item.title }}
+            </button>
+            <p>{{ item.summary }}</p>
+            <small>{{ item.language }} · {{ item.updatedAt }}</small>
+            <div class="mobile-content-actions">
+              <el-button
+                v-has-permi="'content:write'"
+                link
+                type="primary"
+                @click="edit(item)"
+                >编辑</el-button
+              ><el-button link @click="openPreview(item)">预览</el-button
+              ><el-button
+                v-has-permi="'content:write'"
+                link
+                :type="item.status === '已发布' ? 'warning' : 'primary'"
+                @click="togglePublish(item)"
+                >{{ item.status === "已发布" ? "下架" : "发布" }}</el-button
+              >
+            </div>
+          </article>
+          <el-empty v-if="!visible.length" description="暂无匹配内容" />
+        </div>
+        <Pagination
+          v-model:page="page"
+          v-model:limit="limit"
+          :total="filtered.length"
         />
-        <el-select v-model="status" aria-label="内容状态" class="status-field"
-          ><el-option
-            v-for="option in ['全部状态', '草稿', '已发布', '已下架']"
-            :key="option"
-            :label="option"
-            :value="option"
-        /></el-select>
-        <span class="filter-total">共 {{ filtered.length }} 条内容</span>
-      </div>
-      <el-table
-        :data="visible"
-        class="content-table"
-        row-key="id"
-        empty-text="暂无匹配内容，试试调整筛选或新建内容"
+      </section>
+      <p class="page-footnote">
+        {{
+          modeText(
+            "文章按栏目和专区独立编辑；首页轮播、媒体及其他目录在上方对应页签维护。发布状态同步至用户端。",
+            "统计为样例；编辑和发布仅在本次演示会话生效。",
+          )
+        }}
+      </p>
+      <el-dialog
+        v-model="dialog"
+        :title="editingId ? '编辑内容' : '新建内容'"
+        width="min(680px, 92vw)"
+        :close-on-click-modal="false"
       >
-        <el-table-column label="内容标题" min-width="290"
-          ><template #default="{ row }"
-            ><div class="title-cell">
-              <span class="category-mark">{{
-                row.category === "Banner" ? "图" : row.category.slice(0, 1)
-              }}</span>
-              <div>
-                <button class="text-title" @click="openPreview(row)">
-                  {{ row.title }}</button
-                ><small>{{ row.id }} · {{ row.author }}</small>
-              </div>
-            </div></template
-          ></el-table-column
+        <el-alert
+          v-if="error"
+          :title="error"
+          type="error"
+          :closable="false"
+          show-icon
+          class="form-alert"
+        />
+        <el-form label-position="top" @submit.prevent="save">
+          <el-form-item label="内容标题" required
+            ><el-input
+              v-model="draft.title"
+              placeholder="填写清晰、有辨识度的内容标题"
+              maxlength="100"
+              show-word-limit
+          /></el-form-item>
+          <div class="form-columns">
+            <el-form-item label="所属栏目" required
+              ><el-select v-model="draft.category"
+                ><el-option
+                  v-for="item in contentCategories.filter((item) => !isHttpMode || item !== 'Banner' || draft.category === 'Banner')"
+                  :key="item"
+                  :label="item"
+                  :value="item" /></el-select></el-form-item
+            ><el-form-item label="发布范围" required
+              ><el-select v-model="draft.region"
+                ><el-option
+                  v-for="item in editorialRegions"
+                  :key="item"
+                  :label="item"
+                  :value="item" /></el-select></el-form-item
+            ><el-form-item label="内容语言" required
+              ><el-select v-model="draft.language"
+                ><el-option label="简体中文" value="简体中文" /><el-option
+                  label="English"
+                  value="English" /></el-select
+            ></el-form-item>
+          </div>
+          <el-form-item label="家风专区"
+            ><el-select v-model="draft.topic"
+              ><el-option
+                v-for="(label, key) in contentTopics"
+                :key="key"
+                :label="label"
+                :value="key" /></el-select
+          ></el-form-item>
+          <el-form-item label="内容摘要" required
+            ><el-input
+              v-model="draft.summary"
+              type="textarea"
+              :rows="2"
+              maxlength="500"
+              show-word-limit
+              placeholder="填写摘要，适合用于列表或卡片展示"
+          /></el-form-item>
+          <el-form-item label="正文 / 展示文案" required
+            ><el-input
+              v-model="draft.body"
+              type="textarea"
+              :rows="7"
+              maxlength="50000"
+              show-word-limit
+              placeholder="填写文章正文，首页轮播请在上方独立页签维护。"
+          /></el-form-item>
+          <p class="editor-hint">
+            不同语言分别维护内容，不会自动翻译。{{
+              modeText(
+                "保存结果写入服务端，公开状态以后台记录为准。",
+                "此次保存仅在当前演示会话生效。",
+              )
+            }}
+          </p>
+        </el-form>
+        <template #footer
+          ><el-button @click="dialog = false">取消</el-button
+          ><el-button
+            v-has-permi="'content:write'"
+            type="primary"
+            :loading="connection.pending > 0"
+            @click="save"
+            >{{ editingId ? "保存修改" : "保存草稿" }}</el-button
+          ></template
         >
-        <el-table-column prop="category" label="栏目" width="95" />
-        <el-table-column prop="region" label="发布范围" width="105" />
-        <el-table-column label="状态" width="105"
-          ><template #default="{ row }"
-            ><el-tag :type="tagType(row.status)" effect="light">{{
-              row.status
-            }}</el-tag></template
-          ></el-table-column
-        >
-        <el-table-column prop="language" label="语言" width="115" />
-        <el-table-column prop="updatedAt" label="最近编辑" min-width="160" />
-        <el-table-column label="操作" width="190" fixed="right"
-          ><template #default="{ row }"
-            ><el-button link type="primary" @click="edit(row)">编辑</el-button
-            ><el-button link @click="openPreview(row)">预览</el-button
-            ><el-button
-              link
-              :type="row.status === '已发布' ? 'warning' : 'primary'"
-              @click="togglePublish(row)"
-              >{{ row.status === "已发布" ? "下架" : "发布" }}</el-button
-            ></template
-          ></el-table-column
-        >
-      </el-table>
-      <div class="content-mobile-list">
-        <article
-          v-for="item in visible"
-          :key="item.id"
-          class="mobile-content-card"
-        >
-          <div class="mobile-content-meta">
-            <span>{{ item.category }} · {{ item.region }}</span
-            ><el-tag :type="tagType(item.status)" size="small">{{
-              item.status
+      </el-dialog>
+      <el-drawer v-model="previewOpen" title="内容预览" size="min(720px, 100vw)">
+        <article v-if="preview" class="content-preview">
+          <div class="preview-meta">
+            <el-tag size="small">{{ preview.category }}</el-tag
+            ><span>{{ preview.region }} · {{ preview.language }}</span
+            ><el-tag :type="tagType(preview.status)" size="small">{{
+              preview.status
             }}</el-tag>
           </div>
-          <button class="text-title" @click="openPreview(item)">
-            {{ item.title }}
-          </button>
-          <p>{{ item.summary }}</p>
-          <small>{{ item.language }} · {{ item.updatedAt }}</small>
-          <div class="mobile-content-actions">
-            <el-button link type="primary" @click="edit(item)">编辑</el-button
-            ><el-button link @click="openPreview(item)">预览</el-button
-            ><el-button
-              link
-              :type="item.status === '已发布' ? 'warning' : 'primary'"
-              @click="togglePublish(item)"
-              >{{ item.status === "已发布" ? "下架" : "发布" }}</el-button
-            >
-          </div>
+          <h2>{{ preview.title }}</h2>
+          <p class="preview-author">{{ preview.author }} · {{ preview.updatedAt }}</p>
+          <p class="preview-summary">{{ preview.summary }}</p>
+          <div class="preview-body">{{ preview.body }}</div>
+          <el-alert
+            title="这是后台内容预览，不代表小程序已发布内容。"
+            type="info"
+            :closable="false"
+          />
         </article>
-        <el-empty v-if="!visible.length" description="暂无匹配内容" />
-      </div>
-      <Pagination
-        v-model:page="page"
-        v-model:limit="limit"
-        :total="filtered.length"
-      />
-    </section>
-    <p class="page-footnote">
-      统计为样例；资讯、公告、Banner
-      与专题支持独立编辑。发布不会同步到小程序，刷新页面后恢复初始样例。
-    </p>
-    <el-dialog
-      v-model="dialog"
-      :title="editingId ? '编辑内容' : '新建内容'"
-      width="min(680px, 92vw)"
-      :close-on-click-modal="false"
-    >
-      <el-alert
-        v-if="error"
-        :title="error"
-        type="error"
-        :closable="false"
-        show-icon
-        class="form-alert"
-      />
-      <el-form label-position="top" @submit.prevent="save">
-        <el-form-item label="内容标题" required
-          ><el-input
-            v-model="draft.title"
-            placeholder="填写清晰、有辨识度的内容标题"
-            maxlength="60"
-            show-word-limit
-        /></el-form-item>
-        <div class="form-columns">
-          <el-form-item label="所属栏目" required
-            ><el-select v-model="draft.category"
-              ><el-option
-                v-for="item in contentCategories"
-                :key="item"
-                :label="item"
-                :value="item" /></el-select></el-form-item
-          ><el-form-item label="发布范围" required
-            ><el-select v-model="draft.region"
-              ><el-option
-                v-for="item in editorialRegions"
-                :key="item"
-                :label="item"
-                :value="item" /></el-select></el-form-item
-          ><el-form-item label="内容语言" required
-            ><el-select v-model="draft.language"
-              ><el-option label="简体中文" value="简体中文" /><el-option
-                label="English"
-                value="English" /></el-select
-          ></el-form-item>
-        </div>
-        <el-form-item label="内容摘要" required
-          ><el-input
-            v-model="draft.summary"
-            type="textarea"
-            :rows="2"
-            maxlength="180"
-            show-word-limit
-            placeholder="5–180 字，适合用于列表或卡片展示"
-        /></el-form-item>
-        <el-form-item label="正文 / 展示文案" required
-          ><el-input
-            v-model="draft.body"
-            type="textarea"
-            :rows="7"
-            maxlength="10000"
-            show-word-limit
-            placeholder="填写正文，当前使用纯文本编辑；Banner 可填写展示文案。"
-        /></el-form-item>
-        <p class="editor-hint">
-          不同语言分别维护内容；不会自动翻译。此次保存只保留在当前打开的页面会话。
-        </p>
-      </el-form>
-      <template #footer
-        ><el-button @click="dialog = false">取消</el-button
-        ><el-button type="primary" @click="save">{{
-          editingId ? "保存修改" : "保存草稿"
-        }}</el-button></template
-      >
-    </el-dialog>
-    <el-drawer v-model="previewOpen" title="内容预览" size="min(720px, 100vw)">
-      <article v-if="preview" class="content-preview">
-        <div class="preview-meta">
-          <el-tag size="small">{{ preview.category }}</el-tag
-          ><span>{{ preview.region }} · {{ preview.language }}</span
-          ><el-tag :type="tagType(preview.status)" size="small">{{
-            preview.status
-          }}</el-tag>
-        </div>
-        <h2>{{ preview.title }}</h2>
-        <p class="preview-author">
-          {{ preview.author }} · {{ preview.updatedAt }}
-        </p>
-        <p class="preview-summary">{{ preview.summary }}</p>
-        <div class="preview-body">{{ preview.body }}</div>
-        <el-alert
-          title="这是后台内容预览，不代表小程序已发布内容。"
-          type="info"
-          :closable="false"
-        />
-      </article>
-      <template #footer
-        ><el-button @click="previewOpen = false">关闭预览</el-button></template
-      >
-    </el-drawer>
+        <template #footer
+          ><el-button @click="previewOpen = false">关闭预览</el-button></template
+        >
+      </el-drawer>
+    </template>
   </div>
 </template>
 
 <style scoped>
+.workspace-tabs {
+  margin-bottom: 18px;
+}
 .content-panel {
   padding: 0;
 }

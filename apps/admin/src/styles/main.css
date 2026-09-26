@@ -1013,3 +1013,13 @@ h3 {
     animation: none !important;
   }
 }
+
+.connection-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  color: #87907e;
+}
+.connection-alert {
+  margin-bottom: 20px;
+}

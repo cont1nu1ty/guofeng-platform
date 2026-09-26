@@ -3,6 +3,8 @@ import { reviewState } from "./review";
 import { editorialState } from "./editorial";
 import { matchesRegion, workspace } from "./workspace";
 
+import { isHttpMode } from "../services/mode";
+
 export const trendPeriod = ref<"7" | "14">("14");
 export const scopedSubmissions = computed(() =>
   reviewState.submissions.filter((item) => matchesRegion(item.region)),
@@ -18,6 +20,33 @@ export const scopedContents = computed(() =>
 );
 const sampleTrend = [12, 18, 15, 24, 20, 29, 25, 34, 29, 38, 33, 42, 37, 48];
 export const historyTrend = computed(() => {
+  if (isHttpMode) {
+    const groups = new Map<
+      string,
+      { date: string; submitted: number; reviewed: number }
+    >();
+    for (const item of scopedSubmissions.value) {
+      const date = item.submittedAt?.slice(0, 10);
+      if (!date) continue;
+      const value = groups.get(date) || { date, submitted: 0, reviewed: 0 };
+      value.submitted++;
+      groups.set(date, value);
+      const approval = item.history.find((event) => ["初审通过", "approveSubmission"].includes(event.title));
+      if (approval?.time) {
+        const key = approval.time.slice(0, 10);
+        const bucket = groups.get(key) || {
+          date: key,
+          submitted: 0,
+          reviewed: 0,
+        };
+        bucket.reviewed++;
+        groups.set(key, bucket);
+      }
+    }
+    return [...groups.values()]
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(-Number(trendPeriod.value));
+  }
   const factor =
     workspace.region === "全国"
       ? 1
@@ -133,7 +162,7 @@ export const channelOption = computed(() => ({
       left: "center",
       top: "54%",
       style: {
-        text: "示例稿件",
+        text: isHttpMode ? "稿件" : "示例稿件",
         font: "10px sans-serif",
         fill: "#a0a690",
         textAlign: "center",
@@ -154,9 +183,13 @@ export const channelOption = computed(() => ({
 
 export function downloadSampleCsv() {
   const rows = [
-    ["家风中华行 · 示例统计导出（非运营数据）"],
+    [
+      isHttpMode
+        ? "家风中华行 · 授权范围统计导出"
+        : "家风中华行 · 示例统计导出（非运营数据）",
+    ],
     ["范围", workspace.region],
-    ["日期", "示例投稿量", "示例完成初审"],
+    ["日期", "投稿量", "完成初审"],
     ...historyTrend.value.map((item) => [
       item.date,
       `${item.submitted}`,
@@ -175,7 +208,9 @@ export function downloadSampleCsv() {
   );
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = "家风中华行-示例统计.csv";
+  anchor.download = isHttpMode
+    ? "家风中华行-业务统计.csv"
+    : "家风中华行-示例统计.csv";
   anchor.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

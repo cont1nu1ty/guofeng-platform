@@ -1,4 +1,15 @@
 <script setup lang="ts">
+import { isHttpMode, modeText } from "../services/mode";
+
+import {
+  saveCollection,
+  saveChapter,
+  moveChapter,
+  collectVolume,
+  addSampleChapter,
+  importChapter,
+} from "../services/actions";
+
 import { computed, reactive, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
@@ -15,17 +26,29 @@ import { workspace, matchesRegion } from "../domain/workspace";
 import {
   editorialState,
   editorialRegions,
-  saveCollection,
-  saveChapter,
-  moveChapter,
-  collectVolume,
-  addSampleChapter,
   validateCollection,
   type CollectionItem,
   type CollectionDraft,
   type Chapter,
 } from "../domain/editorial";
 
+import { reviewState } from "../domain/review";
+const importOpen = ref(false),
+  importId = ref("");
+const selectedWorks = computed(() =>
+  reviewState.submissions.filter(
+    (item) =>
+      (item.status === "已入围" ||
+        ["shortlisted", "awarded", "collected"].includes(item.result || "")) &&
+      (!isHttpMode || item.published),
+  ),
+);
+async function importWork() {
+  if (!selected.value || !importId.value) return;
+  await importChapter(selected.value.id, importId.value);
+  importOpen.value = false;
+  ElMessage.success("已添加入选作品章节");
+}
 const query = ref("");
 const status = ref("全部分卷");
 const filtered = computed(() =>
@@ -76,12 +99,12 @@ function editVolume(item?: CollectionItem) {
   );
   dialog.value = true;
 }
-function saveVolume() {
+async function saveVolume() {
   error.value = validateCollection(draft);
   if (error.value) return;
-  saveCollection(draft, editingId.value);
+  await saveCollection(draft, editingId.value);
   dialog.value = false;
-  ElMessage.success("分卷已保存到本次演示会话");
+  ElMessage.success("分卷已保存");
 }
 function openDetail(item: CollectionItem, tab = "chapters") {
   selected.value = item;
@@ -100,20 +123,25 @@ function editChapter(item?: Chapter) {
   );
   chapterDialog.value = true;
 }
-function saveChapterDraft() {
+async function saveChapterDraft() {
   if (!selected.value) return;
   try {
-    saveChapter(selected.value, chapterDraft, chapterId.value);
+    await saveChapter(selected.value, chapterDraft, chapterId.value);
     chapterDialog.value = false;
     ElMessage.success("章节已保存，分卷进入编纂中状态");
   } catch (reason) {
     if (reason instanceof Error) chapterError.value = reason.message;
   }
 }
-function addSample() {
+async function addSample() {
   if (!selected.value) return;
+  if (isHttpMode) {
+    importId.value = "";
+    importOpen.value = true;
+    return;
+  }
   try {
-    addSampleChapter(selected.value);
+    await addSampleChapter(selected.value);
     ElMessage.success("已将入选作品样例加入本卷末尾");
   } catch (reason) {
     if (reason instanceof Error) ElMessage.warning(reason.message);
@@ -122,12 +150,12 @@ function addSample() {
 async function publish(item: CollectionItem) {
   try {
     await ElMessageBox.confirm(
-      `将《${item.title}》的 ${item.chapters.length} 个章节标记为已入藏？此操作仅演示编纂流程，不产生正式出版或版权效力。`,
-      "模拟入藏",
+      `将《${item.title}》的 ${item.chapters.length} 个章节标记为已入藏？数字典藏发布不产生正式出版或版权登记效力。`,
+      "确认入藏",
       { confirmButtonText: "确认入藏", cancelButtonText: "取消", type: "info" },
     );
-    collectVolume(item);
-    ElMessage.success("已标记为已入藏（当前会话）");
+    await collectVolume(item);
+    ElMessage.success("已标记为已入藏");
   } catch (reason) {
     if (reason instanceof Error) ElMessage.error(reason.message);
   }
@@ -141,7 +169,11 @@ async function publish(item: CollectionItem) {
       title="典籍编纂"
       description="以总典为纲、地方为卷，将散落的家风记忆编织成册。"
       ><template #actions
-        ><el-button type="primary" :icon="Plus" @click="editVolume()"
+        ><el-button
+          v-has-permi="'collections:write'"
+          type="primary"
+          :icon="Plus"
+          @click="editVolume()"
           >新建分卷</el-button
         ></template
       ></PageHeading
@@ -159,7 +191,7 @@ async function publish(item: CollectionItem) {
             ><strong>{{
               scoped.reduce((sum, item) => sum + item.chapters.length, 0)
             }}</strong>
-            篇编纂样例</span
+            篇编纂章节</span
           >
         </div>
       </div>
@@ -236,7 +268,10 @@ async function publish(item: CollectionItem) {
     </div>
     <section v-else class="panel">
       <el-empty description="暂无匹配分卷，可调整筛选或开始编纂新卷"
-        ><el-button type="primary" @click="editVolume()"
+        ><el-button
+          v-has-permi="'collections:write'"
+          type="primary"
+          @click="editVolume()"
           >新建分卷</el-button
         ></el-empty
       >
@@ -244,7 +279,12 @@ async function publish(item: CollectionItem) {
     <div class="collection-note">
       <el-icon><Collection /></el-icon>
       <p>
-        编纂工作区使用原创选读样例。章节顺序与入藏状态仅在本次会话生效，正式出版、版权与批量导出留待后续接入。
+        {{
+          modeText(
+            "章节顺序、内容与入藏状态保存至服务端；数字典藏发布不构成正式出版或版权登记。",
+            "编纂工作区使用原创选读样例。章节顺序与入藏状态仅在本次会话生效，正式出版、版权与批量导出留待后续接入。",
+          )
+        }}
       </p>
     </div>
 
@@ -293,7 +333,10 @@ async function publish(item: CollectionItem) {
       ></el-form>
       <template #footer
         ><el-button @click="dialog = false">取消</el-button
-        ><el-button type="primary" @click="saveVolume"
+        ><el-button
+          v-has-permi="'collections:write'"
+          type="primary"
+          @click="saveVolume"
           >保存分卷</el-button
         ></template
       >
@@ -325,8 +368,13 @@ async function publish(item: CollectionItem) {
           <div class="chapter-tools">
             <span>共 {{ selected.chapters.length }} 个章节</span>
             <div>
-              <el-button size="small" @click="addSample">加入入选样例</el-button
+              <el-button
+                v-has-permi="'collections:write'"
+                size="small"
+                @click="addSample"
+                >{{ modeText("加入入选作品", "加入入选样例") }}</el-button
               ><el-button
+                v-has-permi="'collections:write'"
                 size="small"
                 type="primary"
                 :icon="Plus"
@@ -351,6 +399,7 @@ async function publish(item: CollectionItem) {
             </div>
             <div class="chapter-actions">
               <el-button
+                v-has-permi="'collections:write'"
                 text
                 circle
                 :icon="ArrowUp"
@@ -358,25 +407,33 @@ async function publish(item: CollectionItem) {
                 :aria-label="`上移${chapter.title}`"
                 @click="moveChapter(selected, index, -1)"
               /><el-button
+                v-has-permi="'collections:write'"
                 text
                 circle
                 :icon="ArrowDown"
                 :disabled="index === selected.chapters.length - 1"
                 :aria-label="`下移${chapter.title}`"
                 @click="moveChapter(selected, index, 1)"
-              /><el-button link type="primary" @click="editChapter(chapter)"
+              /><el-button
+                v-has-permi="'collections:write'"
+                link
+                type="primary"
+                @click="editChapter(chapter)"
                 >编辑</el-button
               >
             </div>
           </div>
           <el-empty
             v-if="!selected.chapters.length"
-            description="分卷还没有章节，从入选样例开始编排吧"
+            description="分卷还没有章节，请添加章节或已入选作品"
           />
           <p class="chapter-note">
-            调整章节后进入“编纂中”，完成后可再次模拟入藏。每次排序即时保留在本次会话。
+            调整章节后进入“编纂中”，完成后可再次确认入藏。每次排序完成后保留。
           </p>
-          <el-button :icon="Edit" @click="editVolume(selected)"
+          <el-button
+            v-has-permi="'collections:write'"
+            :icon="Edit"
+            @click="editVolume(selected)"
             >编辑分卷信息</el-button
           >
         </div>
@@ -409,12 +466,13 @@ async function publish(item: CollectionItem) {
         ><div class="drawer-footer">
           <el-button @click="detailOpen = false">关闭</el-button
           ><el-button
+            v-has-permi="'collections:write'"
             v-if="selected"
             type="primary"
             :disabled="selected.status === '已入藏'"
             @click="publish(selected)"
             >{{
-              selected.status === "已入藏" ? "已入藏（演示）" : "模拟入藏"
+              selected.status === "已入藏" ? "已入藏（演示）" : "确认入藏"
             }}</el-button
           >
         </div></template
@@ -443,7 +501,7 @@ async function publish(item: CollectionItem) {
           ><el-input
             v-model="chapterDraft.author"
             maxlength="40"
-            placeholder="使用虚构署名体验编辑" /></el-form-item
+            placeholder="填写作品署名" /></el-form-item
         ><el-form-item label="章节正文" required
           ><el-input
             v-model="chapterDraft.body"
@@ -454,8 +512,39 @@ async function publish(item: CollectionItem) {
             placeholder="填写 10–10000 字的章节内容" /></el-form-item></el-form
       ><template #footer
         ><el-button @click="chapterDialog = false">取消</el-button
-        ><el-button type="primary" @click="saveChapterDraft"
+        ><el-button
+          v-has-permi="'collections:write'"
+          type="primary"
+          @click="saveChapterDraft"
           >保存章节</el-button
+        ></template
+      ></el-dialog
+    >
+    <el-dialog
+      v-model="importOpen"
+      title="添加已入选作品"
+      width="min(520px,94vw)"
+      ><el-select
+        v-model="importId"
+        placeholder="选择已入选作品"
+        filterable
+        style="width: 100%"
+        ><el-option
+          v-for="work in selectedWorks"
+          :key="work.id"
+          :value="work.id"
+          :label="work.title" /></el-select
+      ><el-empty
+        v-if="!selectedWorks.length"
+        description="暂无可添加的入选作品"
+      /><template #footer
+        ><el-button @click="importOpen = false">取消</el-button
+        ><el-button
+          v-has-permi="'collections:write'"
+          type="primary"
+          :disabled="!importId"
+          @click="importWork"
+          >添加到本卷</el-button
         ></template
       ></el-dialog
     >

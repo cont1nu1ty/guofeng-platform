@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import { isHttpMode, modeText } from "../services/mode";
+
+import { savePlatformConfig, saveNotificationDraft } from "../services/actions";
+
 import { computed, reactive, ref } from "vue";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import {
   Plus,
   Search,
@@ -13,26 +17,42 @@ import {
 import PageHeading from "../components/PageHeading.vue";
 import {
   platformConfig,
-  savePlatformConfig,
   notificationDrafts,
-  saveNotificationDraft,
   type NotificationDraft,
 } from "../domain/operations";
 import { activityLog } from "../domain/workspace";
+import { command } from "../services/workspaceData";
+async function sendNotification(item: NotificationDraft) {
+  try {
+    await ElMessageBox.confirm(
+      `将“${item.title}”发送给授权范围内的${item.audience}？发送后将记录为站内消息。`,
+      "发送站内消息",
+      {
+        confirmButtonText: "确认发送",
+        cancelButtonText: "取消",
+        type: "warning",
+      },
+    );
+    await command("publishNotification", {}, item.id);
+    ElMessage.success("站内消息已发送");
+  } catch (error) {
+    if (error instanceof Error) ElMessage.error(error.message);
+  }
+}
 const tab = ref("platform"),
   query = ref("");
 const config = reactive({ ...platformConfig });
 const dirty = computed(
   () => JSON.stringify(config) !== JSON.stringify(platformConfig),
 );
-function saveConfig() {
-  const result = savePlatformConfig(config);
+async function saveConfig() {
+  const result = await savePlatformConfig(config);
   if (!result.ok) return ElMessage.warning(result.message);
   ElMessage.success(result.message);
 }
 function resetConfig() {
   Object.assign(config, platformConfig);
-  ElMessage.info("已恢复为本次会话最后保存的配置");
+  ElMessage.info("已恢复为最后保存的配置");
 }
 const notifications = computed(() =>
   notificationDrafts.filter(
@@ -58,8 +78,8 @@ function createDraft() {
   Object.assign(draft, { title: "", audience: "区域运营", content: "" });
   newDraftOpen.value = true;
 }
-function saveDraft() {
-  const result = saveNotificationDraft(draft);
+async function saveDraft() {
+  const result = await saveNotificationDraft(draft);
   if (!result.ok) return ElMessage.warning(result.message);
   ElMessage.success(result.message);
   newDraftOpen.value = false;
@@ -72,7 +92,7 @@ function preview(item: NotificationDraft) {
 <template>
   <PageHeading
     title="系统设置"
-    description="统一平台表达，管理通知草稿，回看本次会话的操作轨迹。"
+    description="统一平台表达，管理通知草稿，回看操作轨迹。"
     eyebrow="PLATFORM SETTINGS"
   />
   <section class="panel settings-panel">
@@ -131,7 +151,7 @@ function preview(item: NotificationDraft) {
                   label="中英双语（配置示例）"
                   value="中英双语（配置示例）" /></el-select
               ><span class="field-help"
-                >此项保存语言配置样例，不自动翻译页面或内容。</span
+                >此项保存语言配置，不自动翻译页面或内容。</span
               ></el-form-item
             ><el-form-item label="品牌寄语"
               ><el-input
@@ -172,7 +192,11 @@ function preview(item: NotificationDraft) {
           </div>
         </div>
         <div class="settings-save">
-          <el-button type="primary" @click="saveConfig">保存配置</el-button
+          <el-button
+            v-has-permi="'settings:write'"
+            type="primary"
+            @click="saveConfig"
+            >保存配置</el-button
           ><el-button @click="resetConfig">撤销未保存修改</el-button
           ><span v-if="dirty" class="unsaved">有未保存修改</span
           ><span v-else class="muted">配置与本次保存一致</span>
@@ -193,7 +217,12 @@ function preview(item: NotificationDraft) {
           <div>
             <b>当前配置范围</b>
             <p>
-              修改只存在于当前页面会话，刷新后恢复预置内容。尚未对接服务端配置、消息推送或备份服务。
+              {{
+                modeText(
+                  "配置由服务端保存并记录操作日志。外部消息推送未启用。",
+                  "修改只存在于当前页面会话，刷新后恢复预置内容。尚未对接服务端配置、消息推送或备份服务。",
+                )
+              }}
             </p>
           </div>
         </div>
@@ -201,7 +230,12 @@ function preview(item: NotificationDraft) {
           <el-icon><Connection /></el-icon>
           <h3>服务连接状态</h3>
           <p>
-            消息推送、素材备份和外部接口尚未启用。当前可使用配置预览与通知草稿。
+            {{
+              modeText(
+                "当前支持业务配置、通知草稿与站内消息；未启用外部推送通道。",
+                "消息推送、素材备份和外部接口尚未启用。当前可使用配置预览与通知草稿。",
+              )
+            }}
           </p>
         </div>
       </aside>
@@ -210,9 +244,20 @@ function preview(item: NotificationDraft) {
       ><div class="notification-heading">
         <div>
           <h2 class="section-title">把每一条通知准备妥当</h2>
-          <p class="muted">先编辑、再预览。当前界面不发送站内信或微信消息。</p>
+          <p class="muted">
+            {{
+              modeText(
+                "先编辑、再预览，核对后发送站内消息。微信推送暂不可用。",
+                "先编辑、再预览。演示模式不发送消息。",
+              )
+            }}
+          </p>
         </div>
-        <el-button type="primary" :icon="Plus" @click="createDraft"
+        <el-button
+          v-has-permi="'settings:write'"
+          type="primary"
+          :icon="Plus"
+          @click="createDraft"
           >新建通知草稿</el-button
         >
       </div>
@@ -233,30 +278,47 @@ function preview(item: NotificationDraft) {
           prop="audience"
           label="接收人群"
           min-width="125" /><el-table-column label="状态" width="120"
-          ><template #default
-            ><el-tag type="info" size="small">未发送草稿</el-tag></template
+          ><template #default="{ row }"
+            ><el-tag
+              :type="row.status === '已发送' ? 'success' : 'info'"
+              size="small"
+              >{{ row.status || "未发送草稿" }}</el-tag
+            ></template
           ></el-table-column
         ><el-table-column
           prop="date"
           label="编辑日期"
-          width="130" /><el-table-column label="操作" width="110" fixed="right"
+          width="130" /><el-table-column label="操作" width="180" fixed="right"
           ><template #default="{ row }"
             ><el-button link type="primary" @click="preview(row)"
               >预览通知</el-button
+            ><el-button
+              v-if="isHttpMode && row.status !== '已发送'"
+              v-has-permi="'settings:write'"
+              type="primary"
+              link
+              @click="sendNotification(row)"
+              >发送站内消息</el-button
             ></template
           ></el-table-column
         ><template #empty
           ><el-empty description="没有匹配的通知草稿" /></template
       ></el-table>
       <div class="table-tools muted">
-        共 {{ notifications.length }} 条通知草稿 · 仅当前会话保留
+        共 {{ notifications.length }} 条通知草稿 ·
+        {{ modeText("服务端持久保存", "仅当前会话保留") }}
       </div></template
     >
     <template v-else
       ><div class="log-heading">
-        <h2 class="section-title">本次会话操作记录</h2>
+        <h2 class="section-title">操作记录</h2>
         <p class="muted">
-          记录示例状态变更，帮助回看界面演示过程；不替代服务端审计日志。
+          {{
+            modeText(
+              "显示当前账号授权范围内的服务端操作记录。",
+              "记录状态变更，帮助回看界面演示过程；不替代服务端审计日志。",
+            )
+          }}
         </p>
       </div>
       <div class="filter-bar">
@@ -279,23 +341,26 @@ function preview(item: NotificationDraft) {
           prop="target"
           label="操作对象"
           min-width="240" /><el-table-column label="操作者" width="140"
-          ><template #default>演示管理员</template></el-table-column
+          ><template #default="{ row }">{{
+            row.actor || modeText("系统记录", "演示管理员")
+          }}</template></el-table-column
         ><el-table-column label="记录来源" width="140"
           ><template #default
-            ><el-tag type="info" size="small" effect="plain"
-              >内存示例</el-tag
-            ></template
+            ><el-tag type="info" size="small" effect="plain">{{
+              modeText("业务日志", "内存示例")
+            }}</el-tag></template
           ></el-table-column
         ><template #empty
           ><el-empty
             :description="
               query
                 ? '没有匹配的操作记录'
-                : '本次会话还没有操作记录，保存配置后可在此查看'
+                : '还没有操作记录，保存配置后可在此查看'
             " /></template
       ></el-table>
       <div class="table-tools muted">
-        共 {{ logs.length }} 条记录 · 刷新页面会重置
+        共 {{ logs.length }} 条记录 ·
+        {{ modeText("由服务端保存", "刷新页面会重置") }}
       </div></template
     >
   </section>
@@ -312,7 +377,7 @@ function preview(item: NotificationDraft) {
       ><el-form-item label="接收人群" required
         ><el-select v-model="draft.audience"
           ><el-option
-            v-for="item in ['区域运营', '内容运营', '评审专家', '所有演示用户']"
+            v-for="item in ['区域运营', '内容运营', '评审专家', '全部用户']"
             :key="item"
             :value="item"
             :label="item" /></el-select></el-form-item
@@ -330,7 +395,10 @@ function preview(item: NotificationDraft) {
       :closable="false"
     /><template #footer
       ><el-button @click="newDraftOpen = false">取消</el-button
-      ><el-button type="primary" @click="saveDraft"
+      ><el-button
+        v-has-permi="'settings:write'"
+        type="primary"
+        @click="saveDraft"
         >保存草稿</el-button
       ></template
     ></el-dialog
@@ -348,7 +416,7 @@ function preview(item: NotificationDraft) {
         <p class="notification-sign">家风中华行运营中心</p>
       </article>
       <el-alert
-        title="草稿预览 · 本通知尚未发送，关闭预览不会触发发送。"
+        :title="`通知预览 · ${selectedDraft?.status || '未发送草稿'}，关闭预览不会触发发送。`"
         type="info"
         :closable="false"
         show-icon /></template

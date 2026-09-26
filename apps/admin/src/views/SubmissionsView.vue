@@ -1,4 +1,13 @@
 <script setup lang="ts">
+import { isHttpMode, modeText } from "../services/mode";
+
+import {
+  approveSubmission,
+  batchApproveSubmissions,
+  returnSubmission,
+  assignReview,
+} from "../services/actions";
+
 import { computed, ref, watch } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
@@ -15,10 +24,6 @@ import { workspace, matchesRegion } from "../domain/workspace";
 import {
   reviewState,
   submissionStatuses,
-  approveSubmission,
-  batchApproveSubmissions,
-  returnSubmission,
-  assignReview,
   type Submission,
   type SubmissionStatus,
 } from "../domain/review";
@@ -75,7 +80,7 @@ const stats = computed(() => [
   {
     label: "全部稿件",
     count: scoped.value.length,
-    note: "当前范围 · 示例作品",
+    note: "当前范围 · 作品",
     icon: Document,
     color: "ink",
   },
@@ -108,6 +113,9 @@ function tagType(value: SubmissionStatus) {
       评审中: "primary",
       退回修改: "danger",
       已入围: "success",
+      已获奖: "success",
+      已入藏: "success",
+      未入围: "info",
     } as const
   )[value];
 }
@@ -135,9 +143,9 @@ function openDetail(row: Submission) {
   activeId.value = row.id;
   drawer.value = true;
 }
-function approve() {
+async function approve() {
   if (!active.value) return;
-  const result = approveSubmission(active.value.id);
+  const result = await approveSubmission(active.value.id);
   result.ok
     ? ElMessage.success(result.message)
     : ElMessage.error(result.message);
@@ -145,7 +153,7 @@ function approve() {
 async function batchApprove() {
   try {
     await ElMessageBox.confirm(
-      `将所选 ${selected.value.length} 篇稿件通过初审并转入评审中，随后仍需分配专家。此操作仅影响本次演示。`,
+      `将所选 ${selected.value.length} 篇稿件通过初审并转入评审中，随后仍需分配专家。${modeText("操作将保存至服务端。", "此操作仅影响本次演示。")}`,
       "批量通过初审",
       {
         confirmButtonText: "通过初审",
@@ -153,7 +161,7 @@ async function batchApprove() {
         type: "warning",
       },
     );
-    const result = batchApproveSubmissions(
+    const result = await batchApproveSubmissions(
       selected.value.map((item) => item.id),
     );
     result.ok
@@ -172,9 +180,9 @@ function openReturn() {
   returnError.value = "";
   returnOpen.value = true;
 }
-function confirmReturn() {
+async function confirmReturn() {
   if (!active.value) return;
-  const result = returnSubmission(active.value.id, reason.value);
+  const result = await returnSubmission(active.value.id, reason.value);
   if (!result.ok) {
     returnError.value = result.message;
     return;
@@ -189,15 +197,74 @@ function openAssignment(row: Submission) {
   assignmentError.value = "";
   assignmentOpen.value = true;
 }
-function confirmAssignment() {
+async function confirmAssignment() {
   if (!active.value) return;
-  const result = assignReview(active.value.id, expertId.value, dueAt.value);
+  const result = await assignReview(
+    active.value.id,
+    expertId.value,
+    dueAt.value,
+  );
   if (!result.ok) {
     assignmentError.value = result.message;
     return;
   }
   ElMessage.success(result.message);
   assignmentOpen.value = false;
+}
+import { command } from "../services/workspaceData";
+import { downloadFile } from "../services/files";
+const materialOpen = ref(false),
+  materialContent = ref(""),
+  materialConfirmed = ref(false);
+const decisionOpen = ref(false),
+  decision = ref("shortlisted"),
+  decisionNote = ref("");
+function prepareMaterial() {
+  if (!active.value) return;
+  materialContent.value = active.value.blindContent || active.value.content;
+  materialConfirmed.value = false;
+  materialOpen.value = true;
+}
+async function saveMaterial() {
+  if (
+    !active.value ||
+    !materialConfirmed.value ||
+    materialContent.value.trim().length < 10
+  )
+    return ElMessage.warning("请填写脱敏正文并确认已人工核对");
+  await command(
+    "prepareBlindMaterial",
+    { content: materialContent.value, confirmed: true },
+    active.value.id,
+  );
+  materialOpen.value = false;
+  ElMessage.success("脱敏材料已保存");
+}
+async function decide() {
+  if (!active.value) return;
+  await command(
+    "decideSubmission",
+    { result: decision.value, note: decisionNote.value },
+    active.value.id,
+  );
+  decisionOpen.value = false;
+  ElMessage.success("评审结果已确认");
+}
+async function publishResult() {
+  if (!active.value) return;
+  await ElMessageBox.confirm(
+    active.value.published
+      ? "撤回该作品的公开发布？"
+      : "确认将该作品及结果公开发布？请先核对授权与个人信息。",
+    "发布确认",
+    { type: "warning" },
+  );
+  await command(
+    "publishSubmission",
+    { published: !active.value.published },
+    active.value.id,
+  );
+  ElMessage.success("发布状态已更新");
 }
 </script>
 
@@ -210,7 +277,7 @@ function confirmAssignment() {
     >
       <template #actions
         ><el-tag effect="plain" type="info"
-          >{{ workspace.region }} · 内存演示</el-tag
+          >{{ workspace.region }} · 工作空间</el-tag
         ></template
       >
     </PageHeading>
@@ -230,7 +297,14 @@ function confirmAssignment() {
       <div class="panel-header">
         <div>
           <h2 class="section-title">作品库</h2>
-          <p class="muted">筛选、初审与专家分配 · 刷新后恢复示例</p>
+          <p class="muted">
+            {{
+              modeText(
+                "筛选、初审与专家分配 · 服务端持久保存",
+                "筛选、初审与专家分配 · 刷新后恢复示例",
+              )
+            }}
+          </p>
         </div>
         <RightToolbar v-model:show-search="showSearch" @query-table="reset" />
       </div>
@@ -282,6 +356,7 @@ function confirmAssignment() {
           <span class="muted">· 仅待初审稿件可批量处理</span>
         </div>
         <el-button
+          v-has-permi="'submissions:write'"
           :disabled="selected.length === 0"
           :icon="CircleCheck"
           size="small"
@@ -342,6 +417,7 @@ function confirmAssignment() {
               row.status === "待初审" ? "初审" : "详情"
             }}</el-button
             ><el-button
+              v-has-permi="'submissions:write'"
               v-if="row.status === '评审中'"
               link
               type="primary"
@@ -358,7 +434,12 @@ function confirmAssignment() {
       />
     </section>
     <p class="footnote">
-      作品、作者、附件及统计均为虚构样例。初审通过仅转入评审，不会自动入围、发布公示或通知作者。
+      {{
+        modeText(
+          "初审通过仅转入评审，不会自动入围或公开发布。",
+          "作品、作者、附件及统计均为虚构样例。初审通过仅转入评审，不会自动入围或公开发布。",
+        )
+      }}
     </p>
 
     <el-drawer
@@ -376,6 +457,25 @@ function confirmAssignment() {
             {{ active.author }} <span>·</span> {{ active.region }}
             <span>·</span> {{ active.genre }}
           </p>
+        </div>
+        <el-alert
+          v-if="isHttpMode"
+          :title="`脱敏材料：${active.blindConfirmed ? '已确认' : '待准备'} · 评审结果：${active.result || '待决定'} · ${active.published ? '已公开发布' : '未公开'}`"
+          type="info"
+          :closable="false"
+        />
+        <div
+          v-if="isHttpMode"
+          class="real-review-actions"
+          v-has-permi="'submissions:write'"
+        >
+          <el-button @click="prepareMaterial">准备脱敏材料</el-button
+          ><el-button @click="decisionOpen = true">确认评审结果</el-button
+          ><el-button
+            v-has-permi="'submissions:write'"
+            @click="publishResult"
+            >{{ active.published ? "撤回发布" : "发布作品" }}</el-button
+          >
         </div>
         <el-tabs>
           <el-tab-pane label="作品内容">
@@ -396,7 +496,18 @@ function confirmAssignment() {
             <div class="manuscript-content">{{ active.content }}</div>
             <div class="attachment-box">
               <h3>附件与版权记录</h3>
-              <p v-for="file in active.attachments" :key="file">
+              <p v-for="file in active.files || []" :key="file.fileId">
+                <el-button
+                  link
+                  type="primary"
+                  @click="downloadFile(file.fileId)"
+                  >{{ file.name }}</el-button
+                >
+              </p>
+              <p
+                v-for="file in !isHttpMode ? active.attachments : []"
+                :key="file"
+              >
                 <el-icon><Document /></el-icon> {{ file }}
                 <el-tag size="small" type="info">仅元信息</el-tag>
               </p>
@@ -404,7 +515,12 @@ function confirmAssignment() {
                 此稿件没有示例附件。
               </p>
               <p class="muted">
-                版权勾选：已确认演示须知；尚未接入正式签署或查重服务。
+                {{
+                  modeText(
+                    "协议确认记录仅代表投稿须知确认；未接入正式签署或查重服务。",
+                    "版权勾选：已确认演示须知；尚未接入正式签署或查重服务。",
+                  )
+                }}
               </p>
             </div>
           </el-tab-pane>
@@ -447,16 +563,23 @@ function confirmAssignment() {
       </template>
       <template #footer
         ><div v-if="active" class="drawer-actions">
-          <span class="muted">操作仅在本次会话生效</span>
+          <span class="muted">{{
+            modeText("操作由服务端验证并保存", "操作仅在本次会话生效")
+          }}</span>
           <div>
-            <el-button v-if="active.status === '待初审'" @click="openReturn"
+            <el-button
+              v-has-permi="'submissions:write'"
+              v-if="active.status === '待初审'"
+              @click="openReturn"
               >退回修改</el-button
             ><el-button
+              v-has-permi="'submissions:write'"
               v-if="active.status === '待初审'"
               type="primary"
               @click="approve"
               >通过初审</el-button
             ><el-button
+              v-has-permi="'submissions:write'"
               v-if="active.status === '评审中'"
               type="primary"
               @click="openAssignment(active)"
@@ -485,7 +608,10 @@ function confirmAssignment() {
             placeholder="例如：请补充文中引用家训的出处，并核对附件与正文版本。至少 5 字。" /></el-form-item></el-form
       ><template #footer
         ><el-button @click="returnOpen = false">取消</el-button
-        ><el-button type="primary" @click="confirmReturn"
+        ><el-button
+          v-has-permi="'submissions:write'"
+          type="primary"
+          @click="confirmReturn"
           >确认退回</el-button
         ></template
       ></el-dialog
@@ -495,9 +621,12 @@ function confirmAssignment() {
       title="分配评审专家"
       width="min(620px, 92vw)"
       ><p class="dialog-description">
-        {{ active?.title }}<br /><span class="muted"
-          >专家范围为全部示例档案；地区筛选不构成真实权限隔离。</span
-        >
+        {{ active?.title }}<br /><span class="muted">{{
+          modeText(
+            "可分配专家以服务端返回的授权范围为准。",
+            "专家范围为全部专家档案；地区筛选不构成真实权限隔离。",
+          )
+        }}</span>
       </p>
       <el-form label-position="top"
         ><el-form-item label="评审专家" required
@@ -525,8 +654,70 @@ function confirmAssignment() {
         :closable="false"
       /><template #footer
         ><el-button @click="assignmentOpen = false">取消</el-button
-        ><el-button type="primary" @click="confirmAssignment"
+        ><el-button
+          v-has-permi="'submissions:write'"
+          type="primary"
+          @click="confirmAssignment"
           >分配任务</el-button
+        ></template
+      ></el-dialog
+    >
+    <el-dialog
+      v-model="materialOpen"
+      title="准备匿名评审材料"
+      width="min(700px,94vw)"
+      ><el-alert
+        title="请人工删除正文中的作者、联系方式及可识别身份的信息。原附件不直接提供给盲审专家。"
+        :closable="false"
+        type="warning"
+      /><el-input
+        v-model="materialContent"
+        type="textarea"
+        :rows="14"
+        maxlength="20000"
+        show-word-limit
+      /><el-checkbox v-model="materialConfirmed"
+        >已人工核对并确认可用于匿名评审</el-checkbox
+      ><template #footer
+        ><el-button @click="materialOpen = false">取消</el-button
+        ><el-button
+          v-has-permi="'submissions:write'"
+          type="primary"
+          @click="saveMaterial"
+          >保存脱敏材料</el-button
+        ></template
+      ></el-dialog
+    >
+    <el-dialog
+      v-model="decisionOpen"
+      title="确认评审结果"
+      width="min(520px,94vw)"
+      ><el-form label-position="top"
+        ><el-form-item label="结果" required
+          ><el-select v-model="decision"
+            ><el-option label="入围" value="shortlisted" /><el-option
+              label="未入围"
+              value="rejected" /><el-option
+              label="获奖"
+              value="awarded" /><el-option
+              label="典藏"
+              value="collected" /></el-select></el-form-item
+        ><el-form-item label="决定说明" required
+          ><el-input
+            v-model="decisionNote"
+            type="textarea"
+            :rows="4"
+            maxlength="1000" /></el-form-item></el-form
+      ><el-alert
+        title="确认结果不会自动公开发布，发布需另行操作。"
+        :closable="false"
+      /><template #footer
+        ><el-button @click="decisionOpen = false">取消</el-button
+        ><el-button
+          v-has-permi="'submissions:write'"
+          type="primary"
+          @click="decide"
+          >确认结果</el-button
         ></template
       ></el-dialog
     >
@@ -534,6 +725,16 @@ function confirmAssignment() {
 </template>
 
 <style scoped>
+.real-review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+.real-review-actions .el-button {
+  margin-left: 0;
+}
+
 .submission-stats {
   margin-bottom: 24px;
 }

@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { isHttpMode, modeText } from "../services/mode";
+
+import { submitReview, configureReviewFlow } from "../services/actions";
+
 import { computed, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import {
@@ -16,11 +20,10 @@ import {
   reviewState,
   reviewFlow,
   scoringDimensions,
-  submitReview,
-  configureReviewFlow,
   type ReviewTask,
 } from "../domain/review";
 
+import { can, session } from "../services/session";
 const tab = ref("tasks"),
   search = ref(""),
   taskStatus = ref(""),
@@ -46,6 +49,13 @@ const activeSubmission = computed(() =>
   reviewState.submissions.find(
     (item) => item.id === activeTask.value?.submissionId,
   ),
+);
+const canScore = computed(
+  () =>
+    !isHttpMode ||
+    activeTask.value?.canScore === true ||
+    (session.user?.roles.includes("expert") &&
+      activeTask.value?.expertId === session.user.id),
 );
 const totalScore = computed(() =>
   scores.value.reduce(
@@ -89,7 +99,9 @@ const complete = computed(
 function isOverdue(task: ReviewTask) {
   return (
     task.status === "待评分" &&
-    new Date(`${task.dueAt}T23:59:59`).getTime() < Date.now()
+    new Date(
+      task.dueAt.includes("T") ? task.dueAt : `${task.dueAt}T23:59:59`,
+    ).getTime() < Date.now()
   );
 }
 const overdue = computed(() => scoped.value.filter(isOverdue).length);
@@ -103,9 +115,13 @@ function openTask(task: ReviewTask) {
   scoreError.value = "";
   drawer.value = true;
 }
-function submit() {
+async function submit() {
   if (!activeTask.value) return;
-  const result = submitReview(activeTask.value.id, scores.value, comment.value);
+  const result = await submitReview(
+    activeTask.value.id,
+    scores.value,
+    comment.value,
+  );
   if (!result.ok) {
     scoreError.value = result.message;
     return;
@@ -115,15 +131,15 @@ function submit() {
 }
 function configure() {
   flowDraft.value = {
-    blind: reviewFlow.blind,
+    blind: isHttpMode ? true : reviewFlow.blind,
     deadlineDays: reviewFlow.deadlineDays,
     enabled: reviewFlow.stages.map((stage) => stage.enabled),
   };
   configurationError.value = "";
   configureOpen.value = true;
 }
-function saveConfiguration() {
-  const result = configureReviewFlow(flowDraft.value);
+async function saveConfiguration() {
+  const result = await configureReviewFlow(flowDraft.value);
   if (!result.ok) {
     configurationError.value = result.message;
     return;
@@ -140,8 +156,11 @@ function saveConfiguration() {
       description="有序分配，认真评阅。清晰掌握每一轮评审的进展。"
       eyebrow="评审中心 / 评审管理"
       ><template #actions
-        ><el-button :icon="Setting" @click="configure"
-          >流程示意配置</el-button
+        ><el-button
+          :icon="Setting"
+          v-if="can('submissions:write')"
+          @click="configure"
+          >评审流程配置</el-button
         ></template
       ></PageHeading
     >
@@ -151,7 +170,7 @@ function saveConfiguration() {
         <div class="summary-number">
           {{ scoped.length }}<small>项任务</small>
         </div>
-        <p>示例任务进度随本次操作即时更新</p>
+        <p>任务进度随本次操作即时更新</p>
       </div>
       <div class="review-metric">
         <el-icon><EditPen /></el-icon><strong>{{ pending }}</strong
@@ -318,7 +337,12 @@ function saveConfiguration() {
       </el-tabs>
     </section>
     <p class="footnote">
-      评分、评语与流程配置仅保存在当前页面会话，刷新恢复示例。匿名展示只是界面演示，真实盲审字段与访问权限仍需服务端控制。
+      {{
+        modeText(
+          "评分和评语由服务端保存并锁定；专家只读取已分配任务的脱敏材料。流程发布新版本后影响后续实例。",
+          "评分、评语与流程配置仅保存在当前页面会话，刷新恢复示例。匿名展示只是界面演示，真实盲审字段与访问权限仍需服务端控制。",
+        )
+      }}
     </p>
 
     <el-drawer
@@ -339,13 +363,20 @@ function saveConfiguration() {
               reviewFlow.blind
                 ? "作者信息已隐藏 · 匿名展示示例"
                 : `${activeSubmission.author} · ${activeSubmission.region}`
-            }}<br />{{ activeSubmission.genre }} · {{ activeSubmission.id }}
+            }}<br />{{ activeSubmission.genre }} · {{ activeSubmission.id
+            }}<span v-if="activeTask.ruleVersion">
+              · 量表 {{ activeTask.ruleVersion }}</span
+            >
           </p>
         </div>
         <el-collapse
           ><el-collapse-item title="展开阅读作品内容" name="content"
             ><div class="review-manuscript">
-              {{ activeSubmission.content }}
+              {{
+                isHttpMode
+                  ? activeSubmission.blindContent || activeSubmission.content
+                  : activeSubmission.content
+              }}
             </div></el-collapse-item
           ></el-collapse
         >
@@ -375,7 +406,7 @@ function saveConfiguration() {
               :min="0"
               :max="dimension.max"
               :precision="0"
-              :disabled="activeTask.status === '已完成'"
+              :disabled="activeTask.status !== '待评分' || !canScore"
               controls-position="right"
               :aria-label="dimension.label"
             />
@@ -387,7 +418,7 @@ function saveConfiguration() {
               :rows="4"
               maxlength="1000"
               show-word-limit
-              :disabled="activeTask.status === '已完成'"
+              :disabled="activeTask.status !== '待评分' || !canScore"
               placeholder="请填写不少于 10 字的具体评语，可说明作品亮点与完善建议。" /></el-form-item
         ></el-form>
         <el-alert
@@ -406,9 +437,15 @@ function saveConfiguration() {
       </template>
       <template #footer
         ><div class="score-footer">
-          <span>仅为示例评分，不构成正式评审意见</span
+          <span>{{
+            modeText(
+              "评分保存后锁定，结果由管理员另行确认",
+              "仅为示例评分，不构成正式评审意见",
+            )
+          }}</span
           ><el-button
-            v-if="activeTask?.status === '待评分'"
+            v-has-permi="'reviews:write'"
+            v-if="activeTask?.status === '待评分' && canScore"
             type="primary"
             @click="submit"
             >确认提交评分</el-button
@@ -418,10 +455,15 @@ function saveConfiguration() {
     </el-drawer>
     <el-dialog
       v-model="configureOpen"
-      title="流程示意配置"
+      title="评审流程配置"
       width="min(620px, 92vw)"
       ><p class="dialog-description">
-        配置讨论方案的展示方式。此处不创建、执行或变更真实工作流。
+        {{
+          modeText(
+            "保存后发布新的流程配置版本，仅影响后续启动的评审实例。",
+            "配置讨论方案的展示方式，不执行真实工作流。",
+          )
+        }}
       </p>
       <el-form label-position="top"
         ><el-form-item label="流程节点"
@@ -442,7 +484,10 @@ function saveConfiguration() {
         ><el-form-item label="在评分界面隐藏作者信息"
           ><el-switch
             v-model="flowDraft.blind"
-            aria-label="匿名展示" /></el-form-item></el-form
+            :disabled="isHttpMode"
+            aria-label="匿名展示" />
+          <span v-if="isHttpMode" class="muted">本期采用匿名评审</span>
+          </el-form-item></el-form
       ><el-alert
         v-if="configurationError"
         :title="configurationError"
@@ -450,8 +495,11 @@ function saveConfiguration() {
         :closable="false"
       /><template #footer
         ><el-button @click="configureOpen = false">取消</el-button
-        ><el-button type="primary" @click="saveConfiguration"
-          >保存讨论方案</el-button
+        ><el-button
+          v-has-permi="'reviews:write'"
+          type="primary"
+          @click="saveConfiguration"
+          >{{ modeText("发布流程配置", "保存讨论方案") }}</el-button
         ></template
       ></el-dialog
     >
