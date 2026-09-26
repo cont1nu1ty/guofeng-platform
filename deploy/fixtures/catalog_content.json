@@ -1,0 +1,479 @@
+{
+  "datasetVersion": "catalog-2026-09-v1",
+  "fictional": true,
+  "contents": [
+    {
+      "key": "catalog_policy",
+      "data": {
+        "title": "家风资料征集与公开使用说明（展示稿）",
+        "category": "政策解读",
+        "topic": "everyday",
+        "region": "all",
+        "language": "中文",
+        "summary": "介绍展示平台的投稿范围、资料出处和公开授权要求；本说明不是政府政策文件。",
+        "body": "本平台的本机展示环境用于沟通家风资料的征集与编辑流程，不代表正式征集活动。\n投稿前请核对文字与图片的来源，不上传身份证件、联系方式或未经同意的家庭隐私。涉及他人经历时，请先取得本人同意，并用必要的背景信息替代完整身份信息。\n运营人员在公开前核对出处、授权范围和匿名材料。修改后的稿件会保留版本，退回意见可在个人进度页查看。\n资料发布、撤回和相关轮播均由后台统一管理；本说明中的所有业务安排均为演示设置。"
+      },
+      "status": "已发布"
+    },
+    {
+      "key": "catalog_industry",
+      "data": {
+        "title": "从旧物标签到共读卡：社区文化资料如何整理（模拟报道）",
+        "category": "行业动态",
+        "topic": "everyday",
+        "region": "all",
+        "language": "中文",
+        "summary": "展示一次虚构的资料整理交流，讨论出处、口述核对与分层阅读。",
+        "body": "在一场虚构的社区文化工作交流中，参与者围绕旧物标签、口述笔记和亲子共读卡讨论资料整理方法。\n第一步是记录物件与文字的来源，区分原件、转述与编辑说明；第二步是请讲述人核对关键时间和人物关系；第三步是为不同读者准备长度不同的阅读材料。\n这篇模拟报道用于演示行业动态分类与站内订阅提醒，不指代真实机构或已发生的会议。"
+      },
+      "status": "已发布"
+    }
+  ],
+  "mediaItems": [
+    {
+      "key": "media_letter",
+      "data": {
+        "title": "把牵挂写给长大后的你",
+        "category": "letter",
+        "type": "short",
+        "collection": "秋日家书 · 共读片段",
+        "excerpt": "原创静音文字动画：在一封短家书里谈诚实、勤俭与担当。用作网页播放与公开素材管理的展示。",
+        "duration": "00:12",
+        "transcript": "亲爱的孩子，愿你心中有光，脚下有路。\n诚实待人，认真做事；珍惜每一餐，也珍惜每一次相聚。\n愿你把小家的温暖，化作服务大家的力量。",
+        "region": "all",
+        "language": "zh",
+        "sortOrder": 10,
+        "sample": true
+      },
+      "source": "family-letter.mp4",
+      "poster": "family-letter.jpg",
+      "status": "已发布"
+    },
+    {
+      "key": "media_everyday",
+      "data": {
+        "title": "家风，就在日常之间",
+        "category": "documentary",
+        "type": "short",
+        "collection": "帧藏家风 · 日常篇",
+        "excerpt": "三个日常片段：珍惜一餐、邻里相助、认真守约。原创静音文字动画，不是实拍纪录片。",
+        "duration": "00:12",
+        "transcript": "一粥一饭，记得来之不易。\n邻里之间，多一点体谅，多一份帮助。\n答应的事情，认真做到；平凡的日子，用心过好。",
+        "region": "zhejiang",
+        "language": "zh",
+        "sortOrder": 20,
+        "sample": true
+      },
+      "source": "everyday-values.mp4",
+      "poster": "everyday-values.jpg",
+      "status": "已发布"
+    },
+    {
+      "key": "media_ceremony",
+      "data": {
+        "title": "年度共读回顾 · 清廉从小事开始",
+        "category": "lecture",
+        "type": "replay",
+        "collection": "年度盛典 · 回放展示",
+        "excerpt": "用原创静音文字动画展示回放功能。此为模拟节目，没有发生真实盛典或直播。",
+        "duration": "00:12",
+        "transcript": "把规矩记在心里，把诚信落实在行动中。\n家事多商量，公私要分明。\n从今天的小事做起，让清廉成为习惯。",
+        "region": "all",
+        "language": "zh",
+        "sortOrder": 30,
+        "sample": true
+      },
+      "source": "integrity-talk.mp4",
+      "poster": "integrity-talk.jpg",
+      "status": "已发布"
+    },
+    {
+      "key": "media_letter_en",
+      "data": {
+        "title": "A Letter to Your Future Self",
+        "category": "letter",
+        "type": "short",
+        "collection": "Autumn letters · sample film",
+        "excerpt": "An original silent typography animation about honesty and care. Chinese captions; this English edition is edited separately.",
+        "duration": "00:12",
+        "transcript": "Dear child, may you find light in your heart and purpose in your steps.\nBe honest and diligent. Treasure every meal and every moment together.\nMay the warmth of your family inspire you to serve others.",
+        "region": "all",
+        "language": "en",
+        "sortOrder": 10,
+        "sample": true
+      },
+      "source": "family-letter.mp4",
+      "poster": "family-letter.jpg",
+      "status": "已发布"
+    },
+    {
+      "key": "media_draft",
+      "data": {
+        "title": "借用卡背后的约定 · 待编素材",
+        "category": "documentary",
+        "type": "short",
+        "collection": "社区记忆 · 编辑中",
+        "excerpt": "待核对的展示素材，不进入公开目录。",
+        "duration": "00:12",
+        "transcript": "编辑说明：还需补充作者授权说明与准确字幕。",
+        "region": "beijing",
+        "language": "zh",
+        "sortOrder": 90,
+        "sample": true
+      },
+      "source": "everyday-values.mp4",
+      "poster": "everyday-values.jpg",
+      "status": "草稿"
+    }
+  ],
+  "venues": [
+    {
+      "key": "venue_practice",
+      "data": {
+        "title": "青禾社区共读空间",
+        "category": "practice",
+        "city": "浙江 · 虚构社区",
+        "address": "展示书院路 6 号（虚构地址）",
+        "hours": "周二至周日 09:30–16:30（模拟）",
+        "description": "在共读桌、家书展墙和修补角，练习倾听、记录与共同约定。此为联动演示场馆，请勿据此安排行程。",
+        "highlights": "家庭共读桌\n口述记忆角\n旧物修补展示",
+        "stops": "入口导览\n家书展墙\n共读交流区",
+        "contact": "现场服务台（模拟，无真实电话）",
+        "visitorNotice": "本场馆和地址均为虚构；关联的家书工作坊可演示报名与签到。",
+        "region": "zhejiang",
+        "language": "zh",
+        "sortOrder": 10,
+        "sample": true
+      },
+      "activityKey": "activity_letters",
+      "status": "已发布"
+    },
+    {
+      "key": "venue_integrity",
+      "data": {
+        "title": "澄溪清廉家风学习馆",
+        "category": "integrity",
+        "city": "江苏 · 虚构街区",
+        "address": "展示文化街 18 号（虚构地址）",
+        "hours": "周二至周六 09:00–17:00（模拟）",
+        "description": "通过家庭约定、物件来历和情景讨论，了解公私分明、守信节俭如何落实在日常。",
+        "highlights": "家庭约定展墙\n旧物小展\n情景讨论桌",
+        "stops": "序厅\n旧物展区\n情景课堂",
+        "contact": "预约服务台（模拟）",
+        "visitorNotice": "展示活动已满额，可查看报名分支；无真实出行服务。",
+        "region": "jiangsu",
+        "language": "zh",
+        "sortOrder": 20,
+        "sample": true
+      },
+      "activityKey": "activity_old_objects",
+      "status": "已发布"
+    },
+    {
+      "key": "venue_hall",
+      "data": {
+        "title": "竹里家族记忆馆",
+        "category": "hall",
+        "city": "四川 · 虚构社区",
+        "address": "展示竹院巷 12 号（虚构地址）",
+        "hours": "周三至周日 10:00–17:00（模拟）",
+        "description": "整理虚构家庭的书信、家训和口述记录，以普通人的日常选择讨论家族记忆的传承。",
+        "highlights": "口述档案桌\n家训临摹区\n邻里故事墙",
+        "stops": "竹院入口\n家训展廊\n邻里故事墙",
+        "contact": "馆内服务台（模拟）",
+        "visitorNotice": "三类阵地中的宗祠名人馆目录展示。所有地址和服务信息均为虚构。",
+        "region": "sichuan",
+        "language": "zh",
+        "sortOrder": 30,
+        "sample": true
+      },
+      "activityKey": "activity_courtyard",
+      "status": "已发布"
+    },
+    {
+      "key": "venue_en",
+      "data": {
+        "title": "Qinghe Community Reading Room",
+        "category": "practice",
+        "city": "Zhejiang · fictional community",
+        "address": "6 Demo Academy Road (fictional)",
+        "hours": "Tue–Sun 09:30–16:30 (sample)",
+        "description": "A fictional community space for shared reading and family letters. Do not plan travel from this sample.",
+        "highlights": "Family reading tables\nLetter gallery\nMemory workshop",
+        "stops": "Welcome\nGallery\nReading tables",
+        "contact": "Sample visitor desk",
+        "visitorNotice": "This English entry is published independently. Booking opens the Chinese activity record.",
+        "region": "zhejiang",
+        "language": "en",
+        "sortOrder": 10,
+        "sample": true
+      },
+      "activityKey": "activity_letters",
+      "status": "已发布"
+    }
+  ],
+  "hallPeople": [
+    {
+      "key": "hall_cheng",
+      "data": {
+        "title": "程守一（虚构人物）",
+        "era": "近现代生活史 · 展示档案",
+        "theme": "把每一次托付记清楚",
+        "book": "修理铺里的约定簿（原创样篇）",
+        "quote": "答应的事写在纸上，也要放在心上。",
+        "introduction": "程守一是一位为本项目原创设计的虚构人物。故事中的他经营一家小修理铺，把邻里寄修的物件、预计完成日期和每次修改都记在册中。家人从这本约定簿里学会了做事有交代、遇到难处及时沟通。",
+        "notes": "物件：一把多次修补的小木椅，连接三代人的生活记忆。\n家训：承诺不能做到时，先说明原因，再商量新的安排。\n共读：请回忆一件你曾答应家人的小事，想想如何把它做好。",
+        "sourceTitle": "本项目原创虚构人物与展陈文案",
+        "sourceUrl": "",
+        "region": "jiangsu",
+        "language": "zh",
+        "sortOrder": 10,
+        "sample": true
+      },
+      "status": "已发布"
+    },
+    {
+      "key": "hall_lu",
+      "data": {
+        "title": "陆和清（虚构人物）",
+        "era": "当代社区记忆 · 展示档案",
+        "theme": "先听完，再商量",
+        "book": "院坝里的共议笔记（原创样篇）",
+        "quote": "把不同的想法摆出来，把共同的办法写下来。",
+        "introduction": "陆和清是一位原创虚构的社区记录员。她在邻里共议时记录每个人的顾虑，把轮流照看花园、共享工具和照顾独居老人等约定写成简单明白的清单。这份档案用于讨论家庭与社区中的倾听和担当。",
+        "notes": "档案：保留不同意见和修改日期，说明约定如何形成。\n传习：把抽象的善意变成轮值、借还与提醒的具体安排。\n练习：写一条家人都能理解、可以执行的共同约定。",
+        "sourceTitle": "本项目原创虚构人物与展陈文案",
+        "sourceUrl": "",
+        "region": "sichuan",
+        "language": "zh",
+        "sortOrder": 20,
+        "sample": true
+      },
+      "status": "已发布"
+    },
+    {
+      "key": "hall_draft",
+      "data": {
+        "title": "桥边书屋口述档案 · 编辑稿",
+        "era": "社区记忆 · 待核稿",
+        "theme": "核对来历，尊重讲述",
+        "book": "口述资料整理记录",
+        "quote": "把记得的写下，也把不确定的标清。",
+        "introduction": "用于展示名人馆资料的待核对状态。编辑需要补充来源核对与公开授权，当前不会进入用户端。",
+        "notes": "待办：核对材料来历与可公开范围。",
+        "sourceTitle": "本项目原创演示资料",
+        "sourceUrl": "",
+        "region": "zhejiang",
+        "language": "zh",
+        "sortOrder": 90,
+        "sample": true
+      },
+      "status": "草稿"
+    }
+  ],
+  "banners": [
+    {
+      "key": "banner_policy",
+      "data": {
+        "category": "policy",
+        "title": "让每一份家风资料都有来处",
+        "subtitle": "全国政策通知 · 展示说明",
+        "description": "查看资料征集、来源核对与公开使用说明。",
+        "actionLabel": "阅读说明",
+        "footnote": "平台展示稿，非政府政策文件",
+        "targetScreen": "news",
+        "region": "all",
+        "language": "zh",
+        "sortOrder": 10,
+        "sample": true
+      },
+      "targetKey": [
+        "contents",
+        "catalog_policy"
+      ],
+      "status": "已发布"
+    },
+    {
+      "key": "banner_contribution",
+      "data": {
+        "category": "contribution",
+        "title": "把担当与牵挂，写给身边人",
+        "subtitle": "秋日家书征集",
+        "description": "从一件小事、一句叮嘱开始，记录家庭中的诚实、互助与责任。",
+        "actionLabel": "查看征集",
+        "footnote": "虚构征集场景 · 可体验真实投稿流程",
+        "targetScreen": "news",
+        "region": "all",
+        "language": "zh",
+        "sortOrder": 20,
+        "sample": true
+      },
+      "targetKey": [
+        "contents",
+        "notice_autumn"
+      ],
+      "status": "已发布"
+    },
+    {
+      "key": "banner_celebration",
+      "data": {
+        "category": "celebration",
+        "title": "共读一封家书，共守一份约定",
+        "subtitle": "年度盛典 · 回放展示",
+        "description": "通过原创短片体验盛典回放与媒体展播。",
+        "actionLabel": "观看回放",
+        "footnote": "原创静音样片 · 非真实盛典或直播",
+        "targetScreen": "media",
+        "region": "all",
+        "language": "zh",
+        "sortOrder": 30,
+        "sample": true
+      },
+      "targetKey": [
+        "mediaItems",
+        "media_ceremony"
+      ],
+      "coverKey": "integrity-talk.jpg",
+      "status": "已发布"
+    },
+    {
+      "key": "banner_collection",
+      "data": {
+        "category": "collection",
+        "title": "日常有光，让家书成为共同记忆",
+        "subtitle": "典籍首发 · 家书与邻里卷",
+        "description": "从窗台、饭桌与邻里相助中，读见平凡生活里的家风。",
+        "actionLabel": "打开典籍",
+        "footnote": "模拟编纂与发布记录",
+        "targetScreen": "library",
+        "region": "all",
+        "language": "zh",
+        "sortOrder": 40,
+        "sample": true
+      },
+      "targetKey": [
+        "collections",
+        "collection_everyday"
+      ],
+      "status": "已发布"
+    },
+    {
+      "key": "banner_study",
+      "data": {
+        "category": "study",
+        "title": "周末围坐，一起写下家人的故事",
+        "subtitle": "研学活动 · 家书工作坊",
+        "description": "到青禾社区共读空间，体验从阅读到写作的完整活动流程。",
+        "actionLabel": "查看与报名",
+        "footnote": "虚构场馆与活动 · 用于报名联动展示",
+        "targetScreen": "learning",
+        "region": "zhejiang",
+        "language": "zh",
+        "sortOrder": 50,
+        "sample": true
+      },
+      "targetKey": [
+        "activities",
+        "activity_letters"
+      ],
+      "status": "已发布"
+    },
+    {
+      "key": "banner_integrity",
+      "data": {
+        "category": "integrity",
+        "title": "把清廉写进日常的每一次选择",
+        "subtitle": "廉政课堂 · 家庭约定三讲",
+        "description": "围绕公私边界、节俭守信和家庭商量，完成三个学习章节。",
+        "actionLabel": "进入课堂",
+        "footnote": "模拟学习台账 · 无正式培训效力",
+        "targetScreen": "classroom",
+        "region": "all",
+        "language": "zh",
+        "sortOrder": 60,
+        "sample": true
+      },
+      "targetKey": [
+        "courses",
+        "course_clear_boundaries"
+      ],
+      "status": "已发布"
+    },
+    {
+      "key": "banner_english",
+      "data": {
+        "category": "contribution",
+        "title": "Autumn Letters: Begin Close to Home",
+        "subtitle": "Family letters · English edition",
+        "description": "Begin with one promise, one meal, or one person who taught you to care.",
+        "actionLabel": "Read the invitation",
+        "footnote": "Fictional campaign for the local demonstration",
+        "targetScreen": "news",
+        "region": "all",
+        "language": "en",
+        "sortOrder": 10,
+        "sample": true
+      },
+      "targetKey": [
+        "contents",
+        "notice_autumn_en"
+      ],
+      "status": "已发布"
+    },
+    {
+      "key": "banner_future",
+      "data": {
+        "category": "contribution",
+        "title": "下一轮共读 · 排期展示",
+        "subtitle": "未来发布窗口",
+        "description": "已发布但尚未到展示时间，用户端当前不会出现。",
+        "actionLabel": "开始写作",
+        "footnote": "用于检验定时展示",
+        "targetScreen": "submit",
+        "startsAt": "2030-01-01T00:00:00+08:00",
+        "endsAt": "2030-02-01T00:00:00+08:00",
+        "region": "all",
+        "language": "zh",
+        "sortOrder": 80,
+        "sample": true
+      },
+      "status": "已发布"
+    },
+    {
+      "key": "banner_expired",
+      "data": {
+        "category": "study",
+        "title": "往期共读 · 已过展示窗口",
+        "subtitle": "历史排期展示",
+        "description": "保留后台历史记录，不进入当前首页。",
+        "actionLabel": "查看活动",
+        "footnote": "用于检验过期排期",
+        "targetScreen": "learning",
+        "startsAt": "2025-01-01T00:00:00+08:00",
+        "endsAt": "2025-02-01T00:00:00+08:00",
+        "region": "all",
+        "language": "zh",
+        "sortOrder": 90,
+        "sample": true
+      },
+      "status": "已发布"
+    },
+    {
+      "key": "banner_draft",
+      "data": {
+        "category": "collection",
+        "title": "旧物与家史 · 首发筹备",
+        "subtitle": "尚在编辑",
+        "description": "尚未确认的首页推荐草稿，不对公众展示。",
+        "actionLabel": "查看典籍",
+        "footnote": "草稿分支",
+        "targetScreen": "library",
+        "region": "all",
+        "language": "zh",
+        "sortOrder": 99,
+        "sample": true
+      },
+      "status": "草稿"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "lockedAt": "2026-09-26",
+  "images": {
+    "mysql:8.4.9": [
+      "mysql@sha256:c36050afdca850f23cef85703f84c7531a5ae155a11b5ee1c60acb09937c4084"
+    ],
+    "redis:8.6.3": [
+      "redis@sha256:4d25e2fe601f7ffaeb4437cb6ced3518bc36edf34ebe98863c80836943d94529"
+    ],
+    "chrislusf/seaweedfs:4.47": [
+      "chrislusf/seaweedfs@sha256:ce9e796f1fe6f06968f4c04bdaf8f678dad9c8acdfef3d244133d71bfa6bf882"
+    ],
+    "nginx:1.29.6-alpine": [
+      "nginx@sha256:f46cb72c7df02710e693e863a983ac42f6a9579058a59a35f1ae36c9958e4ce0"
+    ],
+    "maven:3.9.11-eclipse-temurin-21": [
+      "maven@sha256:6fdc855a6ed81d288ca7ca37ac6ff5e9308b612485c0801d70b25a858c83d237"
+    ],
+    "eclipse-temurin:21-jre-alpine": [
+      "eclipse-temurin@sha256:51ab5e3302e7141ce665ca3ea85e8b5cd648eafbc3c0c90dd79d6537684e4555"
+    ],
+    "node:22-alpine": [
+      "node@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402"
+    ]
+  }
+}

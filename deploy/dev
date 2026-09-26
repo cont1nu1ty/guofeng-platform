@@ -1,0 +1,307 @@
+#!/usr/bin/env python3
+"""Isolated local Compose lifecycle. Requires Docker Compose and Python 3."""
+from __future__ import annotations
+
+import datetime as dt
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import secrets
+import shutil
+import subprocess
+import sys
+
+HERE = Path(__file__).resolve().parent
+ENV_FILE = Path(os.environ.get("JIAFENG_ENV_FILE", str(HERE / ".env"))).resolve()
+STORAGE_IMAGE = "chrislusf/seaweedfs:4.47@sha256:ce9e796f1fe6f06968f4c04bdaf8f678dad9c8acdfef3d244133d71bfa6bf882"
+
+
+def run(args, **kwargs):
+    return subprocess.run([str(x) for x in args], check=True, **kwargs)
+
+
+def read_env(path):
+    result = {}
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith("#"):
+            key, value = line.split("=", 1)
+            result[key] = value.strip().strip('"').strip("'")
+    return result
+
+
+def write_env(path, values):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("# Local secrets. Do not commit or share.\n" + "".join(f"{k}={v}\n" for k, v in values.items()))
+    path.chmod(0o600)
+
+
+def initialize():
+    if not ENV_FILE.exists():
+        values = {
+            "COMPOSE_PROJECT_NAME": "jiafeng-dev",
+            "JIAFENG_BIND_ADDRESS": "127.0.0.1",
+            "JIAFENG_HTTP_PORT": "18080",
+            "JIAFENG_S3_PORT": "18333",
+            "JIAFENG_S3_PUBLIC_ENDPOINT": "http://127.0.0.1:18333",
+            "JIAFENG_DEV_ACCOUNTS_ENABLED": "true",
+        }
+        for key in ("DB_PASSWORD", "MYSQL_ROOT_PASSWORD", "REDIS_PASSWORD", "JIAFENG_TOKEN_SECRET", "JIAFENG_HEALTH_PASSWORD", "JIAFENG_DEV_PASSWORD", "JIAFENG_S3_ACCESS_KEY", "JIAFENG_S3_SECRET_KEY"):
+            values[key] = secrets.token_hex(24)
+        values["JIAFENG_LOCAL_CONFIG"] = str(HERE / ".local" / values["COMPOSE_PROJECT_NAME"])
+        write_env(ENV_FILE, values)
+        print(f"Generated local credentials: {ENV_FILE} (mode 0600)")
+    values = read_env(ENV_FILE)
+    if not re.fullmatch(r"[a-z0-9][a-z0-9_-]+", values.get("COMPOSE_PROJECT_NAME", "")):
+        raise ValueError("COMPOSE_PROJECT_NAME must contain only lowercase letters, digits, hyphens and underscores")
+    local = Path(values.get("JIAFENG_LOCAL_CONFIG", str(HERE / ".local")))
+    local.mkdir(parents=True, exist_ok=True)
+    local.chmod(0o700)
+    s3 = local / "s3.json"
+    s3.write_text(json.dumps({"identities": [{"name": "jiafeng-server", "credentials": [{"accessKey": values["JIAFENG_S3_ACCESS_KEY"], "secretKey": values["JIAFENG_S3_SECRET_KEY"]}], "actions": ["Read:jiafeng-private", "Write:jiafeng-private", "List:jiafeng-private", "Tagging:jiafeng-private"]}]}))
+    s3.chmod(0o600)
+    return values
+
+
+def compose(*args, env_file=ENV_FILE, **kwargs):
+    # Do not inherit another project's COMPOSE_* interpolation settings.
+    clean_env = {k: v for k, v in os.environ.items() if not k.startswith("COMPOSE_")}
+    values = read_env(env_file)
+    clean_env.update(values)
+    return run(["docker", "compose", "--env-file", env_file, "-f", HERE / "compose.yaml", "-p", values["COMPOSE_PROJECT_NAME"], *args], env=clean_env, **kwargs)
+
+
+def file_digest(path):
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def backup(values, *, resume_services=True):
+    stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    target = HERE / "backups" / (stamp + "-" + secrets.token_hex(2))
+    target.mkdir(parents=True, mode=0o700)
+    # Stop all application writers before the database snapshot; stop S3 before
+    # copying both filer metadata and volume data. Never remove live volumes.
+    running = compose("ps", "--services", "--status", "running", capture_output=True, text=True).stdout.split()
+    try:
+        compose("stop", "web", "server")
+        with (target / "database.sql").open("wb") as out:
+            compose("exec", "-T", "mysql", "sh", "-c", 'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysqldump -u root --single-transaction --routines --triggers --set-gtid-purged=OFF --no-tablespaces --add-drop-table jiafeng', stdout=out)
+        compose("stop", "storage")
+        volume = values["COMPOSE_PROJECT_NAME"] + "_storage-data"
+        run(["docker", "run", "--rm", "--entrypoint", "sh", "-v", volume + ":/data:ro", "-v", str(target) + ":/backup", STORAGE_IMAGE, "-c", "tar -czf /backup/storage.tar.gz -C /data ."])
+        shutil.copyfile(ENV_FILE, target / "secrets.env")
+        (target / "secrets.env").chmod(0o600)
+        shutil.copyfile(HERE / "images.lock.json", target / "images.lock.json")
+        manifest = {p.name: file_digest(p) for p in target.iterdir() if p.is_file()}
+        (target / "sha256.json").write_text(json.dumps(manifest, indent=2) + "\n")
+        print(f"Backup complete: {target}")
+    finally:
+        resume = [service for service in ("storage", "server", "web") if service in running]
+        if resume and resume_services:
+            compose("start", "--wait", "--wait-timeout", "180", *resume)
+    return target
+
+
+def query(sql):
+    return compose("exec", "-T", "mysql", "sh", "-c",
+        'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql --default-character-set=utf8mb4 '
+        '--batch --skip-column-names -u root jiafeng', input=sql,
+        capture_output=True, text=True).stdout.strip()
+
+
+def reset_scope(values):
+    """Refuse foreign containers/volumes, restored environments and production flags."""
+    project = values["COMPOSE_PROJECT_NAME"]
+    if not re.fullmatch(r"jiafeng-(?:dev|demo-[a-z0-9][a-z0-9_-]*)", project):
+        raise ValueError("reset-demo only supports jiafeng-dev or jiafeng-demo-* development projects")
+    if values.get("JIAFENG_DEV_ACCOUNTS_ENABLED") != "true":
+        raise ValueError("reset-demo requires JIAFENG_DEV_ACCOUNTS_ENABLED=true")
+    volumes = {}
+    for service, destination, logical_name in (
+        ("mysql", "/var/lib/mysql", "mysql-data"),
+        ("redis", "/data", "redis-data"),
+        ("storage", "/data", "storage-data"),
+    ):
+        ids = compose("ps", "-a", "-q", service, capture_output=True, text=True).stdout.split()
+        if len(ids) != 1:
+            raise ValueError(f"reset-demo requires exactly one existing {service} container; run ./deploy/dev up first")
+        raw = run(["docker", "inspect", ids[0], "--format",
+            "{{json .Config.Labels}}\n{{json .Mounts}}\n{{json .State.Status}}"],
+            capture_output=True, text=True).stdout.splitlines()
+        labels, mounts, state = [json.loads(line) for line in raw]
+        if (labels.get("com.docker.compose.project") != project
+                or labels.get("com.docker.compose.service") != service
+                or labels.get("com.docker.compose.project.config_files") != str(HERE / "compose.yaml")):
+            raise ValueError(f"Refusing {service}: container does not belong to this deployment")
+        if service in ("mysql", "redis") and state != "running":
+            raise ValueError(f"reset-demo requires {service} running; run ./deploy/dev up first")
+        matches = [mount for mount in mounts if mount.get("Destination") == destination]
+        if len(matches) != 1 or matches[0].get("Type") != "volume":
+            raise ValueError(f"Refusing {service}: expected a project-owned named volume")
+        volume = matches[0]["Name"]
+        volume_labels = json.loads(run(["docker", "volume", "inspect", volume,
+            "--format", "{{json .Labels}}"], capture_output=True, text=True).stdout)
+        if (volume_labels.get("com.docker.compose.project") != project
+                or volume_labels.get("com.docker.compose.volume") != logical_name):
+            raise ValueError(f"Refusing {service}: volume labels do not match this deployment")
+        volumes[service] = volume
+    if volumes["storage"] != project + "_storage-data":
+        raise ValueError("Refusing storage: backup and reset must refer to the same project volume")
+    expected = {"jf_account", "jf_entity", "jf_revision", "jf_draft", "jf_file",
+        "jf_registration", "jf_idempotency", "jf_audit", "jf_login_attempt",
+        "jf_revision_file", "jf_schema_version", "jf_bootstrap_ready"}
+    actual = set(query("SELECT table_name FROM information_schema.tables WHERE "
+        "table_schema=DATABASE() AND LEFT(table_name,3)='jf_';").splitlines())
+    if actual != expected:
+        raise ValueError("Business schema changed; update and verify reset-demo before clearing data")
+    return volumes
+
+
+def reset_demo(values, *, empty=False):
+    seed_script = HERE / "seed-showcase.py"
+    if not empty and not seed_script.is_file():
+        raise ValueError("Missing deploy/seed-showcase.py; use reset-demo --empty only for an empty development environment")
+    # Keep a single process in charge of the destructive sequence. Never delete
+    # this lock file: another process may already have opened the same inode.
+    lock_path = HERE / ".local" / "reset-demo.lock"
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("a") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            raise ValueError("Another reset-demo is already running") from None
+        volumes = reset_scope(values)
+        before_schema = query("SELECT version,checksum FROM jf_schema_version ORDER BY version;")
+        before_counts = query("SELECT kind,COUNT(*) FROM jf_entity GROUP BY kind ORDER BY kind;")
+        # A successful, verified full backup is a strict prerequisite. Keep all
+        # writers and storage stopped from snapshot until cleanup is complete.
+        saved = backup(values, resume_services=False)
+        manifest = json.loads((saved / "sha256.json").read_text())
+        for name in ("database.sql", "storage.tar.gz", "secrets.env", "images.lock.json"):
+            if file_digest(saved / name) != manifest.get(name):
+                raise ValueError(f"Backup checksum mismatch: {name}; data was not reset")
+        verified_volumes = reset_scope(values)
+        if verified_volumes != volumes:
+            raise ValueError("Volume assignments changed during backup; data was not reset")
+        try:
+            query((HERE / "mysql" / "reset-demo.sql").read_text())
+            cleared = compose("exec", "-T", "redis", "sh", "-c",
+                'REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli -n 0 FLUSHDB SYNC',
+                capture_output=True, text=True).stdout.strip()
+            if cleared != "OK":
+                raise ValueError("Redis did not confirm session cleanup; application remains stopped")
+            run(["docker", "run", "--rm", "--network", "none", "--entrypoint", "sh",
+                "-v", volumes["storage"] + ":/data", STORAGE_IMAGE, "-c",
+                "find /data -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +"])
+            if query("SELECT version,checksum FROM jf_schema_version ORDER BY version;") != before_schema:
+                raise ValueError("Schema history unexpectedly changed; keep services stopped and restore the backup")
+            compose("up", "-d", "--no-build", "--wait", "--wait-timeout", "240")
+            accounts = int(query("SELECT COUNT(*) FROM jf_account;"))
+            if accounts != 6 or int(query("SELECT COUNT(*) FROM jf_file;")) != 0:
+                raise ValueError("Reset did not produce the expected six-account empty development environment")
+            report = {"resetAt": dt.datetime.now(dt.timezone.utc).isoformat(),
+                "project": values["COMPOSE_PROJECT_NAME"], "backupDirectory": str(saved),
+                "backupChecksumsVerified": True, "schemaPreserved": True,
+                "volumesPreserved": True, "previousEntityCounts": before_counts,
+                "accountsAfterReset": accounts,
+                "seedRequested": not empty, "seedCompleted": False}
+            report_path = HERE / ".local" / "reset-demo.json"
+            report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
+            if not empty:
+                run([sys.executable, seed_script], env={**os.environ, "JIAFENG_ENV_FILE": str(ENV_FILE)})
+                run([sys.executable, HERE / "seed-catalog.py"], env={**os.environ, "JIAFENG_ENV_FILE": str(ENV_FILE)})
+                report["seedCompleted"] = True
+                report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
+        except Exception:
+            print(f"Reset or seed interrupted. Retained backup: {saved}", file=sys.stderr)
+            print("Do not discard that backup. Use ./deploy/dev restore BACKUP_DIR to inspect an isolated recovery.", file=sys.stderr)
+            raise
+        print(f"Reset complete; original backup retained: {saved}")
+        print(f"User UI: http://127.0.0.1:{values['JIAFENG_HTTP_PORT']}/")
+        print(f"Admin UI: http://127.0.0.1:{values['JIAFENG_HTTP_PORT']}/admin/")
+        print("Existing sessions were cleared. Sign in again with the unchanged JIAFENG_DEV_PASSWORD.")
+
+
+def restore(source):
+    source = Path(source).resolve()
+    manifest = json.loads((source / "sha256.json").read_text())
+    for name in ("database.sql", "storage.tar.gz", "secrets.env", "images.lock.json"):
+        if file_digest(source / name) != manifest.get(name):
+            raise ValueError(f"Backup checksum mismatch: {name}")
+    stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d%H%M%S")
+    values = read_env(source / "secrets.env")
+    values.update({
+        "COMPOSE_PROJECT_NAME": "jiafeng-restore-" + stamp + "-" + secrets.token_hex(2),
+        "JIAFENG_BIND_ADDRESS": "127.0.0.1",
+        "JIAFENG_HTTP_PORT": os.environ.get("JIAFENG_RESTORE_HTTP_PORT", "18081"),
+        "JIAFENG_S3_PORT": os.environ.get("JIAFENG_RESTORE_S3_PORT", "18334"),
+    })
+    values["JIAFENG_S3_PUBLIC_ENDPOINT"] = "http://127.0.0.1:" + values["JIAFENG_S3_PORT"]
+    values["JIAFENG_LOCAL_CONFIG"] = str(HERE / ".local" / values["COMPOSE_PROJECT_NAME"])
+    restored_env = HERE / ".local" / (values["COMPOSE_PROJECT_NAME"] + ".env")
+    write_env(restored_env, values)
+    run([sys.executable, __file__, "init"], env={**os.environ, "JIAFENG_ENV_FILE": str(restored_env)})
+    compose("up", "-d", "--wait", "mysql", "redis", "storage", env_file=restored_env)
+    with (source / "database.sql").open("rb") as inp:
+        compose("exec", "-T", "mysql", "sh", "-c", 'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql -u root jiafeng', stdin=inp, env_file=restored_env)
+    compose("stop", "storage", env_file=restored_env)
+    volume = values["COMPOSE_PROJECT_NAME"] + "_storage-data"
+    # This is a newly generated project volume, never the source project's data.
+    run(["docker", "run", "--rm", "--entrypoint", "sh", "-v", volume + ":/data", "-v", str(source) + ":/backup:ro", STORAGE_IMAGE, "-c", "find /data -mindepth 1 -maxdepth 1 -exec rm -rf {} + && tar -xzf /backup/storage.tar.gz -C /data"])
+    compose("up", "-d", "--wait", env_file=restored_env)
+    print(f"Restored into new project {values['COMPOSE_PROJECT_NAME']}; original deployment untouched.")
+    print(f"Manage this restored environment: JIAFENG_ENV_FILE={restored_env} ./deploy/dev status")
+    print(f"Open http://127.0.0.1:{values['JIAFENG_HTTP_PORT']}/admin/")
+
+
+def main():
+    command = sys.argv[1] if len(sys.argv) > 1 else "help"
+    if command == "help":
+        print("Usage: ./deploy/dev {up|init|build|down|status|logs [service]|backup|restore BACKUP_DIR|reset-demo [--empty]|seed-catalog}")
+        return
+    if command == "restore":
+        if len(sys.argv) != 3:
+            raise ValueError("Usage: ./deploy/dev restore BACKUP_DIR")
+        restore(sys.argv[2])
+        return
+    values = initialize()
+    if command == "init":
+        print(f"Configuration ready for {values['COMPOSE_PROJECT_NAME']}")
+    elif command == "up":
+        compose("up", "-d", "--build", "--wait", "--wait-timeout", "480")
+        print(f"User UI: http://127.0.0.1:{values['JIAFENG_HTTP_PORT']}/")
+        print(f"Admin UI: http://127.0.0.1:{values['JIAFENG_HTTP_PORT']}/admin/")
+        print(f"Development account password: JIAFENG_DEV_PASSWORD in {ENV_FILE}")
+    elif command == "build":
+        compose("build", *sys.argv[2:])
+    elif command == "down":
+        compose("down")  # No --volumes option: durable data is retained.
+    elif command == "status":
+        compose("ps")
+    elif command == "logs":
+        compose("logs", "--tail", "120", *sys.argv[2:])
+    elif command == "backup":
+        backup(values)
+    elif command == "seed-catalog":
+        run([sys.executable, HERE / "seed-catalog.py"], env={**os.environ, "JIAFENG_ENV_FILE": str(ENV_FILE)})
+    elif command == "reset-demo":
+        if sys.argv[2:] not in ([], ["--empty"]):
+            raise ValueError("Usage: ./deploy/dev reset-demo [--empty]")
+        reset_demo(values, empty=sys.argv[2:] == ["--empty"])
+    else:
+        raise ValueError("Unknown command; use ./deploy/dev help")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (subprocess.CalledProcessError, ValueError, KeyError, FileNotFoundError) as exc:
+        print(f"Deployment stopped: {exc}", file=sys.stderr)
+        sys.exit(1)

@@ -1,0 +1,15 @@
+.git
+**/node_modules
+**/dist
+**/target
+**/.idea
+**/.DS_Store
+**/.flattened-pom.xml
+**/*.log
+**/.env
+**/.env.*
+deploy/.local
+deploy/backups
+docs
+projects
+*.pdf

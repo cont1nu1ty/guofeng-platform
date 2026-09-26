@@ -1,0 +1,8 @@
+.env
+.env.*
+!.env.example
+.local/
+backups/
+__pycache__/
+restore-*/
+!README.md
