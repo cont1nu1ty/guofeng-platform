@@ -1,0 +1,57 @@
+{
+  "base": "http://127.0.0.1:5175/admin/",
+  "stamp": 1790389746304,
+  "titles": {
+    "contentTitle": "联调验证-资讯-1790389746304",
+    "activityTitle": "联调验证-活动-1790389746304",
+    "productTitle": "联调验证-文创-1790389746304"
+  },
+  "calls": [
+    {
+      "command": "saveContent",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "setContentStatus",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "saveActivity",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "setActivityStatus",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "saveProduct",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "toggleProduct",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "toggleProduct",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "saveKnowledgeDocument",
+      "status": 200,
+      "error": null
+    }
+  ],
+  "publicVisibility": true,
+  "expertAuthorization": true,
+  "mobileOverflow": false,
+  "errors": [],
+  "mode": "Latest admin source in Vite HTTP mode, real API/MySQL/S3 behind Docker at 18080",
+  "scope": "Development test accounts; content, activity, product, private knowledge file upload, expert UI permissions; no WeChat device evidence"
+}

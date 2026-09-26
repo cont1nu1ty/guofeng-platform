@@ -1,0 +1,917 @@
+{
+  "checkedAt": "2026-09-26T03:15:23.825Z",
+  "origin": "http://127.0.0.1:18080",
+  "mode": "Real seeded database and final Nginx H5 bundle; read-only navigation with non-auth API writes blocked",
+  "checks": [
+    {
+      "label": "guest-home",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-news",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-library",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-learning",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-classroom",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-shop",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-topic-red",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-topic-integrity",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-topic-everyday",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-topic-classical",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-public-results",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-activity-open-available",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-activity-open-full",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-activity-ongoing-available",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-activity-ended-available",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "guest-home",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-news",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-library",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-learning",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-classroom",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-shop",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-topic-red",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-topic-integrity",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-topic-everyday",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-topic-classical",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-public-results",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-activity-open-available",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-activity-open-full",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-activity-ongoing-available",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "guest-activity-ended-available",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-works",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-publication-boundary",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-events",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-learning",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-gifts",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-messages",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-archive",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-works",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-publication-boundary",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-events",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-learning",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-gifts",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-messages",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_bj-archive",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-works",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-publication-boundary",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-events",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-learning",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-gifts",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-messages",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-archive",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-works",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-publication-boundary",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-events",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-learning",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-gifts",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-messages",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_zj-archive",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_js-works",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_js-publication-boundary",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_js-events",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_js-learning",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_js-gifts",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_js-messages",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_js-archive",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_js-works",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_js-publication-boundary",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_js-events",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_js-learning",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_js-gifts",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_js-messages",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_js-archive",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-works",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-publication-boundary",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-events",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-learning",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-gifts",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-messages",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-archive",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-returned-progress",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-works",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-publication-boundary",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-events",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-learning",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-gifts",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-messages",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-archive",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_sc-returned-progress",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-works",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-publication-boundary",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-events",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-learning",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-gifts",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-messages",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-archive",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-works",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-publication-boundary",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-events",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-learning",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-gifts",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-messages",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "member_overseas-archive",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "expert-anonymous-task",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "expert-anonymous-task",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "admin-overview",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "admin-submissions",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "admin-reviews",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "admin-experts",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "admin-content",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "admin-collections",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "admin-activities",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "admin-education",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "admin-welfare",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "admin-users",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "admin-ai",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "admin-analytics",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "admin-settings",
+      "width": 1440,
+      "documentWidth": 1440,
+      "overflow": false
+    },
+    {
+      "label": "admin-overview",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "admin-submissions",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "admin-reviews",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "admin-experts",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "admin-content",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "admin-collections",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "admin-activities",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "admin-education",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "admin-welfare",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "admin-users",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "admin-ai",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "admin-analytics",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "admin-settings",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "region_bj-scoped-submissions",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "region_zj-scoped-submissions",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    {
+      "label": "expert-admin-tasks",
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    }
+  ],
+  "publicCounts": {
+    "works": 3,
+    "news": 5,
+    "classics": 2,
+    "activities": 5,
+    "courses": 2,
+    "products": 3
+  },
+  "members": {
+    "member_bj": {
+      "ownWorks": 5,
+      "statuses": [
+        "pending_initial_review",
+        "in_review",
+        "rejected",
+        "awarded"
+      ],
+      "claims": [
+        "approved"
+      ],
+      "registrations": 5,
+      "learning": 2
+    },
+    "member_zj": {
+      "ownWorks": 3,
+      "statuses": [
+        "shortlisted",
+        "in_review",
+        "collected"
+      ],
+      "claims": [
+        "recorded"
+      ],
+      "registrations": 4,
+      "learning": 2
+    },
+    "member_js": {
+      "ownWorks": 3,
+      "statuses": [
+        "in_review",
+        "rejected",
+        "shortlisted"
+      ],
+      "claims": [
+        "issued"
+      ],
+      "registrations": 0,
+      "learning": 0
+    },
+    "member_sc": {
+      "ownWorks": 3,
+      "statuses": [
+        "in_review",
+        "pending_initial_review",
+        "returned"
+      ],
+      "claims": [
+        "returned"
+      ],
+      "registrations": 0,
+      "learning": 0
+    },
+    "member_overseas": {
+      "ownWorks": 2,
+      "statuses": [
+        "shortlisted",
+        "pending_initial_review"
+      ],
+      "claims": [
+        "cancelled"
+      ],
+      "registrations": 0,
+      "learning": 0
+    }
+  },
+  "regions": {
+    "region_bj": {
+      "submissions": 5,
+      "regionIds": [
+        "beijing"
+      ]
+    },
+    "region_zj": {
+      "submissions": 3,
+      "regionIds": [
+        "zhejiang"
+      ]
+    }
+  },
+  "adminCounts": {
+    "submissions": 16,
+    "tasks": 51,
+    "experts": 3,
+    "contents": 8,
+    "collections": 3,
+    "activities": 6,
+    "products": 4,
+    "welfareClaims": 6,
+    "courses": 3,
+    "users": 13
+  },
+  "expertTasks": 31,
+  "pageErrors": [],
+  "failedRequests": [],
+  "httpErrors": [],
+  "blockedBusinessWrites": [],
+  "limits": [
+    "Desktop and mobile browser viewport only; no WeChat device evidence.",
+    "Login/logout create real sessions; no business command or record mutation performed.",
+    "No fabricated AI invocation, formal signature or payment result."
+  ],
+  "passed": true
+}

@@ -1,5 +1,7 @@
 # 开源后台选型决策
 
+> 2026-09-26 实施纠正：本轮实际采用版本、许可和部署结果见根 source-lock.json 与 [后端实现](../../docs/engineering/backend-implementation.md)。所选 RuoYi-Vue-Plus 提交没有现成租户模块，地区权限由家风业务实现；下文历史候选不等于已安装能力。
+
 核查日期：2026-09-21。决策状态：**推荐RuoYi-Vue-Plus体系进入R0验证，未完成运行兼容性验收**。已核查官方源码、许可、构建文件、发行记录与功能边界；没有将宣传的节省比例或Star数作为选型依据。
 
 后续实现进展：用户优先要求后台界面，已在 `apps/admin` 完成13页演示，使用选定Vue分支的依赖子集及两个裁剪组件；实际复用见根目录 `source-lock.json` 的 `adminFrontend`。本页保留服务端选型依据，Java后端与WarmFlow运行验证仍待后续开展。
@@ -86,7 +88,7 @@ AI阶段先验一个知识问答和OCR场景：内网解析、embedding、rerank
 
 可优先整合的是系统基础能力与通用界面；真正的作品版本、评审规则、匿名材料、公益额度、典籍编校以及区域治理需在家风模块中开发。因此不承诺“开源覆盖百分之多少”或“几周完成全平台”。
 
-原文的省级物理分库仍需专门实现。Plus多数据源和租户机制是基础工具；芋道默认租户拦截器也是行级机制。芋道有数据库隔离文章，但快速体验涉及旧分支和SQL时效提示，不能据此认定当前默认部署已满足全国分库、总库同步与恢复要求。[芋道默认实现](https://github.com/YunaiV/ruoyi-vue-pro/blob/master/yudao-framework/yudao-spring-boot-starter-biz-tenant/src/main/java/cn/iocoder/yudao/framework/tenant/core/db/TenantDatabaseInterceptor.java)、[数据库隔离说明](https://doc.iocoder.cn/saas-tenant/dynamic/)。
+原文的省级物理分库仍需专门实现。Plus 多数据源可作为基础工具，但所选提交没有可直接使用的租户模块；芋道默认租户拦截器也是行级机制。芋道有数据库隔离文章，但快速体验涉及旧分支和SQL时效提示，不能据此认定当前默认部署已满足全国分库、总库同步与恢复要求。[芋道默认实现](https://github.com/YunaiV/ruoyi-vue-pro/blob/master/yudao-framework/yudao-spring-boot-starter-biz-tenant/src/main/java/cn/iocoder/yudao/framework/tenant/core/db/TenantDatabaseInterceptor.java)、[数据库隔离说明](https://doc.iocoder.cn/saas-tenant/dynamic/)。
 
 R0的选择成立条件：公开源码/脚本足以启动；前后端版本匹配；权限、文件、流程满足试点路径；家风模块能独立开发升级。若失败，先记录具体缺口再整体比较备选。近期必须上完整交易、标准BPMN或运营低代码设计时重新计算总成本，不因模块名字相似就复制另一框架代码。
 

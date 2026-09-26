@@ -1,0 +1,11 @@
+{
+  "mode": "Final Nginx build with real API, regional first-login draft",
+  "base": "http://127.0.0.1:18080/admin/",
+  "accountRole": "regional_admin",
+  "title": "联调验证-区域默认-1790391176585",
+  "initialRegion": "浙江省",
+  "savedRegion": "浙江省",
+  "saveStatus": 200,
+  "persistedAfterReload": true,
+  "errors": []
+}

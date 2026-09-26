@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-09-26T04:13:33.655Z",
+  "mediaId": "media_25413cf042414247a79a61cfbc8b7505",
+  "sourcePath": "/api/v1/files/file_f71fb9ccd14244bf9f3a46ca88504bb5/public",
+  "mode": "Public H5 player, muted playback advanced beyond one second and decoded video dimensions",
+  "duration": 12,
+  "currentTime": 1.024237,
+  "readyState": 4,
+  "videoWidth": 640,
+  "videoHeight": 360,
+  "paused": false,
+  "passed": true
+}

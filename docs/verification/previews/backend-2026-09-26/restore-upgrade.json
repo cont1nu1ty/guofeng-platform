@@ -1,0 +1,20 @@
+{
+  "backupSchemaVersion": 1,
+  "restoredSchemaVersion": 2,
+  "migrationRows": [
+    1,
+    2
+  ],
+  "revisionFileLinks": 2,
+  "submissionId": "submission_d5816d22093b48dcabaec0d3850efa18",
+  "fileId": "file_cfd9024733fd441cb4fd1f4914e1e8f9",
+  "fileSha256": "40e2acf76ae7f5ad2cbe6d0371a7af1f028401bd9dd8293bad99cfde3900625d",
+  "fileName": "部署备份验收.pdf",
+  "originalWorkRetained": true,
+  "fileBytesRetained": true,
+  "freshLoginWorks": true,
+  "sourceBackup": "deploy/backups/20260926T022107Z-7b59",
+  "databaseBackupSha256": "f89d2a246c4946bc091988961d37ef37d05f11356e87bf2f9c5cb6acbc3d9a75",
+  "storageBackupSha256": "1f88304100790b1f133d709d4adbdc27b87615b7d7495970624a4e1a8896eeea",
+  "isolatedProject": "jiafeng-restore-20260926023014-7022"
+}

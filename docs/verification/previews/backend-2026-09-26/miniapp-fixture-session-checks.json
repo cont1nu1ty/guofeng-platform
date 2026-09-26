@@ -1,0 +1,10 @@
+{
+  "mode": "fixture HTTP responses; two expert sessions",
+  "passed": true,
+  "errors": [],
+  "checks": [
+    "first expert can open assigned anonymous material",
+    "logout unmounts private component state",
+    "second expert cannot see first expert material"
+  ]
+}

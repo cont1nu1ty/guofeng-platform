@@ -1,0 +1,14 @@
+{
+  "actor": "member_pending",
+  "originalNewsPreferences": {
+    "categories": [
+      "industry"
+    ],
+    "updates": false,
+    "digest": "instant",
+    "quietHours": true
+  },
+  "fileId": "file_f71fb9ccd14244bf9f3a46ca88504bb5",
+  "mediaId": "media_25413cf042414247a79a61cfbc8b7505",
+  "supportId": "supportTicket_15ce7d2b98f64b44bbc20fac91e3c559"
+}

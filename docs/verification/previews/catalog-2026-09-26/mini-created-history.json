@@ -1,0 +1,11 @@
+[
+  {
+    "actor": "member_pending",
+    "originalNewsPreferences": {
+      "categories": [],
+      "updates": false,
+      "digest": "instant",
+      "quietHours": true
+    }
+  }
+]

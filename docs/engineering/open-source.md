@@ -1,5 +1,7 @@
 # 开源复用选型与整合方案
 
+> 2026-09-26 状态更新：本文保留早期方案输入。现已完成本机真实服务接入；实际代码、版本、范围和下一步以 [后端实现](backend-implementation.md)、根 source-lock.json 和 [验证记录](../verification/backend-runtime.md) 为准。下文“未接入”描述编写时状态。
+
 **最新实现补充：后台界面v0.1已在`apps/admin`落地。** 实際引入Element Plus/ECharts与锁定plus-ui Vue提交的Pagination、RightToolbar裁剪组件；不是完整fork，Java后台/权限/HTTP/WarmFlow未接入。准确已采用范围以根`source-lock.json`的`adminFrontend`为准，下文调研快照不代表整仓引入。
 
 查询日期：2026-09-20。本文区分“已核实的上游能力”和“本项目拟采用方案”。以下后端、工作流、AI、OCR、VR、商城均为候选或路线，**不代表已在本项目集成**。当前优先交付可沟通的前端演示，业务服务以独立接口替换模拟数据。

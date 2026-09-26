@@ -1,0 +1,15 @@
+{
+  "cleanedAt": "2026-09-26T04:13:37.414762+00:00",
+  "entityIds": [
+    "media_25413cf042414247a79a61cfbc8b7505",
+    "supportTicket_15ce7d2b98f64b44bbc20fac91e3c559",
+    "notification_8e8a58f01c084a2ba699a2272f84cc9f"
+  ],
+  "fileIds": [
+    "file_f71fb9ccd14244bf9f3a46ca88504bb5"
+  ],
+  "matchedOwnerTitleAndFilename": true,
+  "s3ObjectDeleted": true,
+  "preferencesRestoredToDefault": true,
+  "originalShowcaseUntouched": true
+}

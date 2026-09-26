@@ -1,0 +1,66 @@
+{
+  "checkedAt": "2026-09-26T03:23:08.066Z",
+  "origin": "http://127.0.0.1:18080",
+  "checks": [
+    {
+      "label": "guest-review",
+      "width": 1440,
+      "ruleVersion": "jiafeng-four-v1",
+      "maxima": [
+        30,
+        30,
+        25,
+        15
+      ],
+      "matchesServer": true,
+      "staleDemoCopyAbsent": true,
+      "overflow": false
+    },
+    {
+      "label": "guest-review",
+      "width": 390,
+      "ruleVersion": "jiafeng-four-v1",
+      "maxima": [
+        30,
+        30,
+        25,
+        15
+      ],
+      "matchesServer": true,
+      "staleDemoCopyAbsent": true,
+      "overflow": false
+    },
+    {
+      "label": "returned-progress",
+      "width": 1440,
+      "ruleVersion": "jiafeng-four-v1",
+      "maxima": [
+        30,
+        30,
+        25,
+        15
+      ],
+      "matchesServer": true,
+      "staleDemoCopyAbsent": true,
+      "overflow": false
+    },
+    {
+      "label": "returned-progress",
+      "width": 390,
+      "ruleVersion": "jiafeng-four-v1",
+      "maxima": [
+        30,
+        30,
+        25,
+        15
+      ],
+      "matchesServer": true,
+      "staleDemoCopyAbsent": true,
+      "overflow": false
+    }
+  ],
+  "pageErrors": [],
+  "blockedBusinessWrites": [],
+  "passed": true,
+  "scope": "Final Nginx bundle after server-backed scoring-rule and HTTP authorization wording fix; read-only H5 checks"
+}

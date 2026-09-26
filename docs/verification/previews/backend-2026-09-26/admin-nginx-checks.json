@@ -1,0 +1,57 @@
+{
+  "base": "http://127.0.0.1:18080/admin/",
+  "stamp": 1790390356792,
+  "titles": {
+    "contentTitle": "联调验证-资讯-1790390356792",
+    "activityTitle": "联调验证-活动-1790390356792",
+    "productTitle": "联调验证-文创-1790390356792"
+  },
+  "calls": [
+    {
+      "command": "saveContent",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "setContentStatus",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "saveActivity",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "setActivityStatus",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "saveProduct",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "toggleProduct",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "toggleProduct",
+      "status": 200,
+      "error": null
+    },
+    {
+      "command": "saveKnowledgeDocument",
+      "status": 200,
+      "error": null
+    }
+  ],
+  "publicVisibility": true,
+  "expertAuthorization": true,
+  "mobileOverflow": false,
+  "errors": [],
+  "mode": "Final Docker Nginx admin build with real API/MySQL/S3 after full-stack restart",
+  "scope": "Development test records; no intercepted routes; no credentials or signed URLs in report"
+}

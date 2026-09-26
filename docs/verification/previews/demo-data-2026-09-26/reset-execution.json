@@ -1,0 +1,122 @@
+{
+  "resetAt": "2026-09-26T03:08:58.617523+00:00",
+  "project": "jiafeng-dev",
+  "backupDirectory": "/home/steven/Documents/Codex/2026-09-20/xb/outputs/jiafeng-platform/deploy/backups/20260926T030821Z-4d6c",
+  "backupChecksumsVerified": true,
+  "schemaPreserved": true,
+  "volumesPreserved": true,
+  "previousEntityCounts": "activity\t10\ncheckin\t2\nclaim\t12\ncollection\t4\ncontent\t11\ncourse\t3\nexpert\t1\nknowledge\t3\nlearning\t3\nnotice\t3\nnotification\t38\nproduct\t10\nsetting\t2\nsubmission\t17\ntask\t14",
+  "accountsAfterReset": 6,
+  "seedRequested": false,
+  "seedCompleted": false,
+  "checkedAt": "2026-09-26T03:10:13.064381+00:00",
+  "credentialsUnchanged": true,
+  "accounts": [
+    [
+      "devadmin",
+      "staff",
+      "1"
+    ],
+    [
+      "region_zj",
+      "staff",
+      "1"
+    ],
+    [
+      "region_bj",
+      "staff",
+      "1"
+    ],
+    [
+      "expert_zj",
+      "staff",
+      "1"
+    ],
+    [
+      "member_zj",
+      "member",
+      "1"
+    ],
+    [
+      "member_bj",
+      "member",
+      "1"
+    ]
+  ],
+  "emptyTableCounts": {
+    "jf_account": 6,
+    "jf_entity": 3,
+    "jf_revision": 0,
+    "jf_draft": 0,
+    "jf_file": 0,
+    "jf_revision_file": 0,
+    "jf_registration": 0,
+    "jf_idempotency": 0,
+    "jf_audit": 0,
+    "jf_login_attempt": 0,
+    "jf_schema_version": 2,
+    "jf_bootstrap_ready": 1,
+    "flow_definition": 0,
+    "flow_instance": 0,
+    "flow_task": 0,
+    "flow_his_task": 0,
+    "flow_user": 0
+  },
+  "initialEntities": [
+    [
+      "10004",
+      "expert"
+    ],
+    [
+      "platformConfig",
+      "setting"
+    ],
+    [
+      "reviewFlow",
+      "setting"
+    ]
+  ],
+  "health": {
+    "status": "ok",
+    "schemaVersion": 2
+  },
+  "services": [
+    {
+      "service": "mysql",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "redis",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "server",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "storage",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "web",
+      "state": "running",
+      "health": "healthy"
+    }
+  ],
+  "seedInvoked": false,
+  "backupFiles": [
+    "database.sql",
+    "secrets.env",
+    "storage.tar.gz",
+    "images.lock.json"
+  ],
+  "notes": [
+    "Backup and cleanup kept application writers stopped.",
+    "Only this project was reset; old volumes and backups retained.",
+    "No showcase seed has been invoked."
+  ]
+}

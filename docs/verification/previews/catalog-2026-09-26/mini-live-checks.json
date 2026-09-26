@@ -1,0 +1,259 @@
+{
+  "checkedAt": "2026-09-26T04:12:18.683Z",
+  "origin": "http://127.0.0.1:18080",
+  "checks": [
+    {
+      "label": "home",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "news",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "media",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "venues",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "hall",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "classroom",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "learning",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "shop",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "venues-detail",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "hall-detail",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "home",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "news",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "media",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "venues",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "hall",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "classroom",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "learning",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "shop",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "venues-detail",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "hall-detail",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "banner-policy",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "banner-contribution",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "banner-celebration",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "banner-collection",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "banner-study",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "banner-integrity",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "media-en",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "hall-en-empty",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "venues-region",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "media-cached",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "media-share-link",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "cloud-subscription",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "media-submitted",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "support-created",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "media-resubmitted",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "support-replied",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "media-published-player",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "media-published-player",
+      "width": 390,
+      "passed": true
+    }
+  ],
+  "created": {
+    "actor": "member_pending",
+    "originalNewsPreferences": {
+      "categories": [
+        "industry"
+      ],
+      "updates": false,
+      "digest": "instant",
+      "quietHours": true
+    },
+    "fileId": "file_f71fb9ccd14244bf9f3a46ca88504bb5",
+    "mediaId": "media_25413cf042414247a79a61cfbc8b7505",
+    "supportId": "supportTicket_15ce7d2b98f64b44bbc20fac91e3c559"
+  },
+  "commands": [
+    {
+      "command": "news.preferences",
+      "status": 200,
+      "id": null
+    },
+    {
+      "command": "news.preferences",
+      "status": 200,
+      "id": null
+    },
+    {
+      "command": "media.submit",
+      "status": 200,
+      "id": "media_25413cf042414247a79a61cfbc8b7505"
+    },
+    {
+      "command": "support.create",
+      "status": 200,
+      "id": "supportTicket_15ce7d2b98f64b44bbc20fac91e3c559"
+    },
+    {
+      "command": "media.resubmit",
+      "status": 200,
+      "id": "media_25413cf042414247a79a61cfbc8b7505"
+    }
+  ],
+  "pageErrors": [],
+  "failedRequests": [],
+  "httpErrors": [],
+  "passed": true,
+  "limits": [
+    "H5 desktop/mobile viewports; no physical WeChat device or microphone recording evidence.",
+    "Creates labelled QA records; root cleans only the recorded entity/file IDs after verification."
+  ],
+  "historicalAttempts": [
+    {
+      "issue": "Existing news editions used Chinese/English language labels; initial language filter omitted them.",
+      "resolution": "Service adapter normalizes 中文/zh and English/英文/en; final live news visibility and 108 unit tests passed."
+    },
+    {
+      "issue": "Initial test selectors assumed native button and placeholder DOM attributes.",
+      "resolution": "Test script targets Uni rendered button/form elements; no application change was needed for these selector failures.",
+      "evidence": [
+        "mini-initial-failure.json",
+        "mini-selector-failure.json"
+      ]
+    }
+  ]
+}

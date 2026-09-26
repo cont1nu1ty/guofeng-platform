@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-09-26T03:07:22.570100+00:00",
+  "safetyTests": 7,
+  "clonedDatabaseSqlResetPassed": true,
+  "liveBusinessDataUnchanged": true,
+  "migrationChecksumsPreserved": true,
+  "bootstrapMarkerPreserved": true,
+  "nativeDisabledUsersPreserved": true,
+  "menusPreserved": true,
+  "unrelatedWorkflowDefinitionPreserved": true,
+  "businessRowsAndWorkflowTasksCleared": true
+}

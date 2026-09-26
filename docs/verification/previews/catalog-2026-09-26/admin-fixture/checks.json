@@ -1,0 +1,47 @@
+{
+  "checks": [
+    "Banner independent English and uploaded cover saved as draft",
+    "Publish is separate; stale edit retains dialog and error",
+    "Homepage ordering uses setting version and all six sections",
+    "Member media review return stores reason and version",
+    "Media source upload uses media purpose and draft-only save",
+    "Venue and hall archives created through directory commands",
+    "Support reply closes ticket with captured version",
+    "All seven tabs at 1440px and 390px: no document overflow or page errors"
+  ],
+  "commands": [
+    {
+      "command": "saveBanner"
+    },
+    {
+      "command": "setBannerStatus",
+      "version": 3
+    },
+    {
+      "command": "saveBanner",
+      "version": 4
+    },
+    {
+      "command": "saveHomepageConfig",
+      "version": 3
+    },
+    {
+      "command": "setMediaStatus",
+      "version": 2
+    },
+    {
+      "command": "saveMedia"
+    },
+    {
+      "command": "saveVenue"
+    },
+    {
+      "command": "saveHallPerson"
+    },
+    {
+      "command": "replySupportTicket",
+      "version": 4
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,190 @@
+{
+  "mode": "final Nginx container bundle, direct same-origin real API; no API proxy or fixture",
+  "passed": true,
+  "checks": [
+    {
+      "view": "home",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "view": "profile authenticated records",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "view": "own submission progress",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "view": "home",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "view": "profile authenticated records",
+      "width": 390,
+      "overflow": false
+    }
+  ],
+  "pageErrors": [],
+  "failedRequests": [],
+  "httpErrors": [],
+  "resources": [
+    {
+      "path": "/assets/uni.e79b6259.css",
+      "type": "stylesheet",
+      "status": 200
+    },
+    {
+      "path": "/assets/index-DxDHLzV7.css",
+      "type": "stylesheet",
+      "status": 200
+    },
+    {
+      "path": "/assets/index-C38uWzsC.js",
+      "type": "script",
+      "status": 200
+    },
+    {
+      "path": "/assets/readInputValue-Cw-rkd1Q.css",
+      "type": "stylesheet",
+      "status": 200
+    },
+    {
+      "path": "/assets/HomeView-B8HU97sU.css",
+      "type": "stylesheet",
+      "status": 200
+    },
+    {
+      "path": "/static/h5/fonts/JiafengSans-Regular.woff",
+      "type": "font",
+      "status": 200
+    },
+    {
+      "path": "/assets/pages-index-index.BBwt86Dc.js",
+      "type": "script",
+      "status": 200
+    },
+    {
+      "path": "/assets/HomeView.BWXWTQir.js",
+      "type": "script",
+      "status": 200
+    },
+    {
+      "path": "/assets/readInputValue.9lLS0aSy.js",
+      "type": "script",
+      "status": 200
+    },
+    {
+      "path": "/static/h5/fonts/JiafengSerif-SemiBold.woff",
+      "type": "font",
+      "status": 200
+    },
+    {
+      "path": "/assets/useShowcase-0LzyGRaf.css",
+      "type": "stylesheet",
+      "status": 200
+    },
+    {
+      "path": "/assets/index-CF1jTf0o.css",
+      "type": "stylesheet",
+      "status": 200
+    },
+    {
+      "path": "/assets/useShowcase.DpoFjAxM.js",
+      "type": "script",
+      "status": 200
+    },
+    {
+      "path": "/assets/pages-explore-index.CxzQzy2V.js",
+      "type": "script",
+      "status": 200
+    }
+  ],
+  "fontFaces": [
+    {
+      "family": "uni-video-icon",
+      "status": "unloaded"
+    },
+    {
+      "family": "JiafengSans",
+      "status": "loaded"
+    },
+    {
+      "family": "JiafengSerif",
+      "status": "loaded"
+    },
+    {
+      "family": "jiafeng-icons",
+      "status": "loaded"
+    },
+    {
+      "family": "wd-icons",
+      "status": "unloaded"
+    },
+    {
+      "family": "wd-icons",
+      "status": "unloaded"
+    }
+  ],
+  "api": [
+    {
+      "path": "/api/v1/workspace",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/workspace",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/login",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/workspace",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/submissions/submission_014908adf38544f1820df45a52078822/progress",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/submissions/submission_014908adf38544f1820df45a52078822/progress",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/workspace",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/workspace",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/auth/me",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/workspace",
+      "status": 200
+    }
+  ],
+  "limits": [
+    "H5 desktop and mobile viewport checks only; no WeChat device verification.",
+    "Existing member_bj submission read only; no new submission or draft mutation."
+  ],
+  "cleanup": {
+    "temporaryMiniappDevPort5183": "stopped after successful Nginx verification",
+    "existingPort5173": "left running and untouched"
+  }
+}

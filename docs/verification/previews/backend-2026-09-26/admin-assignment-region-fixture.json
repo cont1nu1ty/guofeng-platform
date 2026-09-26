@@ -1,0 +1,19 @@
+{
+  "mode": "Final Nginx bundle, intercepted HTTP fixtures; no live writes",
+  "base": "http://127.0.0.1:18080/admin/",
+  "assignableOptions": [
+    "已完成可重分配 · 浙江省",
+    "已取消可重分配 · 浙江省",
+    "已过期可重分配 · 浙江省"
+  ],
+  "nationalRegionRows": 35,
+  "regionalRows": [
+    "浙江省550"
+  ],
+  "regionalDraftDefaults": {
+    "content": "发布范围\n浙江省",
+    "activity": "所属地区\n浙江省"
+  },
+  "mobileOverflow": false,
+  "errors": []
+}

@@ -1,0 +1,48 @@
+{
+  "checkedAt": "2026-09-26T04:14:10.246975+00:00",
+  "publicCounts": {
+    "banners": 7,
+    "mediaItems": 4,
+    "venues": 4,
+    "hallPeople": 2,
+    "news": 7,
+    "classics": 2,
+    "activities": 5,
+    "courses": 2,
+    "products": 3
+  },
+  "entityCounts": {
+    "activity": 6,
+    "banner": 10,
+    "checkin": 2,
+    "claim": 6,
+    "collection": 3,
+    "content": 10,
+    "course": 3,
+    "dictionary": 5,
+    "excerpt": 2,
+    "expert": 3,
+    "favorite": 2,
+    "hallPerson": 3,
+    "knowledge": 2,
+    "learning": 4,
+    "media": 7,
+    "notice": 3,
+    "notification": 29,
+    "product": 4,
+    "setting": 3,
+    "submission": 16,
+    "supportTicket": 2,
+    "task": 51,
+    "venue": 4
+  },
+  "homeStats": {
+    "submissions": 16,
+    "participants": 5,
+    "regions": 5,
+    "asOf": "2026-09-26T04:14:09.901394508Z"
+  },
+  "qaEntitiesRemaining": 0,
+  "userEditedArticleTitle": "Autumn Letters: Begin with Someone Close to You（test data)",
+  "catalogSeedComplete": true
+}

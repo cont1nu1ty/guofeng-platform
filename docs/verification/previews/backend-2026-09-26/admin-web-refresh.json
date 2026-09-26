@@ -1,0 +1,15 @@
+{
+  "action": "build web and isolated compose up --no-deps web",
+  "serverUnchangedAtWebRestart": true,
+  "serverStartedAtAtWebRestart": "2026-09-26T02:40:50.432614693Z",
+  "note": "Root performs a separately coordinated server update after this web restart.",
+  "adminScripts": [
+    "/admin/assets/index-BUZSu4yR.js"
+  ],
+  "typecheck": "passed",
+  "unitTests": {
+    "files": 3,
+    "passed": 22
+  },
+  "httpBuild": "passed"
+}

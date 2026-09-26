@@ -1,0 +1,197 @@
+{
+  "mode": "HTTP UI against intercepted contract fixtures, not live backend",
+  "checks": [
+    {
+      "path": "overview",
+      "width": 1440,
+      "heading": "运营工作台",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "submissions",
+      "width": 1440,
+      "heading": "投稿作品",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "reviews",
+      "width": 1440,
+      "heading": "评审管理",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "experts",
+      "width": 1440,
+      "heading": "专家库",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "content",
+      "width": 1440,
+      "heading": "内容与资讯",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "collections",
+      "width": 1440,
+      "heading": "典籍编纂",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "activities",
+      "width": 1440,
+      "heading": "活动与传习",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "education",
+      "width": 1440,
+      "heading": "清廉教育",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "welfare",
+      "width": 1440,
+      "heading": "文创与公益",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "users",
+      "width": 1440,
+      "heading": "用户与权限",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "ai",
+      "width": 1440,
+      "heading": "AI 运营中心",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "analytics",
+      "width": 1440,
+      "heading": "数据智库",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "settings",
+      "width": 1440,
+      "heading": "系统设置",
+      "overflow": false,
+      "hasEmpty": false
+    },
+    {
+      "path": "overview",
+      "width": 390,
+      "heading": "运营工作台",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "submissions",
+      "width": 390,
+      "heading": "投稿作品",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "reviews",
+      "width": 390,
+      "heading": "评审管理",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "experts",
+      "width": 390,
+      "heading": "专家库",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "content",
+      "width": 390,
+      "heading": "内容与资讯",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "collections",
+      "width": 390,
+      "heading": "典籍编纂",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "activities",
+      "width": 390,
+      "heading": "活动与传习",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "education",
+      "width": 390,
+      "heading": "清廉教育",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "welfare",
+      "width": 390,
+      "heading": "文创与公益",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "users",
+      "width": 390,
+      "heading": "用户与权限",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "ai",
+      "width": 390,
+      "heading": "AI 运营中心",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "analytics",
+      "width": 390,
+      "heading": "数据智库",
+      "overflow": false,
+      "hasEmpty": true
+    },
+    {
+      "path": "settings",
+      "width": 390,
+      "heading": "系统设置",
+      "overflow": false,
+      "hasEmpty": false
+    }
+  ],
+  "anonymousReviewLocked": true,
+  "commands": [
+    {
+      "command": "saveContent"
+    },
+    {
+      "command": "saveContent"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,4 @@
+#10 43.55 [INFO] Running org.dromara.jiafeng.JfMultipartErrorsTest
+#10 44.14 [INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.570 s -- in org.dromara.jiafeng.JfMultipartErrorsTest
+#10 44.17 [INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+#10 44.17 [INFO] BUILD SUCCESS

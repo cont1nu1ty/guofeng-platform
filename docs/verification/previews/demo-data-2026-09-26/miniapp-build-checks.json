@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-09-26T03:23:04.475700+00:00",
+  "scope": "HTTP publication and activity availability, news topics, public reading, server-backed review rules and permission explanations",
+  "mode": {
+    "VITE_DATA_MODE": "http",
+    "VITE_API_BASE_URL": "/api/v1"
+  },
+  "checks": [
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "log": "mini-tests.log"
+    },
+    {
+      "command": "npm run build:h5",
+      "exitCode": 0,
+      "log": "mini-h5.log"
+    },
+    {
+      "command": "npm run build:mp-weixin",
+      "exitCode": 0,
+      "log": "mini-mp.log"
+    }
+  ],
+  "testFiles": 15,
+  "tests": 97,
+  "wechatMainPackageBytes": 1531862,
+  "wechatDeviceVerified": false
+}

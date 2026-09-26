@@ -1,0 +1,434 @@
+{
+  "datasetVersion": "1.0",
+  "seededAt": "2026-09-26T03:10:42.671761+00:00",
+  "fixtureSha256": "c1c4cfaa4a97ac8c0200fc54ef4d0a798ec50f96a672a5b5340744d4e9f862cb",
+  "project": "jiafeng-dev",
+  "fictional": true,
+  "refs": {
+    "submissions": {
+      "river_letter": {
+        "id": "submission_fb45ff798e07428c849463580cf570fe",
+        "title": "写给第一次离家的你",
+        "actor": "member_zj",
+        "scenario": "collected_public"
+      },
+      "shared_ladder": {
+        "id": "submission_99be24df00cf483581bf5b2f9f0b788f",
+        "title": "楼道里那把蓝梯子",
+        "actor": "member_bj",
+        "scenario": "awarded_public"
+      },
+      "kitchen_poems": {
+        "id": "submission_628904d031bf49778b251d70a8053b0d",
+        "title": "灶台边的小小约定",
+        "actor": "member_js",
+        "scenario": "shortlisted_public"
+      },
+      "old_postbag": {
+        "id": "submission_85180a60249349be8948cbc28c530c6e",
+        "title": "旧邮袋里的三封信",
+        "actor": "member_sc",
+        "scenario": "returned"
+      },
+      "repair_bench": {
+        "id": "submission_462a57156e9941098e87f46a44b647d4",
+        "title": "修鞋凳上的账本",
+        "actor": "member_overseas",
+        "scenario": "pending"
+      },
+      "dinner_rules": {
+        "id": "submission_4beefbb6baca415a9658a9864c736e68",
+        "title": "我们家的晚饭公约",
+        "actor": "member_bj",
+        "scenario": "review_pending"
+      },
+      "two_keys": {
+        "id": "submission_30936417b21d40d7ba999cf913a592fd",
+        "title": "两把钥匙，一张轮值表",
+        "actor": "member_zj",
+        "scenario": "decision_pending"
+      },
+      "family_rules_essay": {
+        "id": "submission_c741f64dc51e4f9ab5e607d30a99d4b8",
+        "title": "把家训挂起来以后",
+        "actor": "member_bj",
+        "scenario": "rejected"
+      },
+      "nightshift_letter": {
+        "id": "submission_2182c1a84b5d4dc1b65af5f3fb69f927",
+        "title": "给夜班归来的爸爸留盏灯",
+        "actor": "member_sc",
+        "scenario": "resubmitted"
+      },
+      "balcony_boxes": {
+        "id": "submission_f0ee53881f8b4453b3cdcc48e8535915",
+        "title": "阳台上的三个纸箱",
+        "actor": "member_bj",
+        "scenario": "review_overdue"
+      },
+      "door_couplets": {
+        "id": "submission_86e866c201c24db3a22b7752fa3b8144",
+        "title": "门前四联",
+        "actor": "member_js",
+        "scenario": "rejected"
+      },
+      "bridge_notebook": {
+        "id": "submission_6c0a0b7367624b49bedcc76ffa29218d",
+        "title": "父亲的桥边笔记",
+        "actor": "member_overseas",
+        "scenario": "shortlisted_private"
+      },
+      "mending_voices": {
+        "id": "submission_24020addf8664c2585c43d15239fcdf9",
+        "title": "一台缝纫机的回声",
+        "actor": "member_zj",
+        "scenario": "withdrawn_public"
+      },
+      "weekend_pact": {
+        "id": "submission_c1aa5dacff5840b38e4ccd9277a1732d",
+        "title": "周末共同照料公约",
+        "actor": "member_bj",
+        "scenario": "pending"
+      },
+      "rain_supper": {
+        "id": "submission_01d8e078b3fd4b828d078fcad5dd051b",
+        "title": "雨天多添的一双筷子",
+        "actor": "member_js",
+        "scenario": "review_midway"
+      },
+      "shared_measure": {
+        "id": "submission_086ddef95f5340df87166ea4288cb6d4",
+        "title": "守信不只是一句保证",
+        "actor": "member_sc",
+        "scenario": "decision_pending"
+      }
+    },
+    "contents": {
+      "notice_autumn": {
+        "id": "content_27da46fa13e6481bac6a95854ebcc8fe",
+        "title": "秋日家书征集：把担当与牵挂写给身边人"
+      },
+      "notice_autumn_en": {
+        "id": "content_ab5abcc7fb214c339cd0bf96c27680af",
+        "title": "Autumn Letters: Begin with Someone Close to You"
+      },
+      "news_shared_tools": {
+        "id": "content_41c6c8b9df71434a9366524d6228623c",
+        "title": "一张借用卡，串起楼院里的互助日常"
+      },
+      "feature_hearing": {
+        "id": "content_569fecf4f050405d8e38a823bac2feff",
+        "title": "一封家书里的界限：把公事与私谊分清"
+      },
+      "feature_old_objects": {
+        "id": "content_7a70c8b3451b4609b5456ea538c202ea",
+        "title": "旧物小展：把来历和修补一起留下"
+      },
+      "news_pact_draft": {
+        "id": "content_f678dbfcb97443c0a5fe69f4277bf845",
+        "title": "院坝里的周末议事：先把一件小事说清"
+      },
+      "notice_change_withdrawn": {
+        "id": "content_a3ddec7233e8446c9109ee7f7367316c",
+        "title": "原定秋日读书会场地调整说明"
+      },
+      "feature_overseas_en_draft": {
+        "id": "content_2155efac13074da19bdd4b98c9de679b",
+        "title": "A Recipe Notebook Across Two Kitchens"
+      }
+    },
+    "collections": {
+      "collection_everyday": {
+        "id": "collection_b45b399ef1b24c22a0827e176bc8c066",
+        "title": "日常有光·家书与邻里卷"
+      },
+      "collection_young": {
+        "id": "collection_53fcd97a1b29431ca2543eebf338e49c",
+        "title": "少年笔下·饭桌与窗台卷"
+      },
+      "collection_memory_draft": {
+        "id": "collection_1c32a377532c4086809430b68019f546",
+        "title": "旧物与家史·口述整理卷"
+      }
+    },
+    "activities": {
+      "activity_letters": {
+        "id": "activity_ed7c49dd0cee49bdbaf962152ace8a56",
+        "title": "一封家书的周末：秋日共写工作坊",
+        "scenario": "open"
+      },
+      "activity_old_objects": {
+        "id": "activity_edf813d531d44596a3d8621fb7a40929",
+        "title": "旧物有话说：家庭记忆小展",
+        "scenario": "full"
+      },
+      "activity_courtyard": {
+        "id": "activity_613290c3dd864203a865c8f31f5628c1",
+        "title": "院坝议事：把共同约定写清楚",
+        "scenario": "ongoing"
+      },
+      "activity_reading_ended": {
+        "id": "activity_f956c54b9c124a5a834de30edad9411d",
+        "title": "桥边读书会：一句承诺如何落地",
+        "scenario": "ended"
+      },
+      "activity_overseas_draft": {
+        "id": "activity_10ed6bd256d54525a911c05294862490",
+        "title": "两地厨房：家庭食谱线上交流",
+        "scenario": "draft"
+      },
+      "activity_cancelled": {
+        "id": "activity_16bf3b64d44a4297bc5ea30c59f83eb1",
+        "title": "借书袋行动：邻里共读整理日",
+        "scenario": "cancelled-registration"
+      }
+    },
+    "courses": {
+      "course_clear_boundaries": {
+        "id": "course_d6dfb1e4999e47ccbd3dbaefdae4e842",
+        "title": "把清廉写进日常：家庭约定三讲"
+      },
+      "course_family_hearing": {
+        "id": "course_6b882a40a0614eee96e21a0dc0353898",
+        "title": "照料也要商量：代际沟通三讲"
+      },
+      "course_memory_notes": {
+        "id": "course_621164a5013e482ba1c35fff65b33514",
+        "title": "把家史记准确：口述整理入门"
+      }
+    },
+    "products": {
+      "product_letter_kit": {
+        "id": "product_a6a37d9804864ba9af016be282a7febf",
+        "title": "家书共写纸笺包"
+      },
+      "product_reading_cards": {
+        "id": "product_013fa3c22ed641c487ec9bc9469980b0",
+        "title": "邻里共读话题卡"
+      },
+      "product_memory_notebook": {
+        "id": "product_d7730364cc86416493501e00ca607b73",
+        "title": "旧物故事记录册"
+      },
+      "product_pact_board": {
+        "id": "product_afd9e1e56a4b46a2b6345d3d7699876d",
+        "title": "家庭共议约定板"
+      }
+    },
+    "knowledgeDocuments": {
+      "knowledge_writing": {
+        "id": "knowledge_4710dcc208b240c78d8f8a1a112d9508",
+        "fileId": "file_f3d1a80f808d494aa3f971db0eed70e5",
+        "title": "家庭共读资料使用指南"
+      },
+      "knowledge_family_reading": {
+        "id": "knowledge_b5d02655facf4ed0abe01bd9f6d2d4d8",
+        "fileId": "file_d800db8177dc433f930912285428ab60",
+        "title": "匿名评审材料工作说明"
+      }
+    },
+    "dictionaryWords": {
+      "word_family_pact": {
+        "id": "dictionary_a7543e2d30d6474da222afe7d0a0c49b",
+        "title": "家庭公约"
+      },
+      "word_uncertain_date": {
+        "id": "dictionary_237fba134ec5401892be0d02949aaf51",
+        "title": "年代不详"
+      },
+      "word_absolute_award": {
+        "id": "dictionary_c5efd9424ac3438ea52cb3cc50ab37bc",
+        "title": "保证获奖"
+      },
+      "word_privacy_number": {
+        "id": "dictionary_d5b83ae34933462a9317d11f8fb45acc",
+        "title": "身份证号码"
+      },
+      "word_gentle_tone": {
+        "id": "dictionary_f70ff447f5704e299deb4247aca1c942",
+        "title": "必须听话"
+      }
+    },
+    "notificationDrafts": {
+      "notice_welcome": {
+        "id": "notice_ba21f8fb6ed0472aa394b08b9435234f",
+        "title": "欢迎来到秋日家风共读季"
+      },
+      "notice_experts": {
+        "id": "notice_a0ae96237b174427b4c11de733a923f7",
+        "title": "本轮评审请使用统一四维量表"
+      },
+      "notice_region_draft": {
+        "id": "notice_1b560ea6cc5549918f864586e05bf6cf",
+        "title": "家书工作坊行前提醒待确认"
+      }
+    },
+    "claims": {
+      "recorded": {
+        "id": "claim_37fc110fc4eb4d65a6e19c75861216fd",
+        "actor": "member_zj",
+        "productId": "product_013fa3c22ed641c487ec9bc9469980b0"
+      },
+      "approved": {
+        "id": "claim_17d5f43e5d934e539c79ec4ba42e44a7",
+        "actor": "member_bj",
+        "productId": "product_a6a37d9804864ba9af016be282a7febf"
+      },
+      "issued": {
+        "id": "claim_d1045978ae284f6f9596512475a046a0",
+        "actor": "member_js",
+        "productId": "product_013fa3c22ed641c487ec9bc9469980b0"
+      },
+      "returned": {
+        "id": "claim_243c51eb270f49c8b2c42c6d6787903c",
+        "actor": "member_sc",
+        "productId": "product_a6a37d9804864ba9af016be282a7febf"
+      },
+      "cancelled": {
+        "id": "claim_71c8fac720674ed38a544837528ad94b",
+        "actor": "member_overseas",
+        "productId": "product_013fa3c22ed641c487ec9bc9469980b0"
+      },
+      "custom": {
+        "id": "claim_bdb48a170b3a46568919342edbff0111",
+        "actor": "member_zj",
+        "productId": "product_a6a37d9804864ba9af016be282a7febf"
+      }
+    },
+    "drafts": {
+      "zj_cloud_draft": {
+        "actor": "member_zj",
+        "title": "旧饭盒里的新约定"
+      },
+      "bj_cloud_draft": {
+        "actor": "member_bj",
+        "title": "胡同口的借书袋"
+      }
+    }
+  },
+  "checks": [
+    "Visitor work visibility follows decisions and publication; private/withdrawn/returned hidden",
+    "Visitor has no member or expert private records",
+    "Regional operators only receive permitted manuscript regions",
+    "Expert tasks are assigned and contain anonymized text without originals",
+    "Public review criteria, admin settings and assigned tasks share the same four-dimensional rubric",
+    "Resubmitted manuscripts keep immutable original revisions",
+    "Published content and collected volumes match public catalog",
+    "Activities include capacity reached, cancellation, ongoing check-in and ended branches",
+    "All five welfare request states are backed by persisted records",
+    "Learning includes completed and partially completed real lessons",
+    "Courses preserve their configured region scope",
+    "Both member cloud drafts are retained independently",
+    "Review tasks include active, completed, cancelled and expired branches",
+    "Account approval, disabled account and paused expert fixtures are visible",
+    "AI documents remain unindexed and no fabricated model invocation logs exist",
+    "Chinese-named private sample PDFs download with matching checksums",
+    "Old integration-probe records have been removed from active business data",
+    "Unknown news topic rejected; ordinary editing preserves existing topic",
+    "Cross-region course editing rejected",
+    "Direct seed rerun refuses occupied data without creating duplicates"
+  ],
+  "accounts": [
+    {
+      "username": "devadmin",
+      "name": "全国展示运营",
+      "role": "national_admin",
+      "region": "all",
+      "enabled": true
+    },
+    {
+      "username": "region_zj",
+      "name": "沈书宁",
+      "role": "regional_admin",
+      "region": "zhejiang",
+      "enabled": true
+    },
+    {
+      "username": "region_bj",
+      "name": "陆知微",
+      "role": "regional_admin",
+      "region": "beijing",
+      "enabled": true
+    },
+    {
+      "username": "expert_zj",
+      "name": "顾明川",
+      "role": "expert",
+      "region": "zhejiang",
+      "enabled": true
+    },
+    {
+      "username": "member_zj",
+      "name": "林晚晴",
+      "role": "member",
+      "region": "zhejiang",
+      "enabled": true
+    },
+    {
+      "username": "member_bj",
+      "name": "陈景和",
+      "role": "member",
+      "region": "beijing",
+      "enabled": true
+    },
+    {
+      "username": "member_js",
+      "name": "周砚秋",
+      "role": "member",
+      "region": "jiangsu",
+      "enabled": true
+    },
+    {
+      "username": "member_sc",
+      "name": "赵云舒",
+      "role": "member",
+      "region": "sichuan",
+      "enabled": true
+    },
+    {
+      "username": "member_overseas",
+      "name": "许知远",
+      "role": "member",
+      "region": "overseas",
+      "enabled": true
+    },
+    {
+      "username": "expert_bj",
+      "name": "闻溪",
+      "role": "expert",
+      "region": "beijing",
+      "enabled": true
+    },
+    {
+      "username": "expert_sc",
+      "name": "唐亦舟",
+      "role": "expert",
+      "region": "sichuan",
+      "enabled": true
+    },
+    {
+      "username": "member_pending",
+      "name": "宋青禾",
+      "role": "member",
+      "region": "zhejiang",
+      "enabled": true
+    },
+    {
+      "username": "member_disabled",
+      "name": "何望舒",
+      "role": "member",
+      "region": "beijing",
+      "enabled": false
+    }
+  ],
+  "counts": {
+    "files": 5,
+    "tasks": 51,
+    "claims": 6,
+    "accounts": 13,
+    "revisions": 17,
+    "manuscripts": 16,
+    "registrations": 9
+  },
+  "verifiedAt": "2026-09-26T03:18:29.261595+00:00"
+}

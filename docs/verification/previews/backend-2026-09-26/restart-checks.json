@@ -1,0 +1,60 @@
+{
+  "checkedAt": "2026-09-26T02:38:40.603191+00:00",
+  "project": "jiafeng-dev",
+  "health": {
+    "status": "ok",
+    "schemaVersion": 2
+  },
+  "repeatUpPreservesAllJfRows": true,
+  "fullStackRecreationPreservesAllJfRows": true,
+  "freshLoginWorks": true,
+  "submissionPreserved": true,
+  "signedFileGetPreserved": true,
+  "submissionId": "submission_d5816d22093b48dcabaec0d3850efa18",
+  "fileId": "file_cfd9024733fd441cb4fd1f4914e1e8f9",
+  "submissionSha256": "c5ae8772d56a0481f61801db03899d21d949f8074824ba0755b6027b79c8632a",
+  "fileSha256": "40e2acf76ae7f5ad2cbe6d0371a7af1f028401bd9dd8293bad99cfde3900625d",
+  "beforeCounts": {
+    "jf_account": 6,
+    "jf_audit": 178,
+    "jf_bootstrap_ready": 1,
+    "jf_draft": 2,
+    "jf_entity": 60,
+    "jf_file": 13,
+    "jf_idempotency": 118,
+    "jf_login_attempt": 0,
+    "jf_registration": 4,
+    "jf_revision": 12,
+    "jf_revision_file": 15,
+    "jf_schema_version": 2
+  },
+  "afterRepeatCounts": {
+    "jf_account": 6,
+    "jf_audit": 178,
+    "jf_bootstrap_ready": 1,
+    "jf_draft": 2,
+    "jf_entity": 60,
+    "jf_file": 13,
+    "jf_idempotency": 118,
+    "jf_login_attempt": 0,
+    "jf_registration": 4,
+    "jf_revision": 12,
+    "jf_revision_file": 15,
+    "jf_schema_version": 2
+  },
+  "afterRestartCounts": {
+    "jf_account": 6,
+    "jf_audit": 178,
+    "jf_bootstrap_ready": 1,
+    "jf_draft": 2,
+    "jf_entity": 60,
+    "jf_file": 13,
+    "jf_idempotency": 118,
+    "jf_login_attempt": 0,
+    "jf_registration": 4,
+    "jf_revision": 12,
+    "jf_revision_file": 15,
+    "jf_schema_version": 2
+  },
+  "comparisonNote": "Row counts compared before fresh-login audit writes; no secrets or signed URLs retained."
+}

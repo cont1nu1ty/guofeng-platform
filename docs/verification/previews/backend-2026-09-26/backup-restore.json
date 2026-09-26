@@ -1,0 +1,11 @@
+{
+  "submissionId": "submission_d5816d22093b48dcabaec0d3850efa18",
+  "fileId": "file_cfd9024733fd441cb4fd1f4914e1e8f9",
+  "submissionSurvivesRestore": true,
+  "fileSurvivesRestore": true,
+  "fileSha256": "40e2acf76ae7f5ad2cbe6d0371a7af1f028401bd9dd8293bad99cfde3900625d",
+  "freshLoginWorks": true,
+  "backupChecksumsVerified": true,
+  "isolatedProject": "jiafeng-restore-20260926022132-b597",
+  "sourceProject": "jiafeng-dev"
+}

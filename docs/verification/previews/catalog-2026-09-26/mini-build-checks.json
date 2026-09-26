@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-09-26T04:08:18.036148+00:00",
+  "scope": "Current miniapp catalogue integration; HTTP builds",
+  "typecheck": {
+    "passed": true
+  },
+  "unitTests": {
+    "passed": true,
+    "tests": 108,
+    "files": 16
+  },
+  "h5Build": {
+    "passed": true,
+    "dataMode": "http",
+    "warnings": [
+      "Existing CSS font paths remain runtime-resolved."
+    ]
+  },
+  "wechatBuild": {
+    "passed": true,
+    "dataMode": "http",
+    "mainPackageBytes": 1537730,
+    "bytesRemainingToLimit": 559422,
+    "uniqueInlineFonts": 2,
+    "duplicateWoffFiles": false
+  },
+  "limitations": [
+    "Build checks are not physical WeChat device, upload-domain, microphone or capacity evidence."
+  ]
+}

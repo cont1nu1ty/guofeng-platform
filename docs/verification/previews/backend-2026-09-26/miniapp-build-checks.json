@@ -1,0 +1,31 @@
+{
+  "date": "2026-09-26",
+  "scope": "apps/miniapp final source",
+  "mode": "VITE_DATA_MODE=http; VITE_API_BASE_URL=/api/v1",
+  "checks": [
+    {
+      "command": "npm run typecheck",
+      "passed": true
+    },
+    {
+      "command": "npm test",
+      "passed": true,
+      "files": 14,
+      "tests": 91
+    },
+    {
+      "command": "npm run build:h5",
+      "passed": true
+    },
+    {
+      "command": "npm run build:mp-weixin",
+      "passed": true,
+      "mainPackageBytes": 1527978,
+      "remainingPackageBytes": 569174
+    }
+  ],
+  "limits": [
+    "Builds do not prove WeChat device compatibility.",
+    "H5 build emitted existing font path resolution warnings; fonts loaded in browser QA."
+  ]
+}

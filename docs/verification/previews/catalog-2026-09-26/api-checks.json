@@ -1,0 +1,335 @@
+{
+  "startedAt": "2026-09-26T04:03:46.389483+00:00",
+  "checkedAt": "2026-09-26T04:03:50.430094+00:00",
+  "project": "jiafeng-dev",
+  "passed": true,
+  "checks": [
+    {
+      "check": "six Chinese carousel categories are present",
+      "passed": true
+    },
+    {
+      "check": "future, expired and draft banners excluded",
+      "passed": true
+    },
+    {
+      "check": "English carousel published independently",
+      "passed": true
+    },
+    {
+      "check": "private member video and support records absent for guest",
+      "passed": true
+    },
+    {
+      "check": "public media hides file metadata and review history",
+      "passed": true
+    },
+    {
+      "check": "homepage submission count equals stored records",
+      "passed": true
+    },
+    {
+      "check": "banners regional workspace scope",
+      "passed": true
+    },
+    {
+      "check": "banners expert workspace empty",
+      "passed": true
+    },
+    {
+      "check": "mediaItems regional workspace scope",
+      "passed": true
+    },
+    {
+      "check": "mediaItems expert workspace empty",
+      "passed": true
+    },
+    {
+      "check": "venues regional workspace scope",
+      "passed": true
+    },
+    {
+      "check": "venues expert workspace empty",
+      "passed": true
+    },
+    {
+      "check": "hallPeople regional workspace scope",
+      "passed": true
+    },
+    {
+      "check": "hallPeople expert workspace empty",
+      "passed": true
+    },
+    {
+      "check": "supportTickets regional workspace scope",
+      "passed": true
+    },
+    {
+      "check": "supportTickets expert workspace empty",
+      "passed": true
+    },
+    {
+      "check": "public asset status 404",
+      "passed": true
+    },
+    {
+      "check": "public asset status 302",
+      "passed": true
+    },
+    {
+      "check": "public assets use five-minute signed URLs",
+      "passed": true
+    },
+    {
+      "check": "asset response forbids caching",
+      "passed": true
+    },
+    {
+      "check": "published S3 file checksum",
+      "passed": true
+    },
+    {
+      "check": "public asset status 404",
+      "passed": true
+    },
+    {
+      "check": "cross-owner source denial has a stable error code and request ID",
+      "passed": true
+    },
+    {
+      "check": "cross-owner source denial exposes no file metadata or storage URL",
+      "passed": true
+    },
+    {
+      "check": "unpublished member media inaccessible to another member",
+      "passed": true
+    },
+    {
+      "check": "unpublished media inaccessible to another region",
+      "passed": true
+    },
+    {
+      "check": "assigned region operator can review private source",
+      "passed": true
+    },
+    {
+      "check": "another member cannot resubmit the original media",
+      "passed": true
+    },
+    {
+      "check": "foreign file cannot be bound to member media",
+      "passed": true
+    },
+    {
+      "check": "unpublished media cannot be liked",
+      "passed": true
+    },
+    {
+      "check": "member media submission starts in pending review",
+      "passed": true
+    },
+    {
+      "check": "member media submission retry does not duplicate the work",
+      "passed": true
+    },
+    {
+      "check": "pending member media is absent from public catalog",
+      "passed": true
+    },
+    {
+      "check": "public asset status 404",
+      "passed": true
+    },
+    {
+      "check": "pending media cannot obtain a public signed URL",
+      "passed": true
+    },
+    {
+      "check": "member sees the actual regional return note",
+      "passed": true
+    },
+    {
+      "check": "foreign member media revision denial has a stable error code and request ID",
+      "passed": true
+    },
+    {
+      "check": "foreign member media revision denial exposes no file metadata or storage URL",
+      "passed": true
+    },
+    {
+      "check": "stale media revision cannot overwrite a newer return",
+      "passed": true
+    },
+    {
+      "check": "member resubmission keeps ID and returns to pending review",
+      "passed": true
+    },
+    {
+      "check": "media resubmission retains previous text and return note",
+      "passed": true
+    },
+    {
+      "check": "regional approval publishes the actual revised media",
+      "passed": true
+    },
+    {
+      "check": "published member media exposes no private review or identity fields",
+      "passed": true
+    },
+    {
+      "check": "public asset status 302",
+      "passed": true
+    },
+    {
+      "check": "published member media downloads the original S3 bytes",
+      "passed": true
+    },
+    {
+      "check": "media withdrawal immediately removes the public catalog entry",
+      "passed": true
+    },
+    {
+      "check": "public asset status 404",
+      "passed": true
+    },
+    {
+      "check": "withdrawn member media cannot obtain a new signed URL",
+      "passed": true
+    },
+    {
+      "check": "media lifecycle leaves seeded member records untouched",
+      "passed": true
+    },
+    {
+      "check": "default manuscript upload rejects MP4 has a stable error code and request ID",
+      "passed": true
+    },
+    {
+      "check": "default manuscript upload rejects MP4 exposes no file metadata or storage URL",
+      "passed": true
+    },
+    {
+      "check": "media upload rejects a fake extension has a stable error code and request ID",
+      "passed": true
+    },
+    {
+      "check": "media upload rejects a fake extension exposes no file metadata or storage URL",
+      "passed": true
+    },
+    {
+      "check": "server rejects a 51MiB media file has a stable error code and request ID",
+      "passed": true
+    },
+    {
+      "check": "server rejects a 51MiB media file exposes no file metadata or storage URL",
+      "passed": true
+    },
+    {
+      "check": "malformed multipart returns a sanitized failure has a stable error code and request ID",
+      "passed": true
+    },
+    {
+      "check": "malformed multipart returns a sanitized failure exposes no file metadata or storage URL",
+      "passed": true
+    },
+    {
+      "check": "all rejected uploads leave no usable file row",
+      "passed": true
+    },
+    {
+      "check": "media ID cannot bypass manuscript attachment types has a stable error code and request ID",
+      "passed": true
+    },
+    {
+      "check": "media ID cannot bypass manuscript attachment types exposes no file metadata or storage URL",
+      "passed": true
+    },
+    {
+      "check": "rejected media attachment does not create a manuscript",
+      "passed": true
+    },
+    {
+      "check": "cross-region catalog mutation blocked",
+      "passed": true
+    },
+    {
+      "check": "draft target blocks carousel publication",
+      "passed": true
+    },
+    {
+      "check": "publishing a valid carousel immediately reaches guest workspace",
+      "passed": true
+    },
+    {
+      "check": "stale edit cannot overwrite newer banner",
+      "passed": true
+    },
+    {
+      "check": "withdrawing the target hides its linked banner",
+      "passed": true
+    },
+    {
+      "check": "region filter cannot expand creation privileges",
+      "passed": true
+    },
+    {
+      "check": "invalid schedule rejected",
+      "passed": true
+    },
+    {
+      "check": "incomplete navigation coordinates rejected",
+      "passed": true
+    },
+    {
+      "check": "non-HTTPS source link rejected",
+      "passed": true
+    },
+    {
+      "check": "homepage layout persists and affects public contract",
+      "passed": true
+    },
+    {
+      "check": "homepage layout detects concurrent editing",
+      "passed": true
+    },
+    {
+      "check": "subscription preferences persist on account",
+      "passed": true
+    },
+    {
+      "check": "subscription preferences isolated from another account",
+      "passed": true
+    },
+    {
+      "check": "publishing subscribed category creates a real member notification",
+      "passed": true
+    },
+    {
+      "check": "idempotent publication does not duplicate notification",
+      "passed": true
+    },
+    {
+      "check": "regional news does not notify an out-of-region subscriber",
+      "passed": true
+    },
+    {
+      "check": "ticket is not visible to another member",
+      "passed": true
+    },
+    {
+      "check": "regional operator reply is visible to author",
+      "passed": true
+    },
+    {
+      "check": "pre-existing user title remains unchanged",
+      "passed": true
+    }
+  ],
+  "temporaryEntitiesRemoved": 8,
+  "scope": "Real local APIs, database, signed S3 assets; original business records preserved.",
+  "serverMediaLimitVerified": true,
+  "limits": [
+    "Not WeChat device testing",
+    "No model inference, live stream, media transcoding or production authorization claim"
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "checkedAt": "2026-09-26T04:10:56.230Z",
+  "origin": "http://127.0.0.1:18080",
+  "checks": [
+    {
+      "label": "home",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "news",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "media",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "venues",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "hall",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "classroom",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "learning",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "shop",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "venues-detail",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "hall-detail",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "home",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "news",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "media",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "venues",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "hall",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "classroom",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "learning",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "shop",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "venues-detail",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "hall-detail",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "banner-policy",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "banner-contribution",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "banner-celebration",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "banner-collection",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "banner-study",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "banner-integrity",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "media-en",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "hall-en-empty",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "venues-region",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "media-cached",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "media-share-link",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "cloud-subscription",
+      "width": 1440,
+      "passed": true
+    }
+  ],
+  "created": {
+    "actor": "member_pending",
+    "originalNewsPreferences": {
+      "categories": [],
+      "updates": false,
+      "digest": "instant",
+      "quietHours": true
+    }
+  },
+  "commands": [
+    {
+      "command": "news.preferences",
+      "status": 200,
+      "id": null
+    }
+  ],
+  "pageErrors": [],
+  "failedRequests": [],
+  "httpErrors": [],
+  "passed": false,
+  "limits": [
+    "H5 desktop/mobile viewports; no physical WeChat device or microphone recording evidence.",
+    "Creates labelled QA records; root cleans only the recorded entity/file IDs after verification."
+  ],
+  "error": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByPlaceholder('作品标题', { exact: true })\u001b[22m\n"
+}

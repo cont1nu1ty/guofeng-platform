@@ -1,0 +1,117 @@
+{
+  "checkedAt": "2026-09-26T04:05:06.424Z",
+  "origin": "http://127.0.0.1:18080",
+  "checks": [
+    {
+      "label": "home",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "news",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "media",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "venues",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "hall",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "classroom",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "learning",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "shop",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "venues-detail",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "hall-detail",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "home",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "news",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "media",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "venues",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "hall",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "classroom",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "learning",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "shop",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "venues-detail",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "hall-detail",
+      "width": 390,
+      "passed": true
+    }
+  ],
+  "created": {},
+  "commands": [],
+  "pageErrors": [],
+  "failedRequests": [],
+  "httpErrors": [],
+  "passed": false,
+  "limits": [
+    "H5 desktop/mobile viewports; no physical WeChat device or microphone recording evidence.",
+    "Creates labelled QA records; root cleans only the recorded entity/file IDs after verification."
+  ],
+  "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('uni-swiper-item').filter({ has: getByText('让每一份家风资料都有来处', { exact: true }) }).getByText('阅读说明', { exact: true })\u001b[22m\n"
+}

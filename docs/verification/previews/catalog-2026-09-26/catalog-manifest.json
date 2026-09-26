@@ -1,0 +1,196 @@
+{
+  "datasetVersion": "catalog-2026-09-v1",
+  "project": "jiafeng-dev",
+  "fictional": true,
+  "fixtureSha256": "098af6c8cc5d34bdcbbb38b8c9593c88fe5cc35a61fe19645cd47be3e912ed11",
+  "seededAt": "2026-09-26T03:51:02.470728+00:00",
+  "refs": {
+    "contents": {
+      "catalog_policy": {
+        "id": "content_5820fa9cef5b48d9960443e4134aa427",
+        "title": "家风资料征集与公开使用说明（展示稿）",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "catalog_industry": {
+        "id": "content_4c8b15ed497445a6b55bbc777f4d5bd0",
+        "title": "从旧物标签到共读卡：社区文化资料如何整理（模拟报道）",
+        "intendedStatus": "已发布",
+        "complete": true
+      }
+    },
+    "mediaItems": {
+      "media_letter": {
+        "id": "media_b2ee003d1ddd4274bd4315acd1a8ee12",
+        "title": "把牵挂写给长大后的你",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "media_everyday": {
+        "id": "media_41d4cba49db5420caa189510b22644e9",
+        "title": "家风，就在日常之间",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "media_ceremony": {
+        "id": "media_16fb1e5f09cb42beac5f7b1303ed14c1",
+        "title": "年度共读回顾 · 清廉从小事开始",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "media_letter_en": {
+        "id": "media_9031ae42e10d4837a983d6fa0789941b",
+        "title": "A Letter to Your Future Self",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "media_draft": {
+        "id": "media_141c48b2c0354b38a3a54c51929d492c",
+        "title": "借用卡背后的约定 · 待编素材",
+        "intendedStatus": "草稿",
+        "complete": true
+      },
+      "member_pending": {
+        "id": "media_2657a02170194ec38ce21f7d1f449c48",
+        "title": "我家的三条约定 · 待审核投稿",
+        "intendedStatus": "待审核",
+        "complete": true
+      },
+      "member_returned": {
+        "id": "media_121aff8833144a3591d23da7403d8723",
+        "title": "一张借用卡 · 待补充说明",
+        "intendedStatus": "已退回",
+        "complete": true
+      }
+    },
+    "venues": {
+      "venue_practice": {
+        "id": "venue_d97e0da95e504f79a7318bcff39c7b93",
+        "title": "青禾社区共读空间",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "venue_integrity": {
+        "id": "venue_c77fe268808841fb8980612b4c4ab283",
+        "title": "澄溪清廉家风学习馆",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "venue_hall": {
+        "id": "venue_8e8ffbb14e4247c0ba2add703fd78b35",
+        "title": "竹里家族记忆馆",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "venue_en": {
+        "id": "venue_be0be4b8c344481f960c14ee332cd923",
+        "title": "Qinghe Community Reading Room",
+        "intendedStatus": "已发布",
+        "complete": true
+      }
+    },
+    "hallPeople": {
+      "hall_cheng": {
+        "id": "hallPerson_bc66b360ba1040a8a7ec0c1c9db33e43",
+        "title": "程守一（虚构人物）",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "hall_lu": {
+        "id": "hallPerson_eeb8dfc969eb4509a81f9424b8f49ec5",
+        "title": "陆和清（虚构人物）",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "hall_draft": {
+        "id": "hallPerson_d6294c16d481460d88958d40088fb97c",
+        "title": "桥边书屋口述档案 · 编辑稿",
+        "intendedStatus": "草稿",
+        "complete": true
+      }
+    },
+    "banners": {
+      "banner_policy": {
+        "id": "banner_f0c9e2c6b9af4c97a6e41948fd9cfd85",
+        "title": "让每一份家风资料都有来处",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "banner_contribution": {
+        "id": "banner_596d1471b25d43c9936df19916574845",
+        "title": "把担当与牵挂，写给身边人",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "banner_celebration": {
+        "id": "banner_94733e15dffb4fbda02a5dae50c5236d",
+        "title": "共读一封家书，共守一份约定",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "banner_collection": {
+        "id": "banner_a79fd81ff1074ac9a4e0911632fcdbdb",
+        "title": "日常有光，让家书成为共同记忆",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "banner_study": {
+        "id": "banner_17988f41e2d04501a560c7d439ca4932",
+        "title": "周末围坐，一起写下家人的故事",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "banner_integrity": {
+        "id": "banner_80f602d584164de5bd56da187ded2c70",
+        "title": "把清廉写进日常的每一次选择",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "banner_english": {
+        "id": "banner_1ea9b5f7d94b4d0f9b816feec9790303",
+        "title": "Autumn Letters: Begin Close to Home",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "banner_future": {
+        "id": "banner_ab1dc21c8b5c4ae7ba487317d945f185",
+        "title": "下一轮共读 · 排期展示",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "banner_expired": {
+        "id": "banner_b01238e83a634918868234501b2027d6",
+        "title": "往期共读 · 已过展示窗口",
+        "intendedStatus": "已发布",
+        "complete": true
+      },
+      "banner_draft": {
+        "id": "banner_ce4b2778116c435aa9feef37838d5909",
+        "title": "旧物与家史 · 首发筹备",
+        "intendedStatus": "草稿",
+        "complete": true
+      }
+    },
+    "supportTickets": {
+      "support_open": {
+        "id": "supportTicket_0a6090295c0f4105a97ca1e23dd75c58",
+        "title": "退回的短片怎样补充资料？",
+        "complete": true
+      },
+      "support_answered": {
+        "id": "supportTicket_037796896dcd4f7a88014ab00a0fd3ba",
+        "title": "活动满额以后还能报名吗？",
+        "complete": true
+      }
+    }
+  },
+  "completedAt": "2026-09-26T03:53:30.252239+00:00",
+  "counts": {
+    "contents": 2,
+    "mediaItems": 7,
+    "venues": 4,
+    "hallPeople": 3,
+    "banners": 10,
+    "supportTickets": 2
+  }
+}
