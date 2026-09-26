@@ -1,3 +1,5 @@
+import { isHttpMode } from '../config/dataMode'
+import { command, remoteWorkspace } from '../services/api'
 import { computed, ref } from 'vue'
 import {
   culturalProducts,
@@ -54,10 +56,16 @@ function readState(): ShowcaseState {
   }
 }
 
-const state = ref<ShowcaseState>(readState())
-export const mediaFavorites = computed(() => state.value.favorites)
-export const mediaLikes = computed(() => state.value.likes)
-export const commerceRequests = computed(() => [...state.value.requests].reverse())
+const state = ref<ShowcaseState>(isHttpMode ? emptyState() : readState())
+export const mediaFavorites = computed(() =>
+  isHttpMode ? remoteWorkspace.mediaFavorites : state.value.favorites,
+)
+export const mediaLikes = computed(() =>
+  isHttpMode ? remoteWorkspace.mediaLikes : state.value.likes,
+)
+export const commerceRequests = computed(() =>
+  [...(isHttpMode ? remoteWorkspace.commerceRequests : state.value.requests)].reverse(),
+)
 
 function writeState(next: ShowcaseState) {
   if (showcaseStorageError.value) throw new Error('showcase-storage')
@@ -80,9 +88,11 @@ function toggle(field: 'favorites' | 'likes', id: string) {
 }
 
 export function toggleMediaFavorite(id: string) {
+  if (isHttpMode) return command('media.favorite', id)
   toggle('favorites', id)
 }
 export function toggleMediaLike(id: string) {
+  if (isHttpMode) return command('media.like', id)
   toggle('likes', id)
 }
 
@@ -92,6 +102,17 @@ export function createCommerceRequest(productId: string, kind: CommerceKind, for
     throw new Error('invalid-product')
   const validation = validateCommerceForm(form)
   if (validation) throw new Error(validation)
+  if (isHttpMode) {
+    return command<CommerceRequest>('welfare.claim', productId, {
+      kind,
+      organization: form.organization.trim(),
+      quantity: Number(form.quantity),
+      purpose: form.purpose.trim(),
+    }).then(
+      (result) =>
+        result || remoteWorkspace.commerceRequests[remoteWorkspace.commerceRequests.length - 1]!,
+    )
+  }
   const record: CommerceRequest = {
     id: `DEMO-${kind === 'public' ? 'G' : 'C'}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 5).toUpperCase()}`,
     productId,
@@ -107,6 +128,7 @@ export function createCommerceRequest(productId: string, kind: CommerceKind, for
 }
 
 export function cancelCommerceRequest(id: string) {
+  if (isHttpMode) return command('welfare.cancel', id)
   writeState({
     ...state.value,
     requests: state.value.requests.map((request) =>

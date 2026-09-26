@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { remoteUser } from '../services/api'
+import { isHttpMode } from '../config/dataMode'
+import { commerceStatusLabels } from '../domain/showcaseCatalog'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import AccountPanel from './AccountPanel.vue'
@@ -253,18 +256,19 @@ function previewCertificate(id: string) {
   selectedCertificateId.value = id
   showCertificate.value = true
 }
-function revise(id: string) {
-  if (safely(() => repo.prepareRevision(id))) navigate('submit')
+async function revise(id: string) {
+  if (await safely(() => repo.prepareRevision(id))) navigate('submit')
 }
-function readMessage(id: string, workId: string) {
+function readMessage(id: string, workId: string, sourceType?: string, targetId?: string) {
   safely(() => repo.markNotificationRead(id))
-  openProgress(workId)
+  if (sourceType === 'news' && targetId) navigate('news', { id: targetId })
+  else if (workId) openProgress(workId)
 }
-function markAllRead() {
+async function markAllRead() {
   const unread = notifications.value.filter((item) => !item.read)
   for (const item of unread) {
-    const saved = safely(() => {
-      repo.markNotificationRead(item.id)
+    const saved = await safely(async () => {
+      await repo.markNotificationRead(item.id)
       return true
     })
     if (!saved) return
@@ -272,8 +276,8 @@ function markAllRead() {
   notify(t('消息已标为已读', 'Messages marked as read'))
 }
 
-function cancelBooking(id: string) {
-  safely(() => repo.cancelRegistration(id))
+async function cancelBooking(id: string) {
+  await safely(() => repo.cancelRegistration(id))
   if (!isRegistered(id) && !clearActivityCheckIn(id))
     notify(
       t(
@@ -282,17 +286,17 @@ function cancelBooking(id: string) {
       ),
     )
 }
-function cancelGift(id: string) {
+async function cancelGift(id: string) {
   try {
-    cancelCommerceRequest(id)
-    notify(t('已取消本机演示记录', 'Local sample request cancelled'))
-  } catch {
-    notify(t('本机保存失败，记录未取消', 'Could not save locally. The request is unchanged.'))
+    await cancelCommerceRequest(id)
+    notify(isHttpMode ? '申请已取消' : t('已取消本机演示记录', 'Local sample request cancelled'))
+  } catch (error) {
+    notify(error instanceof Error ? error.message : '记录未取消，请重试。')
   }
 }
-function removeVideo(id: string) {
+async function removeVideo(id: string) {
   try {
-    toggleMediaFavorite(id)
+    await toggleMediaFavorite(id)
   } catch {
     notify(t('本机保存失败，请重试', 'Could not save locally. Please try again.'))
   }
@@ -329,11 +333,14 @@ const rows = computed<PersonalRow[]>(() => {
       id: item.id,
       title: systemMessage(item.title),
       tag: item.read ? t('已读', 'Read') : t('未读', 'Unread'),
-      meta: `${dateLabel(item.createdAt)} · ${item.workId}`,
+      meta: `${dateLabel(item.createdAt)}${item.workId ? ' · ' + item.workId : ''}`,
       body: systemMessage(item.content),
       unread: !item.read,
       actions: [
-        { label: t('查看详情 →', 'View details →'), run: () => readMessage(item.id, item.workId) },
+        {
+          label: t('查看详情 →', 'View details →'),
+          run: () => readMessage(item.id, item.workId, item.sourceType, item.targetId),
+        },
       ],
     }))
   if (tab.value === 'favorites')
@@ -432,7 +439,7 @@ const rows = computed<PersonalRow[]>(() => {
           run: () => navigate('shop', { id: item.productId }),
         },
       ]
-      if (item.status !== 'cancelled' && !showcaseStorageError.value)
+      if (item.status === 'recorded' && !showcaseStorageError.value)
         actions.push({
           label: t('取消记录', 'Cancel request'),
           run: () => cancelGift(item.id),
@@ -441,7 +448,7 @@ const rows = computed<PersonalRow[]>(() => {
       return {
         id: item.id,
         title: productTitle(item.productId),
-        tag: `${item.kind === 'public' ? t('公益申领', 'Public-interest gift') : t('商业定制', 'Custom request')} · ${item.status === 'cancelled' ? t('已取消', 'Cancelled') : t('本机已记录', 'Recorded locally')}`,
+        tag: `${item.kind === 'public' ? t('公益申领', 'Public-interest gift') : t('商业定制', 'Custom request')} · ${isHttpMode ? commerceStatusLabels[item.status] : item.status === 'cancelled' ? t('已取消', 'Cancelled') : t('本机已记录', 'Recorded locally')}`,
         meta: `${item.id} · ${dateLabel(item.createdAt)}`,
         body: `${item.organization} · ${item.quantity} ${t('份', 'items')}\n${item.purpose}`,
         actions,
@@ -515,7 +522,9 @@ const panelHelp = computed(
         'Track submissions, feedback and results by status.',
       ),
       messages: t(
-        '消息由本机流程生成，不发送真实微信通知。',
+        isHttpMode
+          ? '查看平台处理进度的站内通知。微信订阅通知另行接入。'
+          : '消息由本机流程生成，不发送真实微信通知。',
         'Local demo updates; no real WeChat notification is sent.',
       ),
       certificates: t(
@@ -527,7 +536,7 @@ const panelHelp = computed(
         'Keep favourite stories, classics and videos in one place.',
       ),
       events: t(
-        '预约、签到和参与记录仅用于界面演示。',
+        isHttpMode ? '查看当前账号的活动预约和签到记录。' : '预约、签到和参与记录仅用于界面演示。',
         'Bookings, check-ins and participation are interface demonstrations.',
       ),
       learning: t(
@@ -535,11 +544,15 @@ const panelHelp = computed(
         'Learning progress is local and carries no accredited hours.',
       ),
       gifts: t(
-        '演示申请不构成订单、支付或实际发货。',
+        isHttpMode
+          ? '申请由平台处理，状态以实际处理结果为准。本次不涉及支付。'
+          : '演示申请不构成订单、支付或实际发货。',
         'Sample requests do not create purchases, payments or deliveries.',
       ),
       archive: t(
-        '摘抄与创作示例保存在本机，可随时返回编辑。',
+        isHttpMode
+          ? '摘抄与创作记录保存到当前账号。预设助手文本不代表模型推理。'
+          : '摘抄与创作示例保存在本机，可随时返回编辑。',
         'Local excerpts and writing samples are ready to revisit.',
       ),
     })[tab.value] ?? '',
@@ -594,9 +607,15 @@ function openInformation(kind: 'privacy' | 'about') {
     <view class="profile-hero">
       <view class="profile-avatar">家</view>
       <view class="profile-identity">
-        <text class="section-title">{{ t('家风同行者', 'A companion in family heritage') }}</text>
+        <text class="section-title">
+          {{ remoteUser?.name || t('家风同行者', 'A companion in family heritage') }}
+        </text>
         <text class="section-subtitle">
-          {{ t('体验账户 · 当前设备的个人记录', 'Demo account · records on this device') }}
+          {{
+            isHttpMode
+              ? t('平台账号 · 云端个人记录', 'Platform account · Personal records')
+              : t('体验账户 · 当前设备的个人记录', 'Demo account · records on this device')
+          }}
         </text>
         <text class="profile-local-note">
           {{
@@ -903,7 +922,13 @@ function openInformation(kind: 'privacy' | 'about') {
           <text>{{ t('关于平台', 'About this platform') }}</text>
           <text>→</text>
         </button>
-        <view class="profile-role-card">
+        <view v-if="isHttpMode && remoteUser?.roles.includes('expert')" class="profile-role-card">
+          <text class="profile-panel-title">专家权限</text>
+          <wd-button variant="plain" @click="navigate('admin', { tab: 'expert' })">
+            进入专家工作台
+          </wd-button>
+        </view>
+        <view v-if="!isHttpMode" class="profile-role-card">
           <text class="profile-panel-title">{{ t('角色体验', 'Role preview') }}</text>
           <text class="muted">
             {{ t('仅用于演示，不代表已认证身份', 'A preview only; no verified identity') }}
@@ -943,7 +968,9 @@ function openInformation(kind: 'privacy' | 'about') {
         <text class="scope-note">
           {{
             t(
-              '可体验本机模拟登录与认证。真实授权、实名认证和跨设备同步尚未接入。',
+              isHttpMode
+                ? '云端记录按账号隔离。试点登录不等于完成实名认证；证书样张不代表正式签发。'
+                : '可体验本机模拟登录与认证。真实授权、实名认证和跨设备同步尚未接入。',
               'Local sign-in and verification states can be previewed. Real authorisation, identity checks and cross-device sync are not connected.',
             )
           }}
@@ -1019,7 +1046,9 @@ function openInformation(kind: 'privacy' | 'about') {
           <text class="profile-dialog-paragraph">
             {{
               t(
-                '草稿、投稿、收藏、学习、预约和文创演示记录保存在当前设备，未连接真实账户或后台服务。请使用虚构信息体验。',
+                isHttpMode
+                  ? '草稿、投稿、附件、收藏、学习、预约和申请记录会通过服务接口保存在平台，并关联当前账号。媒体本机样片和离线样张仍保留其明确标识。'
+                  : '草稿、投稿、收藏、学习、预约和文创演示记录保存在当前设备，未连接真实账户或后台服务。请使用虚构信息体验。',
                 'Drafts, submissions, favourites, learning, bookings and sample gift requests are stored on this device. No real account or backend is connected. Use fictional information.',
               )
             }}
@@ -1027,7 +1056,9 @@ function openInformation(kind: 'privacy' | 'about') {
           <text class="profile-dialog-paragraph">
             {{
               t(
-                '清理浏览器或小程序存储会清除记录；更换设备不会自动同步。本说明描述演示的数据行为，不是正式服务隐私协议。',
+                isHttpMode
+                  ? '清理设备存储会移除登录状态和本机设置，不会删除服务端账号记录。此为试点功能说明，正式隐私协议与留存期限须由运营方另行发布。'
+                  : '清理浏览器或小程序存储会清除记录；更换设备不会自动同步。本说明描述演示的数据行为，不是正式服务隐私协议。',
                 'Clearing browser or mini-program storage removes records. Data does not sync to another device. This describes the demo and is not a production privacy policy.',
               )
             }}

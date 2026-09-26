@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import { readInputValue } from '../composables/readInputValue'
 import { openReader, works, regionLabel, repo, region } from '../composables/useDemo'
@@ -11,6 +11,10 @@ import {
   newsCategories,
   type BilingualText,
 } from '../domain/contentCatalog'
+import { isHttpMode } from '../config/dataMode'
+import { remoteWorkspace, remoteLoading, remoteError, refreshWorkspace } from '../services/api'
+import { visibleEdition, orderedHomeSections, type HomeSectionId } from '../domain/remoteCatalog'
+import { venues } from '../domain/contentCatalog'
 import type { Work } from '../domain/types'
 const L = (text: BilingualText) => t(text.zh, text.en)
 const query = ref('')
@@ -83,8 +87,9 @@ interface HeroSlide {
   params?: Record<string, string>
   book: string
   seal: string
+  cover?: string
 }
-const heroSlides = computed<HeroSlide[]>((): HeroSlide[] => [
+const demoHeroSlides = computed<HeroSlide[]>((): HeroSlide[] => [
   {
     id: 'policy',
     kicker: t('全国政策通知 · 版式样例', 'NATIONAL NOTICES · DEMO'),
@@ -176,6 +181,43 @@ const heroSlides = computed<HeroSlide[]>((): HeroSlide[] => [
     seal: '正气',
   },
 ])
+const heroSlides = computed<HeroSlide[]>(() =>
+  isHttpMode
+    ? visibleEdition(remoteWorkspace.banners, locale.value, region.value).map((b) => ({
+        id: b.id,
+        kicker: b.subtitle,
+        title: [b.title],
+        description: b.description.split('\n').filter(Boolean),
+        action: b.actionLabel || t('查看详情', 'View details'),
+        foot: b.footnote,
+        screen: b.targetScreen,
+        params: b.targetId ? { id: b.targetId } : undefined,
+        book: b.title,
+        seal: t('家风', 'Values'),
+        cover: b.cover,
+      }))
+    : demoHeroSlides.value,
+)
+watch(heroSlides, () => {
+  heroIndex.value = 0
+})
+const sections = computed(() =>
+  orderedHomeSections(isHttpMode ? remoteWorkspace.homepageConfig : undefined),
+)
+function sectionStyle(id: HomeSectionId) {
+  const index = sections.value.findIndex((x) => x.id === id)
+  return { order: index, display: index < 0 ? 'none' : undefined }
+}
+const publishedNews = computed(() =>
+  newsArticles.filter(
+    (x) => region.value === 'all' || !x.region || x.region === 'all' || x.region === region.value,
+  ),
+)
+const nearbyVenues = computed(() =>
+  venues
+    .filter((x) => region.value === 'all' || x.region === 'all' || x.region === region.value)
+    .slice(0, 3),
+)
 function changeHero(event: { detail: { current: number } }) {
   heroIndex.value = event.detail.current
 }
@@ -209,21 +251,22 @@ const filteredWorks = computed(() =>
   selectedTopic.value === 'all'
     ? works.value.filter(
         (work) =>
-          !terms.value ||
-          match(
-            work.title,
-            work.excerpt,
-            work.author,
-            workEnglish[work.id]?.title ?? '',
-            workEnglish[work.id]?.excerpt ?? '',
-          ),
+          (!isHttpMode || work.published === true) &&
+          (!terms.value ||
+            match(
+              work.title,
+              work.excerpt,
+              work.author,
+              workEnglish[work.id]?.title ?? '',
+              workEnglish[work.id]?.excerpt ?? '',
+            )),
       )
     : [],
 )
 const topicArticles = computed(() =>
   selectedTopic.value === 'all' && !terms.value
     ? []
-    : newsArticles.filter(
+    : publishedNews.value.filter(
         (article) =>
           (selectedTopic.value === 'all' || article.topic === selectedTopic.value) &&
           (!terms.value ||
@@ -255,13 +298,13 @@ const noResults = computed(
     !searchClassics.value.length &&
     !searchActivities.value.length,
 )
-const latestNews = computed(() => newsArticles.slice(0, 3))
+const latestNews = computed(() => publishedNews.value.slice(0, 3))
 const articleCategory = (id: string) => {
   const category = newsCategories.find((item) => item.id === id)
   return category ? L(category.label) : t('资讯动态', 'News')
 }
 function topicArticle(id: string) {
-  return newsArticles.find((article) => article.topic === id)!
+  return publishedNews.value.find((article) => article.topic === id)!
 }
 </script>
 <template>
@@ -271,6 +314,7 @@ function topicArticle(id: string) {
       <text class="muted">{{ t(regionLabel) }} · {{ t('共建共享', 'Built together') }}</text>
     </view>
     <swiper
+      v-if="heroSlides.length"
       class="home-hero-swiper"
       :current="heroIndex"
       :autoplay="true"
@@ -280,7 +324,7 @@ function topicArticle(id: string) {
       @change="changeHero"
     >
       <swiper-item v-for="slide in heroSlides" :key="slide.id">
-        <view class="hero">
+        <view :class="['hero', { 'hero-has-cover': !!slide.cover }]">
           <view class="hero-copy">
             <text class="hero-kicker">{{ slide.kicker }}</text>
             <view class="hero-title">
@@ -302,7 +346,8 @@ function topicArticle(id: string) {
               <text>{{ slide.foot }}</text>
             </view>
           </view>
-          <view class="hero-art" @click="navigate(slide.screen, slide.params)">
+          <image v-if="slide.cover" class="hero-cover" :src="slide.cover" mode="aspectFill" />
+          <view v-else class="hero-art" @click="navigate(slide.screen, slide.params)">
             <view class="art-orbit orbit-one" />
             <view class="art-orbit orbit-two" />
             <view class="art-sun" />
@@ -325,7 +370,7 @@ function topicArticle(id: string) {
         </view>
       </swiper-item>
     </swiper>
-    <view class="home-carousel-tools">
+    <view v-if="heroSlides.length" class="home-carousel-tools">
       <view class="home-carousel-dots">
         <button
           v-for="(slide, index) in heroSlides"
@@ -339,294 +384,431 @@ function topicArticle(id: string) {
         </button>
       </view>
     </view>
-    <view class="announcement" @click="navigate('news', { id: 'notice-autumn' })">
+    <view
+      v-if="publishedNews.length"
+      class="announcement"
+      @click="navigate('news', { id: publishedNews[0].id })"
+    >
       <view class="notice-symbol">{{ t('告', 'N') }}</view>
       <text class="notice-title">{{ t('征集公告', 'Notice') }}</text>
       <text class="notice-copy">
-        {{ L(newsArticles[0].title) }} · {{ t('演示公告', 'Sample notice') }}
+        {{ L(publishedNews[0].title) }}
+        {{ isHttpMode ? '' : '· ' + t('演示公告', 'Sample notice') }}
       </text>
       <text class="arrow">→</text>
     </view>
-    <view class="entry-grid">
-      <button
-        v-for="item in entries"
-        :key="item.screen"
-        class="entry-button"
-        @click="navigate(item.screen)"
-      >
-        <view class="entry-icon"><wd-icon :name="item.icon" size="25px" /></view>
-        <text class="entry-label">{{ item.label }}</text>
-        <text class="entry-sub">{{ item.sub }}</text>
-      </button>
+    <view v-if="isHttpMode && (remoteLoading || remoteError)" class="scope-note">
+      {{ remoteLoading ? t('正在加载内容…', 'Loading content…') : remoteError }}
+      <wd-button v-if="remoteError" size="small" @click="refreshWorkspace().catch(() => {})">
+        {{ t('重试', 'Retry') }}
+      </wd-button>
     </view>
-    <view class="home-topic-section">
-      <SectionHeading
-        :title="t('四大家风专区', 'Four paths through family heritage')"
-        :eyebrow="t('家国同心 · 文脉相承', 'FAMILY VALUES · SHARED TRADITIONS')"
-        :subtitle="
-          t(
-            '读懂一个故事，走近一种传承。各专区均提供原创样例。',
-            'Explore original sample stories in every theme.',
-          )
-        "
-      >
-        <button class="text-button" @click="navigate('news')">
-          {{ t('全部专题', 'All topics') }} ↗
-        </button>
-      </SectionHeading>
-      <view class="home-topic-grid">
+    <view class="home-managed-sections">
+      <view class="entry-grid" :style="sectionStyle('entries')">
         <button
-          v-for="topic in familyTopics"
-          :key="topic.id"
-          class="home-topic-card"
-          @click="navigate('news', { topic: topic.id })"
+          v-for="item in entries"
+          :key="item.screen"
+          class="entry-button"
+          @click="navigate(item.screen)"
         >
-          <view class="home-topic-top">
-            <text class="home-topic-mark">{{ topic.mark }}</text>
-            <text class="home-topic-title">{{ L(topic.label) }}</text>
-          </view>
-          <text class="home-topic-description">{{ L(topic.description) }}</text>
-          <text class="home-topic-feature">{{ L(topicArticle(topic.id).title) }}</text>
-          <text class="home-topic-link">{{ t('进入专区', 'Explore topic') }} →</text>
+          <view class="entry-icon"><wd-icon :name="item.icon" size="25px" /></view>
+          <text class="entry-label">{{ item.label }}</text>
+          <text class="entry-sub">{{ item.sub }}</text>
         </button>
       </view>
-    </view>
-    <view class="home-columns">
-      <view class="home-main">
+      <view class="home-topic-section" :style="sectionStyle('topics')">
         <SectionHeading
-          :title="t('万家故事，皆有回响', 'Every family has a story')"
-          :eyebrow="t('家风故事 · 共同传承', 'STORIES OF FAMILY')"
+          :title="t('四大家风专区', 'Four paths through family heritage')"
+          :eyebrow="t('家国同心 · 文脉相承', 'FAMILY VALUES · SHARED TRADITIONS')"
           :subtitle="
-            t('在平凡日常里，读懂家风的力量。', 'Discover the strength of family in everyday life.')
+            isHttpMode
+              ? t('读懂一个故事，走近一种传承。', 'Explore published stories in every theme.')
+              : t(
+                  '读懂一个故事，走近一种传承。各专区均提供原创样例。',
+                  'Explore original sample stories in every theme.',
+                )
           "
         >
-          <button class="text-button" @click="navigate('library')">
-            {{ t('更多作品', 'More stories') }} ↗
+          <button class="text-button" @click="navigate('news')">
+            {{ t('全部专题', 'All topics') }} ↗
           </button>
         </SectionHeading>
-        <view class="story-filters">
+        <view class="home-topic-grid">
           <button
-            v-for="topic in topics"
+            v-for="topic in familyTopics"
             :key="topic.id"
-            :class="['filter-chip', { active: selectedTopic === topic.id }]"
-            @click="selectedTopic = topic.id"
+            class="home-topic-card"
+            @click="navigate('news', { topic: topic.id })"
           >
-            {{ topic.label }}
-          </button>
-        </view>
-        <view class="search-field">
-          <wd-icon name="search-line" size="19px" />
-          <input
-            v-model="query"
-            :placeholder="
-              t('搜索作品、资讯、课堂、视频等', 'Search stories, courses, videos and more')
-            "
-            confirm-type="search"
-            @blur="query = readInputValue($event, query)"
-            @confirm="navigate('search', { q: readInputValue($event, query).trim() })"
-            :aria-label="t('搜索作品、资讯、典籍、活动', 'Search stories, news, books and events')"
-          />
-          <button v-if="query" class="text-button" @click="query = ''">
-            {{ t('清除', 'Clear') }}
-          </button>
-        </view>
-        <button class="text-button home-search-all" @click="navigate('search', { q: terms })">
-          {{ t('查看全站搜索结果', 'View all search results') }} →
-        </button>
-        <view
-          v-for="(work, index) in filteredWorks.slice(0, 3)"
-          :key="work.id"
-          class="story-row"
-          @click="openReader(work)"
-        >
-          <view :class="['story-art', 'story-art-' + index]">
-            <text>{{ ['家书', '家训', '家风'][index] }}</text>
-            <view class="story-art-line" />
-          </view>
-          <view class="story-copy">
-            <view class="story-meta">
-              <text>{{ t('原创故事样例', 'Original sample') }}</text>
-              <text>· {{ workText(work, 'author') }}</text>
+            <view class="home-topic-top">
+              <text class="home-topic-mark">{{ topic.mark }}</text>
+              <text class="home-topic-title">{{ L(topic.label) }}</text>
             </view>
-            <text class="story-title">{{ workText(work, 'title') }}</text>
-            <text class="story-excerpt">{{ workText(work, 'excerpt') }}</text>
-            <text class="story-link">
-              {{ t('阅读故事', 'Read story') }}
-              <text>↗</text>
+            <text class="home-topic-description">{{ L(topic.description) }}</text>
+            <text class="home-topic-feature">
+              {{
+                topicArticle(topic.id)
+                  ? L(topicArticle(topic.id)!.title)
+                  : t('内容待发布', 'Content coming soon')
+              }}
             </text>
-          </view>
-        </view>
-        <view
-          v-for="(article, index) in topicArticles.slice(0, 3)"
-          :key="article.id"
-          class="story-row"
-          @click="navigate('news', { id: article.id })"
-        >
-          <view :class="['story-art', 'story-art-' + index]">
-            <text>{{ familyTopics.find((topic) => topic.id === article.topic)?.mark }}</text>
-            <view class="story-art-line" />
-          </view>
-          <view class="story-copy">
-            <view class="story-meta">
-              <text>{{ articleCategory(article.category) }}</text>
-              <text>· {{ t('原创演示', 'Original demo') }}</text>
-            </view>
-            <text class="story-title">{{ L(article.title) }}</text>
-            <text class="story-excerpt">{{ L(article.excerpt) }}</text>
-            <text class="story-link">
-              {{ t('阅读专题故事', 'Read themed story') }}
-              <text>↗</text>
-            </text>
-          </view>
-        </view>
-        <view v-if="noResults" class="empty-state">
-          {{
-            t('暂未找到内容，试试其他地区或关键词。', 'No results. Try another region or keyword.')
-          }}
-        </view>
-        <view
-          v-for="item in searchClassics"
-          :key="item.id"
-          class="search-result"
-          @click="openReader(item)"
-        >
-          <text class="tag">{{ t('典籍', 'Book') }}</text>
-          {{ item.title }}
-          <text>↗</text>
-        </view>
-        <view
-          v-for="item in searchActivities"
-          :key="item.id"
-          class="search-result"
-          @click="navigate('learning', { id: item.id })"
-        >
-          <text class="tag">{{ t('活动', 'Event') }}</text>
-          {{ item.title }}
-          <text>↗</text>
+            <text class="home-topic-link">{{ t('进入专区', 'Explore topic') }} →</text>
+          </button>
         </view>
       </view>
-      <view class="home-side">
-        <view class="quote-panel">
-          <text class="eyebrow">{{ t('今日家训', 'A daily precept') }}</text>
-          <text class="quote-text">
-            {{ t('忠厚传家久', 'Kindness endures') }}
-            <br />
-            {{ t('诗书继世长', 'Learning carries on') }}
-          </text>
-          <view class="fine-line" />
-          <text class="quote-note">
-            {{ t('把日子过成家风', 'Live your family values') }}
-            <br />
-            {{ t('把家风传给下一代', 'Share them with the next generation') }}
-          </text>
-          <button class="text-button" @click="navigate('library')">
-            {{ t('走进典籍馆藏', 'Open the collection') }} →
+      <view class="home-columns" :style="sectionStyle('works')">
+        <view class="home-main">
+          <SectionHeading
+            :title="t('万家故事，皆有回响', 'Every family has a story')"
+            :eyebrow="t('家风故事 · 共同传承', 'STORIES OF FAMILY')"
+            :subtitle="
+              t(
+                '在平凡日常里，读懂家风的力量。',
+                'Discover the strength of family in everyday life.',
+              )
+            "
+          >
+            <button class="text-button" @click="navigate('library')">
+              {{ t('更多作品', 'More stories') }} ↗
+            </button>
+          </SectionHeading>
+          <view class="story-filters">
+            <button
+              v-for="topic in topics"
+              :key="topic.id"
+              :class="['filter-chip', { active: selectedTopic === topic.id }]"
+              @click="selectedTopic = topic.id"
+            >
+              {{ topic.label }}
+            </button>
+          </view>
+          <view class="search-field">
+            <wd-icon name="search-line" size="19px" />
+            <input
+              v-model="query"
+              :placeholder="
+                t('搜索作品、资讯、课堂、视频等', 'Search stories, courses, videos and more')
+              "
+              confirm-type="search"
+              @blur="query = readInputValue($event, query)"
+              @confirm="navigate('search', { q: readInputValue($event, query).trim() })"
+              :aria-label="
+                t('搜索作品、资讯、典籍、活动', 'Search stories, news, books and events')
+              "
+            />
+            <button v-if="query" class="text-button" @click="query = ''">
+              {{ t('清除', 'Clear') }}
+            </button>
+          </view>
+          <button class="text-button home-search-all" @click="navigate('search', { q: terms })">
+            {{ t('查看全站搜索结果', 'View all search results') }} →
           </button>
-        </view>
-        <view class="mini-feature" @click="navigate('learning')">
-          <text class="eyebrow">{{ t('家风传习 · 活动预告', 'LEARNING · UPCOMING EVENTS') }}</text>
-          <text class="mini-feature-title">
-            {{ t('寻一处书院', 'Find a reading space') }}
-            <br />
-            {{ t('赴一场家风之约', 'Share a family story') }}
-          </text>
-          <view class="feature-bottom">
-            <text>{{ t('查看研学活动', 'Explore events') }}</text>
+          <view
+            v-for="(work, index) in filteredWorks.slice(0, 3)"
+            :key="work.id"
+            class="story-row"
+            @click="openReader(work)"
+          >
+            <view :class="['story-art', 'story-art-' + index]">
+              <text>{{ ['家书', '家训', '家风'][index] }}</text>
+              <view class="story-art-line" />
+            </view>
+            <view class="story-copy">
+              <view class="story-meta">
+                <text>
+                  {{
+                    isHttpMode
+                      ? t('公开作品', 'Published story')
+                      : t('原创故事样例', 'Original sample')
+                  }}
+                </text>
+                <text>· {{ workText(work, 'author') }}</text>
+              </view>
+              <text class="story-title">{{ workText(work, 'title') }}</text>
+              <text class="story-excerpt">{{ workText(work, 'excerpt') }}</text>
+              <text class="story-link">
+                {{ t('阅读故事', 'Read story') }}
+                <text>↗</text>
+              </text>
+            </view>
+          </view>
+          <view
+            v-for="(article, index) in topicArticles.slice(0, 3)"
+            :key="article.id"
+            class="story-row"
+            @click="navigate('news', { id: article.id })"
+          >
+            <view :class="['story-art', 'story-art-' + index]">
+              <text>{{ familyTopics.find((topic) => topic.id === article.topic)?.mark }}</text>
+              <view class="story-art-line" />
+            </view>
+            <view class="story-copy">
+              <view class="story-meta">
+                <text>{{ articleCategory(article.category) }}</text>
+                <text>
+                  · {{ isHttpMode ? t('已发布', 'Published') : t('原创演示', 'Original demo') }}
+                </text>
+              </view>
+              <text class="story-title">{{ L(article.title) }}</text>
+              <text class="story-excerpt">{{ L(article.excerpt) }}</text>
+              <text class="story-link">
+                {{ t('阅读专题故事', 'Read themed story') }}
+                <text>↗</text>
+              </text>
+            </view>
+          </view>
+          <view v-if="noResults" class="empty-state">
+            {{
+              t(
+                '暂未找到内容，试试其他地区或关键词。',
+                'No results. Try another region or keyword.',
+              )
+            }}
+          </view>
+          <view
+            v-for="item in searchClassics"
+            :key="item.id"
+            class="search-result"
+            @click="openReader(item)"
+          >
+            <text class="tag">{{ t('典籍', 'Book') }}</text>
+            {{ item.title }}
+            <text>↗</text>
+          </view>
+          <view
+            v-for="item in searchActivities"
+            :key="item.id"
+            class="search-result"
+            @click="navigate('learning', { id: item.id })"
+          >
+            <text class="tag">{{ t('活动', 'Event') }}</text>
+            {{ item.title }}
             <text>↗</text>
           </view>
         </view>
-        <view class="home-venue-link" @click="navigate('venues')">
-          <wd-icon name="location" size="22px" />
-          <view class="home-venue-copy">
-            <text class="home-venue-copy-line">
-              {{ t('身边的家风阵地', 'Explore learning venues') }}
+        <view class="home-side">
+          <view class="quote-panel">
+            <text class="eyebrow">{{ t('今日家训', 'A daily precept') }}</text>
+            <text class="quote-text">
+              {{ t('忠厚传家久', 'Kindness endures') }}
+              <br />
+              {{ t('诗书继世长', 'Learning carries on') }}
             </text>
-            <text class="home-venue-copy-line">
+            <view class="fine-line" />
+            <text class="quote-note">
+              {{ t('把日子过成家风', 'Live your family values') }}
+              <br />
+              {{ t('把家风传给下一代', 'Share them with the next generation') }}
+            </text>
+            <button class="text-button" @click="navigate('library')">
+              {{ t('走进典籍馆藏', 'Open the collection') }} →
+            </button>
+          </view>
+          <view class="mini-feature" @click="navigate('learning')">
+            <text class="eyebrow">
+              {{ t('家风传习 · 活动预告', 'LEARNING · UPCOMING EVENTS') }}
+            </text>
+            <text class="mini-feature-title">
+              {{ t('寻一处书院', 'Find a reading space') }}
+              <br />
+              {{ t('赴一场家风之约', 'Share a family story') }}
+            </text>
+            <view class="feature-bottom">
+              <text>{{ t('查看研学活动', 'Explore events') }}</text>
+              <text>↗</text>
+            </view>
+          </view>
+          <view class="home-venue-link" @click="navigate('venues')">
+            <wd-icon name="location" size="22px" />
+            <view class="home-venue-copy">
+              <text class="home-venue-copy-line">
+                {{ t('身边的家风阵地', 'Explore learning venues') }}
+              </text>
+              <text class="home-venue-copy-line">
+                {{
+                  isHttpMode
+                    ? t(
+                        '图文导览 · 参观须知 · 关联活动',
+                        'Venue guides · visitor information · activities',
+                      )
+                    : t(
+                        '示意地图 · 场馆导览 · 预约体验',
+                        'Illustrated map · venue tours · demo bookings',
+                      )
+                }}
+              </text>
+            </view>
+            <text>→</text>
+          </view>
+        </view>
+      </view>
+      <view class="home-news-section" :style="sectionStyle('news')">
+        <SectionHeading
+          :title="t('资讯动态', 'News and updates')"
+          :eyebrow="t('知家事 · 看新风', 'LETTERS · LEARNING · COMMUNITY')"
+          :subtitle="
+            t(
+              '公告、学习专栏与活动报道，了解平台的新故事。',
+              'Notices, learning columns and stories from the community.',
+            )
+          "
+        >
+          <button class="text-button" @click="navigate('news')">
+            {{ t('全部资讯', 'All updates') }} ↗
+          </button>
+        </SectionHeading>
+        <view v-if="!latestNews.length" class="empty-state">
+          {{
+            t('当前地区和语言暂无已发布资讯。', 'No published news for this region and language.')
+          }}
+        </view>
+        <view class="home-news-grid">
+          <button
+            v-for="article in latestNews"
+            :key="article.id"
+            class="home-news-card"
+            @click="navigate('news', { id: article.id })"
+          >
+            <view class="home-news-meta">
+              <text class="home-news-category">{{ articleCategory(article.category) }}</text>
+              <text>{{ article.date }}</text>
+            </view>
+            <text class="home-news-title">{{ L(article.title) }}</text>
+            <text class="home-news-excerpt">{{ L(article.excerpt) }}</text>
+            <text class="home-topic-link">{{ t('阅读详情', 'Read more') }} →</text>
+          </button>
+        </view>
+      </view>
+      <view class="home-news-section" :style="sectionStyle('venues')">
+        <SectionHeading
+          :title="t('身边的家风阵地', 'Learning venues')"
+          :eyebrow="t('图文导览 · 参观信息', 'VENUES · VISITOR INFORMATION')"
+        >
+          <button class="text-button" @click="navigate('venues')">
+            {{ t('全部阵地', 'All venues') }} ↗
+          </button>
+        </SectionHeading>
+        <view v-if="!nearbyVenues.length" class="empty-state">
+          {{
+            t(
+              '当前地区和语言暂无已发布阵地。',
+              'No venues are published for this region and language.',
+            )
+          }}
+        </view>
+        <view class="home-news-grid">
+          <button
+            v-for="venue in nearbyVenues"
+            :key="venue.id"
+            class="home-news-card"
+            @click="navigate('venues', { id: venue.id })"
+          >
+            <text class="home-news-title">{{ L(venue.title) }}</text>
+            <text class="home-news-excerpt">{{ L(venue.description) }}</text>
+          </button>
+        </view>
+      </view>
+      <view :style="sectionStyle('stats')">
+        <view class="vision-strip home-statistics">
+          <view class="home-statistic">
+            <text class="vision-number">
+              {{ isHttpMode ? (remoteWorkspace.homeStats?.submissions ?? '—') : '12,860' }}
+              <text class="home-statistic-unit">{{ t('篇', 'works') }}</text>
+            </text>
+            <text>
               {{
-                t('示意地图 · 场馆导览 · 预约体验', 'Illustrated map · venue tours · demo bookings')
+                isHttpMode
+                  ? t('累计投稿', 'Total submissions')
+                  : t('累计投稿（示例）', 'Total submissions · sample')
               }}
             </text>
           </view>
-          <text>→</text>
-        </view>
-      </view>
-    </view>
-    <view class="home-news-section">
-      <SectionHeading
-        :title="t('资讯动态', 'News and updates')"
-        :eyebrow="t('知家事 · 看新风', 'LETTERS · LEARNING · COMMUNITY')"
-        :subtitle="
-          t(
-            '公告、学习专栏与活动报道，了解平台的新故事。',
-            'Notices, learning columns and stories from the community.',
-          )
-        "
-      >
-        <button class="text-button" @click="navigate('news')">
-          {{ t('全部资讯', 'All updates') }} ↗
-        </button>
-      </SectionHeading>
-      <view class="home-news-grid">
-        <button
-          v-for="article in latestNews"
-          :key="article.id"
-          class="home-news-card"
-          @click="navigate('news', { id: article.id })"
-        >
-          <view class="home-news-meta">
-            <text class="home-news-category">{{ articleCategory(article.category) }}</text>
-            <text>{{ article.date }}</text>
+          <view class="home-statistic">
+            <text class="vision-number">
+              {{ isHttpMode ? (remoteWorkspace.homeStats?.participants ?? '—') : '8,620' }}
+              <text class="home-statistic-unit">{{ t('人', 'people') }}</text>
+            </text>
+            <text>
+              {{
+                isHttpMode
+                  ? t('投稿参与人数', 'Contributing authors')
+                  : t('参与人数（示例）', 'Participants · sample')
+              }}
+            </text>
           </view>
-          <text class="home-news-title">{{ L(article.title) }}</text>
-          <text class="home-news-excerpt">{{ L(article.excerpt) }}</text>
-          <text class="home-topic-link">{{ t('阅读详情', 'Read more') }} →</text>
-        </button>
+          <view class="home-statistic">
+            <text class="vision-number">
+              {{ isHttpMode ? (remoteWorkspace.homeStats?.regions ?? '—') : '34' }}
+              <text class="home-statistic-unit">{{ t('个', 'regions') }}</text>
+            </text>
+            <text>
+              {{
+                isHttpMode
+                  ? t('投稿地区', 'Submission regions')
+                  : t('覆盖地区（示例）', 'Regions covered · sample')
+              }}
+            </text>
+          </view>
+          <view class="vision-caption home-statistic">
+            <text>
+              {{ t('汇万家之美', 'Many families') }}
+              <br />
+              {{ t('成中华家风', 'One shared heritage') }}
+            </text>
+            <text class="muted">
+              {{
+                isHttpMode
+                  ? t('根据数据库记录汇总', 'Aggregated from saved records')
+                  : t('演示示例 · 非实际运营数据', 'Sample figures · no live statistics')
+              }}
+            </text>
+          </view>
+        </view>
+        <text class="home-statistics-note">
+          {{
+            isHttpMode
+              ? remoteWorkspace.homeStats
+                ? t('统计时间：', 'As of: ') +
+                  remoteWorkspace.homeStats.asOf +
+                  t(
+                    '。当前虚构场景数据用于联动展示。',
+                    '. Current fictional records are for the linked showcase.',
+                  )
+                : t('统计暂不可用', 'Statistics unavailable')
+              : t(
+                  '以上为用于页面沟通的模拟累计数据，不代表实际投稿、参与人数或服务覆盖。',
+                  'These illustrative totals do not represent actual submissions, participants or service coverage.',
+                )
+          }}
+        </text>
       </view>
     </view>
-    <view class="vision-strip home-statistics">
-      <view class="home-statistic">
-        <text class="vision-number">
-          12,860
-          <text class="home-statistic-unit">{{ t('篇', 'works') }}</text>
-        </text>
-        <text>{{ t('累计投稿（示例）', 'Total submissions · sample') }}</text>
-      </view>
-      <view class="home-statistic">
-        <text class="vision-number">
-          8,620
-          <text class="home-statistic-unit">{{ t('人', 'people') }}</text>
-        </text>
-        <text>{{ t('参与人数（示例）', 'Participants · sample') }}</text>
-      </view>
-      <view class="home-statistic">
-        <text class="vision-number">
-          34
-          <text class="home-statistic-unit">{{ t('个', 'regions') }}</text>
-        </text>
-        <text>{{ t('覆盖地区（示例）', 'Regions covered · sample') }}</text>
-      </view>
-      <view class="vision-caption home-statistic">
-        <text>
-          {{ t('汇万家之美', 'Many families') }}
-          <br />
-          {{ t('成中华家风', 'One shared heritage') }}
-        </text>
-        <text class="muted">
-          {{ t('演示示例 · 非实际运营数据', 'Sample figures · no live statistics') }}
-        </text>
-      </view>
-    </view>
-    <text class="home-statistics-note">
-      {{
-        t(
-          '以上为用于页面沟通的模拟累计数据，不代表实际投稿、参与人数或服务覆盖。',
-          'These illustrative totals do not represent actual submissions, participants or service coverage.',
-        )
-      }}
-    </text>
   </view>
 </template>
 <style scoped lang="scss">
+.home-managed-sections {
+  display: flex;
+  flex-direction: column;
+}
+.hero-cover {
+  width: 42%;
+  height: 100%;
+  flex-shrink: 0;
+}
+@media (max-width: 600px) {
+  .hero-cover {
+    position: absolute;
+    right: 12px;
+    top: 18px;
+    width: 72px;
+    height: 72px;
+    border: 1px solid var(--jf-gold);
+    opacity: 0.85;
+  }
+  .hero-has-cover .hero-kicker {
+    max-width: calc(100% - 70px);
+  }
+}
 .home-hero-swiper {
   height: 440px;
 }

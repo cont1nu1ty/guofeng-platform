@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { isHttpMode } from '../config/dataMode'
+import { request, remoteWorkspace, remoteLoading, refreshWorkspace } from '../services/api'
+import type { Work } from '../domain/types'
 import { readInputValue } from '../composables/readInputValue'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
@@ -10,13 +13,24 @@ import { t } from '../composables/useLocale'
 import type { WorkStatus, ReviewAction } from '../domain/types'
 const params = useRouteParams()
 const query = ref(reviewQuery.value)
+const remoteResult = ref<Work>()
+const queryError = ref('')
+const querying = ref(false)
+let querySequence = 0
 const searchedId = ref('')
 const searched = ref(false)
 const publicTab = ref<'shortlisted' | 'awarded' | 'collected'>('shortlisted')
 const certificateVisible = ref(false)
+const scoringTotal = computed(() =>
+  remoteWorkspace.scoringDimensions.reduce((sum, item) => sum + item.max, 0),
+)
 const result = computed(() => {
   revision.value
-  return searchedId.value ? repo.getWork(searchedId.value) : undefined
+  return isHttpMode
+    ? remoteResult.value
+    : searchedId.value
+      ? repo.getWork(searchedId.value)
+      : undefined
 })
 const publicWorks = computed(() => {
   revision.value
@@ -34,12 +48,13 @@ const statusNames: Record<WorkStatus, string> = {
   awarded: 'Awarded',
   collected: 'Collected',
 }
-const actionNames: Record<ReviewAction, [string, string]> = {
+const actionNames: Record<ReviewAction | 'score', [string, string]> = {
   return: ['退回修改', 'Changes requested'],
   advance: ['通过晋级', 'Advanced'],
   shortlist: ['确认入围', 'Shortlisted'],
   award: ['模拟授奖', 'Simulated award'],
   collect: ['模拟入藏', 'Simulated collection'],
+  score: ['专家评分', 'Expert score'],
 }
 const stageEnglish = [
   'County initial review',
@@ -65,11 +80,33 @@ const standardEnglish = [
       'Review originality declarations, completeness and privacy. This is not a real plagiarism check.',
   },
 ]
-function search(id?: string) {
+async function search(id?: string) {
   if (id) query.value = id
   searchedId.value = query.value.trim()
   reviewQuery.value = searchedId.value
   searched.value = true
+  if (isHttpMode) {
+    const sequence = ++querySequence
+    querying.value = true
+    queryError.value = ''
+    remoteResult.value = undefined
+    if (!searchedId.value) {
+      queryError.value = '请输入作品编号'
+      querying.value = false
+      return
+    }
+    try {
+      const response = await request<{ work: Work }>(
+        `/submissions/${encodeURIComponent(searchedId.value)}/progress`,
+      )
+      if (sequence === querySequence) remoteResult.value = response.data.work
+    } catch (error) {
+      if (sequence === querySequence)
+        queryError.value = error instanceof Error ? error.message : '查询失败，请重试'
+    } finally {
+      if (sequence === querySequence) querying.value = false
+    }
+  }
 }
 function selectPublic(id: string) {
   search(id)
@@ -89,7 +126,7 @@ function current(index: number) {
     index === result.value.progressIndex
   )
 }
-function actionLabel(action: ReviewAction) {
+function actionLabel(action: ReviewAction | 'score') {
   const label = actionNames[action]
   return label ? t(label[0], label[1]) : String(action)
 }
@@ -108,8 +145,12 @@ watch(
     :eyebrow="t('评审公示 · 进度查询', 'REVIEW & PROGRESS')"
     :subtitle="
       t(
-        '查询本机作品进度、评语与模拟公示。',
-        'Track local submissions, feedback and simulated public results.',
+        isHttpMode
+          ? '查询当前账号可访问的作品进度、评语和已发布结果。'
+          : '查询本机作品进度、评语与模拟公示。',
+        isHttpMode
+          ? 'Track submissions you may access, feedback and published results.'
+          : 'Track local submissions, feedback and simulated public results.',
       )
     "
   />
@@ -120,13 +161,17 @@ watch(
         @blur="query = readInputValue($event, query)"
         v-model="query"
         class="form-input"
-        :placeholder="t('输入 DEMO- 开头的演示作品编号', 'Enter a demo ID beginning with DEMO-')"
+        :placeholder="
+          isHttpMode
+            ? t('输入作品编号', 'Enter submission ID')
+            : t('输入 DEMO- 开头的演示作品编号', 'Enter a demo ID beginning with DEMO-')
+        "
         :aria-label="t('作品编号', 'Work ID')"
         @confirm="search(readInputValue($event, query))"
       />
       <wd-button @click="search()">{{ t('查询进度', 'Track progress') }}</wd-button>
     </view>
-    <view class="sample-query">
+    <view v-if="!isHttpMode" class="sample-query">
       <text class="muted">{{ t('试一试：', 'Try:') }}</text>
       <button class="text-button" @click="search('DEMO-WORK-003')">DEMO-WORK-003 ↗</button>
       <button v-if="myWorks.length" class="text-button" @click="search(myWorks[0]!.id)">
@@ -134,7 +179,9 @@ watch(
       </button>
     </view>
   </view>
-  <view v-if="searched && !result" class="empty-state">
+  <view v-if="isHttpMode && querying" class="empty-state">正在查询…</view>
+  <view v-if="isHttpMode && queryError" class="empty-state">{{ queryError }}</view>
+  <view v-if="!isHttpMode && searched && !result" class="empty-state">
     {{
       t(
         '未找到该编号。本演示仅查询预置样例和当前设备中的作品。',
@@ -179,7 +226,10 @@ watch(
         <text class="tag">
           {{ actionLabel(entry.action) }} · {{ t('版本', 'Rev') }} {{ entry.submissionRevision }}
         </text>
-        <text class="muted">{{ t('均分', 'Average') }} {{ entry.averageScore }} / 100</text>
+        <text class="muted">
+          {{ isHttpMode ? t('总分', 'Total') : t('均分', 'Average') }} {{ entry.averageScore }} /
+          100
+        </text>
       </view>
       <text class="reader-paragraph">{{ entry.comment }}</text>
       <text class="muted">
@@ -189,6 +239,7 @@ watch(
     </view>
   </view>
   <SectionHeading
+    v-if="!isHttpMode"
     :title="t('六级评审 · 拟定流程', 'Six proposed review stages')"
     :subtitle="
       t(
@@ -197,7 +248,7 @@ watch(
       )
     "
   />
-  <view class="timeline">
+  <view v-if="!isHttpMode" class="timeline">
     <view
       v-for="(stage, index) in reviewStages"
       :key="stage.id"
@@ -225,11 +276,19 @@ watch(
     </view>
   </view>
   <SectionHeading
-    :title="t('模拟结果公示', 'Simulated public results')"
+    :title="
+      isHttpMode
+        ? t('已发布结果', 'Published results')
+        : t('模拟结果公示', 'Simulated public results')
+    "
     :subtitle="
       t(
-        '以下仅为虚构样例或本机操作结果，不构成正式入选、荣誉或馆藏。',
-        'Fictional examples and local simulation results. No official selection, award or collection is implied.',
+        isHttpMode
+          ? '仅展示平台已批准公开的作品。正式证书与版权文件以实际签发为准。'
+          : '以下仅为虚构样例或本机操作结果，不构成正式入选、荣誉或馆藏。',
+        isHttpMode
+          ? 'Only works approved for publication appear here. Formal certificates require separate issuance.'
+          : 'Fictional examples and local simulation results. No official selection, award or collection is implied.',
       )
     "
   />
@@ -256,53 +315,120 @@ watch(
   <view class="public-list">
     <view v-for="work in publicWorks" :key="work.id" class="personal-row">
       <view>
-        <text class="tag">{{ t(work.statusLabel, statusNames[work.status] + ' · Demo') }}</text>
+        <text class="tag">
+          {{ t(work.statusLabel, statusNames[work.status] + (isHttpMode ? '' : ' · Demo')) }}
+        </text>
         <text class="story-title">{{ work.title }}</text>
         <text class="muted">{{ work.author }} · {{ work.id }}</text>
       </view>
-      <button class="text-button" @click="selectPublic(work.id)">
+      <button v-if="!isHttpMode || work.isMine" class="text-button" @click="selectPublic(work.id)">
         {{ t('查看进度', 'View progress') }} →
+      </button>
+      <button v-else class="text-button" @click="openReader(work)">
+        {{ t('阅读作品', 'Read work') }} →
       </button>
     </view>
     <view v-if="!publicWorks.length" class="empty-state">
       {{
         t(
-          '该名单暂没有模拟结果，可到专家工作台体验评审。',
-          'No simulated results yet. Try a review in the reviewer workspace.',
+          isHttpMode
+            ? '该名单暂没有已发布结果。'
+            : '该名单暂没有模拟结果，可到专家工作台体验评审。',
+          isHttpMode
+            ? 'No published results in this list yet.'
+            : 'No simulated results yet. Try a review in the reviewer workspace.',
         )
       }}
     </view>
   </view>
-  <SectionHeading
-    :title="t('评分参考标准 · 待定', 'Proposed scoring criteria')"
-    :subtitle="
-      t(
-        '三项等权平均，0–100分；最终规则由业务方确认，分数不自动授奖。',
-        'Three equally weighted scores, each 0–100. Rules require confirmation; scores do not grant awards automatically.',
-      )
-    "
-  />
-  <view class="review-standards">
+  <template v-if="isHttpMode">
+    <SectionHeading
+      :title="t('试点评审量表', 'Pilot review criteria')"
+      :subtitle="
+        remoteWorkspace.reviewRuleVersion
+          ? t(
+              `量表版本 ${remoteWorkspace.reviewRuleVersion}；最终结果由管理员确认，评分不会自动授奖。`,
+              `Rule version ${remoteWorkspace.reviewRuleVersion}. Administrators confirm results; scores do not grant awards automatically.`,
+            )
+          : t('读取服务端当前评分规则。', 'Loading the current server review rules.')
+      "
+    />
     <view
-      v-for="(standard, index) in reviewStandards"
-      :key="standard.id"
-      class="review-standard-card"
+      v-if="remoteWorkspace.scoringDimensions.length"
+      class="review-standards remote-review-standards"
     >
-      <text class="story-title">{{ t(standard.label, standardEnglish[index]!.title) }}</text>
-      <text class="reader-paragraph">
-        {{ t(standard.description, standardEnglish[index]!.description) }}
-      </text>
-      <text class="muted">{{ t(standard.weight, 'Equal weight · 0–100') }}</text>
+      <view
+        v-for="dimension in remoteWorkspace.scoringDimensions"
+        :key="dimension.id"
+        class="review-standard-card"
+      >
+        <text class="story-title">{{ dimension.label }}</text>
+        <text class="reader-paragraph">
+          {{ t('本维度', 'Dimension') }} {{ dimension.min ?? 0 }}–{{ dimension.max }}
+          {{ t('分', 'points') }}
+        </text>
+        <text class="muted">{{ t('量表总分', 'Total maximum') }} {{ scoringTotal }}</text>
+      </view>
     </view>
-  </view>
+    <view v-else class="empty-state">
+      <text>
+        {{
+          remoteLoading
+            ? t('正在加载评分规则…', 'Loading review rules…')
+            : t('评分规则暂不可用，请重新加载。', 'Review rules are unavailable. Please reload.')
+        }}
+      </text>
+      <wd-button
+        v-if="!remoteLoading"
+        variant="plain"
+        size="small"
+        @click="refreshWorkspace().catch(() => {})"
+      >
+        {{ t('重新加载', 'Reload') }}
+      </wd-button>
+    </view>
+  </template>
+  <template v-else>
+    <SectionHeading
+      :title="t('评分参考标准 · 待定', 'Proposed scoring criteria')"
+      :subtitle="
+        t(
+          '三项等权平均，0–100分；最终规则由业务方确认，分数不自动授奖。',
+          'Three equally weighted scores, each 0–100. Rules require confirmation; scores do not grant awards automatically.',
+        )
+      "
+    />
+    <view class="review-standards">
+      <view
+        v-for="(standard, index) in reviewStandards"
+        :key="standard.id"
+        class="review-standard-card"
+      >
+        <text class="story-title">{{ t(standard.label, standardEnglish[index]!.title) }}</text>
+        <text class="reader-paragraph">
+          {{ t(standard.description, standardEnglish[index]!.description) }}
+        </text>
+        <text class="muted">{{ t(standard.weight, 'Equal weight · 0–100') }}</text>
+      </view>
+    </view>
+  </template>
   <button class="text-button" @click="navigate('admin', { tab: 'expert' })">
-    {{ t('进入模拟专家工作台', 'Open simulated reviewer workspace') }} ↗
+    {{
+      isHttpMode
+        ? t('进入专家工作台', 'Open reviewer workspace')
+        : t('进入模拟专家工作台', 'Open simulated reviewer workspace')
+    }}
+    ↗
   </button>
   <view class="scope-note">
     {{
       t(
-        '本页没有真实身份校验。正式版本必须登录并验证作品归属后，才能查询私人评语与证书；公开名单另行发布。',
-        'This page has no real identity checks. Production access to private feedback and certificates requires login and ownership validation; public lists are published separately.',
+        isHttpMode
+          ? '私人进度与评语由服务端校验登录、作品归属和授权范围；专家仅可办理已分配任务。公开作品可直接阅读。试点账号登录不等于实名认证。'
+          : '本页没有真实身份校验。正式版本必须登录并验证作品归属后，才能查询私人评语与证书；公开名单另行发布。',
+        isHttpMode
+          ? 'The server checks sessions, ownership and permissions for private progress and feedback. Experts may handle only assigned tasks. Public works can be read directly. Pilot login is not identity verification.'
+          : 'This page has no real identity checks. Production access to private feedback and certificates requires login and ownership validation; public lists are published separately.',
       )
     }}
   </view>
@@ -389,6 +515,9 @@ watch(
   padding: 24px;
   border: 1px solid #ded4c3;
   background: #fffaf1;
+}
+.remote-review-standards {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 .certificate-demo {
   text-align: center;

@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { isHttpMode } from '../../config/dataMode'
+import { region } from '../../composables/useDemo'
+import MediaSubmissionPanel from './MediaSubmissionPanel.vue'
+import MediaAudioPlayer from './MediaAudioPlayer.vue'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
 import MediaCreationPanel from './MediaCreationPanel.vue'
@@ -11,10 +15,15 @@ import {
   toggleMediaFavorite,
   toggleMediaLike,
 } from '../../composables/useShowcase'
-import { navigate, goBack, useRouteParams } from '../../composables/useNavigation'
-import { t } from '../../composables/useLocale'
+import { navigate, goBack, useRouteParams, screenUrl } from '../../composables/useNavigation'
+import { t, locale } from '../../composables/useLocale'
 import { assetUrl } from '../composables/useAssetUrl'
 const params = useRouteParams()
+const regionalMedia = computed(() =>
+  mediaCatalog.filter(
+    (x) => region.value === 'all' || !x.region || x.region === 'all' || x.region === region.value,
+  ),
+)
 const current = computed(() => mediaCatalog.find((item) => item.id === params.value.id))
 const replayCache = useReplayCache(current)
 const filter = ref('all')
@@ -28,10 +37,11 @@ const filters = computed(() => [
   { id: 'letter', label: t('家书演绎', 'Family letters') },
   { id: 'documentary', label: t('日常纪实', 'Everyday life') },
   { id: 'lecture', label: t('讲堂回放', 'Lecture replays') },
+  { id: 'recitation', label: t('家风朗诵', 'Recitations') },
   { id: 'favorites', label: t('我的收藏', 'Saved') },
 ])
 const visible = computed(() =>
-  mediaCatalog.filter(
+  regionalMedia.value.filter(
     (item) =>
       filter.value === 'all' ||
       (filter.value === 'favorites'
@@ -47,23 +57,33 @@ watch(
     copied.value = false
   },
 )
-function toggleAction(action: 'favorite' | 'like') {
+async function toggleAction(action: 'favorite' | 'like') {
   if (!current.value) return
   try {
     action === 'favorite'
-      ? toggleMediaFavorite(current.value.id)
-      : toggleMediaLike(current.value.id)
-  } catch {
+      ? await toggleMediaFavorite(current.value.id)
+      : await toggleMediaLike(current.value.id)
+  } catch (error) {
     uni.showToast({
-      title: t('本机存储不可用，操作未保存', 'Storage unavailable. Changes were not saved.'),
+      title:
+        error instanceof Error
+          ? error.message
+          : t('本机存储不可用，操作未保存', 'Storage unavailable. Changes were not saved.'),
       icon: 'none',
     })
   }
 }
 function copyShare() {
   if (!current.value) return
+  let link = ''
+  // #ifdef H5
+  const url = new URL(window.location.href)
+  url.search = ''
+  url.hash = screenUrl('media', { id: current.value.id, lang: locale.value })
+  link = url.toString()
+  // #endif
   uni.setClipboardData({
-    data: `${lt(current.value.title)} · ${t('家风中华行前端演示', 'Family Heritage frontend demo')}\n${t('在短视频展播查看片名即可找到，本分享卡不代表正式发布。', 'Find the title in the video gallery. This is a demonstration card.')}`,
+    data: `${link ? link + '\n' : ''}${lt(current.value.title)} · ${isHttpMode ? t('家风中华行', 'Family Heritage') : t('家风中华行前端演示', 'Family Heritage frontend demo')}\n${t('在短视频展播搜索片名查看。', 'Search the title in the media gallery.')}`,
     success() {
       copied.value = true
     },
@@ -88,7 +108,8 @@ function copyShare() {
       </view>
       <view class="showcase-detail-layout">
         <view>
-          <view class="media-player-frame">
+          <MediaAudioPlayer v-if="current.type === 'audio'" :source="replayCache.source.value" />
+          <view v-else class="media-player-frame">
             <video
               v-if="!playerError"
               :key="current.id"
@@ -107,7 +128,7 @@ function copyShare() {
             />
             <view v-else class="media-player-fallback">
               <wd-icon name="video" size="32px" />
-              <text>{{ t('样片暂时无法播放', 'The sample could not be played') }}</text>
+              <text>{{ t('媒体暂时无法播放', 'The media could not be played') }}</text>
               <text>
                 {{
                   t(
@@ -122,9 +143,9 @@ function copyShare() {
             </view>
           </view>
           <text v-if="playerLoading && !playerError" class="showcase-note" role="status">
-            {{ t('正在缓冲样片…', 'Buffering the sample…') }}
+            {{ t('正在缓冲…', 'Buffering…') }}
           </text>
-          <view class="showcase-panel">
+          <view v-if="current.type !== 'audio'" class="showcase-panel">
             <text class="showcase-card-title">{{ t('回放文件缓存', 'Replay file cache') }}</text>
             <view class="showcase-actions">
               <wd-button size="small" :disabled="replayCache.busy.value" @click="replayCache.save">
@@ -133,7 +154,7 @@ function copyShare() {
                     ? t('处理中…', 'Working…')
                     : replayCache.cached.value
                       ? t('重新缓存', 'Cache again')
-                      : t('缓存本条样片', 'Cache this sample')
+                      : t('缓存本条媒体', 'Cache this media')
                 }}
               </wd-button>
               <wd-button
@@ -144,7 +165,9 @@ function copyShare() {
               >
                 {{
                   replayCache.useCached.value
-                    ? t('切回随包播放', 'Use packaged source')
+                    ? isHttpMode
+                      ? t('切回在线播放', 'Play online')
+                      : t('切回随包播放', 'Use packaged source')
                     : t('使用缓存播放', 'Play from cache')
                 }}
               </wd-button>
@@ -166,8 +189,8 @@ function copyShare() {
                       'The player is using the locally cached file.',
                     )
                   : t(
-                      '缓存仅保存本条样片，不代表整个站点可离线启动。',
-                      'Caching stores this sample file only; it does not make the whole site available offline.',
+                      '缓存仅保存本条媒体，不代表整个站点可离线启动。',
+                      'Caching stores this media file only; it does not make the whole site available offline.',
                     )
               }}
             </text>
@@ -179,12 +202,21 @@ function copyShare() {
             <view class="showcase-meta">
               <text>
                 {{
-                  current.type === 'replay'
-                    ? t('回放界面样例', 'Replay interface sample')
-                    : t('原创文字短片', 'Original typography short')
+                  isHttpMode
+                    ? current.type === 'audio'
+                      ? t('朗诵音频', 'Audio recitation')
+                      : current.type === 'replay'
+                        ? t('讲堂回放', 'Lecture replay')
+                        : t('短视频', 'Video')
+                    : current.type === 'replay'
+                      ? t('回放界面样例', 'Replay interface sample')
+                      : t('原创文字短片', 'Original typography short')
                 }}
               </text>
-              <text>{{ current.duration }} · {{ t('静音样片', 'Silent sample') }}</text>
+              <text>
+                {{ current.duration }} ·
+                {{ isHttpMode ? t('平台展播', 'Published media') : t('静音样片', 'Silent sample') }}
+              </text>
             </view>
             <text class="showcase-title">{{ lt(current.title) }}</text>
             <text class="showcase-description">{{ lt(current.excerpt) }}</text>
@@ -195,7 +227,13 @@ function copyShare() {
                 @click="toggleAction('like')"
               >
                 {{ mediaLikes.includes(current.id) ? t('已点赞', 'Liked') : t('点赞', 'Like') }} ·
-                {{ mediaLikes.includes(current.id) ? '1' : '0' }}
+                {{
+                  isHttpMode
+                    ? t('本人记录', 'Your preference')
+                    : mediaLikes.includes(current.id)
+                      ? '1'
+                      : '0'
+                }}
               </wd-button>
               <wd-button
                 size="small"
@@ -220,7 +258,9 @@ function copyShare() {
               <text class="showcase-description">{{ lt(current.excerpt) }}</text>
               <wd-button size="small" @click="copyShare">
                 {{
-                  copied ? t('已复制分享文案', 'Text copied') : t('复制分享文案', 'Copy share text')
+                  copied
+                    ? t('已复制分享文案', 'Text copied')
+                    : t('复制分享内容', 'Copy sharing details')
                 }}
               </wd-button>
               <text class="showcase-note">
@@ -231,6 +271,29 @@ function copyShare() {
                   )
                 }}
               </text>
+              <!-- #ifdef MP-WEIXIN -->
+              <button open-type="share" class="text-button">
+                {{ t('分享给微信好友', 'Share with a WeChat contact') }}
+              </button>
+              <text class="showcase-note">
+                {{
+                  t(
+                    '原生分享需要正式小程序配置；当前网页链接不会触发微信消息。',
+                    'Native sharing requires a configured Mini Program. Web links do not send WeChat messages.',
+                  )
+                }}
+              </text>
+              <!-- #endif -->
+              <!-- #ifdef H5 -->
+              <text class="showcase-note">
+                {{
+                  t(
+                    '分享内容含当前作品的网页链接；请确保接收人可访问本服务地址。',
+                    'Sharing includes this work’s web link. Recipients must be able to access the server address.',
+                  )
+                }}
+              </text>
+              <!-- #endif -->
             </view>
           </view>
           <view class="showcase-panel showcase-script">
@@ -248,7 +311,7 @@ function copyShare() {
         <view class="showcase-side-panel">
           <text class="showcase-card-title">{{ t('继续看 · 家风合集', 'Continue watching') }}</text>
           <view
-            v-for="item in mediaCatalog.filter((video) => video.id !== current?.id)"
+            v-for="item in regionalMedia.filter((video) => video.id !== current?.id)"
             :key="item.id"
             class="media-related"
             @click="navigate('media', { id: item.id })"
@@ -257,7 +320,10 @@ function copyShare() {
             <view>
               <text class="showcase-card-title">{{ lt(item.title) }}</text>
               <text class="showcase-note">
-                {{ item.duration }} · {{ t('原创演示', 'Original demo') }}
+                {{ item.duration }} ·
+                {{
+                  isHttpMode ? t('已发布媒体', 'Published media') : t('原创演示', 'Original demo')
+                }}
               </text>
             </view>
           </view>
@@ -265,10 +331,15 @@ function copyShare() {
             <text class="showcase-card-title">{{ t('内容说明', 'About these samples') }}</text>
             <text>
               {{
-                t(
-                  '样片为本项目自制的文字动画。讲堂内容用于演示回放布局，没有正在进行的直播。点赞与收藏仅保存在当前设备。',
-                  'All samples are original typography animations. The lecture demonstrates a replay layout; no live stream is running. Likes and saved videos stay on this device.',
-                )
+                isHttpMode
+                  ? t(
+                      '媒体由后台审核发布，点赞和收藏保存在当前账号。直播和转码服务尚未配置。',
+                      'Media is reviewed and published by editors. Likes and saved items belong to your account. Live streaming and transcoding are not configured.',
+                    )
+                  : t(
+                      '样片为本项目自制的文字动画。讲堂内容用于演示回放布局，没有正在进行的直播。点赞与收藏仅保存在当前设备。',
+                      'All samples are original typography animations. The lecture demonstrates a replay layout; no live stream is running. Likes and saved videos stay on this device.',
+                    )
               }}
             </text>
           </view>
@@ -294,18 +365,33 @@ function copyShare() {
           )
         "
       />
-      <MediaCreationPanel :initial-tab="params.tab" />
-      <view class="media-feature" @click="navigate('media', { id: mediaCatalog[0].id })">
-        <image :src="assetUrl(mediaCatalog[0].poster)" mode="aspectFill" />
+      <MediaSubmissionPanel v-if="isHttpMode" />
+      <MediaCreationPanel v-else :initial-tab="params.tab" />
+      <view
+        v-if="regionalMedia.length"
+        class="media-feature"
+        @click="navigate('media', { id: regionalMedia[0].id })"
+      >
+        <image :src="assetUrl(regionalMedia[0].poster)" mode="aspectFill" />
         <view class="media-feature-copy">
           <text class="showcase-kicker">
-            {{ t('本期推荐 · 原创样片', 'Featured · original sample') }}
+            {{
+              isHttpMode
+                ? t('本期展播', 'Featured media')
+                : t('本期推荐 · 原创样片', 'Featured · original sample')
+            }}
           </text>
-          <text class="showcase-title">{{ lt(mediaCatalog[0].title) }}</text>
-          <text>{{ lt(mediaCatalog[0].excerpt) }}</text>
+          <text class="showcase-title">{{ lt(regionalMedia[0].title) }}</text>
+          <text>{{ lt(regionalMedia[0].excerpt) }}</text>
           <view class="media-play-link">
             <wd-icon name="play" size="22px" />
-            <text>{{ t('播放 12 秒样片', 'Play the 12-second sample') }}</text>
+            <text>
+              {{
+                isHttpMode
+                  ? t('播放作品', 'Play media')
+                  : t('播放 12 秒样片', 'Play the 12-second sample')
+              }}
+            </text>
           </view>
         </view>
       </view>
@@ -337,7 +423,15 @@ function copyShare() {
             <text class="showcase-card-title">{{ lt(item.title) }}</text>
             <text class="showcase-description">{{ lt(item.excerpt) }}</text>
             <view class="showcase-card-foot">
-              <text>{{ t('原创静音样片', 'Original silent sample') }}</text>
+              <text>
+                {{
+                  isHttpMode
+                    ? item.sample
+                      ? t('虚构场景素材', 'Fictional showcase material')
+                      : t('已发布', 'Published')
+                    : t('原创静音样片', 'Original silent sample')
+                }}
+              </text>
               <text>
                 {{
                   mediaFavorites.includes(item.id) ? t('已收藏', 'Saved') : t('观看 →', 'Watch →')
@@ -349,13 +443,18 @@ function copyShare() {
       </view>
       <view v-if="!visible.length" class="empty-state">
         {{
-          t(
-            '还没有收藏短片，打开一条短片即可收藏。',
-            'No saved videos yet. Open a video to save it.',
-          )
+          isHttpMode
+            ? t(
+                '当前地区、语言或分类暂无已发布媒体。',
+                'No published media matches the current region, language or category.',
+              )
+            : t(
+                '还没有收藏短片，打开一条短片即可收藏。',
+                'No saved videos yet. Open a video to save it.',
+              )
         }}
       </view>
-      <view class="showcase-live-band">
+      <view v-if="!isHttpMode" class="showcase-live-band">
         <view>
           <text class="showcase-card-title">
             {{ t('家风讲堂 · 云端共读', 'Family values lecture · read together') }}

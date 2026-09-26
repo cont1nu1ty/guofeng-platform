@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isHttpMode } from '../../config/dataMode'
 import { computed, ref, watch, onMounted, nextTick } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
 import CertificateExport from '../../components/CertificateExport.vue'
@@ -22,6 +23,7 @@ import {
   learningStorageError,
 } from '../../composables/useLearningProgress'
 import type { Activity } from '../../domain/types'
+import { activityAvailability } from '../../domain/activityAvailability'
 onMounted(async () => {
   await nextTick()
   if (params.value.tab === 'audio')
@@ -60,22 +62,42 @@ const location = (item: Activity) => {
   const venue = venues.find((entry) => entry.activityId === item.id)
   return venue ? L(venue.city) : item.location
 }
-function toggleRegistration(id: string) {
-  register(id)
+const availability = (item: Activity) =>
+  activityAvailability(item, isRegistered(item.id), isCheckedIn(item.id))
+function registrationLabel(item: Activity) {
+  if (isRegistered(item.id))
+    return availability(item).canCancel ? t('取消报名', 'Cancel booking') : t('已报名', 'Booked')
+  if (item.status === '报名中')
+    return availability(item).canRegister
+      ? t('报名参加', 'Book a place')
+      : t('名额已满', 'Fully booked')
+  return item.status === '进行中'
+    ? t('活动进行中', 'In progress')
+    : item.status === '已结束'
+      ? t('活动已结束', 'Ended')
+      : t('未开放报名', 'Registration closed')
+}
+async function toggleRegistration(id: string) {
+  const item = repo.listActivities().find((entry) => entry.id === id)
+  if (isHttpMode && (!item || !(availability(item).canRegister || availability(item).canCancel)))
+    return
+  await register(id)
   if (!isRegistered(id)) {
     clearActivityCheckIn(id)
     showCertificate.value = false
   }
 }
-function checkIn(id: string) {
+async function checkIn(id: string) {
+  const item = repo.listActivities().find((entry) => entry.id === id)
+  if (isHttpMode && (!item || !availability(item).canCheckIn)) return
   if (!isRegistered(id)) {
     notify(t('请先完成演示预约', 'Please make a sample booking first'))
     return
   }
-  if (!checkInActivity(id)) {
+  if (!(await checkInActivity(id))) {
     notify(
       t(
-        '本机签到保存失败，请检查存储后重试。',
+        isHttpMode ? '签到未保存，请查看页面错误后重试。' : '本机签到保存失败，请检查存储后重试。',
         'Could not save the sample check-in. Check local storage.',
       ),
     )
@@ -83,7 +105,7 @@ function checkIn(id: string) {
   }
   notify(
     t(
-      '演示签到成功，已生成参与证书样张',
+      isHttpMode ? '签到已记录。证书样张不代表正式签发。' : '演示签到成功，已生成参与证书样张',
       'Sample check-in saved. A participation certificate sample is ready.',
     ),
   )
@@ -170,15 +192,21 @@ function showAllActivities() {
             <text>{{ event.registeredCount }}</text>
             <text>/ {{ event.capacity }} {{ t('人（示例）', 'places (sample)') }}</text>
           </view>
+          <text v-if="isHttpMode" class="tag">{{ event.status }}</text>
           <wd-button
             block
             :variant="isRegistered(event.id) ? 'plain' : 'base'"
+            :disabled="
+              isHttpMode && !(availability(event).canRegister || availability(event).canCancel)
+            "
             @click="toggleRegistration(event.id)"
           >
             {{
-              isRegistered(event.id)
-                ? t('取消演示预约', 'Cancel sample booking')
-                : t('预约本场体验', 'Try booking this activity')
+              isHttpMode
+                ? registrationLabel(event)
+                : isRegistered(event.id)
+                  ? t('取消演示预约', 'Cancel sample booking')
+                  : t('预约本场体验', 'Try booking this activity')
             }}
           </wd-button>
           <wd-button
@@ -199,21 +227,33 @@ function showAllActivities() {
           <text class="content-description">
             {{
               t(
-                '演示签到可立即体验，不校验真实位置或时间。',
-                'Try sample check-in now. No real location or time is verified.',
+                isHttpMode
+                  ? '已报名用户可在活动进行中签到，记录由服务端保存。'
+                  : '演示签到可立即体验，不校验真实位置或时间。',
+                isHttpMode
+                  ? 'Registered participants may check in while the activity is in progress.'
+                  : 'Try sample check-in now. No real location or time is verified.',
               )
             }}
           </text>
         </view>
         <view class="content-button-row">
           <wd-button
-            :disabled="!isRegistered(event.id) || isCheckedIn(event.id) || learningStorageError"
+            :disabled="
+              (isHttpMode
+                ? !availability(event).canCheckIn
+                : !isRegistered(event.id) || isCheckedIn(event.id)) || learningStorageError
+            "
             @click="checkIn(event.id)"
           >
             {{
-              isCheckedIn(event.id) && isRegistered(event.id)
-                ? t('已完成演示签到', 'Sample check-in completed')
-                : t('体验活动签到', 'Try activity check-in')
+              isHttpMode
+                ? isCheckedIn(event.id)
+                  ? t('已签到', 'Checked in')
+                  : t('活动签到', 'Check in')
+                : isCheckedIn(event.id) && isRegistered(event.id)
+                  ? t('已完成演示签到', 'Sample check-in completed')
+                  : t('体验活动签到', 'Try activity check-in')
             }}
           </wd-button>
           <wd-button
@@ -377,6 +417,7 @@ function showAllActivities() {
             <text class="activity-art-label">{{ ['书香', '清风', '传习'][index % 3] }}</text>
           </view>
           <view class="activity-content">
+            <text v-if="isHttpMode" class="tag">{{ item.status }}</text>
             <view class="story-meta">
               <text>{{ item.date }}</text>
               <text>· {{ item.time }}</text>
@@ -398,9 +439,13 @@ function showAllActivities() {
                 @click.stop="navigate('learning', { id: item.id })"
               >
                 {{
-                  isRegistered(item.id)
-                    ? t('已预约 · 查看', 'Booked · view')
-                    : t('查看与预约', 'Details and booking')
+                  isHttpMode
+                    ? isRegistered(item.id)
+                      ? t('已报名 · 查看', 'Booked · view')
+                      : t('查看活动', 'View activity')
+                    : isRegistered(item.id)
+                      ? t('已预约 · 查看', 'Booked · view')
+                      : t('查看与预约', 'Details and booking')
                 }}
               </wd-button>
             </view>

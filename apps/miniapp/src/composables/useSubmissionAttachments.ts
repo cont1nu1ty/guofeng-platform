@@ -1,3 +1,5 @@
+import { isHttpMode } from '../config/dataMode'
+import { uploadRemoteFile } from '../services/api'
 import { ref } from 'vue'
 import type { AttachmentMeta } from '../domain/types'
 import { t } from './useLocale'
@@ -88,6 +90,12 @@ function kindOf(file: PickedFile, mode: PickerMode): AttachmentMeta['type'] | un
   if (mode === 'document')
     return suffix === 'pdf' ? 'pdf' : suffix === 'doc' || suffix === 'docx' ? 'word' : undefined
   if (
+    isHttpMode &&
+    (['gif', 'webp'].includes(suffix ?? '') ||
+      ['image/gif', 'image/webp'].includes(file.type ?? ''))
+  )
+    return undefined
+  if (
     file.type?.startsWith('image/') &&
     !['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type)
   )
@@ -131,7 +139,9 @@ export function useSubmissionAttachments() {
         if (!kind) {
           attachmentErrors.value.push(
             t(
-              `${name}：不支持此格式，请选择 JPG/PNG/WebP/GIF 图片或 PDF/Word 文件。`,
+              isHttpMode
+                ? `${name}：试点服务支持 JPG/PNG 图片或 PDF/Word 文件。`
+                : `${name}：不支持此格式，请选择 JPG/PNG/WebP/GIF 图片或 PDF/Word 文件。`,
               `${name}: unsupported format. Choose JPG/PNG/WebP/GIF images or PDF/Word documents.`,
             ),
           )
@@ -164,12 +174,15 @@ export function useSubmissionAttachments() {
           )
           continue
         }
-        const id = replaceId ?? `attachment-${Date.now().toString(36)}-${++sequence}`
+        const uploaded = isHttpMode ? await uploadRemoteFile(file.path, name) : undefined
+        const id =
+          uploaded?.fileId ?? replaceId ?? `attachment-${Date.now().toString(36)}-${++sequence}`
         const metadata: AttachmentMeta = {
           id,
           name: name.slice(0, 200),
           size: file.size,
           type: kind,
+          ...(uploaded?.url ? { url: uploaded.url } : {}),
         }
         if (file.type?.includes('/')) metadata.mimeType = file.type
         if (replaceId) {
@@ -187,7 +200,7 @@ export function useSubmissionAttachments() {
           )
           continue
         }
-        temporaryPaths.value[id] = file.path
+        temporaryPaths.value[id] = uploaded?.url || file.path
       }
       return next
     } catch (error) {
@@ -200,7 +213,9 @@ export function useSubmissionAttachments() {
       if (!message.toLowerCase().includes('cancel'))
         attachmentErrors.value = [
           t(
-            '文件选择未完成，请检查权限后重试。',
+            isHttpMode
+              ? message || '附件上传未完成，请重试。'
+              : '文件选择未完成，请检查权限后重试。',
             'File selection failed. Check permissions and try again.',
           ),
         ]

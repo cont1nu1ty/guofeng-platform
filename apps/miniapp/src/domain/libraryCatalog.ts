@@ -168,7 +168,13 @@ export function readingDocument(item: ReadingItem, locale: 'zh' | 'en'): Reading
   const selectedThemes = !classic && item.themes?.length ? item.themes : (metadata?.themes ?? [])
   const title = useEnglish ? metadata!.title : item.title
   let chapters: ReadingChapter[]
-  if (classic && book) {
+  if (classic && item.chapters?.length) {
+    chapters = item.chapters.map((chapter) => ({
+      id: chapter.id,
+      title: chapter.title,
+      paragraphs: sourceParagraphs(chapter.body),
+    }))
+  } else if (classic && book) {
     if (useEnglish)
       chapters = book.englishChapters.map((entry, index) => ({
         id: `chapter-${index + 1}`,
@@ -213,8 +219,12 @@ export function readingDocument(item: ReadingItem, locale: 'zh' | 'en'): Reading
         ? book.subtitle
         : item.subtitle
       : locale === 'en'
-        ? 'Sample work · reading selection'
-        : '演示作品 · 家风选读',
+        ? item.isDemo
+          ? 'Sample work · reading selection'
+          : 'Family story · reading selection'
+        : item.isDemo
+          ? '演示作品 · 家风选读'
+          : '家风作品 · 家风选读',
     author: useEnglish ? (work?.author ?? 'Prototype editorial team (fictional)') : item.author,
     excerpt: useEnglish ? metadata!.excerpt : item.excerpt,
     chapters,

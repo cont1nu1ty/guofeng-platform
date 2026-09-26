@@ -1,3 +1,6 @@
+import { reactive } from 'vue'
+import type { RegionId } from './types'
+import { isHttpMode } from '../config/dataMode'
 export interface BilingualText {
   zh: string
   en: string
@@ -7,8 +10,11 @@ const text = (zh: string, en: string): BilingualText => ({ zh, en })
 export interface MediaItem {
   id: string
   title: BilingualText
-  category: 'letter' | 'documentary' | 'lecture'
-  type: 'short' | 'replay'
+  language?: 'zh' | 'en'
+  region?: RegionId
+  sample?: boolean
+  category: 'letter' | 'documentary' | 'lecture' | 'recitation'
+  type: 'short' | 'replay' | 'audio'
   collection: BilingualText
   excerpt: BilingualText
   duration: string
@@ -17,7 +23,7 @@ export interface MediaItem {
   transcript: BilingualText[]
 }
 
-export const mediaCatalog: MediaItem[] = [
+const demoMediaCatalog: MediaItem[] = [
   {
     id: 'letter-01',
     title: text('写给长大后的你', 'A letter to your future self'),
@@ -105,7 +111,10 @@ export interface HallPerson {
   id: string
   name: BilingualText
   era: BilingualText
-  region: 'sichuan' | 'jiangsu'
+  region: RegionId
+  language?: 'zh' | 'en'
+  sample?: boolean
+  panoramaUrl?: string
   regionName: BilingualText
   theme: BilingualText
   book: BilingualText
@@ -116,7 +125,7 @@ export interface HallPerson {
   sourceUrl: string
 }
 
-export const hallPeople: HallPerson[] = [
+const demoHallPeople: HallPerson[] = [
   {
     id: 'zhuge-liang',
     name: text('诸葛亮', 'Zhuge Liang'),
@@ -193,7 +202,7 @@ export interface CulturalProduct {
   details: BilingualText[]
 }
 
-export const culturalProducts: CulturalProduct[] = [
+const demoCulturalProducts: CulturalProduct[] = [
   {
     id: 'reading-kit',
     name: text('家风共读 · 公益读本', 'Family reading · community kit'),
@@ -298,7 +307,7 @@ export interface CommerceRequest {
   quantity: number
   purpose: string
   createdAt: string
-  status: 'recorded' | 'cancelled'
+  status: 'recorded' | 'approved' | 'returned' | 'issued' | 'cancelled'
 }
 
 export function validateCommerceForm(
@@ -315,3 +324,16 @@ export function validateCommerceForm(
   if (!form.agreed) return 'agreement'
   return null
 }
+
+export const culturalProducts: CulturalProduct[] = reactive(isHttpMode ? [] : demoCulturalProducts)
+
+export const commerceStatusLabels = {
+  recorded: '待处理',
+  approved: '已批准',
+  returned: '已退回',
+  issued: '已发放',
+  cancelled: '已取消',
+}
+
+export const mediaCatalog: MediaItem[] = reactive(isHttpMode ? [] : demoMediaCatalog)
+export const hallPeople: HallPerson[] = reactive(isHttpMode ? [] : demoHallPeople)

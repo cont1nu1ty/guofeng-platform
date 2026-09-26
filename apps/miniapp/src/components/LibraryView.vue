@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isHttpMode } from '../config/dataMode'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import {
@@ -185,7 +186,7 @@ function syncExcerptNote(event: unknown) {
   const value = (event as { detail?: { value?: unknown } })?.detail?.value
   if (typeof value === 'string') excerptNote.value = value
 }
-function saveSelectedExcerpt() {
+async function saveSelectedExcerpt() {
   if (!source.value || !document.value || !selectedText.value.trim()) {
     notify(t('请先选择要摘抄的段落', 'Select a paragraph first'))
     return
@@ -199,13 +200,19 @@ function saveSelectedExcerpt() {
     )
     return
   }
-  const result = saveExcerpt({
+  const result = await saveExcerpt({
     sourceId: source.value.id,
     sourceTitle: document.value.title,
     text: selectedText.value,
     note: excerptNote.value.trim(),
   })
-  if (result) notify(t('摘抄与感想已保存到本机', 'Excerpt and reflection saved on this device'))
+  if (result)
+    notify(
+      t(
+        isHttpMode ? '摘抄与感想已保存到当前账号' : '摘抄与感想已保存到本机',
+        'Excerpt and reflection saved on this device',
+      ),
+    )
 }
 function readCurrentChapter() {
   if (currentChapter.value)

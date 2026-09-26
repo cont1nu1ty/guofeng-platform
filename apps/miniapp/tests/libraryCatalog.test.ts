@@ -35,4 +35,23 @@ describe('阅读分段与富文本兼容', () => {
     expect(book.chapters.length).toBeGreaterThan(1)
     expect(book.chapters.every((chapter) => chapter.paragraphs.length > 0)).toBe(true)
   })
+  it('uses the server chapter order and titles for a published collection', () => {
+    const book = readingDocument(
+      {
+        ...seedClassics[0]!,
+        id: 'published-collection',
+        isDemo: false,
+        chapters: [
+          { id: 'b', title: '先读第二章', body: '云端第一段\n\n云端第二段' },
+          { id: 'a', title: '再读第一章', body: '云端第三段' },
+        ],
+      },
+      'zh',
+    )
+    expect(book.chapters.map((chapter) => chapter.id)).toEqual(['b', 'a'])
+    expect(book.chapters[0]).toMatchObject({
+      title: '先读第二章',
+      paragraphs: ['云端第一段', '云端第二段'],
+    })
+  })
 })

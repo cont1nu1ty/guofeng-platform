@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { isHttpMode } from '../config/dataMode'
+import RemoteAccountPanel from './RemoteAccountPanel.vue'
 import { computed, reactive, ref } from 'vue'
 import { t } from '../composables/useLocale'
 import { accountState, accountUnavailable, changeAccount } from '../composables/useAccountDemo'
@@ -105,7 +107,8 @@ function edit() {
 }
 </script>
 <template>
-  <view class="account-entry">
+  <RemoteAccountPanel v-if="isHttpMode" />
+  <view v-else class="account-entry">
     <view class="account-entry-copy">
       <text class="account-entry-title">{{ t('账户与身份认证', 'Account and identity') }}</text>
       <text class="account-entry-note">

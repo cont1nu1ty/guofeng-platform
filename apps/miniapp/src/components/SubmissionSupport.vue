@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { isHttpMode } from '../config/dataMode'
+import { command, remoteWorkspace, remoteUser } from '../services/api'
 import { computed, ref } from 'vue'
 import { t } from '../composables/useLocale'
 import { readInputValue } from '../composables/readInputValue'
@@ -22,7 +24,7 @@ const messages = ref<{ question: string; zh: string; en: string }[]>([])
 const handoff = ref(false)
 const handoffNote = ref('')
 const queued = ref(false)
-const faq = [
+const demoFaq = [
   {
     zh: '怎样保存和找回草稿？',
     en: 'How do I save and restore a draft?',
@@ -47,8 +49,31 @@ const faq = [
       'This is a frontend demo. Submissions, files and this conversation are not sent to a real platform. Use fictional names and sample materials.',
   },
 ]
+const busy = ref(false)
+const error = ref('')
+const ticketCategory = ref('submission')
+const faq = computed(() =>
+  isHttpMode
+    ? [
+        {
+          ...demoFaq[0]!,
+          answer:
+            '登录后正文与选项保存到账号云草稿；上传成功的附件保留 fileId。跨设备冲突会提示重新加载，不会静默覆盖。',
+          answerEn:
+            'Signed-in drafts are saved to your account. Uploaded attachments retain their file IDs. Conflicts require reloading rather than silent overwrites.',
+        },
+        demoFaq[1]!,
+        {
+          ...demoFaq[2]!,
+          answer: '当前连接真实后台，投稿与附件会保存。版权确认只记录确认行为，不是正式电子签章。',
+          answerEn:
+            'This mode saves submissions and files to the backend. Copyright confirmation records your acknowledgement; it is not a formal electronic signature.',
+        },
+      ]
+    : demoFaq,
+)
 function ask(index: number) {
-  const item = faq[index]!
+  const item = faq.value[index]!
   messages.value.push({ question: t(item.zh, item.en), zh: item.answer, en: item.answerEn })
 }
 function send() {
@@ -61,21 +86,47 @@ function send() {
       : /上传|平台|upload|real|platform/i.test(question)
         ? 2
         : -1
-  const answer = index >= 0 ? faq[index] : undefined
+  const answer = index >= 0 ? faq.value[index] : undefined
   messages.value.push({
     question,
     zh:
       answer?.answer ??
-      '本机帮助暂没有匹配的回答。可选择上方常见问题，或填写转人工演示单，查看后续处理界面。',
+      (isHttpMode
+        ? '本机帮助暂没有匹配的回答。可以提交问题单，由运营在后台处理。'
+        : '本机帮助暂没有匹配的回答。可选择上方常见问题，或填写转人工演示单，查看后续处理界面。'),
     en:
       answer?.answerEn ??
-      'No matching local answer is available. Choose a question above or open the handoff sample to preview the support process.',
+      (isHttpMode
+        ? 'No matching local answer is available. Submit a support ticket for an editor to respond.'
+        : 'No matching local answer is available. Choose a question above or open the handoff sample to preview the support process.'),
   })
   questionVersion.value++
   input.value = ''
 }
-function requestHandoff() {
-  if (handoffNote.value.trim().length >= 5) queued.value = true
+async function requestHandoff() {
+  if (handoffNote.value.trim().length < 5 || busy.value) return
+  if (!isHttpMode) {
+    queued.value = true
+    return
+  }
+  busy.value = true
+  error.value = ''
+  try {
+    if (!remoteUser.value)
+      throw new Error(t('请先登录后提交问题。', 'Sign in to submit a question.'))
+    await command('support.create', undefined, {
+      subject: handoffNote.value.trim().slice(0, 80),
+      body: handoffNote.value.trim(),
+      category: ticketCategory.value,
+    })
+    handoffNote.value = ''
+    handoff.value = false
+  } catch (e) {
+    error.value =
+      e instanceof Error ? e.message : t('提交失败，请重试', 'Request failed. Please retry.')
+  } finally {
+    busy.value = false
+  }
 }
 </script>
 <template>
@@ -124,18 +175,43 @@ function requestHandoff() {
           {{ t('查看本机答复', 'Get a local answer') }}
         </wd-button>
         <wd-button variant="plain" size="small" @click="handoff = !handoff">
-          {{ t('转人工演示', 'Preview agent handoff') }}
+          {{
+            isHttpMode
+              ? t('提交问题单', 'Contact support')
+              : t('转人工演示', 'Preview agent handoff')
+          }}
         </wd-button>
       </view>
       <view v-if="handoff" class="support-handoff">
         <text>
           {{
-            t(
-              '填写问题，预览转人工申请状态。没有客服人员接单，也不会实际发送。',
-              'Describe your issue to preview a handoff status. No agent receives this request and nothing is sent.',
-            )
+            isHttpMode
+              ? t(
+                  '问题单将保存到当前账号，由区域运营处理；回复可在此处查看，不通过邮件发送。',
+                  'Tickets are saved to your account for regional editors. Responses appear here; no email is sent.',
+                )
+              : t(
+                  '填写问题，预览转人工申请状态。没有客服人员接单，也不会实际发送。',
+                  'Describe your issue to preview a handoff status. No agent receives this request and nothing is sent.',
+                )
           }}
         </text>
+        <view v-if="isHttpMode" class="support-questions">
+          <wd-button
+            v-for="item in [
+              { id: 'submission', zh: '投稿', en: 'Submission' },
+              { id: 'review', zh: '评审', en: 'Review' },
+              { id: 'activity', zh: '活动', en: 'Activity' },
+              { id: 'other', zh: '其他', en: 'Other' },
+            ]"
+            :key="item.id"
+            size="small"
+            :variant="ticketCategory === item.id ? 'base' : 'plain'"
+            @click="ticketCategory = item.id"
+          >
+            {{ t(item.zh, item.en) }}
+          </wd-button>
+        </view>
         <textarea
           class="support-handoff-input"
           v-if="!queued"
@@ -152,10 +228,16 @@ function requestHandoff() {
         <wd-button
           v-if="!queued"
           size="small"
-          :disabled="handoffNote.trim().length < 5"
+          :disabled="busy || handoffNote.trim().length < 5"
           @click="requestHandoff"
         >
-          {{ t('预览申请结果', 'Preview request result') }}
+          {{
+            isHttpMode
+              ? busy
+                ? t('提交中…', 'Submitting…')
+                : t('提交问题', 'Submit ticket')
+              : t('预览申请结果', 'Preview request result')
+          }}
         </wd-button>
         <view v-else class="support-queued">
           <text class="support-queued-copy">
@@ -173,6 +255,25 @@ function requestHandoff() {
           <button class="text-button" @click="handoff = false">
             {{ t('收起申请', 'Close request') }}
           </button>
+        </view>
+      </view>
+      <text v-if="error" class="scope-note">{{ error }}</text>
+      <view v-if="isHttpMode" class="support-tickets">
+        <text class="section-title">{{ t('我的问题与回复', 'My tickets and replies') }}</text>
+        <text v-if="!remoteWorkspace.supportTickets.length" class="scope-note">
+          {{ t('暂无问题单', 'No tickets yet') }}
+        </text>
+        <view
+          v-for="ticket in remoteWorkspace.supportTickets"
+          :key="ticket.id"
+          class="support-exchange"
+        >
+          <text class="support-question">{{ ticket.subject }} · {{ ticket.status }}</text>
+          <text>{{ ticket.body }}</text>
+          <text v-if="ticket.reply">
+            {{ t('运营回复：', 'Editor response: ') }}{{ ticket.reply }}
+          </text>
+          <text v-else>{{ t('等待处理', 'Awaiting response') }}</text>
         </view>
       </view>
     </view>

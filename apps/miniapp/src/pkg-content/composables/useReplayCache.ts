@@ -101,34 +101,67 @@ export function useReplayCache(item: ComputedRef<Replay | undefined>) {
     // #ifdef MP-WEIXIN
     const fs = uni.getFileSystemManager()
     const destination = `${nativeDataPath()}/jiafeng-replay-${current.id}.mp4`
-    fs.copyFile({
-      srcPath: assetUrl(current.source),
-      destPath: destination,
-      success() {
-        try {
-          uni.setStorageSync(`${cacheName}:${current.id}`, destination)
-          if (token === generation) {
-            cached.value = true
-            cachedPath.value = destination
-            message.value = t('回放文件已保存到本机。', 'Replay file saved on this device.')
+    const persist = (path: string, temporary = false) =>
+      fs.copyFile({
+        srcPath: path,
+        destPath: destination,
+        success() {
+          try {
+            uni.setStorageSync(`${cacheName}:${current.id}`, destination)
+            if (token === generation) {
+              cached.value = true
+              cachedPath.value = destination
+              message.value = t('回放文件已保存到本机。', 'Replay file saved on this device.')
+            }
+          } catch {
+            fs.unlink({ filePath: destination })
+            if (token === generation)
+              message.value = t('缓存记录保存失败。', 'Could not save cache metadata.')
           }
-        } catch {
-          fs.unlink({ filePath: destination })
+        },
+        fail() {
           if (token === generation)
-            message.value = t('缓存记录保存失败。', 'Could not save cache metadata.')
-        }
-      },
-      fail() {
-        if (token === generation)
-          message.value = t(
-            '本端未能保存回放，仍可播放随包样片。',
-            'Replay could not be saved. The packaged sample is still available.',
-          )
-      },
-      complete() {
-        busy.value = false
-      },
-    })
+            message.value = t(
+              '本端未能保存回放，请继续在线播放。',
+              'Replay could not be saved. Continue playing online.',
+            )
+        },
+        complete() {
+          if (temporary) fs.unlink({ filePath: path })
+          busy.value = false
+        },
+      })
+    const sourceUrl = assetUrl(current.source)
+    if (/^https?:/.test(sourceUrl)) {
+      uni.downloadFile({
+        url: sourceUrl,
+        success(result) {
+          if (result.statusCode === 200) persist(result.tempFilePath, true)
+          else {
+            busy.value = false
+            if (token === generation)
+              message.value = t(
+                '下载未完成，媒体可能已下架。',
+                'Download failed. The media may no longer be published.',
+              )
+          }
+        },
+        fail() {
+          busy.value = false
+          if (token === generation)
+            message.value = t(
+              '下载失败，请检查网络和小程序下载域名配置。',
+              'Download failed. Check network and Mini Program download-domain configuration.',
+            )
+        },
+      })
+    } else if (sourceUrl.startsWith('/api/')) {
+      busy.value = false
+      message.value = t(
+        '请为微信构建配置可访问的 HTTPS 服务地址和下载域名。',
+        'Configure a reachable HTTPS API address and download domains for the Mini Program build.',
+      )
+    } else persist(sourceUrl)
     return undefined
     // #endif
     busy.value = false

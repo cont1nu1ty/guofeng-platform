@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { isHttpMode } from '../../config/dataMode'
+import { regions } from '../../domain/fixtures'
+import { region } from '../../composables/useDemo'
 import { readInputValue } from '../../composables/readInputValue'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
@@ -9,7 +12,13 @@ import { t } from '../../composables/useLocale'
 const params = useRouteParams()
 const lt = (value: BilingualText) => t(value.zh, value.en)
 const current = computed(() => hallPeople.find((person) => person.id === params.value.id))
-const regionFilter = ref('all')
+const regionFilter = ref<string>(region.value)
+watch(region, (value) => {
+  regionFilter.value = value
+})
+const regionOptions = computed(() =>
+  regions.filter((r) => r.id === 'all' || hallPeople.some((p) => p.region === r.id)),
+)
 const activeScene = ref(0)
 const selectedHotspot = ref(0)
 const reflection = ref('')
@@ -25,7 +34,10 @@ watch(
 const guideOpen = ref(true)
 const visiblePeople = computed(() =>
   hallPeople.filter(
-    (person) => regionFilter.value === 'all' || person.region === regionFilter.value,
+    (person) =>
+      regionFilter.value === 'all' ||
+      person.region === 'all' ||
+      person.region === regionFilter.value,
   ),
 )
 const scenes = computed(() => [
@@ -126,7 +138,7 @@ function copySource() {
       </view>
       <view class="hall-detail-hero">
         <view class="hall-name-seal">
-          <text>{{ current.name.zh }}</text>
+          <text>{{ lt(current.name) }}</text>
         </view>
         <view>
           <text class="showcase-kicker">
@@ -173,9 +185,9 @@ function copySource() {
                   <text>
                     {{
                       activeScene === 0
-                        ? current.quote.zh
+                        ? lt(current.quote)
                         : activeScene === 1
-                          ? current.book.zh
+                          ? lt(current.book)
                           : '家和 · 国兴'
                     }}
                   </text>
@@ -183,7 +195,7 @@ function copySource() {
               </view>
               <view class="hall-desk">
                 <view class="hall-open-book">
-                  <text>{{ current.book.zh }}</text>
+                  <text>{{ lt(current.book) }}</text>
                 </view>
               </view>
               <view class="hall-genealogy">
@@ -245,7 +257,15 @@ function copySource() {
               <text>{{ lt(note) }}</text>
             </view>
           </view>
-          <HallExperiencePanel :person="current" />
+          <HallExperiencePanel v-if="!isHttpMode" :person="current" />
+          <view v-else class="scope-note">
+            {{
+              t(
+                '当前提供图文导览。真实全景查看器、AI讲解及语音合成尚未配置。',
+                'Illustrated guide available. Panorama viewing, AI narration and speech synthesis are not configured.',
+              )
+            }}
+          </view>
           <view class="showcase-panel hall-reflection">
             <text class="showcase-card-title">
               {{ t('把家训带回家', 'Bring the precept home') }}
@@ -289,21 +309,31 @@ function copySource() {
         <view class="showcase-side-panel">
           <view class="hall-book-display">
             <view class="hall-book-spine" />
-            <text>{{ current.book.zh }}</text>
-            <text class="hall-book-author">{{ current.name.zh }}</text>
+            <text>{{ lt(current.book) }}</text>
+            <text class="hall-book-author">{{ lt(current.name) }}</text>
           </view>
           <view class="showcase-callout">
             <text class="showcase-card-title">{{ t('展览资料说明', 'About this gallery') }}</text>
             <text>
               {{
-                t(
-                  '人物介绍依据公开资料简写；展厅、书册及关系图均为原创示意，不对应真实场馆、文物或家谱。当前展示为图文导览。',
-                  'Profiles are brief summaries of public sources. The gallery, book and relationship diagram are original illustrations and do not depict a real museum, artefact or genealogy. This is an illustrated tour.',
-                )
+                isHttpMode
+                  ? current.sample
+                    ? t(
+                        '虚构场景资料，仅用于联动展示。展厅、书册及关系图均为示意。',
+                        'Fictional showcase material. Gallery, book and relationship diagrams are illustrations.',
+                      )
+                    : t(
+                        '人物介绍由运营根据下方资料来源编辑；展厅、书册及关系图为示意。',
+                        'Profiles are edited from the sources below. Gallery, book and relationship diagrams are illustrative.',
+                      )
+                  : t(
+                      '人物介绍依据公开资料简写；展厅、书册及关系图均为原创示意，不对应真实场馆、文物或家谱。当前展示为图文导览。',
+                      'Profiles are brief summaries of public sources. The gallery, book and relationship diagram are original illustrations and do not depict a real museum, artefact or genealogy. This is an illustrated tour.',
+                    )
               }}
             </text>
             <text class="showcase-note" selectable>{{ current.sourceTitle }}</text>
-            <wd-button size="small" variant="plain" @click="copySource">
+            <wd-button v-if="current.sourceUrl" size="small" variant="plain" @click="copySource">
               {{ t('复制资料来源链接', 'Copy source link') }}
             </wd-button>
           </view>
@@ -345,24 +375,28 @@ function copySource() {
           </text>
         </view>
         <text class="hall-intro-count">
-          02
+          {{ visiblePeople.length }}
           <text>{{ t('个主题展', 'galleries') }}</text>
         </text>
       </view>
       <view class="showcase-filter">
         <wd-button
-          v-for="item in [
-            { id: 'all', label: t('全部地区', 'All regions') },
-            { id: 'sichuan', label: t('四川主题', 'Sichuan') },
-            { id: 'jiangsu', label: t('江苏主题', 'Jiangsu') },
-          ]"
+          v-for="item in regionOptions"
           :key="item.id"
           size="small"
           :variant="regionFilter !== item.id ? 'plain' : 'base'"
           @click="regionFilter = item.id"
         >
-          {{ item.label }}
+          {{ t(item.label) }}
         </wd-button>
+      </view>
+      <view v-if="!visiblePeople.length" class="empty-state">
+        {{
+          t(
+            '当前地区和语言暂无已发布人物。',
+            'No profiles are published for this region and language.',
+          )
+        }}
       </view>
       <view class="hall-people-grid">
         <view
@@ -373,8 +407,8 @@ function copySource() {
         >
           <view class="hall-person-art">
             <view class="hall-arch" />
-            <text class="hall-person-seal">{{ person.name.zh }}</text>
-            <text class="hall-person-book">{{ person.book.zh }}</text>
+            <text class="hall-person-seal">{{ lt(person.name) }}</text>
+            <text class="hall-person-book">{{ lt(person.book) }}</text>
             <text class="hall-art-caption">
               {{ t('原创文字展陈', 'Original typographic exhibit') }}
             </text>
@@ -393,10 +427,15 @@ function copySource() {
       </view>
       <view class="scope-note">
         {{
-          t(
-            '本期提供图文导览、可拖动空间示意、家训描摹与预置讲解；720° 实景与文物扫描需另行提供授权素材。',
-            'This edition includes illustrated tours, draggable spatial concepts, tracing and prepared narration. Real panoramas and digitised artefacts require separately licensed materials.',
-          )
+          isHttpMode
+            ? t(
+                '人物介绍和资料来源由后台编辑发布。展陈与书册为文字示意；真实全景、文物扫描及AI讲解未配置。',
+                'Profiles and sources are published by editors. Exhibits and books are illustrations; real panoramas, artefact scans and AI narration are not configured.',
+              )
+            : t(
+                '本期提供图文导览、可拖动空间示意、家训描摹与预置讲解；720° 实景与文物扫描需另行提供授权素材。',
+                'This edition includes illustrated tours, draggable spatial concepts, tracing and prepared narration. Real panoramas and digitised artefacts require separately licensed materials.',
+              )
         }}
       </view>
     </template>

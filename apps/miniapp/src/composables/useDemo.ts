@@ -1,3 +1,6 @@
+import { isHttpMode } from '../config/dataMode'
+import { createRemoteRepository } from '../domain/remoteRepository'
+import { remoteRevision } from '../services/api'
 import { localizeNotice } from './localizeNotice'
 import { computed, ref, watch } from 'vue'
 import { navigate } from './useNavigation'
@@ -79,7 +82,8 @@ function initializeRepository(): DemoRepository {
   }
 }
 
-export const repo = initializeRepository()
+export const repo = isHttpMode ? createRemoteRepository() : initializeRepository()
+watch(remoteRevision, () => revision.value++)
 export const regionLabel = computed(
   () => regions.find((r) => r.id === region.value)?.label ?? '全国',
 )
@@ -110,9 +114,9 @@ export const certificates = computed(() => {
 export function notify(message: string) {
   uni.showToast({ title: localizeNotice(message), icon: 'none', duration: 2400 })
 }
-export function safely<T>(action: () => T): T | undefined {
+export async function safely<T>(action: () => T | Promise<T>): Promise<T | undefined> {
   try {
-    const result = action()
+    const result = await action()
     revision.value++
     return result
   } catch (error) {
@@ -133,14 +137,14 @@ export function isRegistered(id: string) {
   revision.value
   return repo.isRegistered(id)
 }
-export function register(id: string) {
-  safely(() => {
+export async function register(id: string) {
+  await safely(async () => {
     if (repo.isRegistered(id)) {
-      repo.cancelRegistration(id)
-      notify('已取消演示预约')
+      await repo.cancelRegistration(id)
+      notify(isHttpMode ? '已取消预约' : '已取消演示预约')
     } else {
-      repo.registerActivity(id)
-      notify('演示预约成功，可在个人中心查看')
+      await repo.registerActivity(id)
+      notify(isHttpMode ? '预约成功，可在个人中心查看' : '演示预约成功，可在个人中心查看')
     }
   })
 }

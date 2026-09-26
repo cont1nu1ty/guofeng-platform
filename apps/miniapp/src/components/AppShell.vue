@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { isHttpMode } from '../config/dataMode'
+import { remoteError, remoteLoading, remoteUser, refreshWorkspace } from '../services/api'
 import { ref, computed, provide } from 'vue'
 import { localizeNotice } from '../composables/localizeNotice'
 import { getMiniAppHeaderStyle } from '../composables/useMiniAppInsets'
@@ -46,6 +48,11 @@ function selectRegion(id: RegionId) {
       <text>{{ t('家风文化 · 界面演示', 'Family culture · Demo') }}</text>
     </view>
     <!-- #endif -->
+    <view v-if="isHttpMode && remoteError" class="storage-alert">
+      {{ remoteError }}
+      <wd-button size="small" @click="refreshWorkspace().catch(() => {})">重试加载</wd-button>
+    </view>
+    <view v-if="isHttpMode && remoteLoading" class="storage-alert">正在加载服务数据…</view>
     <view v-if="storageError" class="storage-alert">{{ localizeNotice(storageError) }}</view>
     <view class="utility-bar">
       <view class="container utility-inner">
@@ -54,7 +61,13 @@ function selectRegion(id: RegionId) {
         </text>
         <view>
           <text class="demo-dot" />
-          <text>{{ t('交互演示 · 数据为样例', 'Interactive demo · Sample data') }}</text>
+          <text>
+            {{
+              isHttpMode
+                ? t('服务已接入 · 账号数据隔离', 'Connected · Account-scoped data')
+                : t('交互演示 · 数据为样例', 'Interactive demo · Sample data')
+            }}
+          </text>
         </view>
       </view>
     </view>
@@ -114,7 +127,7 @@ function selectRegion(id: RegionId) {
         </button>
       </view>
     </view>
-    <view class="container main-content">
+    <view :key="isHttpMode ? remoteUser?.id || 'anonymous' : 'demo'" class="container main-content">
       <view v-if="canBack" class="back-bar">
         <button class="text-button" @click="goBack">← {{ t('返回上一页', 'Back') }}</button>
       </view>

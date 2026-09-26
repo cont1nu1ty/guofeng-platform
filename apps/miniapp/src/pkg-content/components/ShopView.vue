@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { isHttpMode } from '../../config/dataMode'
+import { commerceStatusLabels } from '../../domain/showcaseCatalog'
 import { readInputValue } from '../../composables/readInputValue'
 import { computed, reactive, ref, watch } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
@@ -73,7 +75,7 @@ function openForm(kind: CommerceKind) {
   validationError.value = ''
   form.agreed = false
 }
-function submitRequest() {
+async function submitRequest() {
   if (!current.value || submitting.value || result.value) return
   const validation = validateCommerceForm(form)
   if (validation) {
@@ -82,7 +84,7 @@ function submitRequest() {
   }
   submitting.value = true
   try {
-    result.value = createCommerceRequest(current.value.id, mode.value, form)
+    result.value = await createCommerceRequest(current.value.id, mode.value, form)
     formOpen.value = false
     validationError.value = ''
   } catch (error) {
@@ -91,9 +93,9 @@ function submitRequest() {
     submitting.value = false
   }
 }
-function cancel(id: string) {
+async function cancel(id: string) {
   try {
-    cancelCommerceRequest(id)
+    await cancelCommerceRequest(id)
     uni.showToast({ title: t('已取消本机演示记录', 'Local demo request cancelled'), icon: 'none' })
   } catch {
     uni.showToast({ title: errorMessages.value['showcase-storage'], icon: 'none' })
@@ -166,9 +168,11 @@ function fillExample() {
           </text>
           <text :class="['shop-status', { cancelled: request.status === 'cancelled' }]">
             {{
-              request.status === 'cancelled'
-                ? t('已取消', 'Cancelled')
-                : t('已记录，待沟通', 'Recorded for discussion')
+              isHttpMode
+                ? commerceStatusLabels[request.status]
+                : request.status === 'cancelled'
+                  ? t('已取消', 'Cancelled')
+                  : t('已记录，待沟通', 'Recorded for discussion')
             }}
           </text>
         </view>
@@ -237,7 +241,9 @@ function fillExample() {
           <text class="showcase-note">
             {{
               t(
-                '本次为前端流程演示，填写示例信息即可。',
+                isHttpMode
+                  ? '提交后由平台处理，进度可在个人中心查看。'
+                  : '本次为前端流程演示，填写示例信息即可。',
                 'This is a frontend workflow demo. Please use example information.',
               )
             }}
@@ -318,7 +324,9 @@ function fillExample() {
         <wd-checkbox v-model="form.agreed" class="shop-form-agreement">
           {{
             t(
-              '我了解这只是本机演示，不产生真实申领、报价、合同或付款。',
+              isHttpMode
+                ? '我同意将申请发送给平台处理。本次不产生报价、合同或付款。'
+                : '我了解这只是本机演示，不产生真实申领、报价、合同或付款。',
               'I understand this local demo creates no real request, quote, contract or payment.',
             )
           }}
@@ -326,6 +334,7 @@ function fillExample() {
         <view v-if="validationError" class="showcase-form-error" role="alert">
           {{
             errorMessages[validationError] ||
+            validationError ||
             t('提交未完成，请重新检查表单。', 'Submission failed. Check the form and try again.')
           }}
         </view>
@@ -333,8 +342,12 @@ function fillExample() {
           <wd-button :loading="submitting" @click="submitRequest">
             {{
               mode === 'public'
-                ? t('提交演示申领', 'Save demo request')
-                : t('提交演示咨询', 'Save demo inquiry')
+                ? isHttpMode
+                  ? t('提交申领', 'Submit request')
+                  : t('提交演示申领', 'Save demo request')
+                : isHttpMode
+                  ? t('提交咨询', 'Submit inquiry')
+                  : t('提交演示咨询', 'Save demo inquiry')
             }}
           </wd-button>
           <wd-button variant="plain" @click="formOpen = false">
@@ -344,7 +357,13 @@ function fillExample() {
       </view>
       <view v-if="result" class="showcase-panel shop-result">
         <view class="shop-result-check"><wd-icon name="check" size="30px" /></view>
-        <text class="showcase-title">{{ t('演示记录已保存', 'Demo request saved') }}</text>
+        <text class="showcase-title">
+          {{
+            isHttpMode
+              ? t('申请已提交', 'Request submitted')
+              : t('演示记录已保存', 'Demo request saved')
+          }}
+        </text>
         <text>
           {{
             t(

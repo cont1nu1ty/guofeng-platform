@@ -108,6 +108,7 @@ export function createSearchIndex(
       a.title,
       a.excerpt,
       a.paragraphs.map((p) => p.zh + ' ' + p.en).join(' '),
+      a.region || 'all',
     ),
   )
   courses.forEach((c) =>
@@ -128,6 +129,7 @@ export function createSearchIndex(
       m.title,
       m.excerpt,
       m.transcript.map((p) => p.zh + ' ' + p.en).join(' '),
+      m.region || 'all',
     ),
   )
   hallPeople.forEach((h) =>

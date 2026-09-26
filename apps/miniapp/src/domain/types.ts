@@ -45,7 +45,9 @@ export interface ReviewInput {
   comment: string
   reviewer?: string
 }
-export interface ReviewRecord extends ReviewInput {
+export interface ReviewRecord extends Omit<ReviewInput, 'action' | 'scores'> {
+  action: ReviewAction | 'score'
+  scores: ReviewScores | number[]
   id: string
   stageIndex: number
   createdAt: string
@@ -53,13 +55,15 @@ export interface ReviewRecord extends ReviewInput {
   averageScore: number
 }
 export interface DemoNotification {
+  sourceType?: string
+  targetId?: string
   id: string
   workId: string
   title: string
   content: string
   createdAt: string
   read: boolean
-  isDemo: true
+  isDemo: boolean
 }
 export interface DemoCertificate {
   id: string
@@ -68,7 +72,7 @@ export interface DemoCertificate {
   author: string
   awardLabel: string
   issuedAt: string
-  isDemo: true
+  isDemo: boolean
 }
 
 export interface Option<T extends string = string> {
@@ -98,6 +102,8 @@ export interface SubmissionDraft {
 }
 export type ValidationErrors = Partial<Record<keyof SubmissionDraft, string>>
 export interface Work {
+  version?: number
+  published?: boolean
   contentDelta?: import('./writingTools').WritingDelta
   overseasLocation?: string
   id: string
@@ -119,9 +125,10 @@ export interface Work {
   reviews?: ReviewRecord[]
   revisionNumber?: number
   isMine: boolean
-  isDemo: true
+  isDemo: boolean
 }
 export interface Classic {
+  chapters?: { id: string; title: string; body: string; author?: string }[]
   id: string
   title: string
   subtitle: string
@@ -132,9 +139,10 @@ export interface Classic {
   category: string
   coverColor: string
   chapterCount: number
-  isDemo: true
+  isDemo: boolean
 }
 export interface Activity {
+  status?: '草稿' | '报名中' | '进行中' | '已结束'
   id: string
   title: string
   excerpt: string
@@ -147,12 +155,12 @@ export interface Activity {
   category: string
   capacity: number
   registeredCount: number
-  isDemo: true
+  isDemo: boolean
 }
 export interface Registration {
   activityId: string
   registeredAt: string
-  isDemo: true
+  isDemo: boolean
 }
 export interface WorkFilter {
   region?: RegionId

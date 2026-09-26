@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { isHttpMode } from '../../config/dataMode'
+import { region } from '../../composables/useDemo'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
 import NewsSubscriptions from './NewsSubscriptions.vue'
@@ -28,6 +30,10 @@ const activeTopic = computed(() => familyTopics.find((item) => item.id === topic
 const filtered = computed(() =>
   newsArticles.filter(
     (item) =>
+      (region.value === 'all' ||
+        !item.region ||
+        item.region === 'all' ||
+        item.region === region.value) &&
       (category.value === 'all' || item.category === category.value) &&
       (topic.value === 'all' || item.topic === topic.value) &&
       `${item.title.zh}${item.title.en}${item.excerpt.zh}${item.excerpt.en}`
@@ -76,7 +82,11 @@ function resetFilters() {
           {{ t('返回资讯', 'Back to updates') }}
         </wd-button>
         <text class="content-demo-label">
-          {{ t('原创演示内容', 'Original prototype content') }}
+          {{
+            isHttpMode
+              ? t('已发布资讯', 'Published update')
+              : t('原创演示内容', 'Original prototype content')
+          }}
         </text>
       </view>
       <view class="content-article">
@@ -97,9 +107,21 @@ function resetFilters() {
         <view class="content-author">
           <view class="content-small-seal">文</view>
           <view>
-            <text>{{ t('家风内容演示组', 'Prototype editorial team') }}</text>
+            <text>
+              {{
+                isHttpMode
+                  ? t('家风平台', 'Family Heritage platform')
+                  : t('家风内容演示组', 'Prototype editorial team')
+              }}
+            </text>
             <text class="content-caption">
-              {{ t('原创样例 · 非官方发布', 'Original sample · not an official publication') }}
+              {{
+                isHttpMode
+                  ? article.sample
+                    ? t('虚构场景素材', 'Fictional showcase material')
+                    : t('平台内容', 'Platform content')
+                  : t('原创样例 · 非官方发布', 'Original sample · not an official publication')
+              }}
             </text>
           </view>
         </view>
@@ -139,7 +161,9 @@ function resetFilters() {
     </template>
     <template v-else-if="params.id">
       <view class="empty-state">
-        {{ t('未找到这篇演示资讯。', 'This sample article was not found.') }}
+        {{
+          t('未找到当前语言可公开的资讯。', 'No published article is available in this language.')
+        }}
         <wd-button variant="plain" @click="navigate('news')">
           {{ t('查看全部资讯', 'View all updates') }}
         </wd-button>

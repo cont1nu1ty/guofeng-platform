@@ -12,7 +12,6 @@ import {
   getAssistantTool,
   getAssistantExample,
   createAssistantDraft,
-  transferAssistantDraft,
 } from '../domain/assistantExamples'
 import type { LocalizedText } from '../domain/assistantExamples'
 import type { AssistantMode } from '../domain/personalArchive'
@@ -180,9 +179,9 @@ function copyResult() {
     copyFailed.value = true
   }
 }
-function saveResult(message?: string): boolean {
+async function saveResult(message?: string): Promise<boolean> {
   if (!canUseResult.value) return false
-  const result = saveAiArchive({
+  const result = await saveAiArchive({
     mode: mode.value,
     prompt: current.value.resultPrompt,
     result: current.value.result,
@@ -194,18 +193,23 @@ function saveResult(message?: string): boolean {
   }
   return false
 }
-function keepAndArchive() {
+async function keepAndArchive() {
   if (
-    saveResult(
+    await saveResult(
       t('示例已另存，原投稿草稿未改动。', 'Sample archived. Your contribution draft is unchanged.'),
     )
   )
     conflictVisible.value = false
 }
-function attemptTransfer(replace = false) {
+async function attemptTransfer(replace = false) {
   if (!candidateDraft.value) return
   transferFailed.value = false
-  const result = safely(() => transferAssistantDraft(repo, candidateDraft.value!, replace))
+  const result = await safely(async () => {
+    const existing = repo.getDraft()
+    if (existing && !replace)
+      return { status: 'conflict' as const, existing, candidate: candidateDraft.value! }
+    return { status: 'saved' as const, draft: await repo.saveDraft(candidateDraft.value!) }
+  })
   if (!result) {
     transferFailed.value = true
     return
@@ -225,9 +229,9 @@ function attemptTransfer(replace = false) {
   candidateDraft.value = result.candidate
   conflictVisible.value = true
 }
-function startTransfer() {
+async function startTransfer() {
   if (!canUseResult.value || isReference.value) return
-  const candidate = safely(() =>
+  const candidate = await safely(() =>
     createAssistantDraft(mode.value, current.value.result, region.value, locale.value),
   )
   if (!candidate) return

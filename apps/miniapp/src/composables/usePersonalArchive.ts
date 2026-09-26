@@ -1,3 +1,5 @@
+import { isHttpMode } from '../config/dataMode'
+import { command, remoteWorkspace } from '../services/api'
 import { computed, ref } from 'vue'
 import { createPersonalArchive, type Excerpt, type AiArchive } from '../domain/personalArchive'
 import { notify } from './useDemo'
@@ -19,18 +21,25 @@ function init() {
     })
   }
 }
-const store = init()
+const store = isHttpMode
+  ? createPersonalArchive({
+      getItem: () => null,
+      setItem: () => {
+        throw new Error('请使用云端存档接口')
+      },
+    })
+  : init()
 export const excerpts = computed(() => {
   version.value
-  return store.listExcerpts()
+  return isHttpMode ? remoteWorkspace.excerpts : store.listExcerpts()
 })
 export const aiArchives = computed(() => {
   version.value
-  return store.listAiArchives()
+  return isHttpMode ? remoteWorkspace.aiArchives : store.listAiArchives()
 })
-function run<T>(action: () => T): T | undefined {
+async function run<T>(action: () => T | Promise<T>): Promise<T | undefined> {
   try {
-    const result = action()
+    const result = await action()
     version.value++
     return result
   } catch (error) {
@@ -39,24 +48,34 @@ function run<T>(action: () => T): T | undefined {
   }
 }
 export function saveExcerpt(value: Omit<Excerpt, 'id' | 'createdAt'>) {
-  return run(() => store.saveExcerpt(value))
-}
-export function saveAiArchive(value: Omit<AiArchive, 'id' | 'createdAt'>) {
-  return run(() => store.saveAiArchive(value))
-}
-export function removeExcerpt(id: string): boolean {
-  return (
-    run(() => {
-      store.removeExcerpt(id)
-      return true
-    }) === true
+  return run(() =>
+    isHttpMode
+      ? command<Excerpt>('archive.excerpt.save', undefined, value)
+      : store.saveExcerpt(value),
   )
 }
-export function removeAiArchive(id: string): boolean {
+export function saveAiArchive(value: Omit<AiArchive, 'id' | 'createdAt'>) {
+  return run(() =>
+    isHttpMode
+      ? command<AiArchive>('archive.ai.save', undefined, value)
+      : store.saveAiArchive(value),
+  )
+}
+export async function removeExcerpt(id: string): Promise<boolean> {
   return (
-    run(() => {
-      store.removeAiArchive(id)
+    (await run(async () => {
+      if (isHttpMode) await command('archive.excerpt.remove', id)
+      else store.removeExcerpt(id)
       return true
-    }) === true
+    })) === true
+  )
+}
+export async function removeAiArchive(id: string): Promise<boolean> {
+  return (
+    (await run(async () => {
+      if (isHttpMode) await command('archive.ai.remove', id)
+      else store.removeAiArchive(id)
+      return true
+    })) === true
   )
 }

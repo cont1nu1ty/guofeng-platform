@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { readInputValue } from '../composables/readInputValue'
-import { computed, reactive, ref, watch } from 'vue'
+import { isHttpMode } from '../config/dataMode'
+import { loadRemoteDraft, remoteUser, ApiError, request } from '../services/api'
+import RemoteAccountPanel from './RemoteAccountPanel.vue'
+import { computed, reactive, ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import WritingEditor from './WritingEditor.vue'
 import WritingInspiration from './WritingInspiration.vue'
 import SubmissionSupport from './SubmissionSupport.vue'
@@ -42,21 +45,30 @@ const hydrate = (draft: SubmissionDraft): SubmissionDraft => ({
   themes: draft.themes ?? (draft.theme ? [draft.theme] : []),
   attachments: draft.attachments ?? [],
 })
+const draftReady = ref(!isHttpMode)
+const cloudError = ref('')
 const initialDraft = repo.getDraft()
 const form = reactive<SubmissionDraft>(hydrate(initialDraft ?? blank()))
 const errors = ref<ValidationErrors>({})
 const draftState = ref<'restored' | 'ready' | 'saved' | 'error' | 'new'>(
   initialDraft ? 'restored' : 'ready',
 )
-const draftMessage = computed(
-  () =>
-    ({
-      restored: t('已恢复本机草稿', 'Local draft restored'),
-      ready: t('填写后自动保存到本机', 'Your draft is saved on this device'),
-      saved: t('已自动保存到本机', 'Automatically saved on this device'),
-      error: t('保存失败，请检查设备存储空间', 'Save failed. Check device storage.'),
-      new: t('新投稿可重新填写', 'You can start another submission'),
-    })[draftState.value],
+const draftMessage = computed(() =>
+  isHttpMode
+    ? {
+        restored: '已恢复云端草稿',
+        ready: '编辑后自动保存到云端',
+        saved: '云端草稿已保存',
+        error: cloudError.value || '云端保存失败，内容仍保留在编辑区',
+        new: '投稿成功，可填写新稿件',
+      }[draftState.value]
+    : {
+        restored: t('已恢复本机草稿', 'Local draft restored'),
+        ready: t('填写后自动保存到本机', 'Your draft is saved on this device'),
+        saved: t('已自动保存到本机', 'Automatically saved on this device'),
+        error: t('保存失败，请检查设备存储空间', 'Save failed. Check device storage.'),
+        new: t('新投稿可重新填写', 'You can start another submission'),
+      }[draftState.value],
 )
 const submittedId = ref('')
 const submittedRevision = ref(1)
@@ -76,12 +88,7 @@ function richChange(value: { content: string; contentDelta: WritingDelta }) {
   form.content = value.content
   form.contentDelta = value.contentDelta
   pauseSave = false
-  try {
-    repo.saveDraft({ ...form })
-    draftState.value = 'saved'
-  } catch {
-    draftState.value = 'error'
-  }
+  scheduleSave()
 }
 function appendInspiration(value: string) {
   const next = form.content + (form.content.trim() ? '\n\n' : '') + value
@@ -181,31 +188,106 @@ function errorText(value?: string) {
   )
 }
 let pauseSave = false
+let saveTimer: ReturnType<typeof setTimeout> | undefined
+let saveQueue: Promise<void> = Promise.resolve()
+let saveSequence = 0
+function snapshot() {
+  return JSON.parse(
+    JSON.stringify({
+      ...form,
+      themes: [...selectedThemes.value],
+      attachments: [...attachments.value],
+    }),
+  ) as SubmissionDraft
+}
+function persistDraft() {
+  const value = snapshot()
+  const sequence = ++saveSequence
+  saveQueue = saveQueue.then(async () => {
+    try {
+      await repo.saveDraft(value)
+      if (sequence === saveSequence) {
+        draftState.value = 'saved'
+        cloudError.value = ''
+      }
+    } catch (error) {
+      draftState.value = 'error'
+      cloudError.value = error instanceof Error ? error.message : '草稿未保存'
+      if (error instanceof ApiError && error.status === 412)
+        cloudError.value =
+          '草稿已在其他设备更新，当前编辑内容未覆盖云端。请复制需要保留的文字后重新加载云草稿。'
+      throw error
+    }
+  })
+  // Keep a rejected write visible while allowing a later explicit edit to retry.
+  const operation = saveQueue
+  saveQueue = saveQueue.catch(() => {})
+  return operation
+}
+function scheduleSave() {
+  if (
+    pauseSave ||
+    !draftReady.value ||
+    revisionLoadError.value ||
+    submitting.value ||
+    submittedId.value
+  )
+    return
+  if (saveTimer) clearTimeout(saveTimer)
+  if (isHttpMode)
+    saveTimer = setTimeout(() => {
+      void persistDraft().catch(() => {})
+    }, 700)
+  else void persistDraft().catch(() => {})
+}
+async function restoreDraft() {
+  if (!isHttpMode) return
+  draftReady.value = false
+  cloudError.value = ''
+  pauseSave = true
+  try {
+    const draft = await loadRemoteDraft()
+    Object.assign(form, hydrate(draft || blank()))
+    if (params.value.id && draft?.editingWorkId !== params.value.id) {
+      const revision = await repo.prepareRevision(params.value.id)
+      Object.assign(form, hydrate(revision))
+    }
+    editorKey.value++
+    draftReady.value = true
+    draftState.value = draft ? 'restored' : 'ready'
+  } catch (error) {
+    cloudError.value = error instanceof Error ? error.message : '草稿加载失败'
+  } finally {
+    pauseSave = false
+  }
+}
+onMounted(() => {
+  if (isHttpMode && remoteUser.value) void restoreDraft()
+})
+onBeforeUnmount(() => {
+  if (saveTimer) clearTimeout(saveTimer)
+})
+watch(remoteUser, (user) => {
+  if (isHttpMode) {
+    if (user) void restoreDraft()
+    else draftReady.value = false
+  }
+})
 watch(
   form,
   () => {
     if (pauseSave || revisionLoadError.value) return
     const currentErrors = repo.validateSubmission({ ...form })
-    for (const field of Object.keys(errors.value) as (keyof SubmissionDraft)[]) {
+    for (const field of Object.keys(errors.value) as (keyof SubmissionDraft)[])
       if (!currentErrors[field]) delete errors.value[field]
-    }
-    try {
-      repo.saveDraft({
-        ...form,
-        themes: [...selectedThemes.value],
-        attachments: [...attachments.value],
-      })
-      draftState.value = 'saved'
-    } catch {
-      draftState.value = 'error'
-    }
+    scheduleSave()
   },
   { deep: true, flush: 'sync' },
 )
 watch(
   () => params.value.id,
-  (id) => {
-    if (!id) return
+  async (id) => {
+    if (!id || isHttpMode) return
     const work = repo.getWork(id)
     if (!work?.isMine || work.status !== 'returned') {
       revisionLoadError.value = true
@@ -214,7 +296,7 @@ watch(
     try {
       pauseSave = true
       const saved = repo.getDraft()
-      const draft = saved?.editingWorkId === id ? saved : repo.prepareRevision(id)
+      const draft = saved?.editingWorkId === id ? saved : await repo.prepareRevision(id)
       Object.assign(form, hydrate(draft))
       revisionLoadError.value = false
       draftState.value = 'restored'
@@ -248,9 +330,41 @@ function removeFile(id: string) {
   form.attachments = removeAttachment(id, attachments.value)
   errors.value.attachments = undefined
 }
-function previewFile(file: AttachmentMeta) {
-  previewAttachment.value = file
+async function previewFile(file: AttachmentMeta) {
+  previewAttachment.value = { ...file }
   showAttachmentPreview.value = true
+  if (isHttpMode) {
+    try {
+      const response = await request<{ url: string }>(`/files/${encodeURIComponent(file.id)}/url`)
+      if (previewAttachment.value?.id === file.id) previewAttachment.value.url = response.data.url
+    } catch (error) {
+      notify(error instanceof Error ? error.message : '附件预览暂不可用，请重试。')
+    }
+  }
+}
+function openCloudDocument() {
+  const url = previewAttachment.value?.url
+  if (!url) return
+  // #ifdef H5
+  window.open(url, '_blank', 'noopener,noreferrer')
+  // #endif
+  // #ifndef H5
+  uni.downloadFile({
+    url,
+    success(result) {
+      if (result.statusCode !== 200) {
+        notify('文件链接已过期，请关闭后重新预览。')
+        return
+      }
+      uni.openDocument({
+        filePath: result.tempFilePath,
+        showMenu: true,
+        fail: () => notify('当前设备无法打开此文档。'),
+      })
+    },
+    fail: () => notify('文档下载失败，请重试。'),
+  })
+  // #endif
 }
 function fileLabel(file: AttachmentMeta) {
   return file.type === 'image' ? t('图片', 'Image') : file.type === 'pdf' ? 'PDF' : 'Word'
@@ -271,16 +385,18 @@ function validate(requireAgreement: boolean) {
 function preview(requireAgreement = false) {
   if (!revisionLoadError.value && validate(requireAgreement)) showPreview.value = true
 }
-function submit() {
+async function submit() {
   if (submitting.value || submittedId.value || revisionLoadError.value || !validate(true)) return
   submitting.value = true
-  const result = safely(() =>
-    repo.submitWork({
+  if (saveTimer) clearTimeout(saveTimer)
+  const result = await safely(async () => {
+    await saveQueue
+    return repo.submitWork({
       ...form,
       themes: [...selectedThemes.value],
       attachments: [...attachments.value],
-    }),
-  )
+    })
+  })
   if (result) {
     pauseSave = true
     submittedId.value = result.id
@@ -301,13 +417,28 @@ function openAgreementFromPreview() {
   showPreview.value = false
   showAgreement.value = true
 }
-function continueWriting() {
+async function continueWriting() {
+  if (isHttpMode) await restoreDraft()
   submittedId.value = ''
   navigate('submit')
 }
 </script>
 <template>
-  <view class="submission-view">
+  <view v-if="isHttpMode && !draftReady" class="submission-view">
+    <RemoteAccountPanel />
+    <view class="scope-note">
+      {{
+        cloudError ||
+        (remoteUser ? '正在读取云端草稿…' : '登录后可以上传附件、保存云端草稿并投稿。')
+      }}
+    </view>
+    <wd-button v-if="remoteUser" @click="restoreDraft">重新加载云草稿</wd-button>
+  </view>
+  <view v-else class="submission-view">
+    <view v-if="isHttpMode && cloudError" class="scope-note">
+      {{ cloudError }}
+      <wd-button size="small" @click="restoreDraft">重新加载云草稿</wd-button>
+    </view>
     <SectionHeading
       :title="t('把家的故事，写给时代', 'Share a family story with the world')"
       :eyebrow="t('家风投稿', 'Contribute your story')"
@@ -338,14 +469,18 @@ function continueWriting() {
         {{
           submittedRevision > 1
             ? t('修改稿已提交，作品编号保持不变', 'Revision submitted with the same work ID')
-            : t('作品已提交到本机演示库', 'Your work is saved in the local demo')
+            : isHttpMode
+              ? t('作品已提交到平台', 'Your work has been submitted')
+              : t('作品已提交到本机演示库', 'Your work is saved in the local demo')
         }}
       </text>
       <text class="muted">{{ t('作品编号：', 'Work ID: ') }}{{ submittedId }}</text>
       <text>
         {{
           t(
-            '当前状态：待区县初审。此操作不向真实平台投稿。',
+            isHttpMode
+              ? '当前状态：待初审。可在个人中心查看同一作品的后续进度。'
+              : '当前状态：待区县初审。此操作不向真实平台投稿。',
             'Status: awaiting initial review in the demo. Nothing is submitted to a real platform.',
           )
         }}
@@ -353,7 +488,9 @@ function continueWriting() {
       <text class="submit-helper">
         {{
           t(
-            '可到评审页查看进度；演示运营端评审后，消息与证书会随状态更新。',
+            isHttpMode
+              ? '后台处理后可查看意见；正式授奖、版权签署和证书签发另按业务流程处理。'
+              : '可到评审页查看进度；演示运营端评审后，消息与证书会随状态更新。',
             'View progress on the review page. Demo review actions update messages and certificates.',
           )
         }}
@@ -629,8 +766,8 @@ function continueWriting() {
           </view>
           <view v-for="file in attachments" :key="file.id" class="submit-attachment-row">
             <image
-              v-if="file.type === 'image' && attachmentPreviewPath(file.id)"
-              :src="attachmentPreviewPath(file.id)"
+              v-if="file.type === 'image' && (attachmentPreviewPath(file.id) || file.url)"
+              :src="attachmentPreviewPath(file.id) || file.url"
               mode="aspectFill"
               class="submit-file-thumbnail"
               @click="previewFile(file)"
@@ -646,8 +783,10 @@ function continueWriting() {
               </text>
               <text class="submit-file-status">
                 {{
-                  attachmentPreviewPath(file.id)
-                    ? t('本机已选择 · 未上传', 'Selected locally · not uploaded')
+                  attachmentPreviewPath(file.id) || file.url
+                    ? isHttpMode
+                      ? t('已上传，受账号权限保护', 'Uploaded · Account protected')
+                      : t('本机已选择 · 未上传', 'Selected locally · not uploaded')
                     : t(
                         '仅恢复文件信息，预览需重新选择',
                         'Metadata restored; select again to preview',
@@ -660,7 +799,7 @@ function continueWriting() {
                 {{ t('预览', 'Preview') }}
               </wd-button>
               <wd-button
-                v-if="!attachmentPreviewPath(file.id)"
+                v-if="!(attachmentPreviewPath(file.id) || file.url)"
                 variant="text"
                 size="small"
                 :disabled="picking"
@@ -694,7 +833,9 @@ function continueWriting() {
         <view class="scope-note">
           {{
             t(
-              '附件仅供当前设备临时预览；本机草稿保存文件名、格式和大小，不保存文件正文，不上传云端。刷新或临时路径失效后需重新选择。',
+              isHttpMode
+                ? '选择文件后会上传至平台私有存储；草稿仅关联当前账号的附件，上传失败时不会加入附件清单。'
+                : '附件仅供当前设备临时预览；本机草稿保存文件名、格式和大小，不保存文件正文，不上传云端。刷新或临时路径失效后需重新选择。',
               'Files are only available for temporary local preview. Drafts store names, formats and sizes, not file contents. No files are uploaded. Select again after refresh or when a temporary path expires.',
             )
           }}
@@ -704,7 +845,11 @@ function continueWriting() {
             {{ t('我已阅读并同意', 'I have read and accept') }}
           </wd-checkbox>
           <button class="text-button" @click="showAgreement = true">
-            {{ t('《演示投稿须知与版权确认》', 'Sample submission and copyright notice') }}
+            {{
+              isHttpMode
+                ? t('《试点投稿须知与版权确认》', 'Pilot submission notice')
+                : t('《演示投稿须知与版权确认》', 'Sample submission and copyright notice')
+            }}
           </button>
         </view>
         <text v-if="errors.copyrightAccepted" class="field-error">
@@ -712,7 +857,14 @@ function continueWriting() {
         </text>
         <view class="submit-footer">
           <text class="muted">
-            {{ t('仅在本机保存，请使用演示内容', 'Saved locally. Use fictional demo content.') }}
+            {{
+              isHttpMode
+                ? t(
+                    '保存到当前账号；请提交有权使用的内容',
+                    'Saved to your account; use content you are authorised to submit',
+                  )
+                : t('仅在本机保存，请使用演示内容', 'Saved locally. Use fictional demo content.')
+            }}
           </text>
           <view class="submit-footer-actions">
             <wd-button variant="plain" :disabled="storageUnavailable" @click="preview(false)">
@@ -841,7 +993,9 @@ function continueWriting() {
             <text class="submit-helper">
               {{
                 t(
-                  '提交仅保存在本机，不产生正式征集、签章或版权授权。',
+                  isHttpMode
+                    ? '提交后作品与附件由平台保存。本次确认不构成电子签章、版权转让或自动发布。'
+                    : '提交仅保存在本机，不产生正式征集、签章或版权授权。',
                   'Submission is local only and does not create an official entry, signature or copyright licence.',
                 )
               }}
@@ -856,7 +1010,9 @@ function continueWriting() {
             {{
               form.editingWorkId
                 ? t('确认修改重投', 'Confirm revision')
-                : t('确认提交演示作品', 'Confirm demo submission')
+                : isHttpMode
+                  ? t('确认提交作品', 'Confirm submission')
+                  : t('确认提交演示作品', 'Confirm demo submission')
             }}
           </wd-button>
         </view>
@@ -873,14 +1029,33 @@ function continueWriting() {
       <view class="submit-modal">
         <view class="submit-modal-heading">
           <text class="section-title">
-            {{ t('演示投稿须知与版权确认', 'Sample submission and copyright notice') }}
+            {{
+              isHttpMode
+                ? t('试点投稿须知与版权确认', 'Pilot submission notice')
+                : t('演示投稿须知与版权确认', 'Sample submission and copyright notice')
+            }}
           </text>
           <text class="submit-helper">
-            {{ t('原型条款样例 · 版本 DEMO-2026-01', 'Prototype terms sample · DEMO-2026-01') }}
+            {{
+              isHttpMode
+                ? t('试点声明 · 非电子签章', 'Pilot acknowledgement · Not an electronic signature')
+                : t('原型条款样例 · 版本 DEMO-2026-01', 'Prototype terms sample · DEMO-2026-01')
+            }}
           </text>
         </view>
         <scroll-view scroll-y class="submit-agreement-scroll">
-          <view class="submit-agreement-article">
+          <view v-if="isHttpMode" class="submit-agreement-article">
+            <text class="submit-agreement-copy">
+              投稿文字、作者署名、地区及附件会发送至当前平台并关联您的账号。请勿提交不必要的证件号码等敏感信息。
+            </text>
+            <text class="submit-agreement-copy">
+              请确认您有权提交作品及附件，并允许平台为征集和评审处理这些资料。勾选记录不构成正式电子签名、版权转让、独家授权或出版许可。
+            </text>
+            <text class="submit-agreement-copy">
+              退回后可沿用同一编号提交新版本；历史稿件和评审意见由服务端保留。平台的公开发布、正式荣誉与签署服务须按后续业务规则实施。
+            </text>
+          </view>
+          <view v-else class="submit-agreement-article">
             <text class="submit-panel-title submit-agreement-copy">
               {{ t('一、体验范围', '1. Scope of this demonstration') }}
             </text>
@@ -970,8 +1145,11 @@ function continueWriting() {
         </view>
         <scroll-view scroll-y class="submit-file-preview-scroll">
           <image
-            v-if="previewAttachment.type === 'image' && attachmentPreviewPath(previewAttachment.id)"
-            :src="attachmentPreviewPath(previewAttachment.id)"
+            v-if="
+              previewAttachment.type === 'image' &&
+              (previewAttachment.url || attachmentPreviewPath(previewAttachment.id))
+            "
+            :src="previewAttachment.url || attachmentPreviewPath(previewAttachment.id)"
             mode="widthFix"
             class="submit-preview-image"
             @error="markPreviewUnavailable(previewAttachment.id)"
@@ -980,14 +1158,23 @@ function continueWriting() {
             <wd-icon :name="fileIcon(previewAttachment)" />
             <text>{{ fileLabel(previewAttachment) }}</text>
           </view>
+          <wd-button
+            v-if="isHttpMode && previewAttachment.url && previewAttachment.type !== 'image'"
+            size="small"
+            @click="openCloudDocument"
+          >
+            打开已上传文档
+          </wd-button>
           <view class="submit-file-preview-copy">
             <text class="submit-file-name">{{ previewAttachment.name }}</text>
             <text>{{ t('文件类型：', 'Type: ') }}{{ fileLabel(previewAttachment) }}</text>
             <text>{{ t('文件大小：', 'Size: ') }}{{ attachmentSize(previewAttachment.size) }}</text>
             <text class="submit-helper">
               {{
-                attachmentPreviewPath(previewAttachment.id)
-                  ? t('已在本机选择，未上传云端。', 'Selected locally; not uploaded.')
+                previewAttachment.url || attachmentPreviewPath(previewAttachment.id)
+                  ? isHttpMode
+                    ? t('已上传到私有存储。', 'Uploaded to private storage.')
+                    : t('已在本机选择，未上传云端。', 'Selected locally; not uploaded.')
                   : t(
                       '临时预览不可用，请移除或重新选择文件。',
                       'The temporary preview is unavailable. Remove or select the file again.',

@@ -1,3 +1,6 @@
+import type { RegionId } from './types'
+import { reactive } from 'vue'
+import { isHttpMode } from '../config/dataMode'
 /** Original prototype content. These entries are not official publications or actual events. */
 export type BilingualText = { zh: string; en: string }
 const b = (zh: string, en: string): BilingualText => ({ zh, en })
@@ -6,6 +9,7 @@ export const newsCategories = [
   { id: 'all', label: b('全部动态', 'All updates') },
   { id: 'notice', label: b('平台公告', 'Notices') },
   { id: 'policy', label: b('政策学习', 'Policy learning') },
+  { id: 'industry', label: b('行业动态', 'Industry updates') },
   { id: 'activity', label: b('活动报道', 'Activities') },
   { id: 'role-model', label: b('家庭榜样', 'Family stories') },
 ] as const
@@ -49,6 +53,9 @@ export const familyTopics = [
 ] as const
 export type FamilyTopic = (typeof familyTopics)[number]['id']
 export interface NewsArticle {
+  language?: 'zh' | 'en'
+  region?: RegionId
+  sample?: boolean
   id: string
   category: Exclude<(typeof newsCategories)[number]['id'], 'all'>
   topic: FamilyTopic
@@ -59,7 +66,7 @@ export interface NewsArticle {
   relatedScreen?: 'submit' | 'classroom' | 'learning' | 'library'
   relatedLabel?: BilingualText
 }
-export const newsArticles: NewsArticle[] = [
+const demoNewsArticles: NewsArticle[] = [
   {
     id: 'notice-autumn',
     category: 'notice',
@@ -370,7 +377,7 @@ export interface Course {
     explanation: BilingualText
   }
 }
-export const courses: Course[] = [
+const demoCourses: Course[] = [
   {
     id: 'integrity-home',
     title: b('清风入家 · 清廉从日常开始', 'Integrity begins at home'),
@@ -577,7 +584,29 @@ export const courses: Course[] = [
   },
 ]
 
-export const venues = [
+export interface Venue {
+  id: string
+  region: RegionId
+  language?: 'zh' | 'en'
+  sample?: boolean
+  category?: 'hall' | 'practice' | 'integrity'
+  activityId?: string
+  mark: string
+  title: BilingualText
+  city: BilingualText
+  address: BilingualText
+  hours: BilingualText
+  description: BilingualText
+  highlights: BilingualText[]
+  stops: BilingualText[]
+  contact?: string
+  visitorNotice?: BilingualText
+  latitude?: number
+  longitude?: number
+  x: number
+  y: number
+}
+const demoVenues: Venue[] = [
   {
     id: 'beijing-reading',
     region: 'beijing',
@@ -644,7 +673,8 @@ export const venues = [
     x: 31,
     y: 68,
   },
-] as const
+]
+export const venues: Venue[] = reactive(isHttpMode ? [] : demoVenues)
 
 export const activityTranslations: Record<
   string,
@@ -672,3 +702,7 @@ export const activityTranslations: Record<
       'Sample activity only. Discuss a family story, draft a shared commitment and write it on a paper bamboo card. Finish by sharing your work. This demonstration does not make a real reservation.',
   },
 }
+
+export const newsArticles: NewsArticle[] = reactive(isHttpMode ? [] : demoNewsArticles)
+
+export const courses: Course[] = reactive(isHttpMode ? [] : demoCourses)

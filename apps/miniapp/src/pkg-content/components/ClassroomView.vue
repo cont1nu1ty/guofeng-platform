@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isHttpMode } from '../../config/dataMode'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
 import CertificateExport from '../../components/CertificateExport.vue'
@@ -45,30 +46,32 @@ watch(
     showCertificate.value = false
   },
 )
-function markLesson() {
+async function markLesson() {
   if (!course.value || !lesson.value) return
-  if (!completeLesson(course.value.id, lesson.value.id)) {
+  if (!(await completeLesson(course.value.id, lesson.value.id))) {
     notify(
       t(
-        '本机保存失败，请检查存储后重试。',
+        isHttpMode ? '服务端未确认保存，请查看错误后重试。' : '本机保存失败，请检查存储后重试。',
         'Could not save locally. Check device storage and try again.',
       ),
     )
     return
   }
-  notify(t('本节演示进度已保存', 'Sample lesson progress saved'))
+  notify(
+    t(isHttpMode ? '本节学习进度已保存' : '本节演示进度已保存', 'Sample lesson progress saved'),
+  )
   if (lessonIndex.value < course.value.lessons.length - 1) lessonIndex.value++
 }
-function answerQuiz() {
+async function answerQuiz() {
   if (!course.value || !canQuiz.value || selectedAnswer.value < 0) return
   if (selectedAnswer.value !== course.value.quiz.answer) {
     quizFeedback.value = 'incorrect'
     return
   }
-  if (!completeQuiz(course.value.id, selectedAnswer.value)) {
+  if (!(await completeQuiz(course.value.id, selectedAnswer.value))) {
     notify(
       t(
-        '本机保存失败，请检查存储后重试。',
+        isHttpMode ? '服务端未确认保存，请查看错误后重试。' : '本机保存失败，请检查存储后重试。',
         'Could not save locally. Check device storage and try again.',
       ),
     )
@@ -205,7 +208,7 @@ function selectAnswer(index: number) {
           </view>
         </view>
       </view>
-      <view class="content-quiz">
+      <view v-if="course.quiz.options.length" class="content-quiz">
         <view class="content-section-line">
           <text class="section-title">
             {{ t('学以致用 · 情景测验', 'Put learning into practice') }}
@@ -260,6 +263,13 @@ function selectAnswer(index: number) {
             }}
           </wd-button>
         </view>
+      </view>
+      <view v-if="!course.quiz.options.length" class="scope-note">
+        {{
+          progress.complete
+            ? '本课程章节学习已完成，记录已保存。'
+            : '本课程暂未发布测验，可逐节完成学习。'
+        }}
       </view>
       <view v-if="progress.complete && showCertificate" class="content-certificate">
         <text class="content-certificate-brand">{{ t('家风中华行', 'Family Heritage') }}</text>

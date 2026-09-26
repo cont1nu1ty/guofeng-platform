@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { isHttpMode } from '../../config/dataMode'
+import { remoteUser } from '../../services/api'
 import { computed } from 'vue'
 import { t } from '../../composables/useLocale'
 import { newsArticles, newsCategories } from '../../domain/contentCatalog'
 import {
   newsPreferences,
   newsPreferenceError,
+  newsPreferenceBusy,
   toggleNewsCategory,
   updateNewsPreferences,
 } from '../composables/useNewsPreferences'
@@ -32,12 +35,15 @@ const cadences = [
         )
       }}
     </view>
+    <text v-if="isHttpMode && !remoteUser" class="scope-note">
+      {{ t('登录后可保存订阅偏好。', 'Sign in to save subscriptions.') }}
+    </text>
     <view class="subscription-categories">
       <button
         v-for="item in newsCategories.filter((c) => c.id !== 'all')"
         :key="item.id"
         :class="['choice-card', { active: newsPreferences.categories.includes(item.id) }]"
-        :disabled="newsPreferenceError"
+        :disabled="newsPreferenceError || newsPreferenceBusy || (isHttpMode && !remoteUser)"
         @click="toggleNewsCategory(item.id)"
       >
         <text>{{ t(item.label.zh, item.label.en) }}</text>
@@ -55,16 +61,16 @@ const cadences = [
         <text>{{ t('接收订阅资讯提醒', 'Receive updates for subscriptions') }}</text>
         <wd-switch
           :model-value="newsPreferences.updates"
-          :disabled="newsPreferenceError"
+          :disabled="newsPreferenceError || newsPreferenceBusy || (isHttpMode && !remoteUser)"
           @update:model-value="updateNewsPreferences({ updates: $event })"
           active-color="#C41A1A"
         />
       </view>
-      <view class="subscription-row">
+      <view v-if="!isHttpMode" class="subscription-row">
         <text>{{ t('夜间免打扰（22:00–08:00）', 'Quiet hours (22:00–08:00)') }}</text>
         <wd-switch
           :model-value="newsPreferences.quietHours"
-          :disabled="newsPreferenceError"
+          :disabled="newsPreferenceError || newsPreferenceBusy || (isHttpMode && !remoteUser)"
           @update:model-value="updateNewsPreferences({ quietHours: $event })"
           active-color="#C41A1A"
         />
@@ -75,25 +81,43 @@ const cadences = [
           v-for="item in cadences"
           :key="item.id"
           :class="['choice-card', { active: newsPreferences.digest === item.id }]"
-          :disabled="newsPreferenceError || !newsPreferences.updates"
+          :disabled="
+            newsPreferenceError ||
+            newsPreferenceBusy ||
+            !newsPreferences.updates ||
+            (isHttpMode && item.id !== 'instant')
+          "
           @click="updateNewsPreferences({ digest: item.id })"
         >
-          {{ t(item.zh, item.en) }}
+          {{ t(item.zh, item.en)
+          }}{{ isHttpMode && item.id !== 'instant' ? t('（未启用）', ' (unavailable)') : '' }}
         </button>
       </view>
       <text class="scope-note">
         {{
-          t(
-            '设置仅保存在本机，用于演示通知偏好；不会发送微信消息或系统通知。',
-            'Preferences are saved on this device for the demo. No WeChat or system notifications are sent.',
-          )
+          isHttpMode
+            ? t(
+                '偏好保存在当前账号。启用即时提醒后，新发布的匹配资讯会生成站内消息；每日/每周汇总未启用，不发送微信消息。',
+                'Preferences are saved to your account. Matching newly published updates create in-app messages when instant updates are enabled. Daily/weekly digests and WeChat delivery are unavailable.',
+              )
+            : t(
+                '设置仅保存在本机，用于演示通知偏好；不会发送微信消息或系统通知。',
+                'Preferences are saved on this device for the demo. No WeChat or system notifications are sent.',
+              )
         }}
       </text>
     </view>
     <view class="subscription-results">
       <text class="section-title">{{ t('订阅内容预览', 'Preview your reading feed') }}</text>
       <view v-if="!selectedArticles.length" class="empty-state">
-        {{ t('还没有订阅，选择上方分类开始。', 'Choose a category above to get started.') }}
+        {{
+          newsPreferences.categories.length
+            ? t(
+                '该订阅暂无当前语言已发布内容。',
+                'No published content matches your subscriptions in this language.',
+              )
+            : t('还没有订阅，选择上方分类开始。', 'Choose a category above to get started.')
+        }}
       </view>
       <button
         v-for="item in selectedArticles"

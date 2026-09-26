@@ -1,8 +1,10 @@
 <script lang="ts">
+import { initializeRemote } from './services/api'
 import { loadFonts } from './composables/loadFonts'
 import { fontStatus } from './composables/useFontStatus'
 export default {
   onLaunch() {
+    void initializeRemote()
     loadFonts().then((result) => {
       fontStatus.value = result
     })

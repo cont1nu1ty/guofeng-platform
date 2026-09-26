@@ -1,3 +1,5 @@
+import { isHttpMode } from '../config/dataMode'
+import { command, remoteWorkspace, remoteError } from '../services/api'
 import { computed, ref } from 'vue'
 import { courses, venues } from '../domain/contentCatalog'
 
@@ -40,6 +42,7 @@ function restore(): LearningState {
       }
     }
     for (const venue of venues) {
+      if (!venue.activityId) continue
       const value = parsed.checkIns?.[venue.activityId]
       if (typeof value === 'string' && Number.isFinite(Date.parse(value)))
         next.checkIns[venue.activityId] = value
@@ -50,7 +53,7 @@ function restore(): LearningState {
     return emptyState()
   }
 }
-const state = ref<LearningState>(restore())
+const state = ref<LearningState>(isHttpMode ? emptyState() : restore())
 function save(next: LearningState) {
   if (learningStorageError.value) return false
   try {
@@ -64,32 +67,43 @@ function save(next: LearningState) {
 }
 export function getCourseProgress(id: string) {
   const course = courses.find((item) => item.id === id)
-  const record = state.value.courses[id] ?? { lessons: [], quizPassed: false }
-  const total = (course?.lessons.length ?? 0) + 1
+  const record = (isHttpMode ? remoteWorkspace.learning.courses : state.value.courses)[id] ?? {
+    lessons: [],
+    quizPassed: false,
+  }
+  const requiresQuiz = Boolean(course?.quiz.options.length)
+  const total = Math.max(1, (course?.lessons.length ?? 0) + Number(requiresQuiz))
+  const allLessons = Boolean(
+    course?.lessons.length && record.lessons.length === course.lessons.length,
+  )
   return {
     ...record,
-    percent: Math.round(((record.lessons.length + Number(record.quizPassed)) / total) * 100),
-    complete: Boolean(
-      course && record.quizPassed && record.lessons.length === course.lessons.length,
+    percent: Math.round(
+      ((record.lessons.length + Number(requiresQuiz && record.quizPassed)) / total) * 100,
     ),
+    complete: Boolean(allLessons && (!requiresQuiz || record.quizPassed)),
   }
 }
-export function completeLesson(courseId: string, lessonId: string) {
+export async function completeLesson(courseId: string, lessonId: string) {
+  if (isHttpMode) return remoteChange('course.progress', courseId, { lessonId })
   const course = courses.find((item) => item.id === courseId)
   if (!course?.lessons.some((item) => item.id === lessonId)) return false
-  const record = state.value.courses[courseId] ?? { lessons: [], quizPassed: false }
+  const record = (isHttpMode ? remoteWorkspace.learning.courses : state.value.courses)[
+    courseId
+  ] ?? { lessons: [], quizPassed: false }
   if (record.lessons.includes(lessonId)) return true
   return save({
     ...state.value,
     courses: {
-      ...state.value.courses,
+      ...(isHttpMode ? remoteWorkspace.learning.courses : state.value.courses),
       [courseId]: { ...record, lessons: [...record.lessons, lessonId] },
     },
   })
 }
-export function completeQuiz(courseId: string, answer: number) {
+export async function completeQuiz(courseId: string, answer: number) {
+  if (isHttpMode) return remoteChange('course.progress', courseId, { answer })
   const course = courses.find((item) => item.id === courseId)
-  const record = state.value.courses[courseId]
+  const record = (isHttpMode ? remoteWorkspace.learning.courses : state.value.courses)[courseId]
   if (
     !course ||
     !record ||
@@ -100,7 +114,7 @@ export function completeQuiz(courseId: string, answer: number) {
   return save({
     ...state.value,
     courses: {
-      ...state.value.courses,
+      ...(isHttpMode ? remoteWorkspace.learning.courses : state.value.courses),
       [courseId]: {
         ...record,
         quizPassed: true,
@@ -110,34 +124,54 @@ export function completeQuiz(courseId: string, answer: number) {
   })
 }
 export function isCheckedIn(id: string) {
-  return Boolean(state.value.checkIns[id])
+  return Boolean((isHttpMode ? remoteWorkspace.learning.checkIns : state.value.checkIns)[id])
 }
-export function checkInActivity(id: string) {
+export async function checkInActivity(id: string) {
+  if (isHttpMode) return remoteChange('activity.checkIn', id)
   if (!venues.some((item) => item.activityId === id)) return false
   if (isCheckedIn(id)) return true
   return save({
     ...state.value,
-    checkIns: { ...state.value.checkIns, [id]: new Date().toISOString() },
+    checkIns: {
+      ...(isHttpMode ? remoteWorkspace.learning.checkIns : state.value.checkIns),
+      [id]: new Date().toISOString(),
+    },
   })
 }
 export function clearActivityCheckIn(id: string) {
-  const next = { ...state.value.checkIns }
+  if (isHttpMode) return true
+  const next = { ...(isHttpMode ? remoteWorkspace.learning.checkIns : state.value.checkIns) }
   delete next[id]
   return save({ ...state.value, checkIns: next })
 }
 export const learningRecords = computed(() =>
   courses
-    .filter((course) => state.value.courses[course.id])
+    .filter(
+      (course) => (isHttpMode ? remoteWorkspace.learning.courses : state.value.courses)[course.id],
+    )
     .map((course) => ({ course, ...getCourseProgress(course.id) })),
 )
 export const learningSummary = computed(() => ({
   started: learningRecords.value.length,
   completed: learningRecords.value.filter((record) => record.complete).length,
-  checkIns: Object.keys(state.value.checkIns).length,
+  checkIns: Object.keys(isHttpMode ? remoteWorkspace.learning.checkIns : state.value.checkIns)
+    .length,
 }))
 export const checkedInActivities = computed(() =>
-  Object.entries(state.value.checkIns).map(([activityId, checkedInAt]) => ({
-    activityId,
-    checkedInAt,
-  })),
+  Object.entries(isHttpMode ? remoteWorkspace.learning.checkIns : state.value.checkIns).map(
+    ([activityId, checkedInAt]) => ({
+      activityId,
+      checkedInAt,
+    }),
+  ),
 )
+
+async function remoteChange(name: string, id: string, data?: unknown) {
+  try {
+    await command(name, id, data)
+    return true
+  } catch (error) {
+    remoteError.value = error instanceof Error ? error.message : '记录未保存'
+    return false
+  }
+}
