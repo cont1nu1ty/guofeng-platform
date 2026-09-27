@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: 家风中华行本机真实业务接口
-  version: 1.1.0-local
+  version: 1.2.0-local
   description: 已实现的HTTP契约。采用若依Sa-Token会话，家风模块返回直接DTO；原生若依系统接口保留但不作为本契约。单库服务端地区/归属/任务授权。开发账号仅开发配置启用；微信、模型推理、支付、电子签章与全国容量未交付。数据库保存业务ID、S3对象键和版本；公开发布、处理状态、最终结果独立。
 servers:
 - url: http://127.0.0.1:18080/api/v1
@@ -236,7 +236,7 @@ paths:
                   format: binary
               required:
               - file
-      description: 默认每文件1字节至10MiB，PNG/JPEG/PDF/DOC/DOCX；purpose=media接受MP4/MP3/WAV≤50MiB及图片≤10MiB。校验扩展名和文件头，DOCX验证容器结构。只接受已登录账号；失败不产生可提交的fileId。不属于病毒扫描、媒体解码兼容或文档内容安全鉴定。小程序通过uni.uploadFile。
+      description: 默认每文件1字节至10MiB，PNG/JPEG/PDF/DOC/DOCX；purpose=media接受MP4/MP3/WAV≤50MiB及图片≤10MiB。校验扩展名和文件头，DOCX验证容器结构。只接受已登录账号；失败不产生可提交的fileId。不属于病毒扫描、媒体解码兼容或文档内容安全鉴定。小程序通过uni.uploadFile。 purpose=recitation仅会员，最大10MiB/180秒，接受MP3/WAV/M4A/AAC/OGG/WebM，实际解码验证并归一化MP3后存储；忙碌或处理失败不产生有效fileId。
       parameters:
       - name: purpose
         in: query
@@ -245,7 +245,8 @@ paths:
           enum:
           - manuscript
           - media
-        description: 省略或manuscript：原图/PDF/Word限制10MiB；media：MP4/MP3/WAV≤50MiB，图片≤10MiB。后端校验实际文件头；不能把媒体绑定为稿件附件。
+          - recitation
+        description: 省略或manuscript：原图/PDF/Word限制10MiB；media：MP4/MP3/WAV≤50MiB，图片≤10MiB。后端校验实际文件头；不能把媒体绑定为稿件附件。 recitation：私有诵读纯音频，10MiB/180秒，输出MP3。
   /files/{id}/download:
     get:
       operationId: downloadFile
@@ -444,6 +445,102 @@ paths:
         default:
           $ref: '#/components/responses/Error'
       description: 只有当前有效已发布轮播或媒体绑定的资产可读取；原稿附件、未审核会员视频、草稿和下架目录不自动公开。已经取得的签名URL在最长五分钟内仍有效。
+  /search:
+    get:
+      operationId: searchPublicContent
+      summary: 检索九类已发布公开内容，独立于用户工作区
+      description: 标题、摘要和正文全文检索；私人记录、原附件和评审材料排除。分类counts遵循关键词/地区/语言，但不受kind限制。地区匹配当前地区与all共享内容。索引同步期间503 SEARCH_UPDATING，故障503 SEARCH_UNAVAILABLE；旧游标409 SEARCH_CHANGED后从首页重试。无Mock回退。
+      security: []
+      parameters:
+      - name: q
+        in: query
+        schema:
+          type: string
+          maxLength: 200
+          default: ''
+      - name: kind
+        in: query
+        schema:
+          type: string
+          enum:
+          - all
+          - work
+          - news
+          - classic
+          - activity
+          - course
+          - video
+          - hall
+          - product
+          - venue
+          default: all
+      - name: region
+        in: query
+        schema:
+          type: string
+          default: all
+      - name: language
+        in: query
+        schema:
+          type: string
+          enum:
+          - zh
+          - en
+          default: zh
+      - name: cursor
+        in: query
+        schema: &id001
+          type: string
+      - name: pageSize
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 50
+          default: 12
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/search/status:
+    get:
+      operationId: searchStatus
+      summary: 区域/全国运营查看搜索状态；不含任何个人内容
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchStatus'
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/search/rebuild:
+    post:
+      operationId: rebuildSearch
+      summary: 仅全国管理员请求从MySQL重新生成公开索引
+      description: 原始业务数据不变；异步构建新索引，追平后原子切换。
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accepted:
+                    type: boolean
+                  status:
+                    type: string
+                    enum:
+                    - queued
+        default:
+          $ref: '#/components/responses/Error'
 components:
   securitySchemes:
     bearerAuth:
@@ -597,6 +694,16 @@ components:
           - pdf
         mimeType:
           type: string
+        purpose:
+          type: string
+          enum:
+          - manuscript
+          - media
+          - recitation
+        duration:
+          type: number
+          description: 录音归一化后的秒数
+        originalName: *id001
       required:
       - fileId
       - id
@@ -977,6 +1084,16 @@ components:
             $ref: '#/components/schemas/Media'
         newsPreferences:
           $ref: '#/components/schemas/NewsPreferences'
+        recitations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recitation'
+          description: 仅当前本人记录；游客为空，后台工作区不返回
+        familyPromises:
+          type: array
+          items:
+            $ref: '#/components/schemas/FamilyPromise'
+          description: 仅当前本人记录；游客为空，后台工作区不返回
       required:
       - classics
       - activities
@@ -1118,6 +1235,8 @@ components:
             $ref: '#/components/schemas/SupportTicket'
         homepageConfig:
           $ref: '#/components/schemas/HomepageConfig'
+        privateRecordStats:
+          $ref: '#/components/schemas/PrivateRecordStats'
       required:
       - submissions
       - experts
@@ -2371,6 +2490,10 @@ components:
       - $ref: '#/components/schemas/MemberMediaResubmitCommand'
       - $ref: '#/components/schemas/MemberNewsPreferencesCommand'
       - $ref: '#/components/schemas/MemberSupportCreateCommand'
+      - $ref: '#/components/schemas/MemberRecitationCreateCommand'
+      - $ref: '#/components/schemas/MemberRecitationRemoveCommand'
+      - $ref: '#/components/schemas/MemberFamilyPromiseSaveCommand'
+      - $ref: '#/components/schemas/MemberFamilyPromiseRemoveCommand'
       discriminator:
         propertyName: command
         mapping:
@@ -2393,24 +2516,28 @@ components:
           media.resubmit: '#/components/schemas/MemberMediaResubmitCommand'
           news.preferences: '#/components/schemas/MemberNewsPreferencesCommand'
           support.create: '#/components/schemas/MemberSupportCreateCommand'
+          recitation.create: '#/components/schemas/MemberRecitationCreateCommand'
+          recitation.remove: '#/components/schemas/MemberRecitationRemoveCommand'
+          familyPromise.save: '#/components/schemas/MemberFamilyPromiseSaveCommand'
+          familyPromise.remove: '#/components/schemas/MemberFamilyPromiseRemoveCommand'
     BannerDraft:
       type: object
       properties:
-        title: &id001
+        title: &id002
           type: string
-        language: &id002
+        language: &id003
           type: string
           enum:
           - zh
           - en
-        region: &id003
+        region: &id004
           type: string
           description: 稳定地区ID；区域运营只能使用已授权地区
-        sortOrder: &id004
+        sortOrder: &id005
           type: integer
           minimum: 0
           maximum: 9999
-        sample: &id005
+        sample: &id006
           type: boolean
         category:
           type: string
@@ -2464,11 +2591,11 @@ components:
     MediaDraft:
       type: object
       properties:
-        title: *id001
-        language: *id002
-        region: *id003
-        sortOrder: *id004
-        sample: *id005
+        title: *id002
+        language: *id003
+        region: *id004
+        sortOrder: *id005
+        sample: *id006
         category:
           type: string
           enum:
@@ -2512,11 +2639,11 @@ components:
     VenueDraft:
       type: object
       properties:
-        title: *id001
-        language: *id002
-        region: *id003
-        sortOrder: *id004
-        sample: *id005
+        title: *id002
+        language: *id003
+        region: *id004
+        sortOrder: *id005
+        sample: *id006
         category:
           type: string
           enum:
@@ -2564,11 +2691,11 @@ components:
     HallPersonDraft:
       type: object
       properties:
-        title: *id001
-        language: *id002
-        region: *id003
-        sortOrder: *id004
-        sample: *id005
+        title: *id002
+        language: *id003
+        region: *id004
+        sortOrder: *id005
+        sample: *id006
         era:
           type: string
         theme:
@@ -3005,3 +3132,222 @@ components:
       required:
       - command
       - data
+    Recitation:
+      type: object
+      properties:
+        id: *id001
+        title: *id001
+        category:
+          type: string
+          enum:
+          - reading
+        fileId: *id001
+        fileName: *id001
+        size: &id007
+          type: integer
+        duration:
+          type: number
+          description: 服务端测得的秒数
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        lockVersion: *id007
+      required:
+      - id
+      - title
+      - fileId
+      - lockVersion
+    FamilyPromise:
+      type: object
+      properties:
+        id: *id001
+        personId: *id001
+        personName: *id001
+        personLanguage:
+          type: string
+          enum:
+          - zh
+          - en
+        text:
+          type: string
+          minLength: 4
+          maxLength: 180
+        targetAvailable: &id008
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        lockVersion: *id007
+      required:
+      - id
+      - personId
+      - text
+      - lockVersion
+    PrivateRecordStats:
+      type: object
+      properties:
+        recitations: *id007
+        familyPromises: *id007
+        byRegion:
+          type: array
+          items:
+            type: object
+            properties:
+              regionId: *id001
+              recitations: *id007
+              familyPromises: *id007
+    MemberRecitationCreateCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - recitation.create
+        data:
+          type: object
+          properties:
+            title:
+              type: string
+              minLength: 2
+              maxLength: 100
+            fileId: *id001
+            consent:
+              type: boolean
+              enum:
+              - true
+          required:
+          - title
+          - fileId
+          - consent
+      required:
+      - command
+      - data
+      description: 只绑定本人purpose=recitation且已成功处理的音频。重复Idempotency-Key不新增记录；原录音默认私有，主动media.submit后才可运营审核。
+    MemberRecitationRemoveCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - recitation.remove
+        entityId: *id001
+        version: *id007
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - entityId
+      - version
+      - data
+    MemberFamilyPromiseSaveCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - familyPromise.save
+        version: *id007
+        data:
+          type: object
+          properties:
+            personId: *id001
+            text:
+              type: string
+              minLength: 4
+              maxLength: 180
+          required:
+          - personId
+          - text
+      required:
+      - command
+      - version
+      - data
+      description: 首次保存version=0；已有约定携带lockVersion。本人+人物唯一。人物下架仍可修改历史约定；不能首次关联未发布人物。
+    MemberFamilyPromiseRemoveCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+          - familyPromise.remove
+        entityId: *id001
+        version: *id007
+        data:
+          type: object
+          properties: {}
+      required:
+      - command
+      - entityId
+      - version
+      - data
+    SearchText:
+      type: object
+      properties:
+        zh: *id001
+        en: *id001
+    SearchResult:
+      type: object
+      properties:
+        id: *id001
+        kind:
+          type: string
+          enum:
+          - work
+          - news
+          - classic
+          - activity
+          - course
+          - video
+          - hall
+          - product
+          - venue
+        contentId: *id001
+        screen: *id001
+        title:
+          $ref: '#/components/schemas/SearchText'
+        summary:
+          $ref: '#/components/schemas/SearchText'
+        language:
+          type: string
+          enum:
+          - zh
+          - en
+        region: *id001
+    SearchResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResult'
+        total: *id007
+        counts:
+          type: object
+          additionalProperties: *id007
+        nextCursor:
+          type: string
+          nullable: true
+        generation: *id007
+      required:
+      - items
+      - total
+      - counts
+      - generation
+    SearchStatus:
+      type: object
+      properties:
+        ready: *id008
+        available: *id008
+        generation: *id007
+        indexedGeneration: *id007
+        pending: *id007
+        status: *id001
+        lastError: *id001
+        rebuildRequested: *id008

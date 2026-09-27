@@ -25,10 +25,14 @@ public class JfFiles {
   private final OssClient oss;
   private final software.amazon.awssdk.services.s3.presigner.S3Presigner downloads;
   private final String bucket;
+  private final JfAudio audio;
+  private final org.springframework.transaction.support.TransactionTemplate transaction;
 
   public JfFiles(
       JfStore store,
       JfAuth auth,
+      JfAudio audio,
+      org.springframework.transaction.PlatformTransactionManager transactions,
       @Value("${JIAFENG_S3_ENDPOINT:http://storage:8333}") String endpoint,
       @Value("${JIAFENG_S3_PUBLIC_ENDPOINT:http://127.0.0.1:18333}") String publicEndpoint,
       @Value("${JIAFENG_S3_ACCESS_KEY:}") String key,
@@ -36,6 +40,8 @@ public class JfFiles {
       @Value("${JIAFENG_S3_BUCKET:jiafeng-private}") String bucket) {
     this.store = store;
     this.auth = auth;
+    this.audio = audio;
+    this.transaction = new org.springframework.transaction.support.TransactionTemplate(transactions);
     this.bucket = bucket;
     OssProperties p = new OssProperties();
     p.setEndpoint(endpoint);
@@ -72,13 +78,12 @@ public class JfFiles {
     downloads.close();
   }
 
-  @org.springframework.transaction.annotation.Transactional(
-      rollbackFor = Exception.class,
-      isolation = org.springframework.transaction.annotation.Isolation.READ_COMMITTED)
   public Map<String, Object> upload(MultipartFile file, String purpose) throws Exception {
     var actor = auth.require();
-    require(Set.of("manuscript", "media").contains(purpose), 422, "INVALID_PURPOSE", "上传用途无效");
+    require(Set.of("manuscript", "media", "recitation").contains(purpose), 422, "INVALID_PURPOSE", "上传用途无效");
     boolean media = purpose.equals("media");
+    boolean recitation = purpose.equals("recitation");
+    if (recitation) require(actor.realm.equals("member"), 403, "FORBIDDEN", "请使用会员账号上传诵读录音");
     require(
         file.getSize() > 0 && file.getSize() <= (media ? 50L : 10L) * 1024 * 1024,
         413,
@@ -93,22 +98,34 @@ public class JfFiles {
         "文件名无效");
     String ext = name.substring(name.lastIndexOf('.') + 1).toLowerCase(Locale.ROOT);
     require(
-        (media
-                ? Set.of("png", "jpg", "jpeg", "mp4", "mp3", "wav")
+        (recitation
+                ? Set.of("mp3", "wav", "m4a", "aac", "ogg", "webm")
+                : media ? Set.of("png", "jpg", "jpeg", "mp4", "mp3", "wav")
                 : Set.of("png", "jpg", "jpeg", "pdf", "doc", "docx"))
             .contains(ext),
         422,
         "INVALID_FILE_TYPE",
-        media ? "媒体上传仅接受MP4/MP3/WAV及PNG/JPEG封面" : "仅接受PNG/JPEG/PDF/Word文件");
+        recitation ? "诵读上传仅接受MP3/WAV/M4A/AAC/OGG/WebM音频" : media ? "媒体上传仅接受MP4/MP3/WAV及PNG/JPEG封面" : "仅接受PNG/JPEG/PDF/Word文件");
     if (Set.of("png", "jpg", "jpeg").contains(ext))
       require(file.getSize() <= 10L * 1024 * 1024, 413, "FILE_TOO_LARGE", "图片须在10MB以内");
     Path temp = Files.createTempFile("jiafeng-upload-", "." + ext);
-    String objectKey = actor.id + "/" + id("file_") + "." + ext;
+    Path inputTemp = temp;
+    String originalName = name;
+    String objectKey = actor.id + "/" + id("file_") + "." + (recitation ? "mp3" : ext);
+    long durationMs = 0;
     boolean uploaded = false;
     try {
       MessageDigest digest = MessageDigest.getInstance("SHA-256");
       try (InputStream in = new DigestInputStream(file.getInputStream(), digest)) {
         Files.copy(in, temp, StandardCopyOption.REPLACE_EXISTING);
+      }
+      String sourceSha256 = HexFormat.of().formatHex(digest.digest());
+      if (recitation) {
+        var converted = audio.convert(inputTemp);
+        temp = converted.path();
+        durationMs = converted.durationMs();
+        ext = "mp3";
+        name = originalName.substring(0, originalName.lastIndexOf('.') > 0 ? originalName.lastIndexOf('.') : originalName.length()) + ".mp3";
       }
       byte[] head;
       try (InputStream in = Files.newInputStream(temp)) {
@@ -168,35 +185,30 @@ public class JfFiles {
       uploaded = true;
       String id = id("file_");
       String region = actor.regions.stream().findFirst().orElse("all");
-      store
-          .db()
-          .update(
-              "INSERT INTO"
-                  + " jf_file(id,owner_id,region_id,object_key,name,mime_type,file_type,size,sha256)"
-                  + " VALUES(?,?,?,?,?,?,?,?,?)",
-              id,
-              actor.id,
-              region,
-              objectKey,
-              name,
-              mime,
-              type,
-              file.getSize(),
-              HexFormat.of().formatHex(digest.digest()));
-      store.audit(actor, "upload", id, region, m("size", file.getSize(), "type", type));
-      return m(
-          "id",
-          id,
-          "fileId",
-          id,
-          "name",
-          name,
-          "size",
-          file.getSize(),
-          "type",
-          type,
-          "mimeType",
-          mime);
+      long storedSize = Files.size(temp);
+      String storedSha = sourceSha256;
+      if (recitation) {
+        MessageDigest normalizedDigest = MessageDigest.getInstance("SHA-256");
+        try (InputStream in = new DigestInputStream(Files.newInputStream(temp), normalizedDigest)) {
+          in.transferTo(OutputStream.nullOutputStream());
+        }
+        storedSha = HexFormat.of().formatHex(normalizedDigest.digest());
+      }
+      String finalName = name, finalSha = storedSha;
+      long finalDuration = durationMs;
+      transaction.executeWithoutResult(status -> {
+        // Recheck the session after potentially slow conversion, then commit metadata atomically.
+        auth.byId(actor.id);
+        store.db().update("INSERT INTO jf_file(id,owner_id,region_id,object_key,name,mime_type,"
+                + "file_type,size,sha256,purpose,duration_ms,original_name,source_sha256)"
+                + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            id, actor.id, region, objectKey, finalName, mime, type, storedSize, finalSha, purpose,
+            recitation ? finalDuration : null, originalName, sourceSha256);
+        store.audit(actor, recitation ? "recitation.upload" : "upload", id, region, m("size", storedSize, "type", type));
+      });
+      return m("id", id, "fileId", id, "name", name, "size", storedSize, "type", type,
+          "mimeType", mime, "purpose", purpose, "duration", durationMs / 1000.0,
+          "originalName", originalName);
     } catch (Exception e) {
       if (uploaded) {
         try {
@@ -208,6 +220,7 @@ public class JfFiles {
       throw e;
     } finally {
       Files.deleteIfExists(temp);
+      if (!temp.equals(inputTemp)) Files.deleteIfExists(inputTemp);
     }
   }
 
@@ -227,6 +240,17 @@ public class JfFiles {
         row.get("file_type"),
         "mimeType",
         row.get("mime_type"));
+  }
+
+  public Map<String, Object> recitationMetadata(String id, long owner) {
+    var row = lookup(id);
+    require(number(row.get("owner_id")) == owner, 404, "NOT_FOUND", "录音不存在或不属于当前账号");
+    require(str(row, "purpose").equals("recitation") && str(row, "file_type").equals("audio")
+            && number(row.get("duration_ms")) > 0 && number(row.get("duration_ms")) <= 180150,
+        422, "INVALID_AUDIO", "请先上传有效诵读录音");
+    var result = metadata(id, owner);
+    result.put("duration", number(row.get("duration_ms")) / 1000.0);
+    return result;
   }
 
   public Map<String, Object> manuscriptMetadata(String id, long owner) {
@@ -255,6 +279,12 @@ public class JfFiles {
     var a = auth.require();
     var f = lookup(id);
     boolean allowed = number(f.get("owner_id")) == a.id;
+    if (allowed && str(f, "purpose").equals("recitation")) {
+      // Deleted private records revoke new download URLs unless a media submission still references it.
+      var records = store.all("recitation").stream()
+          .filter(e -> Objects.equals(e.owner(), a.id) && str(e.data(), "fileId").equals(id)).toList();
+      if (!records.isEmpty()) allowed = records.stream().anyMatch(e -> e.status().equals("active"));
+    }
     if (!allowed)
       allowed =
           store.all("media").stream()
