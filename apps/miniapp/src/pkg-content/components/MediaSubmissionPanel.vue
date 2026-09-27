@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import AudioRecitationPanel from './AudioRecitationPanel.vue'
-import { recitationRecords, localMediaPath } from '../../composables/useLocalMedia'
-import { computed, reactive, ref } from 'vue'
+import type { CloudRecitation } from '../../domain/cloudRecords'
+import { useRouteParams } from '../../composables/useNavigation'
+import { computed, reactive, ref, watch } from 'vue'
 import { command, remoteUser, remoteWorkspace, uploadRemoteFile } from '../../services/api'
 import { locale, t } from '../../composables/useLocale'
 import { notify } from '../../composables/useDemo'
@@ -96,27 +97,41 @@ async function upload(path: string, name: string, size: number) {
     busy.value = false
   }
 }
-async function useRecording(item: (typeof recitationRecords.value)[number]) {
-  const path = localMediaPath(item.id)
-  if (!path) {
-    message.value = t(
-      '本机文件已失效，请重新选择原文件。',
-      'The local file is unavailable. Choose the original file again.',
-    )
-    return
-  }
-  if (!/\.(mp3|wav)$/i.test(item.fileName)) {
-    message.value = t(
-      '该录音格式暂不支持上传。服务仅接收 MP3/WAV；浏览器产生的 WebM/M4A/OGG 不会自动转换，请另选符合格式的文件。',
-      'This recording format cannot be uploaded. Only MP3/WAV is supported; browser WebM/M4A/OGG recordings are not converted. Choose a supported file.',
-    )
-    return
-  }
+function useRecording(item: CloudRecitation) {
   reset()
   opened.value = true
   form.title = item.title
-  await upload(path, item.fileName, item.size)
+  form.sourceFileId = item.fileId
+  form.type = 'audio'
+  form.category = 'recitation'
+  form.duration = String(item.duration)
+  fileName.value = item.fileName
+  message.value = t(
+    '已选用云端录音，无需重复上传。补充简介并提交后才会交给运营审核。',
+    'Cloud recording selected without another upload. Complete the description and submit to request review.',
+  )
 }
+const params = useRouteParams()
+let selectedRecording = ''
+watch(
+  [() => params.value.recitation, () => remoteWorkspace.recitations],
+  () => {
+    const id = params.value.recitation
+    if (!id || selectedRecording === id) return
+    const item = remoteWorkspace.recitations.find((x) => x.id === id)
+    if (item) {
+      selectedRecording = id
+      useRecording(item)
+    }
+  },
+  { immediate: true },
+)
+watch(remoteUser, () => {
+  reset()
+  opened.value = false
+  selectedRecording = ''
+  busy.value = false
+})
 function choose() {
   if (!remoteUser.value) {
     notify(t('请先登录后投稿', 'Sign in before submitting'))
@@ -195,32 +210,28 @@ async function submit() {
     <text class="showcase-note">
       {{
         t(
-          '视频或朗诵音频上传后由运营审核，审核通过后才进入公开展播。支持 MP4 / MP3 / WAV，最大 50 MiB；不提供转码、直播或自动字幕。',
-          'Video and recitation uploads require editorial approval before public display. MP4 / MP3 / WAV up to 50 MiB. Transcoding, live streaming and automatic captions are unavailable.',
+          '视频或朗诵音频上传后由运营审核，审核通过后才进入公开展播。直接上传支持 MP4 / MP3 / WAV，最大 50 MiB；诵读工具支持其他音频格式转换，不提供视频转码、直播或自动字幕。',
+          'Video and recitation uploads require editorial approval before public display. Direct uploads accept MP4 / MP3 / WAV up to 50 MiB. Reading tools convert other audio formats. Video transcoding, live streaming and automatic captions are unavailable.',
         )
       }}
     </text>
     <wd-button size="small" variant="plain" @click="recordingTools = !recordingTools">
-      {{ t('本机录音与诵读记录', 'Local recording and recitations') }}
+      {{ t('云端录音与诵读记录', 'Saved recordings and recitations') }}
     </wd-button>
     <view v-if="recordingTools">
       <AudioRecitationPanel />
       <text class="scope-note">
         {{
           t(
-            '本机打卡不自动上传。录音完成后保存本机记录，再选下方“上传这条录音”。浏览器常生成 WebM/M4A，当前服务仅接收 MP3/WAV，不提供格式转换。',
-            'Local check-ins are not uploaded automatically. Save a local record, then choose Upload this recording. Browsers often produce WebM/M4A; the server accepts only MP3/WAV without conversion.',
+            '私人打卡不自动投稿。录音保存到云端后，可选择下方记录用于投稿；只有主动提交才交给运营审核。',
+            'Private recordings are not submitted automatically. Select a saved recording below, then submit explicitly for editorial review.',
           )
         }}
       </text>
-      <view v-for="item in recitationRecords" :key="item.id" class="media-own-item">
+      <view v-for="item in remoteWorkspace.recitations" :key="item.id" class="media-own-item">
         <text>{{ item.title }} · {{ item.fileName }}</text>
-        <wd-button
-          size="small"
-          :disabled="busy || !remoteUser || !localMediaPath(item.id)"
-          @click="useRecording(item)"
-        >
-          {{ t('上传这条录音', 'Upload this recording') }}
+        <wd-button size="small" :disabled="busy || !remoteUser" @click="useRecording(item)">
+          {{ t('选用这条云端录音', 'Use this saved recording') }}
         </wd-button>
       </view>
     </view>

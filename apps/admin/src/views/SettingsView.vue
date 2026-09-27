@@ -15,6 +15,7 @@ import {
   Connection,
 } from "@element-plus/icons-vue";
 import PageHeading from "../components/PageHeading.vue";
+import SearchStatus from "../components/SearchStatus.vue";
 import {
   platformConfig,
   notificationDrafts,
@@ -115,8 +116,9 @@ function preview(item: NotificationDraft) {
             ><el-icon><Document /></el-icon>操作日志</span
           ></template
         ></el-tab-pane
-      ></el-tabs
+      ><el-tab-pane v-if="isHttpMode" name="search" label="搜索服务" /></el-tabs
     >
+    <SearchStatus v-if="tab === 'search'" />
     <div v-if="tab === 'platform'" class="settings-grid">
       <div class="settings-main">
         <div class="settings-section">
@@ -309,7 +311,7 @@ function preview(item: NotificationDraft) {
         {{ modeText("服务端持久保存", "仅当前会话保留") }}
       </div></template
     >
-    <template v-else
+    <template v-else-if="tab === 'logs'"
       ><div class="log-heading">
         <h2 class="section-title">操作记录</h2>
         <p class="muted">

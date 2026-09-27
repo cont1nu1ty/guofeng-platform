@@ -40,6 +40,7 @@ import {
 } from '../domain/remoteCatalog'
 import type { NewsPreferences } from '../pkg-content/domain/newsPreferences'
 import type { Excerpt, AiArchive } from '../domain/personalArchive'
+import type { CloudRecitation, FamilyPromise } from '../domain/cloudRecords'
 
 export interface SessionUser {
   id: string
@@ -61,6 +62,8 @@ export interface RemoteReviewTask {
   comment?: string
 }
 export interface RemoteWorkspace {
+  recitations: CloudRecitation[]
+  familyPromises: FamilyPromise[]
   banners: HomeBanner[]
   mediaItems: MediaItem[]
   mediaSubmissions: MediaSubmission[]
@@ -94,6 +97,8 @@ export interface RemoteWorkspace {
   mediaLikes: string[]
 }
 export const emptyWorkspace = (): RemoteWorkspace => ({
+  recitations: [],
+  familyPromises: [],
   banners: [],
   mediaItems: [],
   mediaSubmissions: [],
@@ -132,6 +137,9 @@ export const remoteDraft = ref<SubmissionDraft | null>(null)
 let draftEtag = ''
 let sessionEpoch = 0
 let workspaceGeneration = 0
+export function currentSessionEpoch() {
+  return sessionEpoch
+}
 const tokenKey = 'jiafeng:http:token'
 const commandKeys = new Map<string, string>()
 function readToken() {
@@ -501,13 +509,16 @@ export async function submitRemote(draft: SubmissionDraft) {
 export async function uploadRemoteFile<T extends string = 'image' | 'pdf' | 'word'>(
   path: string,
   name: string,
-  purpose?: 'media',
+  purpose?: 'media' | 'recitation',
 ): Promise<{
   fileId: string
   name: string
   size: number
   type: T
   mimeType?: string
+  duration?: number
+  purpose?: string
+  originalName?: string
   url?: string
 }> {
   const epoch = sessionEpoch

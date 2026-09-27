@@ -5,6 +5,12 @@ import { locale, t } from '../../composables/useLocale'
 import { assetUrl } from '../composables/useAssetUrl'
 import { readInputValue } from '../../composables/readInputValue'
 import { audioStories } from '../domain/audioStories'
+import { isHttpMode } from '../../config/dataMode'
+import { currentSessionEpoch, remoteUser, uploadRemoteFile } from '../../services/api'
+import { saveRecitation } from '../../services/cloudRecords'
+import { mediaCatalog } from '../../domain/showcaseCatalog'
+import { region } from '../../composables/useDemo'
+import CloudRecitationRecords from '../../components/CloudRecitationRecords.vue'
 import { validateMediaFile, type LocalMediaFile } from '../../domain/localMedia'
 import {
   localMediaError,
@@ -15,7 +21,33 @@ import {
 } from '../../composables/useLocalMedia'
 const tab = ref('stories')
 const selected = ref(0)
-const story = computed(() => audioStories[selected.value]!)
+const stories = computed(() =>
+  isHttpMode
+    ? mediaCatalog
+        .filter(
+          (item) =>
+            item.type === 'audio' &&
+            item.category === 'recitation' &&
+            (region.value === 'all' || item.region === 'all' || item.region === region.value),
+        )
+        .map((item) => ({
+          id: item.id,
+          title: item.title,
+          text: {
+            zh: item.transcript.map((line) => line.zh).join('\n'),
+            en: item.transcript.map((line) => line.en).join('\n'),
+          },
+          source: item.source,
+        }))
+    : audioStories.map((item) => ({
+        ...item,
+        source: `/pkg-content/static/audio/${item.id}-${locale.value}.mp3`,
+      })),
+)
+const story = computed(() => stories.value[selected.value] || stories.value[0])
+const busy = ref(false)
+const showLegacy = ref(false)
+let uploadedFileId = ''
 const playerState = ref<'idle' | 'loading' | 'playing' | 'paused'>('idle')
 const time = ref(0)
 const duration = ref(0)
@@ -100,7 +132,7 @@ function play(path: string, key: string) {
   }
 }
 function playStory() {
-  play(assetUrl(`/pkg-content/static/audio/${story.value.id}-${locale.value}.mp3`), story.value.id)
+  if (story.value) play(assetUrl(story.value.source), story.value.id)
 }
 function acceptFile(next: LocalMediaFile) {
   const error = validateMediaFile(next, 'recitation')
@@ -120,6 +152,7 @@ function acceptFile(next: LocalMediaFile) {
     return
   }
   stopAudio()
+  uploadedFileId = ''
   file.value = next
   message.value = ''
   consent.value = false
@@ -294,36 +327,83 @@ function stopRecording() {
   // #endif
   recording.value = false
 }
-function save() {
+async function save() {
+  if (busy.value) return
+  if (isHttpMode && !remoteUser.value) {
+    message.value = t('请先在个人中心登录。', 'Sign in through My account first.')
+    return
+  }
   if (!file.value || title.value.trim().length < 2 || !consent.value) {
     message.value = t(
-      '请填写至少 2 字标题、选择音频，并确认本机演示约定。',
-      'Enter a title of at least 2 characters, select audio and confirm the local demo agreement.',
+      '请填写至少 2 字标题、选择音频，并确认保存约定。',
+      'Enter a title of at least 2 characters, select audio and confirm the saving agreement.',
     )
     return
   }
+  const epoch = currentSessionEpoch()
+  busy.value = true
   try {
-    saveLocalMedia(
-      {
-        kind: 'recitation',
-        title: title.value.trim(),
-        category: 'reading',
-        fileName: file.value.name,
-        size: file.value.size,
-        duration: file.value.duration ?? 0,
-      },
-      file.value.path,
-    )
+    if (isHttpMode) {
+      message.value = t('正在上传并处理音频，请稍候…', 'Uploading and processing audio…')
+      if (!uploadedFileId) {
+        const uploaded = await uploadRemoteFile(file.value.path, file.value.name, 'recitation')
+        uploadedFileId = uploaded.fileId
+      }
+      await saveRecitation(title.value, uploadedFileId)
+      if (epoch !== currentSessionEpoch()) return
+    } else
+      saveLocalMedia(
+        {
+          kind: 'recitation',
+          title: title.value.trim(),
+          category: 'reading',
+          fileName: file.value.name,
+          size: file.value.size,
+          duration: file.value.duration ?? 0,
+        },
+        file.value.path,
+      )
+    uploadedFileId = ''
     file.value = null
     title.value = ''
     consent.value = false
-    message.value = t(
-      '诵读打卡已保存到本机，仅保存文件信息；未上传作品。',
-      'Recitation check-in saved locally as file metadata. No work was uploaded.',
-    )
-  } catch {
-    message.value = t('本机保存失败，记录未新增。', 'Local save failed. No record was added.')
+    message.value = isHttpMode
+      ? t(
+          '诵读已保存到当前账号，仅本人可读。主动投稿后才进入后台审核。',
+          'Recording saved privately to your account. Submit it explicitly to request editorial review.',
+        )
+      : t(
+          '诵读打卡已保存到本机，仅保存文件信息；未上传作品。',
+          'Recitation check-in saved locally as file metadata. No work was uploaded.',
+        )
+  } catch (error) {
+    if (epoch === currentSessionEpoch())
+      message.value =
+        error instanceof Error
+          ? error.message
+          : t(
+              '保存失败，所选音频和文字已保留，请重试。',
+              'Save failed. Your audio and title are preserved. Please retry.',
+            )
+  } finally {
+    if (epoch === currentSessionEpoch()) busy.value = false
   }
+}
+function prepareLegacy(item: (typeof recitationRecords.value)[number]) {
+  const path = localMediaPath(item.id)
+  title.value = item.title
+  uploadedFileId = ''
+  file.value = path ? { name: item.fileName, size: item.size, path, duration: item.duration } : null
+  consent.value = false
+  message.value = path
+    ? t(
+        '已选取旧录音，核对账号并勾选约定后保存才会上传。',
+        'Old recording selected. Check your account and confirm before saving to upload it.',
+      )
+    : t(
+        '旧记录只有文件信息，请重新选择原音频。不会把空文件信息当作云端记录。',
+        'Only metadata remains. Reselect the original audio before saving a cloud record.',
+      )
 }
 function remove(id: string) {
   try {
@@ -340,7 +420,17 @@ function leave() {
   stopRecording()
   requesting.value = false
 }
-watch([selected, locale, tab], () => stopAudio())
+watch([selected, locale, tab, stories], () => stopAudio())
+watch(remoteUser, () => {
+  if (!isHttpMode) return
+  leave()
+  file.value = null
+  uploadedFileId = ''
+  title.value = ''
+  consent.value = false
+  busy.value = false
+  message.value = ''
+})
 onHide(leave)
 onBeforeUnmount(() => {
   leave()
@@ -371,7 +461,7 @@ onBeforeUnmount(() => {
     <view v-if="tab === 'stories'" class="audio-grid">
       <view class="audio-story-list">
         <button
-          v-for="(item, index) in audioStories"
+          v-for="(item, index) in stories"
           :key="item.id"
           :class="['audio-story', { selected: selected === index }]"
           @click="selected = index"
@@ -380,7 +470,7 @@ onBeforeUnmount(() => {
           <text>{{ item.title[locale] }}</text>
         </button>
       </view>
-      <view class="audio-sheet">
+      <view v-if="story" class="audio-sheet">
         <text class="audio-title">{{ story.title[locale] }}</text>
         <text class="audio-prose">{{ story.text[locale] }}</text>
         <view class="audio-actions">
@@ -400,34 +490,53 @@ onBeforeUnmount(() => {
         </view>
         <text class="audio-note">
           {{
-            t(
-              '原创示例故事 · 离线合成语音，非真人录音或史实录音。切换语言可播放对应音源。',
-              'Original sample stories with offline synthetic speech, not human or historical recordings. Each language has its own audio.',
-            )
+            isHttpMode
+              ? t(
+                  '音频故事与文字由后台按当前语言发布。',
+                  'Audio stories and transcripts are published by editors in the selected language.',
+                )
+              : t(
+                  '原创示例故事 · 离线合成语音，非真人录音或史实录音。切换语言可播放对应音源。',
+                  'Original sample stories with offline synthetic speech, not human or historical recordings. Each language has its own audio.',
+                )
           }}
         </text>
       </view>
+      <text v-if="!stories.length" class="audio-note">
+        {{
+          t(
+            '当前地区和语言暂无已发布的音频故事。',
+            'No audio stories are published for this region and language.',
+          )
+        }}
+      </text>
     </view>
     <view v-else class="audio-sheet">
       <text class="audio-title">{{ t('留下今天的诵读', 'Record today’s reading') }}</text>
       <text class="audio-note">
         {{
-          t(
-            '可读上方故事或自己的家书。文件不上传；刷新后保留打卡信息，试听需要重新选取文件。文件限 10MB，录音最长 3 分钟。',
-            'Read a story or your own letter. Files stay local. After refresh, check-in metadata remains; select the file again to listen. Files: up to 10MB. Recording: up to 3 minutes.',
-          )
+          isHttpMode
+            ? t(
+                '录音保存到当前账号，仅本人可读。可跨设备回放，每次保存独立计次。音频限 10MB / 3 分钟，服务器校验并转换为 MP3。',
+                'Recordings are private to your account and playable across devices. Each save is one check-in. Audio is limited to 10MB / 3 minutes and checked and converted to MP3 on the server.',
+              )
+            : t(
+                '可读上方故事或自己的家书。文件不上传；刷新后保留打卡信息，试听需要重新选取文件。文件限 10MB，录音最长 3 分钟。',
+                'Read a story or your own letter. Files stay local. After refresh, check-in metadata remains; select the file again to listen. Files: up to 10MB. Recording: up to 3 minutes.',
+              )
         }}
       </text>
       <text class="audio-label">{{ t('诵读标题', 'Reading title') }}</text>
       <input
         v-model="title"
+        :disabled="busy"
         @blur="title = readInputValue($event, title)"
         :maxlength="60"
         class="audio-input"
         :placeholder="t('例如：给家人的一封信', 'For example: A letter to my family')"
       />
       <view class="audio-actions">
-        <wd-button size="small" :disabled="requesting || recording" @click="startRecording">
+        <wd-button size="small" :disabled="busy || requesting || recording" @click="startRecording">
           {{
             requesting
               ? t('等待麦克风许可…', 'Waiting for microphone…')
@@ -440,7 +549,7 @@ onBeforeUnmount(() => {
         <wd-button
           size="small"
           variant="plain"
-          :disabled="recording || requesting"
+          :disabled="busy || recording || requesting"
           @click="chooseAudio"
         >
           {{ t('选取音频文件', 'Choose audio file') }}
@@ -460,55 +569,84 @@ onBeforeUnmount(() => {
         <label class="audio-agreement">
           <checkbox :checked="consent" color="#C41A1A" />
           {{
-            t(
-              '这是我有权使用的音频，仅保存本机演示记录。',
-              'I may use this audio and agree to save a local demo record only.',
-            )
+            isHttpMode
+              ? t(
+                  '这是我有权使用的音频，同意保存到当前账号的私人记录中。',
+                  'I may use this audio and agree to save it privately in my current account.',
+                )
+              : t(
+                  '这是我有权使用的音频，仅保存本机演示记录。',
+                  'I may use this audio and agree to save a local demo record only.',
+                )
           }}
         </label>
       </checkbox-group>
-      <wd-button size="small" :disabled="recording || requesting || !file" @click="save">
-        {{ t('保存诵读打卡', 'Save recitation check-in') }}
+      <wd-button
+        size="small"
+        :disabled="busy || recording || requesting || !file || (isHttpMode && !remoteUser)"
+        @click="save"
+      >
+        {{ busy ? t('上传处理中…', 'Uploading…') : t('保存诵读打卡', 'Save recitation check-in') }}
       </wd-button>
-      <text class="audio-title audio-record-heading">
-        {{ t('我的诵读记录', 'My recitation records') }} · {{ recitationRecords.length }}
-      </text>
-      <view v-for="item in recitationRecords" :key="item.id" class="audio-record">
-        <text class="audio-title">{{ item.title }}</text>
-        <text class="audio-note">
-          {{ item.fileName }} · {{ item.createdAt.slice(0, 10) }} ·
-          {{ Math.ceil(item.size / 1024) }} KB
+      <CloudRecitationRecords v-if="isHttpMode" />
+      <wd-button
+        v-if="isHttpMode && recitationRecords.length"
+        size="small"
+        variant="plain"
+        @click="showLegacy = !showLegacy"
+      >
+        {{ t('查看旧设备记录（未归入账号）', 'Old device records (not linked to your account)') }}
+      </wd-button>
+      <template v-if="!isHttpMode || showLegacy">
+        <text class="audio-title audio-record-heading">
+          {{ t('我的诵读记录', 'My recitation records') }} · {{ recitationRecords.length }}
         </text>
-        <text v-if="!localMediaPath(item.id)" class="audio-note">
+        <view v-for="item in recitationRecords" :key="item.id" class="audio-record">
+          <text class="audio-title">{{ item.title }}</text>
+          <text class="audio-note">
+            {{ item.fileName }} · {{ item.createdAt.slice(0, 10) }} ·
+            {{ Math.ceil(item.size / 1024) }} KB
+          </text>
+          <text v-if="!localMediaPath(item.id)" class="audio-note">
+            {{
+              t(
+                '文件需重新选择；打卡信息仍在本机。',
+                'Select the original file again to listen. Check-in metadata remains.',
+              )
+            }}
+          </text>
+          <view class="audio-actions">
+            <wd-button
+              v-if="isHttpMode"
+              size="small"
+              variant="plain"
+              :disabled="busy || !remoteUser"
+              @click="prepareLegacy(item)"
+            >
+              {{ t('选取后另存到当前账号', 'Select to save to current account') }}
+            </wd-button>
+            <wd-button
+              v-if="localMediaPath(item.id)"
+              size="small"
+              variant="plain"
+              @click="play(localMediaPath(item.id), item.id)"
+            >
+              {{ t('试听记录', 'Play recording') }}
+            </wd-button>
+            <wd-button size="small" variant="plain" @click="remove(item.id)">
+              {{ t('删除记录', 'Delete record') }}
+            </wd-button>
+          </view>
+        </view>
+        <text v-if="!recitationRecords.length" class="audio-note">
           {{
             t(
-              '文件需重新选择；打卡信息仍在本机。',
-              'Select the original file again to listen. Check-in metadata remains.',
+              '还没有诵读记录。选择音频并保存第一条打卡。',
+              'No recitations yet. Select audio and save your first check-in.',
             )
           }}
         </text>
-        <view class="audio-actions">
-          <wd-button
-            v-if="localMediaPath(item.id)"
-            size="small"
-            variant="plain"
-            @click="play(localMediaPath(item.id), item.id)"
-          >
-            {{ t('试听记录', 'Play recording') }}
-          </wd-button>
-          <wd-button size="small" variant="plain" @click="remove(item.id)">
-            {{ t('删除记录', 'Delete record') }}
-          </wd-button>
-        </view>
-      </view>
-      <text v-if="!recitationRecords.length" class="audio-note">
-        {{
-          t(
-            '还没有诵读记录。选择音频并保存第一条打卡。',
-            'No recitations yet. Select audio and save your first check-in.',
-          )
-        }}
-      </text>
+      </template>
     </view>
     <text v-if="playerState === 'loading'" class="audio-note">
       {{ t('正在加载真实音频…', 'Loading audio…') }}
