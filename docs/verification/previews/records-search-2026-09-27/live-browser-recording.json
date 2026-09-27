@@ -1,0 +1,84 @@
+{
+  "checkedAt": "2026-09-27T08:58:44.060Z",
+  "origin": "http://127.0.0.1:19082",
+  "checks": [
+    {
+      "label": "browser-webm-uploaded",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "record-persists-after-refresh",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "record-persists-after-login",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "second-context-real-MP3-playback",
+      "passed": true,
+      "events": [
+        {
+          "event": "loadedmetadata",
+          "duration": 3.24,
+          "currentTime": 0,
+          "error": null
+        },
+        {
+          "event": "playing",
+          "duration": 3.24,
+          "currentTime": 0,
+          "error": null
+        }
+      ]
+    },
+    {
+      "label": "second-context-playback",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "other-account-no-private-record",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "real-search",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "real-audio-story-catalog",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "real-search",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "real-audio-story-catalog",
+      "width": 390,
+      "passed": true
+    }
+  ],
+  "created": {
+    "fileId": "file_a93f3a666d5d4ba0ade36def41a7a6ce",
+    "duration": 3.24,
+    "originalFormat": "audio/webm",
+    "savedFilename": "recitation-1790499517813.mp3",
+    "recitationId": "recitation_9ba6dc9807e64a189bbe4cda1f63b514",
+    "title": "QA网页真实录音-1790499512852"
+  },
+  "pageErrors": [],
+  "limits": [
+    "A generated sine wave is injected through Chromium fake media capture; browser MediaRecorder, real upload, server conversion, MySQL and S3 are exercised.",
+    "No physical microphone, phone or WeChat hardware was used.",
+    "Creates one labelled private QA recording in the isolated test deployment; exact IDs are recorded for follow-up cleanup."
+  ],
+  "passed": true
+}

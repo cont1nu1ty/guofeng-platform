@@ -1,0 +1,182 @@
+{
+  "startedAt": "2026-09-27T08:54:37.719730+00:00",
+  "project": "jiafeng-demo-records-check",
+  "faultTests": true,
+  "checkedAt": "2026-09-27T08:55:26.270988+00:00",
+  "passed": true,
+  "checks": [
+    {
+      "check": "all nine published kinds are covered",
+      "passed": true
+    },
+    {
+      "check": "Chinese hits equal public catalog IDs",
+      "passed": true
+    },
+    {
+      "check": "stable cursor pagination has no duplicates",
+      "passed": true
+    },
+    {
+      "check": "facet all and total equal the public result size",
+      "passed": true
+    },
+    {
+      "check": "English edition excludes legacy Chinese-only records",
+      "passed": true
+    },
+    {
+      "check": "result DTO excludes source body and private metadata",
+      "passed": true
+    },
+    {
+      "check": "result language fields never fallback across editions",
+      "passed": true
+    },
+    {
+      "check": "region filtering narrows to own region plus shared records",
+      "passed": true
+    },
+    {
+      "check": "anonymous status administration denied",
+      "passed": true
+    },
+    {
+      "check": "regional operator can read search status",
+      "passed": true
+    },
+    {
+      "check": "regional operator cannot rebuild public index",
+      "passed": true
+    },
+    {
+      "check": "expert cannot rebuild public index",
+      "passed": true
+    },
+    {
+      "check": "member cannot rebuild public index",
+      "passed": true
+    },
+    {
+      "check": "expert cannot inspect search operations",
+      "passed": true
+    },
+    {
+      "check": "invalid query rejected: INVALID_QUERY",
+      "passed": true
+    },
+    {
+      "check": "invalid query rejected: INVALID_KIND",
+      "passed": true
+    },
+    {
+      "check": "invalid query rejected: INVALID_REGION",
+      "passed": true
+    },
+    {
+      "check": "invalid query rejected: INVALID_LANGUAGE",
+      "passed": true
+    },
+    {
+      "check": "invalid query rejected: INVALID_PAGE_SIZE",
+      "passed": true
+    },
+    {
+      "check": "invalid query rejected: INVALID_PAGE_SIZE",
+      "passed": true
+    },
+    {
+      "check": "drafts are absent from hits, facets and totals",
+      "passed": true
+    },
+    {
+      "check": "CJK analyzer finds Chinese words",
+      "passed": true
+    },
+    {
+      "check": "English analyzer matches stemmed family/families",
+      "passed": true
+    },
+    {
+      "check": "full text body can match independently of title",
+      "passed": true
+    },
+    {
+      "check": "keyword and region apply to facets",
+      "passed": true
+    },
+    {
+      "check": "publication changes invalidate old cursor",
+      "passed": true
+    },
+    {
+      "check": "withdrawal never leaks stale count or title during indexing",
+      "passed": true
+    },
+    {
+      "check": "withdrawn title absent after synchronization",
+      "passed": true
+    },
+    {
+      "check": "full rebuild begins asynchronously",
+      "passed": true
+    },
+    {
+      "check": "rebuild uses a new physical index and switches alias",
+      "passed": true
+    },
+    {
+      "check": "writes during rebuild survive snapshot and outbox replay",
+      "passed": true
+    },
+    {
+      "check": "repeated rebuild replaces index without duplicate documents",
+      "passed": true
+    },
+    {
+      "check": "engine outage returns stable unavailable error",
+      "passed": true
+    },
+    {
+      "check": "other public business remains available during engine outage",
+      "passed": true
+    },
+    {
+      "check": "business save commits while engine is offline",
+      "passed": true
+    },
+    {
+      "check": "offline withdrawal never returns cached hits or facets",
+      "passed": true
+    },
+    {
+      "check": "durable outbox removes withdrawn title after restart",
+      "passed": true
+    },
+    {
+      "check": "missing index never trusts old database checkpoint",
+      "passed": true
+    },
+    {
+      "check": "lost derived index automatically rebuilt from business database",
+      "passed": true
+    },
+    {
+      "check": "temporary records removed from public search before cleanup",
+      "passed": true
+    },
+    {
+      "check": "existing public and private business records unchanged",
+      "passed": true
+    }
+  ],
+  "temporaryNewsRemoved": 4,
+  "cleanupError": "",
+  "temporaryEntityIds": [
+    "content_1e1cce2692414ea4aa575a46fbcf3048",
+    "content_590135c6071a48cdb82f6bbd192af2b6",
+    "content_8f70c2c48c474ee38cdd06850b473294",
+    "content_b82b1a9a37b9425f9fc0948391ced706"
+  ],
+  "scope": "Real MySQL transactions, Elasticsearch, app endpoints and scoped Compose service; no WeChat device evidence."
+}

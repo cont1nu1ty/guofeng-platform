@@ -6,12 +6,15 @@
 | --- | --- |
 | [showcase_content.json](showcase_content.json) | 稿件、评审分支、云草稿、资讯、典籍、活动、课程、公益、资料和通知 |
 | [catalog_content.json](catalog_content.json) | 首页轮播、媒体、阵地、人物目录与发布分支 |
+| [records_content.json](records_content.json) | 两账号私人诵读、家庭约定、人物下架历史、录音投稿分支和四条中英文音频故事 |
 | [files/投稿附页.pdf](files/投稿附页.pdf) | 中文文件名的私人稿件附件 |
 | [files/资料使用指南.pdf](files/资料使用指南.pdf) | AI资料管理中的未索引文档示例 |
 | [files/匿名评审工作说明.pdf](files/匿名评审工作说明.pdf) | 资料管理示例，不把原附件直接作为匿名稿件 |
 | [用户端原创媒体](../../apps/miniapp/src/pkg-content/static/media/README.md) | 三组已有原创静音动画MP4与JPEG封面，导入时上传到当前S3 |
 
 账号与流程由 `seed-showcase.py` 编排，目录与人工咨询由 `seed-catalog.py` 编排。账号密码使用部署时随机生成的值；数据包不包含密码、会话、私钥、过期签名URL或数据库备份。作品和文件在每个新环境中生成自己的ID，公开端与管理端引用同一批持久化记录。
+
+个人记录由 `seed-demo-records.py` 独立编排，复用仓库原创故事音频。完整 `seed-demo` 会执行此阶段；已有环境可只执行 `./deploy/dev seed-demo-records`。它使用独立指纹和完成标记，不改旧阶段标记，不覆盖已有同人物约定；完成后重跑不会恢复用户已删除的打卡或重置编辑。
 
 活动和评审的时间窗口按导入时刻生成，便于展示开放、结束及过期等状态；运行多日后仍会受真实时间规则约束。轮播包含长期展示、未来、过期及草稿分支。模拟标题、人物、机构和结果均不代表真实运营事实。
 

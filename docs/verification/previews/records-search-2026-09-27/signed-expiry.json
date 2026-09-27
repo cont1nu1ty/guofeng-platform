@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-09-27T09:06:58.018422+00:00",
+  "project": "jiafeng-demo-records-check",
+  "fileId": "file_a93f3a666d5d4ba0ade36def41a7a6ce",
+  "expiresSeconds": 300,
+  "initialStatus": 200,
+  "expiredStatus": 403,
+  "refreshedStatus": 200,
+  "sameAudioSha256": "bf9c6d81a0de9db45b71f8429a6f328a587ffff3badf6b11ad9c205c4466d25c",
+  "passed": true
+}

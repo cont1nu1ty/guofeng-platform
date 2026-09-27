@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-09-27T08:56:10.496681+00:00",
+  "project": "jiafeng-demo-records-check",
+  "passed": true,
+  "checks": [
+    {
+      "check": "private recitations absent from hits and facets",
+      "id": "recitation_3106b54d1b7947eaae5dac96529d935b",
+      "passed": true
+    },
+    {
+      "check": "private recitations absent from hits and facets",
+      "id": "recitation_9b15bdc4e4b14294960382967ddde57d",
+      "passed": true
+    },
+    {
+      "check": "private recitations absent from hits and facets",
+      "id": "recitation_34f6aea50a0349088749350835bec69b",
+      "passed": true
+    },
+    {
+      "check": "private familyPromises absent from hits and facets",
+      "id": "promise_c5af66fbe615c6a4acee228f00dfc5861cbde81f",
+      "passed": true
+    },
+    {
+      "check": "private familyPromises absent from hits and facets",
+      "id": "promise_45c9a80bc9c6abeb5ed01cf0c040ec03de8b81ed",
+      "passed": true
+    },
+    {
+      "check": "private familyPromises absent from hits and facets",
+      "id": "promise_5ab9442c191975e22479db287d61ae837613c5ed",
+      "passed": true
+    }
+  ]
+}

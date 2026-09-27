@@ -1,0 +1,66 @@
+{
+  "sourceProject": "jiafeng-demo-records-check",
+  "passed": true,
+  "repeatedImportPreservesEditsAndDeletions": true,
+  "recreatedContainersPreserveDatabaseAndPrivateAudio": true,
+  "businessTables": {
+    "jf_account": {
+      "rows": 13,
+      "sha256": "f8ce31ec12c647d19ca4fdae2340868c9ce0d0ef0479aac80874e8144ba9b399"
+    },
+    "jf_entity": {
+      "rows": 206,
+      "sha256": "73f93c035db9ba0941f9d51dbb449144679a0744cf12737a49678180aed57f20"
+    },
+    "jf_file": {
+      "rows": 26,
+      "sha256": "25ecd6a97d8f383e18eef7ec0392ec4ff80f6b01bf3e590140cbe264197b29fd"
+    },
+    "jf_revision": {
+      "rows": 17,
+      "sha256": "68517a306e877e84401f396af6b5cc2a73bf3db4f04922e6689305c31d915064"
+    },
+    "jf_revision_file": {
+      "rows": 11,
+      "sha256": "219402953103d0b4b2aa4afe9a121ab1e86a2e8269aa82614b796cf040b4d50b"
+    },
+    "jf_draft": {
+      "rows": 2,
+      "sha256": "b177ee16ec060ffa373a2fcd6e8f9bf5693700a9c806cbe5f4a66b673858540d"
+    },
+    "jf_registration": {
+      "rows": 10,
+      "sha256": "55afdea0ec3163f2a32f44b9e523486ce0d34f289bad775130357c5e2db28ae2"
+    },
+    "jf_schema_version": {
+      "rows": 4,
+      "sha256": "2328403c6febc96387a31c893678685b43ffefdf379bfc3db72977d13cce7810"
+    }
+  },
+  "sourceRecordAndAudioChecksums": {
+    "member_zj": {
+      "fileId": "file_a93f3a666d5d4ba0ade36def41a7a6ce",
+      "sha256": "bf9c6d81a0de9db45b71f8429a6f328a587ffff3badf6b11ad9c205c4466d25c"
+    },
+    "member_bj": {
+      "fileId": "file_30e8e062e0b645249090f82559bfa0ab",
+      "sha256": "9fe0d349e38676f5832b7177b0208a0f708315bdd558221cc3b98b6be896c676"
+    }
+  },
+  "restoredProject": "jiafeng-restore-20260927090106-a37a",
+  "restoredToNewVolumes": true,
+  "restoredSearchRebuilt": true,
+  "restoredSearchCounts": {
+    "work": 3,
+    "news": 6,
+    "classic": 2,
+    "activity": 5,
+    "course": 2,
+    "video": 6,
+    "hall": 2,
+    "product": 3,
+    "venue": 3,
+    "all": 32
+  },
+  "backupManifestChecksumsVerified": true
+}

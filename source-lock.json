@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-09-26",
+  "checkedAt": "2026-09-27",
   "frontendTemplate": {
     "repository": "https://github.com/wot-ui/wot-starter",
     "commit": "c9813573b73f45fc08b0eb249f0f28c5ca0fe401",
@@ -321,11 +321,21 @@
       ],
       "node:22-alpine": [
         "node@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402"
+      ],
+      "docker.elastic.co/elasticsearch/elasticsearch:9.5.4": [
+        "docker.elastic.co/elasticsearch/elasticsearch@sha256:82ac14f43fe701992e601f4cc81e1c0d7dbc5a2576d8cd736006452925df4026"
       ]
     },
     "redisLicenseChoice": "AGPL-3.0 option from Redis 8.6.3 tri-license (RSALv2 OR SSPLv1 OR AGPLv3); Redis itself is unmodified and runs in its own official container.",
     "licenseScope": "Main component license records and actual runtime jar inventory; OS packages, bundled components and transitive dependencies retain their own license terms.",
-    "imageLockSha256": "2340dccb6bcb53ab62b620222b5ccb350e49a560d36bbc7ade486a9386efa093"
+    "imageLockSha256": "13968afc7e984e5e8d553053d81074ed50692b569a75ad0342891d1b2035961e",
+    "runtimePackages": {
+      "server": {
+        "repository": "https://dl-cdn.alpinelinux.org/alpine/v3.24/community",
+        "ffmpeg": "8.1.2-r0",
+        "license": "GPL-3.0-or-later (ffmpeg -L; --enable-gpl --enable-version3), bundled libraries have own terms"
+      }
+    }
   },
   "backendLicenseEvidence": [
     {
@@ -539,6 +549,46 @@
           "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
         }
       ]
+    },
+    {
+      "name": "Elasticsearch",
+      "version": "9.5.4",
+      "license": "Elastic License 2.0 distribution; bundled component terms retained",
+      "evidenceSource": "docker.elastic.co/elasticsearch/elasticsearch:9.5.4@sha256:82ac14f43fe701992e601f4cc81e1c0d7dbc5a2576d8cd736006452925df4026",
+      "retainedFiles": [
+        {
+          "path": "licenses/elasticsearch-9.5.4.LICENSE.txt",
+          "sha256": "48255018b41fc0e965b1115af7e6779bc218bb8a6747d561da800d5022622aa2"
+        }
+      ]
+    },
+    {
+      "name": "FFmpeg",
+      "version": "8.1.2-r0 (Alpine 3.24)",
+      "license": "GPL-3.0-or-later for actual binary (--enable-gpl --enable-version3); upstream component licenses retained",
+      "evidenceSource": "https://github.com/FFmpeg/FFmpeg/tree/n8.1.2",
+      "retainedFiles": [
+        {
+          "path": "licenses/ffmpeg-8.1.2.COPYING.GPLv2",
+          "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+        },
+        {
+          "path": "licenses/ffmpeg-8.1.2.COPYING.LGPLv2.1",
+          "sha256": "246041b6ecf9bc32d718a62c57877c78b5eb397b6467e74ed7ae2626ab189c30"
+        },
+        {
+          "path": "licenses/ffmpeg-8.1.2.LICENSE.md",
+          "sha256": "2e1d16c72fd74e12063776371da757322f8b77589386532f4fd8634bde7de1af"
+        },
+        {
+          "path": "licenses/ffmpeg-8.1.2.COPYING.GPLv3",
+          "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+        },
+        {
+          "path": "licenses/ffmpeg-8.1.2.runtime-inventory.txt",
+          "sha256": "8974a91b860c6ddcbe0535a1598b7456ec32a688a647136f32e32bef96b66820"
+        }
+      ]
     }
   ],
   "showcaseData": {
@@ -556,7 +606,7 @@
       },
       {
         "path": "deploy/mysql/reset-demo.sql",
-        "sha256": "cc7ddc35d9d368037fd636573e5e21f54e77c132b19bb69c7db74bbc5989bfb9"
+        "sha256": "10bbfa69b3a371fe0bbf335d841f4ddceb049756735b38e5d45e75664349435a"
       },
       {
         "path": "deploy/fixtures/files/匿名评审工作说明.pdf",
@@ -572,7 +622,7 @@
       },
       {
         "path": "deploy/dev",
-        "sha256": "4ab86567c68a65b023936eee885ae720802925a8ebb0eab9591d7101fc169ed5"
+        "sha256": "ab517f9649512ba6fdbd5dfc438f8d73687b7baf39fbc8ccbeb6c47d8ec7a172"
       },
       {
         "path": "deploy/demo_state.py",
@@ -580,7 +630,7 @@
       },
       {
         "path": "deploy/tests/test_demo_seed.py",
-        "sha256": "79d93b01ef6cacb2858e9243919f202c5da93bc65fc400ed6a495468287abe28"
+        "sha256": "9de44082586f323862f392ab55bbe5739a3afd32049b32ea4db8e6d12cad9cf2"
       },
       {
         "path": "deploy/tests/demo_bootstrap_probe.py",
@@ -619,6 +669,51 @@
       {
         "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfMultipartErrors.java",
         "sha256": "01dac404e577eb495bc677a245d1ba53561de4630ebb7bdddecdd84cce121e8e"
+      }
+    ]
+  },
+  "cloudRecordsAndSearch": {
+    "checkedAt": "2026-09-27",
+    "origin": "Original account record, search projection, adapters and incremental seed code; existing original fictional story audio reused.",
+    "reuse": [
+      "Spring HTTP REST client without upstream ES 7 client activation",
+      "Elasticsearch 9.5.4 single-node image, internal CJK/English analyzers",
+      "FFmpeg 8.1.2-r0 audio normalization; 10MiB / 180 seconds with bounded processes",
+      "Existing RuoYi auth/JDBC, S3 SDK, Wot UI and Element Plus"
+    ],
+    "dataScope": "Owner-only family promises and recitations; public-only search projection; no silent migration of unowned device records",
+    "files": [
+      {
+        "path": "deploy/fixtures/records_content.json",
+        "sha256": "c4c0d309b6678e4978f8c203365e8bc2b27732f8f205ce786edad8a8a7775781"
+      },
+      {
+        "path": "deploy/seed-demo-records.py",
+        "sha256": "a1fa0b8e546374ad36d4ec1cbd1fa56f8e867a4ddd78a374310834263732048a"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/resources/db/jiafeng/V003__private_records.sql",
+        "sha256": "96ea3f0293bd63ea7f12ef625498aee36df470c11d1aac59ff2d8fec2bd28470"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/resources/db/jiafeng/V004__search.sql",
+        "sha256": "dbc5dd47dc66244f2d07ea80a651da05fabe25b97bf29b46a98ebadc76a58769"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfAudio.java",
+        "sha256": "3ab18c02e3431fcd6d8744aa1b8fc3facc2dcc4539b60c1094fc79dbd60aff50"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfPersonalRecords.java",
+        "sha256": "d6c7294b2fb95ea84b7a6b7acd3e191b3ba11796f7cb078762a11e2305061681"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfSearch.java",
+        "sha256": "39d367fc8f345b19dcc9ab92ce812ed681f983abc840bfd023ff3bceffebf460"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfSearchController.java",
+        "sha256": "0e31e91db92e75f1c12c6f5bf6a102ddccf67f3834219e2a04ba487af48f95b8"
       }
     ]
   }

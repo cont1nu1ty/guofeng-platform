@@ -1,0 +1,47 @@
+{
+  "checkedAt": "2026-09-27T09:17:00.754Z",
+  "origin": "http://127.0.0.1:18080",
+  "passed": true,
+  "checks": [
+    {
+      "label": "cloud-list",
+      "width": 1440,
+      "passed": true,
+      "activityCount": 5
+    },
+    {
+      "label": "cloud-list-en",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "cloud-detail",
+      "width": 1440,
+      "passed": true,
+      "activityId": "activity_16bf3b64d44a4297bc5ea30c59f83eb1"
+    },
+    {
+      "label": "cloud-list",
+      "width": 390,
+      "passed": true,
+      "activityCount": 5
+    },
+    {
+      "label": "cloud-list-en",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "cloud-detail",
+      "width": 390,
+      "passed": true,
+      "activityId": "activity_16bf3b64d44a4297bc5ea30c59f83eb1"
+    }
+  ],
+  "pageErrors": [],
+  "blockedMutations": [],
+  "limits": [
+    "Guest browsing only; GET/HEAD allowed, every other business API method blocked.",
+    "This verifies wording and layouts against the running HTTP backend; it does not repeat booking mutations or certify physical-device behavior."
+  ]
+}

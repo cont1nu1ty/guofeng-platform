@@ -1,0 +1,20 @@
+{
+  "datasetVersion": "private-records-v1",
+  "fictional": true,
+  "recitations": [
+    {"key":"zj_private","user":"member_zj","title":"晚饭后共读：把答应的小事做好","audio":"promise-zh.mp3","state":"private"},
+    {"key":"zj_pending","user":"member_zj","title":"周末家庭共读：一张借用纸条","audio":"integrity-zh.mp3","state":"pending"},
+    {"key":"bj_returned","user":"member_bj","title":"爷爷讲的守信故事：补充出处中","audio":"promise-zh.mp3","state":"returned"},
+    {"key":"zj_published","user":"member_zj","title":"从每天节约一张纸开始","audio":"integrity-zh.mp3","state":"published-after-private-delete"}
+  ],
+  "promises": [
+    {"key":"zj_promise","user":"member_zj","text":"每周日一起整理借阅的书，按时归还；做不到的事提前告诉家人。"},
+    {"key":"bj_promise","user":"member_bj","text":"晚饭时放下手机，认真听家人讲完一天的经历，再一起商量明天的安排。"}
+  ],
+  "stories": [
+    {"key":"story_promise_zh","title":"红色家书 · 责任与守信","language":"zh","audio":"promise-zh.mp3","text":"这是一则虚构的红色家风故事。老党员在家书里写道，答应群众的事，要认真做到。孙女读完信，决定从身边的小事尽责。"},
+    {"key":"story_promise_en","title":"A red family letter: responsibility and trust","language":"en","audio":"promise-en.mp3","text":"An original fictional story. In a family letter, a veteran Party member wrote: keep the promises you make to the community. After reading it, a granddaughter chose to take responsibility through small acts of service."},
+    {"key":"story_integrity_zh","title":"清廉，始于日常的选择","language":"zh","audio":"integrity-zh.mp3","text":"这是一则原创清廉故事。孩子问，家里的纸能用单位的吗？父亲说，公家的东西要留给公事。清廉，始于日常的选择。"},
+    {"key":"story_integrity_en","title":"Integrity in everyday choices","language":"en","audio":"integrity-en.mp3","text":"An original story about integrity. A child asked if they could bring paper home from the office. The parent said, public supplies are for public work. Integrity begins with everyday choices."}
+  ]
+}

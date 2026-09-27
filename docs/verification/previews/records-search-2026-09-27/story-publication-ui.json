@@ -1,0 +1,95 @@
+{
+  "checkedAt": "2026-09-27T09:09:45.210Z",
+  "origin": "http://127.0.0.1:19082",
+  "passed": true,
+  "created": {
+    "reusedFromMediaId": "media_48876836f8444b65bdf478563594c895",
+    "sourceFileId": "file_fc6070f6aa064e07b6ffc3de72a04e6c",
+    "mediaId": "media_0f09943f484a4030af7450fcff90d060",
+    "title": "QA音频故事联动-1790500180815初稿",
+    "finalStatus": "已下架",
+    "finalLockVersion": 5
+  },
+  "checks": [
+    {
+      "label": "draft-hidden",
+      "passed": true,
+      "width": 390
+    },
+    {
+      "label": "published-and-playable",
+      "passed": true,
+      "width": 390,
+      "audio": [
+        {
+          "event": "loadedmetadata",
+          "duration": 15.365941,
+          "error": null
+        },
+        {
+          "event": "playing",
+          "duration": 15.365941,
+          "error": null
+        }
+      ]
+    },
+    {
+      "label": "edited-draft-hidden",
+      "passed": true,
+      "width": 390
+    },
+    {
+      "label": "revised-title-body-visible",
+      "passed": true,
+      "width": 1440
+    },
+    {
+      "label": "withdrawn-hidden",
+      "passed": true,
+      "width": 1440
+    },
+    {
+      "label": "original-story-and-file-reference-preserved",
+      "passed": true,
+      "sourceMediaId": "media_48876836f8444b65bdf478563594c895"
+    }
+  ],
+  "mutations": [
+    {
+      "command": "saveMedia",
+      "id": "media_0f09943f484a4030af7450fcff90d060",
+      "status": "草稿",
+      "lockVersion": 1
+    },
+    {
+      "command": "setMediaStatus",
+      "id": "media_0f09943f484a4030af7450fcff90d060",
+      "status": "已发布",
+      "lockVersion": 2
+    },
+    {
+      "command": "saveMedia",
+      "id": "media_0f09943f484a4030af7450fcff90d060",
+      "status": "草稿",
+      "lockVersion": 3
+    },
+    {
+      "command": "setMediaStatus",
+      "id": "media_0f09943f484a4030af7450fcff90d060",
+      "status": "已发布",
+      "lockVersion": 4
+    },
+    {
+      "command": "setMediaStatus",
+      "id": "media_0f09943f484a4030af7450fcff90d060",
+      "status": "已下架",
+      "lockVersion": 5
+    }
+  ],
+  "pageErrors": [],
+  "limits": [
+    "Only one new labelled QA media record was created; it is left withdrawn.",
+    "An existing admin-owned audio file was referenced. No file was uploaded, deleted or replaced.",
+    "The browser rendered real workspace responses and played the existing MP3. No physical phone or WeChat evidence."
+  ]
+}

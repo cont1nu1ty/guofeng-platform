@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-09-27T09:16:49.308Z",
+  "mode": "HTTP",
+  "typecheck": {
+    "passed": true
+  },
+  "tests": {
+    "passed": true,
+    "files": 18,
+    "tests": 121
+  },
+  "buildH5": {
+    "passed": true,
+    "warnings": [
+      "Two H5 WOFF paths retain runtime resolution; existing static assets render in browser checks."
+    ]
+  },
+  "buildWeixin": {
+    "passed": true,
+    "mainPackageBytes": 1553636,
+    "remainingBytes": 543516,
+    "uniqueInlineFonts": 2
+  },
+  "limits": [
+    "Compilation does not prove WeChat device compatibility.",
+    "Controlled HTTP UI tests are separate from real API and audio conversion tests."
+  ],
+  "initialCheckedAt": "2026-09-27T08:50:12.377985+00:00",
+  "recheckedAfter": "LearningView HTTP/demo wording correction; all four required checks passed again.",
+  "format": {
+    "changedLearningView": true,
+    "diffWhitespace": true,
+    "fullProject": false,
+    "preExistingUntouchedFailure": "tests/catalog-live.cjs"
+  },
+  "after": "Final LearningView HTTP/demo wording correction"
+}

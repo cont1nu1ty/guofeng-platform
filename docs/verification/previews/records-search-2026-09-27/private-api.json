@@ -1,0 +1,307 @@
+{
+  "project": "jiafeng-demo-records-check",
+  "run": "d306e924777f",
+  "startedAt": "2026-09-27T08:54:04.420819+00:00",
+  "checks": [
+    {
+      "check": "mp3 normalizes to private MP3 with measured duration",
+      "passed": true
+    },
+    {
+      "check": "mp3 stores input checksum and normalized metadata",
+      "passed": true
+    },
+    {
+      "check": "mp3 returns five-minute playable S3 bytes with matching checksum",
+      "passed": true
+    },
+    {
+      "check": "wav normalizes to private MP3 with measured duration",
+      "passed": true
+    },
+    {
+      "check": "wav stores input checksum and normalized metadata",
+      "passed": true
+    },
+    {
+      "check": "wav returns five-minute playable S3 bytes with matching checksum",
+      "passed": true
+    },
+    {
+      "check": "m4a normalizes to private MP3 with measured duration",
+      "passed": true
+    },
+    {
+      "check": "m4a stores input checksum and normalized metadata",
+      "passed": true
+    },
+    {
+      "check": "m4a returns five-minute playable S3 bytes with matching checksum",
+      "passed": true
+    },
+    {
+      "check": "aac normalizes to private MP3 with measured duration",
+      "passed": true
+    },
+    {
+      "check": "aac stores input checksum and normalized metadata",
+      "passed": true
+    },
+    {
+      "check": "aac returns five-minute playable S3 bytes with matching checksum",
+      "passed": true
+    },
+    {
+      "check": "ogg normalizes to private MP3 with measured duration",
+      "passed": true
+    },
+    {
+      "check": "ogg stores input checksum and normalized metadata",
+      "passed": true
+    },
+    {
+      "check": "ogg returns five-minute playable S3 bytes with matching checksum",
+      "passed": true
+    },
+    {
+      "check": "webm normalizes to private MP3 with measured duration",
+      "passed": true
+    },
+    {
+      "check": "webm stores input checksum and normalized metadata",
+      "passed": true
+    },
+    {
+      "check": "webm returns five-minute playable S3 bytes with matching checksum",
+      "passed": true
+    },
+    {
+      "check": "Six successful uploads create six database files",
+      "passed": true
+    },
+    {
+      "check": "Oversized audio fails without creating an effective file",
+      "passed": true
+    },
+    {
+      "check": "Invalid audio masquerading as MP3 fails without creating an effective file",
+      "passed": true
+    },
+    {
+      "check": "Video stream disguised as MP3 fails without creating an effective file",
+      "passed": true
+    },
+    {
+      "check": "Overlong audio fails without creating an effective file",
+      "passed": true
+    },
+    {
+      "check": "Unbounded browser WebM duration fails without creating an effective file",
+      "passed": true
+    },
+    {
+      "check": "Unsupported extension fails without creating an effective file",
+      "passed": true
+    },
+    {
+      "check": "Staff cannot create private member recording uploads",
+      "passed": true
+    },
+    {
+      "check": "member_bj cannot read unsubmitted private audio",
+      "passed": true
+    },
+    {
+      "check": "devadmin cannot read unsubmitted private audio",
+      "passed": true
+    },
+    {
+      "check": "region_zj cannot read unsubmitted private audio",
+      "passed": true
+    },
+    {
+      "check": "region_bj cannot read unsubmitted private audio",
+      "passed": true
+    },
+    {
+      "check": "expert_zj cannot read unsubmitted private audio",
+      "passed": true
+    },
+    {
+      "check": "Private file binding requires ownership and recording consent",
+      "passed": true
+    },
+    {
+      "check": "Concurrent idempotent creates produce exactly one recording",
+      "passed": true
+    },
+    {
+      "check": "Same idempotency key with changed content is rejected",
+      "passed": true
+    },
+    {
+      "check": "member_bj workspace excludes another member recording",
+      "passed": true
+    },
+    {
+      "check": "devadmin workspace excludes another member recording",
+      "passed": true
+    },
+    {
+      "check": "region_zj workspace excludes another member recording",
+      "passed": true
+    },
+    {
+      "check": "expert_zj workspace excludes another member recording",
+      "passed": true
+    },
+    {
+      "check": "Recording deletion enforces owner and version",
+      "passed": true
+    },
+    {
+      "check": "Concurrent first promise save has one success and one conflict",
+      "passed": true
+    },
+    {
+      "check": "Promise captures actual person identity",
+      "passed": true
+    },
+    {
+      "check": "Different owners keep distinct promises for the same person",
+      "passed": true
+    },
+    {
+      "check": "Person withdrawal preserves owner history with unavailable link",
+      "passed": true
+    },
+    {
+      "check": "Withdrawn-person promise remains editable for owner",
+      "passed": true
+    },
+    {
+      "check": "Promise uses Unicode code-point text limits",
+      "passed": true
+    },
+    {
+      "check": "devadmin admin response contains no private body or file ID",
+      "passed": true
+    },
+    {
+      "check": "devadmin receives only aggregate private-record statistics",
+      "passed": true
+    },
+    {
+      "check": "region_zj admin response contains no private body or file ID",
+      "passed": true
+    },
+    {
+      "check": "region_zj receives only aggregate private-record statistics",
+      "passed": true
+    },
+    {
+      "check": "region_bj admin response contains no private body or file ID",
+      "passed": true
+    },
+    {
+      "check": "region_bj receives only aggregate private-record statistics",
+      "passed": true
+    },
+    {
+      "check": "expert_zj admin response contains no private body or file ID",
+      "passed": true
+    },
+    {
+      "check": "expert_zj receives only aggregate private-record statistics",
+      "passed": true
+    },
+    {
+      "check": "Regional statistics only include authorized regions",
+      "passed": true
+    },
+    {
+      "check": "Expert receives zero private-record statistics",
+      "passed": true
+    },
+    {
+      "check": "Deleted family promise is absent from owner workspace",
+      "passed": true
+    },
+    {
+      "check": "Explicit resave after deletion keeps monotonic version",
+      "passed": true
+    },
+    {
+      "check": "Stale pre-deletion version cannot overwrite recreated promise",
+      "passed": true
+    },
+    {
+      "check": "Media submission reuses normalized file without new upload",
+      "passed": true
+    },
+    {
+      "check": "Deleting check-in preserves explicit submitted media reference",
+      "passed": true
+    },
+    {
+      "check": "After explicit submission only its region operator can review the audio",
+      "passed": true
+    },
+    {
+      "check": "Deleting unsubmitted recording revokes new signed downloads",
+      "passed": true
+    },
+    {
+      "check": "Independent login reads the same persisted owner records",
+      "passed": true
+    },
+    {
+      "check": "Guest workspace contains no personal record content",
+      "passed": true
+    },
+    {
+      "check": "Audit details exclude private recording titles and promise text",
+      "passed": true
+    }
+  ],
+  "created": {
+    "files": [
+      "file_a0808db361ae4b888cf36126ff4a52a1",
+      "file_eaf1fbd75a224aefb79b6100a5ba4a65",
+      "file_c31617dd377e40d5964c1c47a3e69cfe",
+      "file_7a843c3610224b6184e8557f667b663d",
+      "file_c2194c4c483d4020b9fe8500a704d1e4",
+      "file_9d824bc76d914575b29ccdfa9c5e1169"
+    ],
+    "recitations": [
+      "recitation_2abb79d738b145adb771a3b7677db9c7",
+      "recitation_6d41a60e45724adf920218e3ce084d48",
+      "recitation_3106b54d1b7947eaae5dac96529d935b"
+    ],
+    "familyPromises": [
+      "promise_c5af66fbe615c6a4acee228f00dfc5861cbde81f",
+      "promise_d4424413663487ce848cd632bf5604611a1bda85"
+    ],
+    "hallPeople": [
+      "hallPerson_4c0bcd677c5349a2b9389cdd63c1f86c"
+    ],
+    "media": [
+      "media_b5aec1c423a14e3b9807f75e069e52f7"
+    ]
+  },
+  "passed": true,
+  "notExercised": [
+    "FFmpeg timeout/concurrency saturation fault injection",
+    "WeChat physical microphone/playback",
+    "Five-minute URL expiry waiting",
+    "Container restart (run separately against retained records)"
+  ],
+  "ffmpeg": "ffmpeg version 8.1.2 Copyright (c) 2000-2026 the FFmpeg developers",
+  "restartTargets": {
+    "owner": "member_zj",
+    "recitationId": "recitation_3106b54d1b7947eaae5dac96529d935b",
+    "fileId": "file_a0808db361ae4b888cf36126ff4a52a1",
+    "familyPromiseId": "promise_c5af66fbe615c6a4acee228f00dfc5861cbde81f"
+  },
+  "finishedAt": "2026-09-27T08:54:13.825414+00:00"
+}

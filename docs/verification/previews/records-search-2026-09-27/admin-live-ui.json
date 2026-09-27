@@ -1,0 +1,179 @@
+{
+  "checkedAt": "2026-09-27T09:06:26.922Z",
+  "origin": "http://127.0.0.1:18080",
+  "passed": true,
+  "checks": [
+    {
+      "actor": "devadmin",
+      "label": "authorized-private-record-aggregate",
+      "width": 1440,
+      "passed": true,
+      "stats": {
+        "recitations": 3,
+        "familyPromises": 3,
+        "byRegion": [
+          {
+            "regionId": "beijing",
+            "recitations": 1,
+            "familyPromises": 1
+          },
+          {
+            "regionId": "zhejiang",
+            "recitations": 2,
+            "familyPromises": 2
+          }
+        ]
+      }
+    },
+    {
+      "actor": "devadmin",
+      "label": "search-status-readonly-national-control-present",
+      "width": 1440,
+      "passed": true,
+      "status": {
+        "ready": true,
+        "pending": 0,
+        "generation": 16,
+        "indexedGeneration": 16,
+        "lastError": ""
+      }
+    },
+    {
+      "actor": "devadmin",
+      "label": "authorized-private-record-aggregate",
+      "width": 390,
+      "passed": true,
+      "stats": {
+        "recitations": 3,
+        "familyPromises": 3,
+        "byRegion": [
+          {
+            "regionId": "beijing",
+            "recitations": 1,
+            "familyPromises": 1
+          },
+          {
+            "regionId": "zhejiang",
+            "recitations": 2,
+            "familyPromises": 2
+          }
+        ]
+      }
+    },
+    {
+      "actor": "devadmin",
+      "label": "search-status-readonly-national-control-present",
+      "width": 390,
+      "passed": true,
+      "status": {
+        "ready": true,
+        "pending": 0,
+        "generation": 16,
+        "indexedGeneration": 16,
+        "lastError": ""
+      }
+    },
+    {
+      "actor": "region_zj",
+      "label": "authorized-private-record-aggregate",
+      "width": 1440,
+      "passed": true,
+      "stats": {
+        "recitations": 2,
+        "familyPromises": 2,
+        "byRegion": [
+          {
+            "regionId": "zhejiang",
+            "recitations": 2,
+            "familyPromises": 2
+          }
+        ]
+      }
+    },
+    {
+      "actor": "region_zj",
+      "label": "settings-denied-no-rebuild-control",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "actor": "region_zj",
+      "label": "authorized-private-record-aggregate",
+      "width": 390,
+      "passed": true,
+      "stats": {
+        "recitations": 2,
+        "familyPromises": 2,
+        "byRegion": [
+          {
+            "regionId": "zhejiang",
+            "recitations": 2,
+            "familyPromises": 2
+          }
+        ]
+      }
+    },
+    {
+      "actor": "region_zj",
+      "label": "settings-denied-no-rebuild-control",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "actor": "public",
+      "label": "main-instance-public-search",
+      "width": 390,
+      "passed": true,
+      "total": 32
+    }
+  ],
+  "pageErrors": [],
+  "blockedMutations": [],
+  "requests": [
+    {
+      "actor": "devadmin",
+      "path": "/api/v1/auth/login",
+      "method": "POST"
+    },
+    {
+      "actor": "devadmin",
+      "path": "/api/v1/admin/workspace",
+      "method": "GET"
+    },
+    {
+      "actor": "devadmin",
+      "path": "/api/v1/admin/search/status",
+      "method": "GET"
+    },
+    {
+      "actor": "devadmin",
+      "path": "/api/v1/admin/search/status",
+      "method": "GET"
+    },
+    {
+      "actor": "devadmin",
+      "path": "/api/v1/auth/logout",
+      "method": "POST"
+    },
+    {
+      "actor": "region_zj",
+      "path": "/api/v1/auth/login",
+      "method": "POST"
+    },
+    {
+      "actor": "region_zj",
+      "path": "/api/v1/admin/workspace",
+      "method": "GET"
+    },
+    {
+      "actor": "region_zj",
+      "path": "/api/v1/auth/logout",
+      "method": "POST"
+    }
+  ],
+  "limits": [
+    "Only login/logout and read-only requests were permitted. No business records or search indices were changed.",
+    "Region operators retain the existing settings permission boundary: settings is inaccessible, and no rebuild control is displayed.",
+    "Desktop/mobile browser layouts were checked, not physical mobile or WeChat devices."
+  ]
+}

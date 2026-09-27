@@ -1,0 +1,16 @@
+{
+  "recordedAt": "2026-09-27T08:51:02.069174+00:00",
+  "project": "jiafeng-demo-records-check",
+  "schemaVersion": 4,
+  "observedBeforeSeed": {
+    "entityKinds": {
+      "setting": 3,
+      "expert": 1
+    },
+    "files": 0,
+    "searchHttpStatus": 200,
+    "searchItems": []
+  },
+  "defaultDemoImport": false,
+  "notes": "Verified with read-only MySQL queries and public search before explicit seed-demo. The expert entity is the bootstrap development account."
+}

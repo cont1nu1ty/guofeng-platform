@@ -1,0 +1,148 @@
+{
+  "checkedAt": "2026-09-27T08:49:13.337Z",
+  "mode": "controlled HTTP fixtures",
+  "checks": [
+    {
+      "label": "private-promises",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "private-recordings",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "hall-promise-editor",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "published-audio-story",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "audio-recitation",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "server-search",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "label": "private-promises",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "private-recordings",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "hall-promise-editor",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "published-audio-story",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "audio-recitation",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "server-search",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "promise-conflict",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "promise-saved",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "search-error",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "search-late-response",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "record-save-retry",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "record-saved",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "reuse-saved-recording",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "label": "second-account-isolation",
+      "width": 390,
+      "passed": true
+    }
+  ],
+  "commands": [
+    {
+      "command": "familyPromise.save",
+      "entityId": "promise-fixture",
+      "data": {
+        "personId": "hall-fixture",
+        "text": "这是并发冲突后应当保留的家庭约定"
+      },
+      "version": 1
+    },
+    {
+      "command": "familyPromise.save",
+      "entityId": "promise-fixture",
+      "data": {
+        "personId": "hall-fixture",
+        "text": "今天和家人共同实践守时和倾听"
+      },
+      "version": 1
+    },
+    {
+      "command": "recitation.create",
+      "data": {
+        "title": "受控验证的云端录音",
+        "fileId": "uploaded-audio",
+        "consent": true
+      }
+    },
+    {
+      "command": "recitation.create",
+      "data": {
+        "title": "受控验证的云端录音",
+        "fileId": "uploaded-audio",
+        "consent": true
+      }
+    }
+  ],
+  "pageErrors": [],
+  "passed": true,
+  "limits": [
+    "No real database, Elasticsearch, conversion, microphone, signed URL or physical WeChat evidence.",
+    "All /api/v1 routes were intercepted. Only frontend behavior and desktop/mobile layouts were checked."
+  ]
+}

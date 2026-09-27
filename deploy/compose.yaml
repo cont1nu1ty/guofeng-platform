@@ -72,17 +72,43 @@ services:
       JIAFENG_S3_ACCESS_KEY: ${JIAFENG_S3_ACCESS_KEY}
       JIAFENG_S3_SECRET_KEY: ${JIAFENG_S3_SECRET_KEY}
       JIAFENG_S3_BUCKET: jiafeng-private
+      JIAFENG_SEARCH_ENDPOINT: http://search:9200
+      JIAFENG_SEARCH_USERNAME: elastic
+      JIAFENG_SEARCH_PASSWORD: ${JIAFENG_SEARCH_PASSWORD:?run ./deploy/dev init first}
       TZ: Asia/Shanghai
     depends_on:
       mysql: {condition: service_healthy}
       redis: {condition: service_healthy}
       storage: {condition: service_healthy}
+      search: {condition: service_healthy}
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:8080/api/v1/health | grep -Eq '\"status\"[[:space:]]*:[[:space:]]*\"ok\"'"]
       interval: 10s
       timeout: 5s
       retries: 30
       start_period: 60s
+    restart: unless-stopped
+  search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.5.4@sha256:82ac14f43fe701992e601f4cc81e1c0d7dbc5a2576d8cd736006452925df4026
+    mem_limit: 2g
+    environment:
+      discovery.type: single-node
+      cluster.name: jiafeng-search
+      xpack.security.enabled: "true"
+      xpack.security.http.ssl.enabled: "false"
+      xpack.security.transport.ssl.enabled: "false"
+      xpack.license.self_generated.type: basic
+      xpack.ml.enabled: "false"
+      ES_JAVA_OPTS: -Xms1g -Xmx1g
+      ELASTIC_PASSWORD: ${JIAFENG_SEARCH_PASSWORD:?run ./deploy/dev init first}
+    volumes:
+      - search-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent --user elastic:$$ELASTIC_PASSWORD 'http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=3s' | grep -Eq '\"status\":\"(green|yellow)\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
     restart: unless-stopped
   web:
     build:
@@ -104,3 +130,4 @@ volumes:
     name: ${COMPOSE_PROJECT_NAME:-jiafeng-dev}_mysql-data-v1
   redis-data:
   storage-data:
+  search-data:

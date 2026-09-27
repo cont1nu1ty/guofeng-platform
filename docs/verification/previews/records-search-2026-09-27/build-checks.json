@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-09-27T09:05:59.645525+00:00",
+  "admin": {
+    "typecheck": true,
+    "tests": 28,
+    "files": 4,
+    "httpBuild": true,
+    "note": "Rechecked after search tab log-branch correction."
+  },
+  "server": {
+    "java": 21,
+    "compiled": true,
+    "tests": 30,
+    "failures": 0,
+    "skipped": 0,
+    "classes": {
+      "JfPersonalRecordsTest": 8,
+      "JfAudioTest": 4,
+      "JfMultipartErrorsTest": 5,
+      "JfSearchTest": 13
+    }
+  },
+  "deployment": {
+    "pythonUnitTests": 22,
+    "passed": true,
+    "faultProbeRejectsActiveDisplayEnvironment": true
+  },
+  "openapi": {
+    "version": "1.2.0",
+    "internalReferencesValid": true,
+    "paths": 20
+  },
+  "passed": true
+}

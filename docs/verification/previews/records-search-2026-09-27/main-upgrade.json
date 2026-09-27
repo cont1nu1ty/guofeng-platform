@@ -1,0 +1,31 @@
+{
+  "project": "jiafeng-dev",
+  "existingRowsPreserved": {
+    "jf_account": 13,
+    "jf_entity": 180,
+    "jf_file": 12,
+    "jf_revision": 17,
+    "jf_revision_file": 11,
+    "jf_draft": 3,
+    "jf_registration": 10
+  },
+  "schemaVersions": [
+    "1",
+    "2",
+    "3",
+    "4"
+  ],
+  "passed": true,
+  "additiveSeedPreservesOriginalRows": true,
+  "addedRows": {
+    "jf_account": 0,
+    "jf_entity": 16,
+    "jf_file": 7,
+    "jf_revision": 0,
+    "jf_revision_file": 0,
+    "jf_draft": 0,
+    "jf_registration": 0
+  },
+  "checkedAt": "2026-09-27T09:02:58.050764+00:00",
+  "searchReady": true
+}

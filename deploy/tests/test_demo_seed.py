@@ -36,6 +36,7 @@ class DemoSeedTest(unittest.TestCase):
     def lifecycle(self, receipt):
         query = Mock(return_value=json.dumps(receipt) if receipt else '')
         with patch.object(deploy, 'reset_scope'), \
+                patch.object(deploy, 'seed_demo_records'), \
                 patch.object(deploy, 'demo_state_module', return_value=state), \
                 patch.object(state, 'fingerprint', return_value='fixture-hash'), \
                 patch.object(deploy, 'query', query), \
@@ -46,6 +47,7 @@ class DemoSeedTest(unittest.TestCase):
         with patch.object(deploy.sys, 'argv', ['dev', 'up']), \
                 patch.object(deploy, 'initialize', return_value={**self.values, 'JIAFENG_HTTP_PORT': '18080'}), \
                 patch.object(deploy, 'compose') as compose, patch.object(deploy, 'seed_demo') as seed, \
+                patch.object(deploy, 'wait_search') as wait_search, \
                 patch.object(deploy, 'run') as run, contextlib.redirect_stdout(io.StringIO()):
             deploy.main()
             compose.assert_called_once()

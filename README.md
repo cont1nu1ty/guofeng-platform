@@ -1,6 +1,6 @@
 # 家风中华行 · 本机真实业务平台
 
-根据《小程序制做要求.pdf》（2026-08-13 内部讨论稿）建设。保留 Uni-app 用户端和独立运营后台，新增若依 Java 后端、MySQL、Redis、私有 S3 及 Docker Compose。本机 HTTP 模式使用真实会话与持久业务记录，原演示模式仍可独立运行。完整生产平台边界见 [实际实现](docs/engineering/backend-implementation.md)。
+根据《小程序制做要求.pdf》（2026-08-13 内部讨论稿）建设。保留 Uni-app 用户端和独立运营后台，使用若依 Java 后端、MySQL、Redis、私有 S3、Elasticsearch 及 Docker Compose。本机 HTTP 模式使用真实会话与持久业务记录，原演示模式仍可独立运行。完整生产平台边界见 [实际实现](docs/engineering/backend-implementation.md)。
 
 **当前用户端完成情况与待补界面已经按PDF重新核对，统一从 [docs文档导航](docs/README.md) 进入。**
 
@@ -33,6 +33,8 @@
 它会导入稿件与评审、资讯与典籍、活动与公益、六类轮播及媒体等场景，并把仓库中的原始附件上传到当前环境的私有S3。完整导入后重复执行会跳过，不覆盖后续编辑。导入使用宿主机Python和已启动的服务，不增加默认运行的导入容器。新分支部署与中断处理见[演示数据启动说明](deploy/README.md#显式导入演示数据)。
 
 本轮实现与运行限制见 [后端实现](docs/engineering/backend-implementation.md)，实际执行的检查见 [真实后端验证](docs/verification/backend-runtime.md)。公开发布、专家材料和本人数据由服务端分别授权；不把既有设备演示数据自动导入数据库。
+
+2026-09-27 新增本人云端诵读与家庭约定、网页录音转 MP3、后台音频故事及九类公开内容搜索。已有环境可显式执行 `./deploy/dev seed-demo-records` 追加本轮场景；私人记录不公开，后台仅提供授权地区汇总。升级、重启、搜索故障补偿及新卷恢复结果见[本轮验证](docs/verification/records-search-2026-09-27.md)。
 
 ## 单独启动用户端演示
 
