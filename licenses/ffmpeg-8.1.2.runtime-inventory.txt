@@ -1,0 +1,196 @@
+ffmpeg version 8.1.2 Copyright (c) 2000-2026 the FFmpeg developers
+built with gcc 15.2.0 (Alpine 15.2.0)
+configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libdvdnav --enable-libdvdread --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --enable-libplacebo --enable-libpulse --enable-librav1e --enable-librist --enable-libshaderc --enable-libsoxr --enable-libsrt --enable-libssh --enable-libtheora --enable-libv4l2 --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxcb --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-lto=auto --enable-lv2 --enable-openssl --enable-pic --enable-pthreads --enable-shared --enable-vaapi --enable-vdpau --enable-version3 --enable-vulkan --optflags=-O3 --enable-libsvtav1 --enable-libvpl
+libavutil      60. 26.102 / 60. 26.102
+libavcodec     62. 28.102 / 62. 28.102
+libavformat    62. 12.102 / 62. 12.102
+libavdevice    62.  3.102 / 62.  3.102
+libavfilter    11. 14.102 / 11. 14.102
+libswscale      9.  5.102 /  9.  5.102
+libswresample   6.  3.102 /  6.  3.102
+
+Exiting with exit code 0
+ffmpeg is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+ffmpeg is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ffmpeg.  If not, see <http://www.gnu.org/licenses/>.
+acl-libs-2.3.2-r1 - Access control list utilities (libraries)
+alpine-baselayout-3.7.2-r1 - Alpine base dir structure and init scripts
+alpine-baselayout-data-3.7.2-r1 - Alpine base dir structure and init scripts
+alpine-keys-2.6-r0 - Public keys for Alpine Linux packages
+alpine-release-3.24.2-r0 - Alpine release data
+alsa-lib-1.2.15.3-r0 - Advanced Linux Sound Architecture (ALSA) library
+aom-libs-3.14.1-r0 - Alliance for Open Media (AOM) AV1 codec SDK (libraries)
+apk-tools-3.0.8-r0 - Alpine Package Keeper - package manager for alpine
+brotli-libs-1.2.0-r1 - Generic lossless compressor (libraries)
+busybox-1.37.0-r31 - Size optimized toolbox of many common UNIX utilities
+busybox-binsh-1.37.0-r31 - busybox ash /bin/sh
+ca-certificates-20260909-r0 - Common CA certificates PEM files from Mozilla
+ca-certificates-bundle-20260909-r0 - Pre generated bundle of Mozilla certificates
+cjson-1.7.19-r1 - Lighweight JSON parser in C
+coreutils-9.11-r0 - The basic file, shell and text manipulation utilities
+coreutils-env-9.11-r0 - The basic file, shell and text manipulation utilities
+coreutils-fmt-9.11-r0 - The basic file, shell and text manipulation utilities
+coreutils-sha512sum-9.11-r0 - The basic file, shell and text manipulation utilities
+dbus-libs-1.16.2-r2 - D-BUS access libraries
+encodings-1.1.0-r0 - X.org font encoding files
+ffmpeg-8.1.2-r0 - Complete and free Internet live audio and video broadcasting solution for Linux/Unix
+ffmpeg-libavcodec-8.1.2-r0 - Complete and free Internet live audio and video broadcasting solution for Linux/Unix (libavcodec library)
+ffmpeg-libavdevice-8.1.2-r0 - Complete and free Internet live audio and video broadcasting solution for Linux/Unix (libavdevice library)
+ffmpeg-libavfilter-8.1.2-r0 - Complete and free Internet live audio and video broadcasting solution for Linux/Unix (libavfilter library)
+ffmpeg-libavformat-8.1.2-r0 - Complete and free Internet live audio and video broadcasting solution for Linux/Unix (libavformat library)
+ffmpeg-libavutil-8.1.2-r0 - Complete and free Internet live audio and video broadcasting solution for Linux/Unix (libavutil library)
+ffmpeg-libswresample-8.1.2-r0 - Complete and free Internet live audio and video broadcasting solution for Linux/Unix (libswresample library)
+ffmpeg-libswscale-8.1.2-r0 - Complete and free Internet live audio and video broadcasting solution for Linux/Unix (libswscale library)
+font-dejavu-2.37-r6 - Font family based on the Bitstream Vera Fonts with a wider range of characters
+fontconfig-2.17.1-r1 - Library for configuring and customizing font access
+freetype-2.14.3-r0 - TrueType font rendering library
+fribidi-1.0.16-r3 - Free Implementation of the Unicode Bidirectional Algorithm
+gdbm-1.26-r0 - GNU dbm is a set of database routines that use extensible hashing
+glib-2.88.1-r1 - Low-level core library that forms the basis for projects such as GTK and GNOME
+glslang-libs-1.4.341.0-r0 - Khronos reference front-end for GLSL, ESSL, and sample SPIR-V generator (libraries)
+gmp-6.3.0-r4 - free library for arbitrary precision arithmetic
+gnupg-2.4.9-r1 - GNU Privacy Guard 2 - meta package for full GnuPG suite
+gnupg-dirmngr-2.4.9-r1 - GNU Privacy Guard 2 - network certificate management service
+gnupg-gpgconf-2.4.9-r1 - GNU Privacy Guard 2 - core configuration utilities
+gnupg-keyboxd-2.4.9-r1 - GNU Privacy Guard 2 - keyboxd manager
+gnupg-utils-2.4.9-r1 - GNU Privacy Guard 2 - utility programs
+gnupg-wks-client-2.4.9-r1 - GNU Privacy Guard 2 - Web Key Service client
+gnutls-3.8.13-r0 - TLS protocol implementation
+gpg-2.4.9-r1 - GNU Privacy Guard 2 - public key operations only
+gpg-agent-2.4.9-r1 - GNU Privacy Guard 2 - cryptographic agent
+gpg-wks-server-2.4.9-r1 - GNU Privacy Guard 2 - Web Key Service server
+gpgsm-2.4.9-r1 - GNU Privacy Guard 2 - S/MIME version
+gpgv-2.4.9-r1 - GNU Privacy Guard 2 - signature verification only
+graphite2-1.3.14-r6 - reimplementation of the SIL Graphite text processing engine
+harfbuzz-13.2.1-r0 - Text shaping library
+hwdata-pci-0.408-r0 - Hardware identification and configuration data (pci data)
+json-c-0.18-r1 - A JSON implementation in C
+lame-libs-3.100-r5 - An MP3 encoder and graphical frame analyzer (libraries)
+lcms2-2.19-r0 - Color Management Engine
+libapk-3.0.8-r0 - Alpine Package Keeper - package manager for alpine
+libass-0.17.4-r1 - Portable library for SSA/ASS subtitle rendering
+libassuan-3.0.2-r0 - IPC library used by some GnuPG related software
+libasyncns-0.8-r5 - Asynchronous Name Service Library
+libattr-2.5.2-r2 - utilities for managing filesystem extended attributes (libraries)
+libblkid-2.42.3-r1 - Block device identification library from util-linux
+libbluray-1.4.0-r0 - Library for Blu-Ray disc playback
+libbsd-0.12.2-r0 - commonly-used BSD functions not implemented by all libcs
+libbz2-1.0.8-r6 - Shared library for bz2
+libcrypto3-3.5.8-r0 - Crypto library from openssl
+libdav1d-1.5.3-r0 - small and fast AV1 Decoder (libraries)
+libdovi-3.3.2-r0 - Library to read & write Dolby Vision metadata
+libdrm-2.4.134-r0 - Userspace interface to kernel DRM services
+libdvdcss-1.4.3-r0 - Library for accessing DVDs like a block device without having to bother about the decryption
+libdvdnav-6.1.1-r1 - a library for sophisticated DVD navigation features
+libdvdread-6.1.3-r2 - Simple foundation for reading DVD video disks
+libeconf-0.8.3-r0 - Enhanced Config File Parser
+libexpat-2.8.5-r0 - XML Parser library written in C (libraries)
+libffi-3.5.2-r1 - portable, high level programming interface to various calling conventions.
+libflac-1.4.3-r2 - Free Lossless Audio Codec (libFLAC)
+libfontenc-1.1.9-r0 - X11 font encoding library
+libgcc-15.2.0-r5 - GNU C compiler runtime libraries
+libgcrypt-1.12.2-r0 - General purpose crypto library based on the code used in GnuPG
+libgomp-15.2.0-r5 - GCC shared-memory parallel programming API library
+libgpg-error-1.61-r0 - Support library for libgcrypt
+libhwy-1.3.0-r0 - Performance-portable, length-agnostic SIMD with runtime dispatch
+libidn2-2.3.8-r0 - Encode/Decode library for internationalized domain names
+libintl-1.0-r0 - GNU gettext runtime library
+libjpeg-turbo-3.1.3-r0 - Accelerated baseline JPEG compression and decompression library
+libjxl-0.11.2-r1 - JPEG XL image format reference implementation
+libksba-1.7.0-r0 - Libksba is a CMS and X.509 access library
+libldap-2.6.14-r0 - OpenLDAP libraries
+libltdl-2.6.0-r1 - Runtime libraries for GNU Libtool Dynamic Module Loader
+libmd-1.2.0-r0 - Message Digest functions from BSD systems
+libmount-2.42.3-r1 - Block device identification library from util-linux
+libncursesw-6.6_p20260516-r0 - Console display library (libncursesw)
+libogg-1.3.6-r0 - Ogg bitstream and framing library
+libopenmpt-0.8.9-r0 - Cross-platform library to render tracker music to a PCM audio stream
+libpciaccess-0.19-r0 - X11 PCI access library
+libplacebo-7.360.1-r0 - Reusable library for GPU-accelerated video/image rendering
+libpng-1.6.58-r1 - Portable Network Graphics library
+libpulse-17.0-r7 - Pulseaudio libraries
+librist-0.2.15-r0 - Reliable Internet Stream Transport (RIST)
+libsasl-2.1.28-r9 - Cyrus Simple Authentication and Security Layer (SASL) library
+libsharpyuv-1.6.0-r0 - Libraries for working with WebP images (libsharpyuv library)
+libsndfile-1.2.2-r2 - C library for reading and writing files containing sampled sound
+libsodium-1.0.22-r0 - P(ortable|ackageable) NaCl-based crypto library
+libsrt-1.5.3-r1 - Secure Reliable Transport (SRT)
+libssh-0.12.2-r0 - Library for accessing ssh client services through C libraries
+libssl3-3.5.8-r0 - SSL shared libraries
+libstdc++-15.2.0-r5 - GNU C++ standard runtime library
+libSvtAv1Enc-4.1.0-r0 - Scalable Vector Technology for AV1 encoder (SVT-AV1 Encoder)
+libtasn1-4.21.0-r0 - The ASN.1 library used in GNUTLS
+libtheora-1.2.0-r1 - An open video codec developed by the Xiph.org
+libudfread-1.2.0-r1 - UDF reader library
+libunibreak-6.1-r0 - Implementation of the line breaking and word breaking algorithms
+libunistring-1.4.2-r0 - Library for manipulating Unicode strings and C strings
+libva-2.23.0-r0 - Video Acceleration (VA) API for Linux
+libvdpau-1.5-r4 - Hardware-accelerated video playback library
+libvorbis-1.3.7-r2 - Vorbis codec library
+libvpl-2.15.0-r1 - Intel Video Processing Library (Intel VPL)
+libvpx-1.15.2-r1 - Library for the vp8/vp9 codecs
+libwebp-1.6.0-r0 - Libraries for working with WebP images
+libwebpmux-1.6.0-r0 - Libraries for working with WebP images (libwebpmux library)
+libx11-1.8.13-r0 - X11 client-side library
+libxau-1.0.12-r0 - X11 authorisation library
+libxcb-1.17.0-r2 - X11 client-side library
+libxdmcp-1.1.5-r1 - X11 Display Manager Control Protocol library
+libxext-1.3.7-r0 - X11 miscellaneous extensions library
+libxfixes-6.0.2-r0 - X11 miscellaneous 'fixes' extension library
+libxml2-2.13.9-r2 - XML parsing library, version 2
+libzmq-4.3.5-r2 - The ZeroMQ messaging library and tools (libraries)
+lilv-libs-0.24.26-r1 - C library for simpler use of LV2 plugins (libraries)
+mbedtls3-3.6.7-r0 - Light-weight cryptographic and SSL/TLS library
+mkfontscale-1.2.4-r0 - Scalable font index generator for X
+mpg123-libs-1.33.5-r0 - Console-based MPEG Audio Player for Layers 1, 2 and 3 (libraries)
+musl-1.2.6-r2 - the musl c library (libc) implementation
+musl-locales-0.1.0-r1 - Locales support for musl
+musl-locales-lang-0.1.0-r1 - Languages for package musl-locales
+musl-utils-1.2.6-r2 - the musl c library (libc) implementation
+ncurses-terminfo-base-6.6_p20260516-r0 - Descriptions of common terminals
+nettle-3.10.2-r0 - Low-level cryptographic library
+npth-1.8-r0 - The New GNU Portable Threads library
+numactl-2.0.19-r0 - Simple NUMA policy support
+openssl-3.5.8-r0 - Toolkit for Transport Layer Security (TLS)
+opus-1.6.1-r0 - Codec designed for interactive speech and audio transmission over the Internet
+orc-0.4.41-r0 - Oil Run-time Compiler
+p11-kit-0.26.2-r0 - Library for loading and sharing PKCS#11 modules
+p11-kit-trust-0.26.2-r0 - System trust module from p11-kit
+pcre2-10.48-r0 - Perl-compatible regular expression library
+pinentry-1.3.2-r0 - Collection of simple PIN or passphrase entry dialogs which utilize the Assuan protocol
+rav1e-libs-0.8.1-r0 - The fastest and safest AV1 encoder (libraries)
+scanelf-1.3.9-r1 - Scan ELF binaries for stuff
+serd-libs-0.32.8-r0 - lightweight C library for RDF syntax (libraries)
+shaderc-2026.1-r0 - Collection of tools, libraries, and tests for Vulkan shader compilation
+skalibs-libs-2.15.0.0-r0 - Set of general-purpose C programming libraries for skarnet.org software. (libraries)
+sord-libs-0.16.22-r0 - C library for storing RDF data in memory (libraries)
+soxr-0.1.3-r7 - High quality, one-dimensional sample-rate conversion library
+speexdsp-1.2.1-r2 - A voice compression format (DSP)
+spirv-tools-1.4.341.0-r0 - API and commands for processing SPIR-V modules
+sqlite-libs-3.53.4-r0 - C library that implements an SQL database engine (libraries)
+sratom-0.6.20-r0 - library for serialising LV2 atoms to and from RDF
+ssl_client-1.37.0-r31 - External ssl_client for busybox wget
+tdb-libs-1.4.15-r1 - The tdb library (libraries)
+tzdata-2026d-r0 - Timezone data
+utmps-libs-0.1.3.3-r0 - A secure utmp/wtmp implementation (libraries)
+v4l-utils-libs-1.32.0-r1 - Collection of video4linux support libraries
+vidstab-1.1.1-r0 - Video stabilization library
+vulkan-loader-1.4.347-r0 - Vulkan Installable Client Driver (ICD) Loader
+wayland-libs-client-1.25.0-r0 - A computer display server protocol (client library)
+x264-libs-0.164.3108-r1 - Free library for encoding H264/AVC video streams (libraries)
+x265-libs-4.1-r0 - Open Source H265/HEVC video encoder (libraries)
+xvidcore-1.3.7-r2 - XviD is an open source MPEG-4 video codec
+xz-libs-5.8.4-r0 - Library and CLI tools for XZ and LZMA compressed files (libraries)
+zimg-3.0.6-r0 - Scaling, colorspace conversion and dithering library
+zix-libs-0.8.0-r0 - lightweight C99 portability and data structure library (libraries)
+zlib-1.3.2-r0 - A compression/decompression Library
+zstd-libs-1.5.7-r2 - Zstandard - Fast real-time compression algorithm (libraries)

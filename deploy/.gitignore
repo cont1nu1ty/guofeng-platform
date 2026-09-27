@@ -6,3 +6,10 @@ backups/
 __pycache__/
 restore-*/
 !README.md
+
+# Optional business demonstration package belongs to codex/demo-data-bootstrap.
+/fixtures/*.json
+/fixtures/files/
+/seed-showcase.py
+/seed-catalog.py
+/seed-demo-records.py

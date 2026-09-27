@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-09-26",
+  "checkedAt": "2026-09-27",
   "frontendTemplate": {
     "repository": "https://github.com/wot-ui/wot-starter",
     "commit": "c9813573b73f45fc08b0eb249f0f28c5ca0fe401",
@@ -321,11 +321,21 @@
       ],
       "node:22-alpine": [
         "node@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402"
+      ],
+      "docker.elastic.co/elasticsearch/elasticsearch:9.5.4": [
+        "docker.elastic.co/elasticsearch/elasticsearch@sha256:82ac14f43fe701992e601f4cc81e1c0d7dbc5a2576d8cd736006452925df4026"
       ]
     },
     "redisLicenseChoice": "AGPL-3.0 option from Redis 8.6.3 tri-license (RSALv2 OR SSPLv1 OR AGPLv3); Redis itself is unmodified and runs in its own official container.",
     "licenseScope": "Main component license records and actual runtime jar inventory; OS packages, bundled components and transitive dependencies retain their own license terms.",
-    "imageLockSha256": "2340dccb6bcb53ab62b620222b5ccb350e49a560d36bbc7ade486a9386efa093"
+    "imageLockSha256": "13968afc7e984e5e8d553053d81074ed50692b569a75ad0342891d1b2035961e",
+    "runtimePackages": {
+      "server": {
+        "repository": "https://dl-cdn.alpinelinux.org/alpine/v3.24/community",
+        "ffmpeg": "8.1.2-r0",
+        "license": "GPL-3.0-or-later (ffmpeg -L; --enable-gpl --enable-version3), bundled libraries have own terms"
+      }
+    }
   },
   "backendLicenseEvidence": [
     {
@@ -539,42 +549,85 @@
           "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
         }
       ]
+    },
+    {
+      "name": "Elasticsearch",
+      "version": "9.5.4",
+      "license": "Elastic License 2.0 distribution; bundled component terms retained",
+      "evidenceSource": "docker.elastic.co/elasticsearch/elasticsearch:9.5.4@sha256:82ac14f43fe701992e601f4cc81e1c0d7dbc5a2576d8cd736006452925df4026",
+      "retainedFiles": [
+        {
+          "path": "licenses/elasticsearch-9.5.4.LICENSE.txt",
+          "sha256": "48255018b41fc0e965b1115af7e6779bc218bb8a6747d561da800d5022622aa2"
+        }
+      ]
+    },
+    {
+      "name": "FFmpeg",
+      "version": "8.1.2-r0 (Alpine 3.24)",
+      "license": "GPL-3.0-or-later for actual binary (--enable-gpl --enable-version3); upstream component licenses retained",
+      "evidenceSource": "https://github.com/FFmpeg/FFmpeg/tree/n8.1.2",
+      "retainedFiles": [
+        {
+          "path": "licenses/ffmpeg-8.1.2.COPYING.GPLv2",
+          "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+        },
+        {
+          "path": "licenses/ffmpeg-8.1.2.COPYING.LGPLv2.1",
+          "sha256": "246041b6ecf9bc32d718a62c57877c78b5eb397b6467e74ed7ae2626ab189c30"
+        },
+        {
+          "path": "licenses/ffmpeg-8.1.2.LICENSE.md",
+          "sha256": "2e1d16c72fd74e12063776371da757322f8b77589386532f4fd8634bde7de1af"
+        },
+        {
+          "path": "licenses/ffmpeg-8.1.2.COPYING.GPLv3",
+          "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+        },
+        {
+          "path": "licenses/ffmpeg-8.1.2.runtime-inventory.txt",
+          "sha256": "8974a91b860c6ddcbe0535a1598b7456ec32a688a647136f32e32bef96b66820"
+        }
+      ]
     }
   ],
   "showcaseData": {
     "datasetId": "jiafeng-neighborhood-2026-autumn",
     "origin": "Original fictional content and local seed/reset tooling authored for this project; no external text or private personal data imported.",
-    "scope": "Local HTTP showcase; model logs and formal certificates are not fabricated.",
+    "scope": "Generic development lifecycle tooling only on main; fictional scenario payloads and dedicated seeds are external demo-branch resources.",
     "files": [
       {
-        "path": "deploy/fixtures/showcase_content.json",
-        "sha256": "c1c4cfaa4a97ac8c0200fc54ef4d0a798ec50f96a672a5b5340744d4e9f862cb"
-      },
-      {
-        "path": "deploy/seed-showcase.py",
-        "sha256": "364540bb4010551812a272dfb8ad9a0e829dac371fa60f27be864bbdb0724404"
-      },
-      {
         "path": "deploy/mysql/reset-demo.sql",
-        "sha256": "cc7ddc35d9d368037fd636573e5e21f54e77c132b19bb69c7db74bbc5989bfb9"
+        "sha256": "10bbfa69b3a371fe0bbf335d841f4ddceb049756735b38e5d45e75664349435a"
       },
       {
-        "path": "deploy/fixtures/files/匿名评审工作说明.pdf",
-        "sha256": "7eb1b6341a976802b08adf0eff2164195dfc0a5f0e53bac8fa13b80c243a819e"
+        "path": "deploy/dev",
+        "sha256": "22a5d4c23b5033874b9adc6eae491ee94fad1818ea1ceb6e032af3c1f1b5fe6b"
       },
       {
-        "path": "deploy/fixtures/files/投稿附页.pdf",
-        "sha256": "757b0c95e67d1aa0ccb1649cd116c3a95c3eb69d33acd14febd7f8e499a53c73"
+        "path": "deploy/demo_state.py",
+        "sha256": "6dfaf047a7e3037ff343af54bb5a41c01fa86ee24bcc30e91b0ca16a57e8c699"
       },
       {
-        "path": "deploy/fixtures/files/资料使用指南.pdf",
-        "sha256": "86b485d127fa0597a60109f7bc0aeec81ff4bee89414962c59b1b15be195014b"
+        "path": "deploy/tests/test_demo_seed.py",
+        "sha256": "8f862c803f5f5e235f8dcd5a17313c2f1e85510d9d93941b59a3ba51ab4ee569"
       }
-    ]
+    ],
+    "installation": {
+      "entrypoint": "./deploy/dev seed-demo",
+      "automaticOnStartup": false,
+      "method": "Explicit host-side Python command against the running isolated Compose stack",
+      "state": "Database-owned dataset fingerprint and phase receipts; per-project local manifests are disposable",
+      "dataScope": "External demo-branch fictional scenarios and source attachments; not a runtime database snapshot",
+      "availableOnBranch": "codex/demo-data-bootstrap",
+      "availableOnMain": false,
+      "mainBehavior": "Refuse missing data package before seed or non-empty reset; never fetch a package automatically"
+    },
+    "demoResources": "externalDemoResources; not present in the main working tree"
   },
   "catalogManagement": {
     "checkedAt": "2026-09-26",
-    "origin": "Original Jiafeng catalog business code, UI adapters and fictional catalog data; no new third-party library introduced.",
+    "origin": "Original Jiafeng catalog business code and UI adapters on main; fictional data and specific seeds retained only on the demo branch.",
     "reuse": [
       "Existing RuoYi auth, JDBC business store, Element Plus, Wot UI and AWS S3 SDK",
       "Three existing original silent typography MP4/JPEG pairs; copied into private S3 using the authenticated upload API"
@@ -582,20 +635,109 @@
     "scope": "Six carousel categories, homepage sections/stats, media publication/submission, venues, hall records, news subscriptions and support tickets; no inference/transcoding/live streaming added.",
     "files": [
       {
-        "path": "deploy/fixtures/catalog_content.json",
-        "sha256": "098af6c8cc5d34bdcbbb38b8c9593c88fe5cc35a61fe19645cd47be3e912ed11"
-      },
-      {
-        "path": "deploy/seed-catalog.py",
-        "sha256": "94b6bec117f6a017009806a7c2b0b20f88613c243685fdd080777a674ccbdd51"
-      },
-      {
         "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfCatalog.java",
         "sha256": "b5f65549d40ec8874aeb9ea0e28080c2efe4ecf81f4fd2c3104a8c43a0b3a460"
       },
       {
         "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfMultipartErrors.java",
         "sha256": "01dac404e577eb495bc677a245d1ba53561de4630ebb7bdddecdd84cce121e8e"
+      }
+    ],
+    "demoResources": "externalDemoResources; not present in the main working tree"
+  },
+  "cloudRecordsAndSearch": {
+    "checkedAt": "2026-09-27",
+    "origin": "Original account record, search projection and adapters on main; incremental scenario data and specific seeds retained only on the demo branch.",
+    "reuse": [
+      "Spring HTTP REST client without upstream ES 7 client activation",
+      "Elasticsearch 9.5.4 single-node image, internal CJK/English analyzers",
+      "FFmpeg 8.1.2-r0 audio normalization; 10MiB / 180 seconds with bounded processes",
+      "Existing RuoYi auth/JDBC, S3 SDK, Wot UI and Element Plus"
+    ],
+    "dataScope": "Owner-only family promises and recitations; public-only search projection; no silent migration of unowned device records",
+    "files": [
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/resources/db/jiafeng/V003__private_records.sql",
+        "sha256": "96ea3f0293bd63ea7f12ef625498aee36df470c11d1aac59ff2d8fec2bd28470"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/resources/db/jiafeng/V004__search.sql",
+        "sha256": "dbc5dd47dc66244f2d07ea80a651da05fabe25b97bf29b46a98ebadc76a58769"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfAudio.java",
+        "sha256": "3ab18c02e3431fcd6d8744aa1b8fc3facc2dcc4539b60c1094fc79dbd60aff50"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfPersonalRecords.java",
+        "sha256": "d6c7294b2fb95ea84b7a6b7acd3e191b3ba11796f7cb078762a11e2305061681"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfSearch.java",
+        "sha256": "39d367fc8f345b19dcc9ab92ce812ed681f983abc840bfd023ff3bceffebf460"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfSearchController.java",
+        "sha256": "0e31e91db92e75f1c12c6f5bf6a102ddccf67f3834219e2a04ba487af48f95b8"
+      }
+    ],
+    "demoResources": "externalDemoResources; not present in the main working tree"
+  },
+  "externalDemoResources": {
+    "branch": "codex/demo-data-bootstrap",
+    "commit": "a94f4949b47ca08cb006a032aaa6b77ba91d12ee",
+    "includedOnMain": false,
+    "purpose": "Optional fictional import payloads and data-dependent tools; fixed historical references, never downloaded by ordinary startup",
+    "resources": [
+      {
+        "resource": "deploy/fixtures/showcase_content.json",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/a94f4949b47ca08cb006a032aaa6b77ba91d12ee/deploy/fixtures/showcase_content.json",
+        "sha256": "c1c4cfaa4a97ac8c0200fc54ef4d0a798ec50f96a672a5b5340744d4e9f862cb"
+      },
+      {
+        "resource": "deploy/seed-showcase.py",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/a94f4949b47ca08cb006a032aaa6b77ba91d12ee/deploy/seed-showcase.py",
+        "sha256": "11c1ff54c4d5b51dd910966a7c0dd137ca3d5512b428bc1b358aaf5d50b1bdd4"
+      },
+      {
+        "resource": "deploy/fixtures/files/匿名评审工作说明.pdf",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/a94f4949b47ca08cb006a032aaa6b77ba91d12ee/deploy/fixtures/files/匿名评审工作说明.pdf",
+        "sha256": "7eb1b6341a976802b08adf0eff2164195dfc0a5f0e53bac8fa13b80c243a819e"
+      },
+      {
+        "resource": "deploy/fixtures/files/投稿附页.pdf",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/a94f4949b47ca08cb006a032aaa6b77ba91d12ee/deploy/fixtures/files/投稿附页.pdf",
+        "sha256": "757b0c95e67d1aa0ccb1649cd116c3a95c3eb69d33acd14febd7f8e499a53c73"
+      },
+      {
+        "resource": "deploy/fixtures/files/资料使用指南.pdf",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/a94f4949b47ca08cb006a032aaa6b77ba91d12ee/deploy/fixtures/files/资料使用指南.pdf",
+        "sha256": "86b485d127fa0597a60109f7bc0aeec81ff4bee89414962c59b1b15be195014b"
+      },
+      {
+        "resource": "deploy/tests/demo_bootstrap_probe.py",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/a94f4949b47ca08cb006a032aaa6b77ba91d12ee/deploy/tests/demo_bootstrap_probe.py",
+        "sha256": "5c619eb4d6d57ee273d78a385b2f5f233ff741514aac842deb8889e3d95458f4"
+      },
+      {
+        "resource": "deploy/fixtures/catalog_content.json",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/a94f4949b47ca08cb006a032aaa6b77ba91d12ee/deploy/fixtures/catalog_content.json",
+        "sha256": "098af6c8cc5d34bdcbbb38b8c9593c88fe5cc35a61fe19645cd47be3e912ed11"
+      },
+      {
+        "resource": "deploy/seed-catalog.py",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/a94f4949b47ca08cb006a032aaa6b77ba91d12ee/deploy/seed-catalog.py",
+        "sha256": "a861b2c2ce84700556ae23646b8f370c0678054a79b6212608ce2c5be65d1c82"
+      },
+      {
+        "resource": "deploy/fixtures/records_content.json",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/a94f4949b47ca08cb006a032aaa6b77ba91d12ee/deploy/fixtures/records_content.json",
+        "sha256": "c4c0d309b6678e4978f8c203365e8bc2b27732f8f205ce786edad8a8a7775781"
+      },
+      {
+        "resource": "deploy/seed-demo-records.py",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/a94f4949b47ca08cb006a032aaa6b77ba91d12ee/deploy/seed-demo-records.py",
+        "sha256": "a1fa0b8e546374ad36d4ec1cbd1fa56f8e867a4ddd78a374310834263732048a"
       }
     ]
   }

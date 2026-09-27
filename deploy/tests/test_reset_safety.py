@@ -63,7 +63,7 @@ class ResetSafetyTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory, \
                 patch.object(deploy, "HERE", Path(directory)), \
                 patch.object(deploy, "backup") as backup:
-            with self.assertRaisesRegex(ValueError, "Missing deploy/seed-showcase"):
+            with self.assertRaisesRegex(ValueError, "codex/demo-data-bootstrap"):
                 deploy.reset_demo(self.values)
             backup.assert_not_called()
 

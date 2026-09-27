@@ -55,4 +55,15 @@
 
 ## 2026-09-26 首页与内容目录接入
 
-轮播、首页配置、媒体/阵地/人物目录、订阅与咨询的业务代码和 `deploy/fixtures/catalog_content.json` 场景文案为本项目原创，未引入新第三方库。后台继续复用既有 Element Plus、RuoYi认证/数据库层及 AWS S3 SDK；用户端继续使用 Uni-app、Wot UI。私有存储展示文件复用 `apps/miniapp/src/pkg-content/static/media/README.md` 已登记的三组原创静音文字动画与封面，不是第三方盛典视频、真人录音或AI生成内容。数据与主要新增模块摘要登记在 `source-lock.json` 的 `catalogManagement`。
+轮播、首页配置、媒体/阵地/人物目录、订阅与咨询的业务代码，以及演示分支的 [catalog_content.json](https://github.com/cont1nu1ty/guofeng-platform/blob/a94f4949b47ca08cb006a032aaa6b77ba91d12ee/deploy/fixtures/catalog_content.json) 场景文案为本项目原创，未引入新第三方库。后台继续复用既有 Element Plus、RuoYi认证/数据库层及 AWS S3 SDK；用户端继续使用 Uni-app、Wot UI。私有存储展示文件复用 `apps/miniapp/src/pkg-content/static/media/README.md` 已登记的三组原创静音文字动画与封面，不是第三方盛典视频、真人录音或AI生成内容。数据与主要新增模块摘要登记在 `source-lock.json` 的 `catalogManagement`。
+
+演示数据分支的显式导入、数据库安装标记、项目隔离清单及验证工具为本项目原创，使用Python标准库和既有部署组件，没有新增运行依赖。可重建 JSON、三份原创 PDF 与含具体场景的种子脚本仅由 `codex/demo-data-bootstrap` 提供，当前 main 文件树排除这些数据与专用脚本；既有前端 Mock 静态媒体继续保留。来源清单的 `externalDemoResources` 登记固定来源及原始摘要，`showcaseData` 保留通用部署工具记录。运行数据库、密码和会话不属于此数据包。
+
+## 2026-09-27 · 私人记录与公开搜索
+
+| 内容 | 使用范围 | 来源与许可 |
+| --- | --- | --- |
+| Elasticsearch 9.5.4 | 独立私有单节点容器，仅索引已发布公开内容；MySQL与S3是原始数据；不启用若依旧7.17客户端或商业试用功能 | 官方镜像tag/digest见`deploy/images.lock.json`；发行包为Elastic License 2.0，原文`licenses/elasticsearch-9.5.4.LICENSE.txt`。镜像内第三方NOTICE继续保留；不将AGPL源码选项或Apache客户端许可误标为整个镜像许可。 |
+| FFmpeg / ffprobe 8.1.2-r0 | 在固定Alpine 3.24/Temurin镜像内通过官方apk安装，作为独立进程将私人录音转换为MP3；不修改FFmpeg源码 | [FFmpeg n8.1.2源码](https://github.com/FFmpeg/FFmpeg/tree/n8.1.2)；Alpine包声明GPL-2.0-or-later与LGPL-2.1-or-later，实际构建含`--enable-gpl --enable-version3`，`ffmpeg -L`明确声明**GPL-3.0-or-later**，不能仅标LGPL或GPLv2。保留`licenses/ffmpeg-8.1.2.COPYING.GPLv2`、`COPYING.LGPLv2.1`、`COPYING.GPLv3`及`LICENSE.md`，实际构建和许可输出见`licenses/ffmpeg-8.1.2.runtime-inventory.txt`；依赖OS组件遵从各自许可。 |
+
+私人记录、搜索同步与接口、增量种子和验证代码为本项目编写；具体增量种子与数据依赖探针仅保留在演示分支。四份故事 MP3 复用既有原创文字与合成音频（`scripts/audio-sample-manifest.json`），仅在演示分支显式导入时上传 S3，明确为演示声音，不是用户真实录音。FFmpeg二进制进入本轮服务器镜像，与早期仅用本机工具生成样例的历史范围不同。

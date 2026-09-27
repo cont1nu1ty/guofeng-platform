@@ -38,6 +38,11 @@ DELETE FROM jf_audit;
 DELETE FROM jf_login_attempt;
 DELETE FROM jf_file;
 DELETE FROM jf_entity;
+DELETE FROM jf_search_outbox;
+UPDATE jf_search_state SET installation_id=REPLACE(UUID(),'-',''),
+  cursor_secret=CONCAT(REPLACE(UUID(),'-',''),REPLACE(UUID(),'-','')),
+  committed_generation=0,indexed_generation=-1,index_name='',index_uuid='',
+  rebuild_requested=TRUE,status='starting',last_error='' WHERE id=1;
 
 DELETE r FROM sys_user_role r JOIN reset_jf_accounts a ON a.user_id=r.user_id;
 DELETE p FROM sys_user_post p JOIN reset_jf_accounts a ON a.user_id=p.user_id;

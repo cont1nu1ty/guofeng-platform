@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import datetime as dt
+import contextlib
 import fcntl
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -13,6 +15,9 @@ import secrets
 import shutil
 import subprocess
 import sys
+import time
+import urllib.error
+import urllib.request
 
 HERE = Path(__file__).resolve().parent
 ENV_FILE = Path(os.environ.get("JIAFENG_ENV_FILE", str(HERE / ".env"))).resolve()
@@ -55,6 +60,9 @@ def initialize():
         write_env(ENV_FILE, values)
         print(f"Generated local credentials: {ENV_FILE} (mode 0600)")
     values = read_env(ENV_FILE)
+    if not values.get("JIAFENG_SEARCH_PASSWORD"):
+        values["JIAFENG_SEARCH_PASSWORD"] = secrets.token_hex(24)
+        write_env(ENV_FILE, values)
     if not re.fullmatch(r"[a-z0-9][a-z0-9_-]+", values.get("COMPOSE_PROJECT_NAME", "")):
         raise ValueError("COMPOSE_PROJECT_NAME must contain only lowercase letters, digits, hyphens and underscores")
     local = Path(values.get("JIAFENG_LOCAL_CONFIG", str(HERE / ".local")))
@@ -80,6 +88,24 @@ def file_digest(path):
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def wait_search(values, timeout=120):
+    """Business health and a usable search index are separate readiness checks."""
+    url = f"http://127.0.0.1:{values['JIAFENG_HTTP_PORT']}/api/v1/search?pageSize=1"
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        try:
+            with opener.open(url, timeout=5) as response:
+                body = json.load(response)
+                if isinstance(body.get('items'), list):
+                    print('Business services and public search index are ready.')
+                    return
+        except (urllib.error.URLError, TimeoutError, ValueError):
+            pass
+        time.sleep(2)
+    raise ValueError('Business services started, but search is not ready; inspect ./deploy/dev logs server search and retry ./deploy/dev up. Existing data is retained.')
 
 
 def backup(values, *, resume_services=True):
@@ -114,6 +140,83 @@ def query(sql):
         'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql --default-character-set=utf8mb4 '
         '--batch --skip-column-names -u root jiafeng', input=sql,
         capture_output=True, text=True).stdout.strip()
+
+
+def demo_state_module():
+    spec = importlib.util.spec_from_file_location('jiafeng_demo_state', HERE / 'demo_state.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@contextlib.contextmanager
+def demo_lifecycle_lock():
+    # Match reset-demo's existing lock so import and cleanup cannot overlap.
+    lock_path = HERE / '.local' / 'reset-demo.lock'
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open('a') as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            raise ValueError('Another demo import or reset is already running') from None
+        yield
+
+
+def require_demo_package():
+    """Check the optional data branch before configuration, Docker or data writes."""
+    required = [
+        'seed-showcase.py', 'seed-catalog.py', 'seed-demo-records.py',
+        'fixtures/showcase_content.json', 'fixtures/catalog_content.json',
+        'fixtures/records_content.json', 'fixtures/files/投稿附页.pdf',
+        'fixtures/files/资料使用指南.pdf', 'fixtures/files/匿名评审工作说明.pdf',
+    ]
+    missing = [name for name in required if not (HERE / name).is_file()]
+    if missing:
+        raise ValueError(
+            'The optional demo package is not included in main. Use a separate checkout of '
+            'codex/demo-data-bootstrap for sample data. No database or files were changed. '
+            'Missing: ' + ', '.join(missing))
+
+
+def seed_demo(values, *, already_locked=False):
+    """Explicit opt-in import. Never reset or replace a populated database."""
+    require_demo_package()
+    if not already_locked:
+        with demo_lifecycle_lock():
+            return seed_demo(values, already_locked=True)
+    reset_scope(values)  # Read-only ownership/development checks, no cleanup.
+    state = demo_state_module()
+    receipt = state.Receipt(query, values['COMPOSE_PROJECT_NAME'], state.fingerprint(HERE))
+    phase = state.next_phase(receipt.read())
+    if phase == 'done':
+        print('Demo dataset already installed; existing data and user edits were preserved.')
+        seed_demo_records(values, already_locked=True)
+        return
+    child_env = {**os.environ, 'JIAFENG_ENV_FILE': str(ENV_FILE)}
+    if phase == 'base':
+        run([sys.executable, HERE / 'seed-showcase.py'], env=child_env)
+    # The database receipt is authoritative even if a local manifest was lost.
+    installed = receipt.read()
+    if state.next_phase(installed) != 'catalog':
+        raise ValueError('Base import did not record successful completion; catalog was not started')
+    run([sys.executable, HERE / 'seed-catalog.py'], env=child_env)
+    catalog = state.Receipt(query, values['COMPOSE_PROJECT_NAME'], state.fingerprint(HERE), state.CATALOG_ID).read()
+    if not catalog or catalog.get('phase') != 'complete':
+        raise ValueError('Catalog import did not record successful completion; retry seed-demo to resume')
+    installed.update(phase='complete', completedAt=dt.datetime.now(dt.timezone.utc).isoformat())
+    receipt.save(installed)
+    seed_demo_records(values, already_locked=True)
+    print('Demo dataset installed through the real API; database and S3 data persist across restarts.')
+
+
+def seed_demo_records(values, *, already_locked=False):
+    require_demo_package()
+    if not already_locked:
+        with demo_lifecycle_lock():
+            return seed_demo_records(values, already_locked=True)
+    reset_scope(values)
+    run([sys.executable, HERE / 'seed-demo-records.py'],
+        env={**os.environ, 'JIAFENG_ENV_FILE': str(ENV_FILE)})
 
 
 def reset_scope(values):
@@ -156,7 +259,8 @@ def reset_scope(values):
         raise ValueError("Refusing storage: backup and reset must refer to the same project volume")
     expected = {"jf_account", "jf_entity", "jf_revision", "jf_draft", "jf_file",
         "jf_registration", "jf_idempotency", "jf_audit", "jf_login_attempt",
-        "jf_revision_file", "jf_schema_version", "jf_bootstrap_ready"}
+        "jf_revision_file", "jf_schema_version", "jf_bootstrap_ready",
+        "jf_search_state", "jf_search_outbox"}
     actual = set(query("SELECT table_name FROM information_schema.tables WHERE "
         "table_schema=DATABASE() AND LEFT(table_name,3)='jf_';").splitlines())
     if actual != expected:
@@ -165,9 +269,8 @@ def reset_scope(values):
 
 
 def reset_demo(values, *, empty=False):
-    seed_script = HERE / "seed-showcase.py"
-    if not empty and not seed_script.is_file():
-        raise ValueError("Missing deploy/seed-showcase.py; use reset-demo --empty only for an empty development environment")
+    if not empty:
+        require_demo_package()
     # Keep a single process in charge of the destructive sequence. Never delete
     # this lock file: another process may already have opened the same inode.
     lock_path = HERE / ".local" / "reset-demo.lock"
@@ -215,8 +318,7 @@ def reset_demo(values, *, empty=False):
             report_path = HERE / ".local" / "reset-demo.json"
             report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
             if not empty:
-                run([sys.executable, seed_script], env={**os.environ, "JIAFENG_ENV_FILE": str(ENV_FILE)})
-                run([sys.executable, HERE / "seed-catalog.py"], env={**os.environ, "JIAFENG_ENV_FILE": str(ENV_FILE)})
+                seed_demo(values, already_locked=True)
                 report["seedCompleted"] = True
                 report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
         except Exception:
@@ -256,6 +358,7 @@ def restore(source):
     # This is a newly generated project volume, never the source project's data.
     run(["docker", "run", "--rm", "--entrypoint", "sh", "-v", volume + ":/data", "-v", str(source) + ":/backup:ro", STORAGE_IMAGE, "-c", "find /data -mindepth 1 -maxdepth 1 -exec rm -rf {} + && tar -xzf /backup/storage.tar.gz -C /data"])
     compose("up", "-d", "--wait", env_file=restored_env)
+    wait_search(values)
     print(f"Restored into new project {values['COMPOSE_PROJECT_NAME']}; original deployment untouched.")
     print(f"Manage this restored environment: JIAFENG_ENV_FILE={restored_env} ./deploy/dev status")
     print(f"Open http://127.0.0.1:{values['JIAFENG_HTTP_PORT']}/admin/")
@@ -264,18 +367,22 @@ def restore(source):
 def main():
     command = sys.argv[1] if len(sys.argv) > 1 else "help"
     if command == "help":
-        print("Usage: ./deploy/dev {up|init|build|down|status|logs [service]|backup|restore BACKUP_DIR|reset-demo [--empty]|seed-catalog}")
+        print("Usage: ./deploy/dev {up|init|build|down|status|logs [service]|backup|restore BACKUP_DIR|seed-demo|seed-demo-records|reset-demo [--empty]|seed-catalog}")
         return
     if command == "restore":
         if len(sys.argv) != 3:
             raise ValueError("Usage: ./deploy/dev restore BACKUP_DIR")
         restore(sys.argv[2])
         return
+    if command in ('seed-demo', 'seed-demo-records', 'seed-catalog') or (
+            command == 'reset-demo' and '--empty' not in sys.argv[2:]):
+        require_demo_package()
     values = initialize()
     if command == "init":
         print(f"Configuration ready for {values['COMPOSE_PROJECT_NAME']}")
     elif command == "up":
         compose("up", "-d", "--build", "--wait", "--wait-timeout", "480")
+        wait_search(values)
         print(f"User UI: http://127.0.0.1:{values['JIAFENG_HTTP_PORT']}/")
         print(f"Admin UI: http://127.0.0.1:{values['JIAFENG_HTTP_PORT']}/admin/")
         print(f"Development account password: JIAFENG_DEV_PASSWORD in {ENV_FILE}")
@@ -289,8 +396,20 @@ def main():
         compose("logs", "--tail", "120", *sys.argv[2:])
     elif command == "backup":
         backup(values)
+    elif command == "seed-demo":
+        if sys.argv[2:]:
+            raise ValueError('Usage: ./deploy/dev seed-demo')
+        seed_demo(values)
+    elif command == "seed-demo-records":
+        if sys.argv[2:]:
+            raise ValueError('Usage: ./deploy/dev seed-demo-records')
+        seed_demo_records(values)
     elif command == "seed-catalog":
-        run([sys.executable, HERE / "seed-catalog.py"], env={**os.environ, "JIAFENG_ENV_FILE": str(ENV_FILE)})
+        if sys.argv[2:]:
+            raise ValueError('Usage: ./deploy/dev seed-catalog')
+        with demo_lifecycle_lock():
+            reset_scope(values)
+            run([sys.executable, HERE / "seed-catalog.py"], env={**os.environ, "JIAFENG_ENV_FILE": str(ENV_FILE)})
     elif command == "reset-demo":
         if sys.argv[2:] not in ([], ["--empty"]):
             raise ValueError("Usage: ./deploy/dev reset-demo [--empty]")

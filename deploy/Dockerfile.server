@@ -4,7 +4,11 @@ WORKDIR /build
 COPY apps/server/ ./
 RUN --mount=type=cache,target=/root/.m2 mvn -B -ntp -pl ruoyi-admin -am package -Dmaven.test.skip=true
 
+FROM build AS verify
+RUN --mount=type=cache,target=/root/.m2 mvn -B -ntp -pl ruoyi-modules/ruoyi-jiafeng -am test -Dmaven.test.skip=false -DskipTests=false -Dgroups= -Dtest=Jf*Test -Dsurefire.failIfNoSpecifiedTests=false
+
 FROM eclipse-temurin:21-jre-alpine@sha256:51ab5e3302e7141ce665ca3ea85e8b5cd648eafbc3c0c90dd79d6537684e4555
+RUN apk add --no-cache ffmpeg=8.1.2-r0
 RUN addgroup -S jiafeng && adduser -S -G jiafeng jiafeng
 WORKDIR /app
 RUN mkdir -p logs && chown -R jiafeng:jiafeng /app

@@ -1,5 +1,5 @@
 {
-  "lockedAt": "2026-09-26",
+  "lockedAt": "2026-09-27",
   "images": {
     "mysql:8.4.9": [
       "mysql@sha256:c36050afdca850f23cef85703f84c7531a5ae155a11b5ee1c60acb09937c4084"
@@ -21,6 +21,16 @@
     ],
     "node:22-alpine": [
       "node@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402"
+    ],
+    "docker.elastic.co/elasticsearch/elasticsearch:9.5.4": [
+      "docker.elastic.co/elasticsearch/elasticsearch@sha256:82ac14f43fe701992e601f4cc81e1c0d7dbc5a2576d8cd736006452925df4026"
     ]
+  },
+  "runtimePackages": {
+    "server": {
+      "repository": "https://dl-cdn.alpinelinux.org/alpine/v3.24/community",
+      "ffmpeg": "8.1.2-r0",
+      "license": "GPL-3.0-or-later (ffmpeg -L; --enable-gpl --enable-version3), bundled libraries have own terms"
+    }
   }
 }

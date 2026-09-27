@@ -1,10 +1,10 @@
 # 家风中华行 · 本机真实业务平台
 
-根据《小程序制做要求.pdf》（2026-08-13 内部讨论稿）建设。保留 Uni-app 用户端和独立运营后台，新增若依 Java 后端、MySQL、Redis、私有 S3 及 Docker Compose。本机 HTTP 模式使用真实会话与持久业务记录，原演示模式仍可独立运行。完整生产平台边界见 [实际实现](docs/engineering/backend-implementation.md)。
+根据《小程序制做要求.pdf》（2026-08-13 内部讨论稿）建设。保留 Uni-app 用户端和独立运营后台，使用若依 Java 后端、MySQL、Redis、私有 S3、Elasticsearch 及 Docker Compose。本机 HTTP 模式使用真实会话与持久业务记录，原演示模式仍可独立运行。完整生产平台边界见 [实际实现](docs/engineering/backend-implementation.md)。
 
 **当前用户端完成情况与待补界面已经按PDF重新核对，统一从 [docs文档导航](docs/README.md) 进入。**
 
-2026-09-26 已将本机旧验收数据备份后替换为原创虚构场景，供网页用户端与后台读取同一份数据库进行展示。查看 [账号、场景与演示路线](docs/frontend/showcase-data.md)；再次重建可执行 `./deploy/dev reset-demo`，该命令会先备份当前数据。普通 `up` 不会重置数据。
+**`main` 包含完整功能代码与部署配置，不包含可导入的模拟业务数据包及专用种子脚本。** 空卷启动只初始化开发账号和基础配置，重复启动保留已有数据。 分支拆分与空环境检查见[main 同步验证](docs/verification/main-sync-2026-09-27.md)。完整演示内容保留在 [codex/demo-data-bootstrap](https://github.com/cont1nu1ty/guofeng-platform/tree/codex/demo-data-bootstrap)，需在该分支显式导入；既有前端 Mock、静态示例资源与历史验证说明仍保留。
 
 | 要看什么                       | 文档                                                                                                                            |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
@@ -24,7 +24,11 @@
 
 用户端访问 [18080](http://127.0.0.1:18080/)，后台访问 [18080/admin/](http://127.0.0.1:18080/admin/)。开发账号及随机密码位置、局域网配置、日志、停止、备份和隔离恢复见 [部署说明](deploy/README.md)。默认仅本机可达，不占用原有 5173/5174。
 
+需要带内容演示时，另行检出 [演示数据分支](https://github.com/cont1nu1ty/guofeng-platform/tree/codex/demo-data-bootstrap)，按[演示数据启动说明](deploy/README.md#显式导入演示数据)启动并导入。`main` 上的导入及非空重置命令会在缺少数据包时提前拒绝，不下载数据、不清理现有业务；备份、恢复和默认启动仍可正常使用。
+
 本轮实现与运行限制见 [后端实现](docs/engineering/backend-implementation.md)，实际执行的检查见 [真实后端验证](docs/verification/backend-runtime.md)。公开发布、专家材料和本人数据由服务端分别授权；不把既有设备演示数据自动导入数据库。
+
+2026-09-27 新增本人云端诵读与家庭约定、网页录音转 MP3、后台音频故事及九类公开内容搜索。私人记录不公开，后台仅提供授权地区汇总。演示分支上的升级、重启、搜索故障补偿及新卷恢复历史结果见[功能验证](docs/verification/records-search-2026-09-27.md)。
 
 ## 单独启动用户端演示
 
