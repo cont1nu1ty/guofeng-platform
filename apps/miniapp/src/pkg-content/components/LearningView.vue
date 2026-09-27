@@ -91,14 +91,20 @@ async function checkIn(id: string) {
   const item = repo.listActivities().find((entry) => entry.id === id)
   if (isHttpMode && (!item || !availability(item).canCheckIn)) return
   if (!isRegistered(id)) {
-    notify(t('请先完成演示预约', 'Please make a sample booking first'))
+    notify(
+      isHttpMode
+        ? t('请先报名本场活动', 'Please book this activity first')
+        : t('请先完成演示预约', 'Please make a sample booking first'),
+    )
     return
   }
   if (!(await checkInActivity(id))) {
     notify(
       t(
         isHttpMode ? '签到未保存，请查看页面错误后重试。' : '本机签到保存失败，请检查存储后重试。',
-        'Could not save the sample check-in. Check local storage.',
+        isHttpMode
+          ? 'Check-in was not saved. Review the error and retry.'
+          : 'Could not save the sample check-in. Check local storage.',
       ),
     )
     return
@@ -106,7 +112,9 @@ async function checkIn(id: string) {
   notify(
     t(
       isHttpMode ? '签到已记录。证书样张不代表正式签发。' : '演示签到成功，已生成参与证书样张',
-      'Sample check-in saved. A participation certificate sample is ready.',
+      isHttpMode
+        ? 'Check-in recorded. The certificate is a sample, not an official issue.'
+        : 'Sample check-in saved. A participation certificate sample is ready.',
     ),
   )
 }
@@ -164,10 +172,15 @@ function showAllActivities() {
             <text class="content-red-label">{{ t('参与提示', 'Before you join') }}</text>
             <text>
               {{
-                t(
-                  '当前演示不收费、不占用真实名额，也不需要真实个人信息。请使用样例身份体验预约与签到。',
-                  'This demo is free, does not reserve real places and needs no real personal information. Use the sample identity to try booking and check-in.',
-                )
+                isHttpMode
+                  ? t(
+                      '报名、取消与签到会保存到当前账号，并按后台设置更新名额。当前展示使用虚构场景，不作为实际招募或出行安排；参与证书仅为样张。',
+                      'Bookings, cancellations and check-ins are saved to your account and update the configured capacity. Current showcase scenarios are fictional, not real recruitment or travel arrangements; participation certificates are samples.',
+                    )
+                  : t(
+                      '当前演示不收费、不占用真实名额，也不需要真实个人信息。请使用样例身份体验预约与签到。',
+                      'This demo is free, does not reserve real places and needs no real personal information. Use the sample identity to try booking and check-in.',
+                    )
               }}
             </text>
           </view>
@@ -186,11 +199,21 @@ function showAllActivities() {
           </view>
           <view class="content-booking-fact">
             <text>{{ t('组织方', 'Organiser') }}</text>
-            <text>{{ t(event.organizer, 'Family Heritage Demo Workshop (fictional)') }}</text>
+            <text>
+              {{
+                t(
+                  event.organizer,
+                  isHttpMode ? event.organizer : 'Family Heritage Demo Workshop (fictional)',
+                )
+              }}
+            </text>
           </view>
           <view class="content-booking-count">
             <text>{{ event.registeredCount }}</text>
-            <text>/ {{ event.capacity }} {{ t('人（示例）', 'places (sample)') }}</text>
+            <text>
+              / {{ event.capacity }}
+              {{ isHttpMode ? t('人', 'places') : t('人（示例）', 'places (sample)') }}
+            </text>
           </view>
           <text v-if="isHttpMode" class="tag">{{ event.status }}</text>
           <wd-button
@@ -270,18 +293,25 @@ function showAllActivities() {
         </view>
         <text v-if="!isRegistered(event.id)" class="content-caption">
           {{
-            t(
-              '先预约，再体验签到与证书。',
-              'Book first to try check-in and the sample certificate.',
-            )
+            isHttpMode
+              ? t(
+                  '请先报名，活动进行中可签到并查看参与证书样张。',
+                  'Book first, then check in while the activity is in progress to view the sample participation certificate.',
+                )
+              : t(
+                  '先预约，再体验签到与证书。',
+                  'Book first to try check-in and the sample certificate.',
+                )
           }}
         </text>
         <text v-if="learningStorageError" class="content-warning">
           {{
-            t(
-              '本机存储不可用，签到暂不能保存。',
-              'Local storage is unavailable. Check-in cannot be saved.',
-            )
+            isHttpMode
+              ? t('签到暂未保存，请重试。', 'Check-in has not been saved. Please retry.')
+              : t(
+                  '本机存储不可用，签到暂不能保存。',
+                  'Local storage is unavailable. Check-in cannot be saved.',
+                )
           }}
         </text>
       </view>
@@ -298,10 +328,15 @@ function showAllActivities() {
         </text>
         <text>
           {{
-            t(
-              '体验用户完成以下活动的预约与签到演示',
-              'The demo user completed the booking and check-in flow for',
-            )
+            isHttpMode
+              ? t(
+                  '当前账号已记录下述活动的报名与签到',
+                  'This account has recorded a booking and check-in for',
+                )
+              : t(
+                  '体验用户完成以下活动的预约与签到演示',
+                  'The demo user completed the booking and check-in flow for',
+                )
           }}
         </text>
         <text class="content-certificate-course">{{ title(event) }}</text>
@@ -319,7 +354,7 @@ function showAllActivities() {
           :certificate="{
             id: 'activity-' + event.id,
             title: t('活动参与证书', 'Activity Participation'),
-            recipient: t('家风同行者', 'Demo participant'),
+            recipient: t('家风同行者', isHttpMode ? 'Platform participant' : 'Demo participant'),
             subject: title(event),
             date: event.date,
           }"
@@ -328,7 +363,14 @@ function showAllActivities() {
     </template>
     <template v-else-if="params.id">
       <view class="empty-state">
-        {{ t('未找到这个示例活动。', 'This sample activity was not found.') }}
+        {{
+          isHttpMode
+            ? t(
+                '未找到此活动，请返回列表重试。',
+                'This activity was not found. Return to the list and retry.',
+              )
+            : t('未找到这个示例活动。', 'This sample activity was not found.')
+        }}
         <wd-button variant="plain" @click="navigate('learning')">
           {{ t('查看全部活动', 'View all activities') }}
         </wd-button>
@@ -362,7 +404,11 @@ function showAllActivities() {
         </view>
         <view class="content-learning-stat">
           <text>{{ registrations.length }}</text>
-          <text>{{ t('我的演示预约', 'My sample bookings') }}</text>
+          <text>
+            {{
+              isHttpMode ? t('我的预约', 'My bookings') : t('我的演示预约', 'My sample bookings')
+            }}
+          </text>
         </view>
       </view>
       <view class="content-learning-shortcuts">
@@ -431,7 +477,7 @@ function showAllActivities() {
             <view class="card-bottom">
               <text class="muted">
                 {{ item.registeredCount }} / {{ item.capacity }}
-                {{ t('人（示例）', 'places (sample)') }}
+                {{ isHttpMode ? t('人', 'places') : t('人（示例）', 'places (sample)') }}
               </text>
               <wd-button
                 :variant="isRegistered(item.id) ? 'plain' : 'base'"
@@ -455,12 +501,19 @@ function showAllActivities() {
       <view v-if="!filtered.length" class="empty-state">
         <text>
           {{
-            registeredOnly
-              ? t('当前地区暂无演示预约。', 'No sample bookings in this region.')
-              : t(
-                  '该地区暂未安排演示活动，切换全国查看。',
-                  'No sample activities in this region. Switch to all regions.',
-                )
+            isHttpMode
+              ? registeredOnly
+                ? t('当前地区还没有你的预约。', 'You have no bookings in this region.')
+                : t(
+                    '当前地区暂无已发布活动，可切换全国查看。',
+                    'No activities are published in this region. Browse all regions.',
+                  )
+              : registeredOnly
+                ? t('当前地区暂无演示预约。', 'No sample bookings in this region.')
+                : t(
+                    '该地区暂未安排演示活动，切换全国查看。',
+                    'No sample activities in this region. Switch to all regions.',
+                  )
           }}
         </text>
         <wd-button variant="plain" @click="showAllActivities">
@@ -469,10 +522,15 @@ function showAllActivities() {
       </view>
       <view class="scope-note">
         {{
-          t(
-            '预约、签到与参与证书只在当前设备演示，不占用真实名额。阵地与地址均为虚构，不能据此安排出行。',
-            'Booking, check-in and certificate flows are local samples. No real places are reserved. Venues and addresses are fictional.',
-          )
+          isHttpMode
+            ? t(
+                '报名与签到保存到当前账号，并按后台设置更新名额。诵读打卡为本人可读的云端记录。当前展示数据为虚构场景，不能据此安排出行；参与证书仅为样张，不代表正式签发。',
+                'Bookings and check-ins are saved to your account and update the configured capacity. Recitations are private cloud records. Current showcase data is fictional and must not be used to plan travel; participation certificates are samples, not officially issued.',
+              )
+            : t(
+                '预约、签到与参与证书只在当前设备演示，不占用真实名额。阵地与地址均为虚构，不能据此安排出行。',
+                'Booking, check-in and certificate flows are local samples. No real places are reserved. Venues and addresses are fictional.',
+              )
         }}
       </view>
     </template>

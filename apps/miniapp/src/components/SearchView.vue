@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
-import { t } from '../composables/useLocale'
+import { locale, t } from '../composables/useLocale'
+import { isHttpMode } from '../config/dataMode'
+import { remoteUser } from '../services/api'
+import { useRemoteSearch } from '../composables/useRemoteSearch'
 import { region, regionLabel, repo, revision } from '../composables/useDemo'
 import { navigate, useRouteParams, type Screen } from '../composables/useNavigation'
 import {
@@ -18,11 +21,35 @@ const limit = ref(12)
 const allRegions = ref(false)
 const index = computed(() => {
   revision.value
+  if (isHttpMode) return []
   return createSearchIndex(repo.listWorks(), repo.listClassics(), repo.listActivities())
 })
+const remote = useRemoteSearch()
 const matches = computed(() =>
-  findEntries(index.value, query.value, kind.value, allRegions.value ? 'all' : region.value),
+  isHttpMode
+    ? remote.page.value.items
+    : findEntries(index.value, query.value, kind.value, allRegions.value ? 'all' : region.value),
 )
+const resultTotal = computed(() => (isHttpMode ? remote.page.value.total : matches.value.length))
+function count(id: SearchKind | 'all') {
+  return isHttpMode
+    ? (remote.page.value.counts[id] ?? 0)
+    : findEntries(index.value, query.value, id, allRegions.value ? 'all' : region.value).length
+}
+watch(
+  [query, kind, region, allRegions, locale, remoteUser],
+  () => {
+    if (isHttpMode)
+      remote.search({
+        q: query.value,
+        kind: kind.value,
+        region: allRegions.value ? 'all' : region.value,
+        language: locale.value,
+      })
+  },
+  { immediate: true },
+)
+onBeforeUnmount(remote.dispose)
 watch([query, kind, region, allRegions], () => {
   limit.value = 12
 })
@@ -43,8 +70,8 @@ function kindLabel(id: SearchKind) {
       :eyebrow="t('全站搜索', 'Search the platform')"
       :subtitle="
         t(
-          '检索作品、资讯、典籍、活动、课堂、视频、名人馆、文创与阵地。',
-          'Find stories, news, books, events, courses, videos, halls, gifts and venues.',
+          '检索作品、资讯、典籍、活动、课堂、媒体、名人馆、文创与阵地。',
+          'Find stories, news, books, events, courses, media, halls, gifts and venues.',
         )
       "
     />
@@ -63,7 +90,7 @@ function kindLabel(id: SearchKind) {
     <view class="search-kind-list">
       <button :class="['choice-card', { active: kind === 'all' }]" @click="kind = 'all'">
         {{ t('全部', 'All') }} ·
-        {{ findEntries(index, query, 'all', allRegions ? 'all' : region).length }}
+        {{ count('all') }}
       </button>
       <button
         v-for="item in searchKinds"
@@ -72,12 +99,12 @@ function kindLabel(id: SearchKind) {
         @click="kind = item.id"
       >
         {{ t(item.label.zh, item.label.en) }} ·
-        {{ findEntries(index, query, item.id, allRegions ? 'all' : region).length }}
+        {{ count(item.id) }}
       </button>
     </view>
     <view class="search-summary">
       <text>
-        {{ matches.length }} {{ t('条结果', 'results') }} ·
+        {{ resultTotal }} {{ t('条结果', 'results') }} ·
         {{ allRegions ? t('全国', 'National') : t(regionLabel) }}
       </text>
       <button v-if="region !== 'all'" class="text-button" @click="allRegions = !allRegions">
@@ -88,7 +115,19 @@ function kindLabel(id: SearchKind) {
         }}
       </button>
     </view>
-    <view v-if="!matches.length" class="empty-state">
+    <view v-if="isHttpMode && remote.error.value" class="empty-state" role="status">
+      <text>{{ remote.error.value }}</text>
+      <wd-button variant="plain" :disabled="remote.loading.value" @click="remote.retry">
+        {{ t('重试搜索', 'Retry search') }}
+      </wd-button>
+    </view>
+    <text v-if="isHttpMode && remote.loading.value" class="scope-note" role="status">
+      {{ t('正在检索已发布内容…', 'Searching published content…') }}
+    </text>
+    <view
+      v-if="!matches.length && (!isHttpMode || (!remote.loading.value && !remote.error.value))"
+      class="empty-state"
+    >
       <text>
         {{
           t(
@@ -98,11 +137,15 @@ function kindLabel(id: SearchKind) {
         }}
       </text>
       <wd-button variant="plain" @click="resetSearch">
-        {{ t('查看全部样例', 'Browse all samples') }}
+        {{
+          isHttpMode
+            ? t('浏览已发布内容', 'Browse published content')
+            : t('查看全部样例', 'Browse all samples')
+        }}
       </wd-button>
     </view>
     <button
-      v-for="item in matches.slice(0, limit)"
+      v-for="item in isHttpMode ? matches : matches.slice(0, limit)"
       :key="item.id"
       class="search-entry"
       @click="navigate(item.screen as Screen, { id: item.contentId })"
@@ -114,17 +157,29 @@ function kindLabel(id: SearchKind) {
       <text class="search-entry-title">{{ t(item.title.zh, item.title.en) }}</text>
       <text class="search-entry-summary">{{ t(item.summary.zh, item.summary.en) }}</text>
     </button>
-    <view v-if="matches.length > limit" class="search-more">
-      <wd-button variant="plain" @click="limit += 12">
-        {{ t('加载更多', 'Show more') }} ({{ matches.length - limit }})
+    <view
+      v-if="isHttpMode ? remote.page.value.nextCursor : matches.length > limit"
+      class="search-more"
+    >
+      <wd-button
+        variant="plain"
+        :disabled="isHttpMode && remote.loading.value"
+        @click="isHttpMode ? remote.more() : (limit += 12)"
+      >
+        {{ t('加载更多', 'Show more') }} ({{ resultTotal - (isHttpMode ? matches.length : limit) }})
       </wd-button>
     </view>
     <text class="scope-note">
       {{
-        t(
-          '搜索范围为本机样例与当前设备投稿，不代表全国真实资源库。',
-          'Results include local samples and submissions on this device, not a live national database.',
-        )
+        isHttpMode
+          ? t(
+              '仅检索当前语言已发布的公开内容；个人约定、打卡、未公开投稿和评审材料不在此列。',
+              'Only published content in the selected language is searched. Private promises, recordings, drafts and reviews are excluded.',
+            )
+          : t(
+              '搜索范围为本机样例与当前设备投稿，不代表全国真实资源库。',
+              'Results include local samples and submissions on this device, not a live national database.',
+            )
       }}
     </text>
   </view>

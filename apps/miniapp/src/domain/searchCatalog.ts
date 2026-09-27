@@ -35,7 +35,7 @@ export const searchKinds: { id: SearchKind; label: BilingualText }[] = [
   { id: 'classic', label: bi('典籍', 'Books') },
   { id: 'activity', label: bi('活动', 'Events') },
   { id: 'course', label: bi('课堂', 'Courses') },
-  { id: 'video', label: bi('视频', 'Videos') },
+  { id: 'video', label: bi('媒体', 'Media') },
   { id: 'hall', label: bi('名人馆', 'Heritage halls') },
   { id: 'product', label: bi('文创', 'Gifts') },
   { id: 'venue', label: bi('阵地', 'Venues') },

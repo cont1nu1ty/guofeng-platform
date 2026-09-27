@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { remoteUser } from '../services/api'
+import { remoteUser, remoteWorkspace } from '../services/api'
 import { isHttpMode } from '../config/dataMode'
 import { commerceStatusLabels } from '../domain/showcaseCatalog'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import AccountPanel from './AccountPanel.vue'
+import FamilyPromiseEditor from './FamilyPromiseEditor.vue'
+import CloudRecitationRecords from './CloudRecitationRecords.vue'
 import CertificateExport from './CertificateExport.vue'
 import {
   myWorks,
@@ -183,7 +185,9 @@ const tabs = computed(() => [
   {
     id: 'works',
     label: t('我的投稿', 'Submissions'),
-    count: myWorks.value.length + videoSubmissionRecords.value.length,
+    count:
+      myWorks.value.length +
+      (isHttpMode ? remoteWorkspace.mediaSubmissions.length : videoSubmissionRecords.value.length),
   },
   { id: 'messages', label: t('消息中心', 'Messages'), count: unreadCount.value },
   { id: 'certificates', label: t('证书夹', 'Certificates'), count: certificateCards.value.length },
@@ -196,8 +200,19 @@ const tabs = computed(() => [
   {
     id: 'learning',
     label: t('学习记录', 'Learning'),
-    count: learningSummary.value.started + recitationRecords.value.length,
+    count:
+      learningSummary.value.started +
+      (isHttpMode ? remoteWorkspace.recitations.length : recitationRecords.value.length),
   },
+  ...(isHttpMode
+    ? [
+        {
+          id: 'promises',
+          label: t('家庭约定', 'Family promises'),
+          count: remoteWorkspace.familyPromises.length,
+        },
+      ]
+    : []),
   { id: 'gifts', label: t('文创记录', 'Gift requests'), count: commerceRequests.value.length },
   {
     id: 'archive',
@@ -508,11 +523,13 @@ const rows = computed<PersonalRow[]>(() => {
   return []
 })
 const visibleMediaRecords = computed(() =>
-  tab.value === 'learning'
-    ? recitationRecords.value
-    : tab.value === 'works' && workFilter.value === 'all'
-      ? videoSubmissionRecords.value
-      : [],
+  isHttpMode
+    ? []
+    : tab.value === 'learning'
+      ? recitationRecords.value
+      : tab.value === 'works' && workFilter.value === 'all'
+        ? videoSubmissionRecords.value
+        : [],
 )
 const panelHelp = computed(
   () =>
@@ -539,9 +556,18 @@ const panelHelp = computed(
         isHttpMode ? '查看当前账号的活动预约和签到记录。' : '预约、签到和参与记录仅用于界面演示。',
         'Bookings, check-ins and participation are interface demonstrations.',
       ),
-      learning: t(
-        '学习进度保存在当前设备，不计真实培训学时。',
-        'Learning progress is local and carries no accredited hours.',
+      learning: isHttpMode
+        ? t(
+            '学习进度与私人诵读保存到当前账号，不计认证培训学时。',
+            'Learning progress and private recordings are saved to your account, without accredited training hours.',
+          )
+        : t(
+            '学习进度保存在当前设备，不计真实培训学时。',
+            'Learning progress is local and carries no accredited hours.',
+          ),
+      promises: t(
+        '家庭约定保存在当前账号，仅本人可读。',
+        'Promises are saved to your account and visible only to you.',
       ),
       gifts: t(
         isHttpMode
@@ -739,6 +765,26 @@ function openInformation(kind: 'privacy' | 'about') {
             </view>
           </view>
         </template>
+        <template v-if="isHttpMode && tab === 'promises'">
+          <FamilyPromiseEditor
+            v-for="promise in remoteWorkspace.familyPromises"
+            :key="promise.id"
+            :person-id="promise.personId"
+            :person-name="promise.personName"
+          />
+          <text v-if="!remoteWorkspace.familyPromises.length" class="scope-note">
+            {{
+              t(
+                '还没有家庭约定。走进名人馆，写下想和家人实践的小事。',
+                'No promises yet. Visit a gallery and choose something to practise with your family.',
+              )
+            }}
+          </text>
+          <wd-button size="small" variant="plain" @click="navigate('hall')">
+            {{ t('走进名人馆', 'Visit galleries') }}
+          </wd-button>
+        </template>
+        <CloudRecitationRecords v-if="isHttpMode && tab === 'learning'" />
         <view v-if="tab === 'learning'" class="profile-notebook-links">
           <button class="text-button" @click="navigate('learning', { tab: 'audio' })">
             {{ t('听故事 / 诵读打卡 →', 'Audio stories / reading practice →') }}
@@ -801,9 +847,13 @@ function openInformation(kind: 'privacy' | 'about') {
         </text>
         <view
           v-if="
-            tab === 'certificates'
-              ? !certificateCards.length
-              : !rows.length && !visibleMediaRecords.length
+            tab === 'promises'
+              ? false
+              : tab === 'learning' && isHttpMode && remoteWorkspace.recitations.length
+                ? false
+                : tab === 'certificates'
+                  ? !certificateCards.length
+                  : !rows.length && !visibleMediaRecords.length
           "
           class="empty-state"
         >

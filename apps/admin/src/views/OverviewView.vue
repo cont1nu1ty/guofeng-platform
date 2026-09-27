@@ -31,6 +31,14 @@ import {
 } from "../domain/analytics";
 
 import { canVisit } from "../services/session";
+import { privateRecordStats } from "../domain/privateRecords";
+import { regionCatalog } from "../domain/regions";
+const scopedPrivateRecords = computed(() => {
+  if (workspace.region === "全国") return privateRecordStats;
+  const id = regionCatalog.find((item) => item.name === workspace.region)?.id;
+  return privateRecordStats.byRegion.find((item) => item.regionId === id)
+    ?? { recitations: 0, familyPromises: 0 };
+});
 const router = useRouter();
 const pending = computed(() =>
   scopedSubmissions.value.filter((item) => item.status === "待初审"),
@@ -172,6 +180,11 @@ const quickLinks = [
     </button>
   </div>
   <div class="overview-main-grid">
+    <section v-if="isHttpMode && canVisit('/analytics')" class="panel" style="padding: 24px; grid-column: 1 / -1">
+      <h2>个人文化记录 · {{ workspace.region }}</h2>
+      <p>诵读打卡 {{ scopedPrivateRecords.recitations }} 条 · 家庭约定 {{ scopedPrivateRecords.familyPromises }} 份</p>
+      <p>仅汇总授权地区的记录数量。正文与录音由本人管理，主动投稿后才进入媒体审核。</p>
+    </section>
     <section v-if="canVisit('/analytics')" class="panel trend-panel">
       <div class="panel-header">
         <div>

@@ -7,6 +7,7 @@ import { api, ApiError, connection, reportError, newRequestId } from "./http";
 import { session } from "./session";
 import { isHttpMode } from "./mode";
 import { catalogState, homepageConfig } from "../domain/catalog";
+import { privateRecordStats, type PrivateRecordStats } from "../domain/privateRecords";
 export const arrayTargets = {
   ...catalogState,
   ...reviewState,
@@ -31,6 +32,7 @@ export type WorkspaceData = {
   homepageConfig?: typeof homepageConfig;
   permissions: string[];
   roles: string[];
+  privateRecordStats?: PrivateRecordStats;
 };
 // Reconcile existing identities so open drawers observe the authoritative saved values.
 function reconcile(target: any[], source: any[]) {
@@ -46,6 +48,7 @@ function reconcile(target: any[], source: any[]) {
   target.splice(0, target.length, ...next);
 }
 export function applyWorkspace(data: WorkspaceData) {
+  Object.assign(privateRecordStats, data.privateRecordStats ?? { recitations: 0, familyPromises: 0, byRegion: [] });
   for (const key of Object.keys(arrayTargets) as (keyof typeof arrayTargets)[])
     reconcile(arrayTargets[key], Array.isArray(data[key]) ? data[key] : []);
   for (const item of editorialState.activities) {
@@ -88,6 +91,7 @@ export function applyWorkspace(data: WorkspaceData) {
   if (session.user && data.roles) session.user.roles = data.roles;
 }
 export function clearWorkspace() {
+  Object.assign(privateRecordStats, { recitations: 0, familyPromises: 0, byRegion: [] });
   for (const values of Object.values(arrayTargets)) values.splice(0);
   homepageConfig.sections.splice(0);
   homepageConfig.lockVersion = undefined;

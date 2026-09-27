@@ -6,6 +6,7 @@ import { readInputValue } from '../../composables/readInputValue'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
 import HallExperiencePanel from './HallExperiencePanel.vue'
+import FamilyPromiseEditor from '../../components/FamilyPromiseEditor.vue'
 import { hallPeople, type BilingualText } from '../../domain/showcaseCatalog'
 import { navigate, goBack, useRouteParams } from '../../composables/useNavigation'
 import { t } from '../../composables/useLocale'
@@ -278,32 +279,35 @@ function copySource() {
                 )
               }}
             </text>
-            <textarea
-              @blur="reflection = readInputValue($event, reflection)"
-              @confirm="reflection = readInputValue($event, reflection)"
-              v-model="reflection"
-              :key="reflectionEditorVersion"
-              class="showcase-textarea"
-              :maxlength="180"
-              :placeholder="
-                t(
-                  '例如：每周留出一晚，和家人共读一封家书。',
-                  'For example: read a family letter together one evening a week.',
-                )
-              "
-            />
-            <view class="showcase-actions">
-              <wd-button size="small" @click="saveReflection">
-                {{
-                  reflectionSaved
-                    ? t('已保存到本机', 'Saved on this device')
-                    : t('保存我的约定', 'Save my promise')
-                }}
-              </wd-button>
-              <wd-button size="small" variant="plain" @click="restoreReflection">
-                {{ t('读取已存约定', 'Load saved promise') }}
-              </wd-button>
-            </view>
+            <FamilyPromiseEditor v-if="isHttpMode" :key="current.id" :person-id="current.id" />
+            <template v-else>
+              <textarea
+                @blur="reflection = readInputValue($event, reflection)"
+                @confirm="reflection = readInputValue($event, reflection)"
+                v-model="reflection"
+                :key="reflectionEditorVersion"
+                class="showcase-textarea"
+                :maxlength="180"
+                :placeholder="
+                  t(
+                    '例如：每周留出一晚，和家人共读一封家书。',
+                    'For example: read a family letter together one evening a week.',
+                  )
+                "
+              />
+              <view class="showcase-actions">
+                <wd-button size="small" @click="saveReflection">
+                  {{
+                    reflectionSaved
+                      ? t('已保存到本机', 'Saved on this device')
+                      : t('保存我的约定', 'Save my promise')
+                  }}
+                </wd-button>
+                <wd-button size="small" variant="plain" @click="restoreReflection">
+                  {{ t('读取已存约定', 'Load saved promise') }}
+                </wd-button>
+              </view>
+            </template>
           </view>
         </view>
         <view class="showcase-side-panel">
