@@ -11,16 +11,20 @@ public class JfMember {
   private final JfAuth auth;
   private final JfProjection projection;
   private final JfReview review;
+  private final JfPersonalRecords personalRecords;
 
-  public JfMember(JfStore s, JfAuth a, JfProjection p, JfReview r) {
+  public JfMember(JfStore s, JfAuth a, JfProjection p, JfReview r, JfPersonalRecords personalRecords) {
     store = s;
     auth = a;
     projection = p;
     review = r;
+    this.personalRecords = personalRecords;
   }
 
   public Object command(
       JfAuth.Actor a, String cmd, String id, Object version, Map<String, Object> data) {
+    if (Set.of("recitation.create", "recitation.remove", "familyPromise.save", "familyPromise.remove").contains(cmd))
+      return personalRecords.command(a, cmd, id, version, data);
     switch (cmd) {
       case "review.submit" -> {
         return review.command(a, "submitReview", id, version, data);

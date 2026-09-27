@@ -108,3 +108,7 @@ jiafeng:
     secret-key: ${JIAFENG_S3_SECRET_KEY}
     bucket: ${JIAFENG_S3_BUCKET:jiafeng-private}
     region: us-east-1
+logging:
+  level:
+    # Upstream request timing logs include JSON bodies. Private user text must not enter logs.
+    org.dromara.common.web.interceptor.PlusWebInvokeTimeInterceptor: WARN

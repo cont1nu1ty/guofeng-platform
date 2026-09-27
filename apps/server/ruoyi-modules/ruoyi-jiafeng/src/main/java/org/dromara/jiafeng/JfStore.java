@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /** Indexed ownership/status columns plus versioned domain documents, not browser snapshots. */
 @Repository
@@ -61,6 +62,7 @@ public class JfStore {
     return rows.getFirst();
   }
 
+  @Transactional
   public Entity create(
       String kind, Long owner, String region, String status, Map<String, Object> data) {
     String id = id(kind + "_");
@@ -72,9 +74,12 @@ public class JfStore {
         region,
         status,
         json(data));
-    return find(kind, id, false);
+    var entity = find(kind, id, false);
+    enqueueSearch(entity);
+    return entity;
   }
 
+  @Transactional
   public Entity save(Entity e, String region, String status, Map<String, Object> data) {
     int n =
         db.update(
@@ -87,7 +92,21 @@ public class JfStore {
             e.id,
             e.version);
     require(n == 1, 412, "VERSION_CONFLICT", "记录已更新，请刷新后重试");
-    return find(e.kind, e.id, false);
+    var entity = find(e.kind, e.id, false);
+    enqueueSearch(entity);
+    return entity;
+  }
+
+  /** No network I/O: the projection and committed generation commit with the business write. */
+  private void enqueueSearch(Entity entity) {
+    if (!JfSearch.ENTITY_KINDS.contains(entity.kind())) return;
+    db.update("UPDATE jf_search_state SET committed_generation=committed_generation+1 WHERE id=1");
+    Long generation =
+        db.queryForObject("SELECT committed_generation FROM jf_search_state WHERE id=1", Long.class);
+    var document = JfSearch.document(entity);
+    db.update(
+        "INSERT INTO jf_search_outbox(generation,entity_id,entity_kind,document) VALUES(?,?,?,?)",
+        generation, entity.id(), entity.kind(), document == null ? null : json(document));
   }
 
   public void checkVersion(Entity e, Object version) {

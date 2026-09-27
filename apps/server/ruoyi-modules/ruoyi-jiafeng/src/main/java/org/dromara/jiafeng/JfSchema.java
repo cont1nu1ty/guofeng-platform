@@ -56,7 +56,9 @@ public class JfSchema implements ApplicationRunner {
         if (result.getInt(1) != 1) throw new IllegalStateException("Migration lock unavailable");
       }
       try {
-        String[] migrations = {"V001__domain.sql", "V002__revision_files.sql"};
+        String[] migrations = {
+          "V001__domain.sql", "V002__revision_files.sql", "V003__private_records.sql", "V004__search.sql"
+        };
         for (int i = 0; i < migrations.length; i++) {
           int version = i + 1;
           var resource = new ClassPathResource("db/jiafeng/" + migrations[i]);

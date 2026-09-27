@@ -11,11 +11,13 @@ public class JfProjection {
   private final JfStore store;
   private final JfSubmissions submissions;
   private final JfCatalog catalog;
+  private final JfPersonalRecords personalRecords;
 
-  public JfProjection(JfStore s, JfSubmissions w, JfCatalog catalog) {
+  public JfProjection(JfStore s, JfSubmissions w, JfCatalog catalog, JfPersonalRecords personalRecords) {
     store = s;
     submissions = w;
     this.catalog = catalog;
+    this.personalRecords = personalRecords;
   }
 
   private List<JfStore.Entity> scoped(String kind, JfAuth.Actor a) {
@@ -25,6 +27,7 @@ public class JfProjection {
   public Map<String, Object> admin(JfAuth.Actor a) {
     Map<String, Object> out = new LinkedHashMap<>();
     catalog.addAdmin(out, a);
+    personalRecords.addAdmin(out, a);
     List<JfStore.Entity> tasks =
         store.all("task").stream()
             .filter(
@@ -215,6 +218,8 @@ public class JfProjection {
                   "SELECT l.*,u.nick_name FROM jf_audit l LEFT JOIN sys_user u ON"
                       + " l.actor_id=u.user_id ORDER BY l.created_at DESC LIMIT 500")) {
         if (!a.region(text(row.get("region_id")))) continue;
+        String action = text(row.get("action"));
+        if (action.startsWith("recitation.") || action.startsWith("familyPromise.")) continue;
         logs.add(
             m(
                 "id",
@@ -295,6 +300,7 @@ public class JfProjection {
   public Map<String, Object> member(JfAuth.Actor a) {
     Map<String, Object> out = new LinkedHashMap<>();
     catalog.addMember(out, a);
+    personalRecords.addMember(out, a);
     out.put("scoringDimensions", DIMENSIONS);
     out.put(
         "reviewRuleVersion", store.find("setting", "reviewFlow", false).data().get("ruleVersion"));
