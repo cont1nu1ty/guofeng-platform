@@ -260,7 +260,8 @@ def reset_scope(values):
     expected = {"jf_account", "jf_entity", "jf_revision", "jf_draft", "jf_file",
         "jf_registration", "jf_idempotency", "jf_audit", "jf_login_attempt",
         "jf_revision_file", "jf_schema_version", "jf_bootstrap_ready",
-        "jf_search_state", "jf_search_outbox"}
+        "jf_search_state", "jf_search_outbox", "jf_review_window", "jf_review_delivery",
+        "jf_review_reminder_state", "jf_public_cache_state"}
     actual = set(query("SELECT table_name FROM information_schema.tables WHERE "
         "table_schema=DATABASE() AND LEFT(table_name,3)='jf_';").splitlines())
     if actual != expected:
@@ -353,6 +354,13 @@ def restore(source):
     compose("up", "-d", "--wait", "mysql", "redis", "storage", env_file=restored_env)
     with (source / "database.sql").open("rb") as inp:
         compose("exec", "-T", "mysql", "sh", "-c", 'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql -u root jiafeng', stdin=inp, env_file=restored_env)
+    # A restored version counter must not address projections from a different database history.
+    # Older backups acquire their first epoch through V006 during application startup.
+    compose("exec", "-T", "mysql", "sh", "-c", 'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql -u root jiafeng',
+        input="SET @cache_reset=(SELECT IF(COUNT(*)=1,'UPDATE jf_public_cache_state SET epoch=UUID() WHERE id=1','SELECT 1') "
+              "FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name='jf_public_cache_state'); "
+              "PREPARE cache_reset FROM @cache_reset; EXECUTE cache_reset; DEALLOCATE PREPARE cache_reset;",
+        text=True, env_file=restored_env)
     compose("stop", "storage", env_file=restored_env)
     volume = values["COMPOSE_PROJECT_NAME"] + "_storage-data"
     # This is a newly generated project volume, never the source project's data.

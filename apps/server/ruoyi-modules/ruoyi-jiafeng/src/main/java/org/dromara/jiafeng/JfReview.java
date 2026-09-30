@@ -11,11 +11,13 @@ public class JfReview {
   private final JfStore store;
   private final JfAuth auth;
   private final JfReviewFlow flow;
+  private final JfReviewWindows windows;
 
-  public JfReview(JfStore s, JfAuth a, JfReviewFlow f) {
+  public JfReview(JfStore s, JfAuth a, JfReviewFlow f, JfReviewWindows windows) {
     store = s;
     auth = a;
     flow = f;
+    this.windows = windows;
   }
 
   private JfStore.Entity manuscript(JfAuth.Actor a, String id, Object version) {
@@ -27,6 +29,8 @@ public class JfReview {
 
   public Object command(
       JfAuth.Actor a, String command, String id, Object version, Map<String, Object> data) {
+    if (command.equals("markReviewAlertRead")) return windows.markRead(a, id);
+    if (command.equals("updateReviewWindow")) return updateWindow(a, id, version, data);
     if (command.equals("configureReviewFlow")) {
       require(bool(data.get("blind")), 422, "BLIND_REVIEW_REQUIRED", "本期固定采用匿名评审");
       require(a.national(), 403, "FORBIDDEN", "只有全国管理员可修改流程");
@@ -121,7 +125,7 @@ public class JfReview {
         for (var pending : store.all("task")) {
           if (str(pending.data(), "submissionId").equals(id) && pending.status().equals("待评分")) {
             require(
-                !Instant.parse(str(pending.data(), "dueAt")).isAfter(Instant.now()),
+                !JfReviewWindows.dueAt(pending).isAfter(windows.now()),
                 409,
                 "TASK_EXISTS",
                 "当前已有待评分任务");
@@ -148,11 +152,8 @@ public class JfReview {
             "专家当前不可接单");
         require(!Objects.equals(e.owner(), expert.owner()), 409, "REVIEW_CONFLICT", "投稿人不能评审自己的稿件");
         require(a.national() || a.region(expert.region()), 404, "NOT_FOUND", "专家不可见");
-        Instant due =
-            parseDue(
-                str(data, "dueAt"),
-                number(obj(d.get("flowSnapshot")).getOrDefault("deadlineDays", 7)));
-        require(due.isAfter(Instant.now()), 422, "INVALID_DEADLINE", "截止时间须晚于当前时间");
+        var window = windows.initialWindow(data,
+            number(obj(d.get("flowSnapshot")).getOrDefault("deadlineDays", 7)));
         Map<String, Object> task = flow.assign(str(d, "flowInstanceId"), expert.owner(), a.id);
         task.putAll(
             m(
@@ -168,10 +169,8 @@ public class JfReview {
                 expertId,
                 "expertName",
                 str(expert.data(), "name"),
-                "dueAt",
-                due.toString(),
                 "assignedAt",
-                now(),
+                windows.now().toString(),
                 "ruleVersion",
                 "jiafeng-four-v1",
                 "flowInstanceId",
@@ -180,6 +179,7 @@ public class JfReview {
                 a.id,
                 "dimensions",
                 DIMENSIONS));
+        task.putAll(window);
         store.create("task", expert.owner(), e.region(), "待评分", task);
       }
       case "decideSubmission" -> {
@@ -230,7 +230,31 @@ public class JfReview {
     return ok();
   }
 
+  private Object updateWindow(JfAuth.Actor a, String id, Object version, Map<String, Object> input) {
+    var preliminary = store.find("task", id, false);
+    var manuscript = store.find("submission", str(preliminary.data(), "submissionId"), true);
+    auth.operate(a, manuscript.region());
+    var task = store.find("task", id, true);
+    store.checkVersion(task, version);
+    require(manuscript.status().equals("in_review")
+            && str(manuscript.data(), "revisionId").equals(str(task.data(), "revisionId")),
+        409, "TASK_INVALID", "任务对应的稿件版本已失效");
+    var changed = windows.changedWindow(task, input);
+    var history = list(changed.get("windowHistory"));
+    obj(history.getLast()).putAll(m("actorId", a.id, "actorName", a.name));
+    var saved = store.save(task, task.region(), task.status(), changed);
+    store.audit(a, "review.window.updated", id, task.region(),
+        m("oldStartsAt", JfReviewWindows.startsAt(task).toString(), "oldDueAt", JfReviewWindows.dueAt(task).toString(),
+            "startsAt", str(changed, "startsAt"), "dueAt", str(changed, "dueAt"),
+            "windowVersion", JfReviewWindows.windowVersion(saved), "reason", str(input, "reason")));
+    windows.notifyWindow(saved, "window_updated");
+    return ok();
+  }
+
   private Object score(JfAuth.Actor a, String id, Object version, Map<String, Object> input) {
+    // All manuscript/task mutations lock in this order, including the reminder worker.
+    var preliminary = store.find("task", id, false);
+    var e = store.find("submission", str(preliminary.data(), "submissionId"), true);
     var t = store.find("task", id, true);
     require(
         Objects.equals(t.owner(), a.id) && a.roles.contains("expert"),
@@ -238,13 +262,7 @@ public class JfReview {
         "NOT_FOUND",
         "任务不存在或未分配给当前专家");
     store.checkVersion(t, version);
-    require(t.status().equals("待评分"), 409, "TASK_COMPLETED", "任务已完成或已失效");
-    require(
-        Instant.parse(str(t.data(), "dueAt")).isAfter(Instant.now()),
-        409,
-        "TASK_EXPIRED",
-        "评分窗口已关闭，请联系运营重新分配");
-    var e = store.find("submission", str(t.data(), "submissionId"), true);
+    windows.requireScoringWindow(t);
     require(
         e.status().equals("in_review")
             && str(e.data(), "revisionId").equals(str(t.data(), "revisionId")),
@@ -302,21 +320,6 @@ public class JfReview {
     work.put("progressIndex", next);
     store.save(e, e.region(), e.status(), work);
     return ok();
-  }
-
-  private Instant parseDue(String value, long days) {
-    if (value.isBlank()) return Instant.now().plus(Duration.ofDays(days));
-    try {
-      return Instant.parse(value);
-    } catch (Exception ignored) {
-      try {
-        return LocalDateTime.parse(value.replace(' ', 'T'))
-            .atZone(ZoneId.of("Asia/Shanghai"))
-            .toInstant();
-      } catch (Exception e) {
-        throw error(422, "INVALID_DATE", "截止时间格式无效");
-      }
-    }
   }
 
   private Map<String, Object> ok() {

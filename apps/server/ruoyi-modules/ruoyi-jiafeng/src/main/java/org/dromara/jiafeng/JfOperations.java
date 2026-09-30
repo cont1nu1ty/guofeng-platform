@@ -12,12 +12,14 @@ public class JfOperations {
   private final JfAuth auth;
   private final JfFiles files;
   private final JfCatalog catalog;
+  private final JfReviewWindows reviewWindows;
 
-  public JfOperations(JfStore s, JfAuth a, JfFiles f, JfCatalog catalog) {
+  public JfOperations(JfStore s, JfAuth a, JfFiles f, JfCatalog catalog, JfReviewWindows reviewWindows) {
     store = s;
     auth = a;
     files = f;
     this.catalog = catalog;
+    this.reviewWindows = reviewWindows;
   }
 
   private JfStore.Entity existing(JfAuth.Actor a, String kind, String id, Object version) {
@@ -478,6 +480,7 @@ public class JfOperations {
                 bool(input.get("draftNotice")),
                 "notice",
                 required(input, "notice", 0, 1000));
+        reviewWindows.reminderPreferenceChanged(bool(e.data().get("reviewReminder")), bool(d.get("reviewReminder")));
         store.save(e, "all", "active", d);
         return ok();
       }

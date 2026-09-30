@@ -136,9 +136,10 @@ public class JfMember {
                 .filter(
                     e -> Objects.equals(e.owner(), a.id) && str(e.data(), "contentId").equals(id))
                 .findFirst();
-        if (existing.isPresent())
+        if (existing.isPresent()) {
           store.db().update("DELETE FROM jf_entity WHERE id=?", existing.get().id());
-        else
+          JfPublicCache.touch(store.db(), kind, existing.get().id());
+        } else
           store.create(
               kind,
               a.id,

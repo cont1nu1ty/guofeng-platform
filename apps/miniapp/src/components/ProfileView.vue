@@ -274,9 +274,15 @@ function previewCertificate(id: string) {
 async function revise(id: string) {
   if (await safely(() => repo.prepareRevision(id))) navigate('submit')
 }
-function readMessage(id: string, workId: string, sourceType?: string, targetId?: string) {
-  safely(() => repo.markNotificationRead(id))
-  if (sourceType === 'news' && targetId) navigate('news', { id: targetId })
+async function readMessage(id: string, workId: string, sourceType?: string, targetId?: string) {
+  const saved = await safely(async () => {
+    await repo.markNotificationRead(id)
+    return true
+  })
+  if (!saved) return
+  if (sourceType === 'review-task' && targetId)
+    navigate('admin', { tab: 'expert', taskId: targetId })
+  else if (sourceType === 'news' && targetId) navigate('news', { id: targetId })
   else if (workId) openProgress(workId)
 }
 async function markAllRead() {

@@ -34,6 +34,8 @@ public class JfController {
           "returnSubmission",
           "prepareBlindMaterial",
           "assignReview",
+          "updateReviewWindow",
+          "markReviewAlertRead",
           "decideSubmission",
           "publishSubmission");
 
@@ -64,7 +66,7 @@ public class JfController {
   public ResponseEntity<?> health() {
     if (!schema.ready()) return ResponseEntity.status(503).body(m("status", "starting"));
     store.db().queryForObject("SELECT 1", Integer.class);
-    return ResponseEntity.ok(m("status", "ok", "schemaVersion", 4));
+    return ResponseEntity.ok(m("status", "ok", "schemaVersion", 6));
   }
 
   @PostMapping("/auth/login")
@@ -172,7 +174,9 @@ public class JfController {
     var actor = auth.admin();
     String command = required(input, "command", 1, 80), entityId = str(input, "entityId");
     require(
-        command.equals("submitReview") ? actor.roles.contains("expert") : actor.operator(),
+        command.equals("submitReview") ? actor.roles.contains("expert")
+            : command.equals("markReviewAlertRead")
+                ? actor.operator() || actor.roles.contains("expert") : actor.operator(),
         403,
         "FORBIDDEN",
         "当前岗位无权执行该操作");

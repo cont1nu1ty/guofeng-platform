@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { beijingTime } from '../domain/reviewWindow'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import { readInputValue } from '../composables/readInputValue'
@@ -769,7 +770,7 @@ function topicArticle(id: string) {
             isHttpMode
               ? remoteWorkspace.homeStats
                 ? t('统计时间：', 'As of: ') +
-                  remoteWorkspace.homeStats.asOf +
+                  beijingTime(remoteWorkspace.homeStats.asOf) +
                   t(
                     '。当前虚构场景数据用于联动展示。',
                     '. Current fictional records are for the linked showcase.',

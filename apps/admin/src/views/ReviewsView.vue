@@ -1,9 +1,21 @@
 <script setup lang="ts">
+import { useRoute } from "vue-router";
+import ReviewAlertsPanel from "../components/ReviewAlertsPanel.vue";
+import ReviewWindowDialog from "../components/ReviewWindowDialog.vue";
+import {
+  beijingTime,
+  windowLabel,
+  scoreUnavailable,
+  projectMockReviewTask,
+  hasMockTimeWindow,
+  mockScoreUnavailable,
+} from "../domain/reviewWindow";
+import { loadWorkspace } from "../services/workspaceData";
 import { isHttpMode, modeText } from "../services/mode";
 
 import { submitReview, configureReviewFlow } from "../services/actions";
 
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, onUnmounted } from "vue";
 import { ElMessage } from "element-plus";
 import {
   Search,
@@ -23,8 +35,11 @@ import {
   type ReviewTask,
 } from "../domain/review";
 
-import { can, session } from "../services/session";
-const tab = ref("tasks"),
+import { can } from "../services/session";
+import { connection, ApiError } from "../services/http";
+const route = useRoute();
+const windowOpen = ref(false);
+const tab = ref(route.query.tab === "alerts" ? "alerts" : "tasks"),
   search = ref(""),
   taskStatus = ref(""),
   expert = ref(""),
@@ -42,21 +57,31 @@ const flowDraft = ref({
   deadlineDays: 7,
   enabled: reviewFlow.stages.map((stage) => stage.enabled),
 });
+const demoNow = ref(Date.now());
+const demoClock = isHttpMode
+  ? undefined
+  : setInterval(() => {
+      demoNow.value = Date.now();
+    }, 1000);
+onUnmounted(() => {
+  if (demoClock !== undefined) clearInterval(demoClock);
+});
+const projectedTasks = computed(() =>
+  isHttpMode
+    ? reviewState.tasks
+    : reviewState.tasks.map((task) =>
+        projectMockReviewTask(task, demoNow.value),
+      ),
+);
 const activeTask = computed(() =>
-  reviewState.tasks.find((task) => task.id === activeId.value),
+  projectedTasks.value.find((task) => task.id === activeId.value),
 );
 const activeSubmission = computed(() =>
   reviewState.submissions.find(
     (item) => item.id === activeTask.value?.submissionId,
   ),
 );
-const canScore = computed(
-  () =>
-    !isHttpMode ||
-    activeTask.value?.canScore === true ||
-    (session.user?.roles.includes("expert") &&
-      activeTask.value?.expertId === session.user.id),
-);
+const canScore = computed(() => activeTask.value?.canScore === true);
 const totalScore = computed(() =>
   scores.value.reduce(
     (sum, score) => sum + (Number.isFinite(score) ? score : 0),
@@ -64,7 +89,7 @@ const totalScore = computed(() =>
   ),
 );
 const scoped = computed(() =>
-  reviewState.tasks.filter((task) => matchesRegion(task.region)),
+  projectedTasks.value.filter((task) => matchesRegion(task.region)),
 );
 const enriched = computed(() =>
   scoped.value.map((task) => ({
@@ -97,12 +122,7 @@ const complete = computed(
   () => scoped.value.filter((task) => task.status === "已完成").length,
 );
 function isOverdue(task: ReviewTask) {
-  return (
-    task.status === "待评分" &&
-    new Date(
-      task.dueAt.includes("T") ? task.dueAt : `${task.dueAt}T23:59:59`,
-    ).getTime() < Date.now()
-  );
+  return task.windowStatus === "overdue";
 }
 const overdue = computed(() => scoped.value.filter(isOverdue).length);
 watch([search, taskStatus, expert, () => workspace.region, limit], () => {
@@ -116,18 +136,64 @@ function openTask(task: ReviewTask) {
   drawer.value = true;
 }
 async function submit() {
-  if (!activeTask.value) return;
-  const result = await submitReview(
-    activeTask.value.id,
-    scores.value,
-    comment.value,
-  );
-  if (!result.ok) {
-    scoreError.value = result.message;
-    return;
+  if (!isHttpMode) demoNow.value = Date.now();
+  if (!activeTask.value || !canScore.value) return;
+  try {
+    const result = await submitReview(
+      activeTask.value.id,
+      scores.value,
+      comment.value,
+    );
+    if (!result.ok) {
+      scoreError.value = result.message;
+      return;
+    }
+    scoreError.value = "";
+    ElMessage.success(result.message);
+  } catch (error) {
+    scoreError.value =
+      error instanceof Error ? error.message : "评分未提交，请重试。";
+    if (
+      error instanceof ApiError &&
+      [
+        "TASK_EXPIRED",
+        "TASK_NOT_STARTED",
+        "TASK_COMPLETED",
+        "VERSION_CONFLICT",
+      ].includes(error.code)
+    ) {
+      try {
+        await loadWorkspace();
+      } catch {
+        /* Keep the score draft and original failure visible. */
+      }
+    }
   }
-  scoreError.value = "";
-  ElMessage.success(result.message);
+}
+async function openTaskById(id: string) {
+  let task = reviewState.tasks.find((item) => item.id === id);
+  if (!task && isHttpMode) {
+    await loadWorkspace();
+    task = reviewState.tasks.find((item) => item.id === id);
+  }
+  if (task) openTask(task);
+  else ElMessage.warning("任务已不可访问，请刷新列表或联系管理员。");
+}
+watch(
+  () => [route.query.taskId, route.query.tab, reviewState.tasks.length],
+  () => {
+    if (route.query.tab === "alerts") tab.value = "alerts";
+    if (typeof route.query.taskId === "string")
+      void openTaskById(route.query.taskId);
+  },
+  { immediate: true },
+);
+async function refreshTasks() {
+  try {
+    await loadWorkspace();
+  } catch {
+    /* The shared connection banner shows the server error. */
+  }
 }
 function configure() {
   flowDraft.value = {
@@ -156,6 +222,11 @@ async function saveConfiguration() {
       description="有序分配，认真评阅。清晰掌握每一轮评审的进展。"
       eyebrow="评审中心 / 评审管理"
       ><template #actions
+        ><el-button
+          v-if="isHttpMode"
+          :loading="connection.loading"
+          @click="refreshTasks"
+          >刷新任务</el-button
         ><el-button
           :icon="Setting"
           v-if="can('submissions:write')"
@@ -202,7 +273,9 @@ async function saveConfiguration() {
               aria-label="任务状态"
               ><el-option label="待评分" value="待评分" /><el-option
                 label="已完成"
-                value="已完成" /></el-select
+                value="已完成" /><el-option
+                label="已取消"
+                value="已取消" /></el-select
             ><el-select
               v-model="expert"
               clearable
@@ -250,11 +323,14 @@ async function saveConfiguration() {
               ></el-table-column
             >
             <el-table-column prop="stage" label="评审节点" min-width="135" />
-            <el-table-column label="截止日期" min-width="130"
+            <el-table-column label="评审时间（北京时间）" min-width="250"
               ><template #default="{ row }"
-                ><span :class="{ 'overdue-text': isOverdue(row) }">{{
-                  row.dueAt
-                }}</span>
+                ><div v-if="row.startsAt">
+                  开始 {{ beijingTime(row.startsAt) }}
+                </div>
+                <span :class="{ 'overdue-text': isOverdue(row) }"
+                  >截止 {{ beijingTime(row.dueAt) }}</span
+                >
                 <div v-if="isOverdue(row)" class="cell-secondary overdue-text">
                   已逾期 · 待跟进
                 </div></template
@@ -264,14 +340,16 @@ async function saveConfiguration() {
               ><template #default="{ row }"
                 ><el-tag
                   :type="row.status === '已完成' ? 'success' : 'warning'"
-                  >{{ row.status }}</el-tag
+                  >{{ windowLabel(row) }}</el-tag
                 ></template
               ></el-table-column
             >
             <el-table-column label="操作" fixed="right" width="112"
               ><template #default="{ row }"
                 ><el-button link type="primary" @click="openTask(row)">{{
-                  row.status === "待评分" ? "进入评分" : "查看评语"
+                  row.status === "待评分" && row.canScore
+                    ? "进入评分"
+                    : "查看任务"
                 }}</el-button></template
               ></el-table-column
             >
@@ -282,6 +360,9 @@ async function saveConfiguration() {
             :total="filtered.length"
           />
         </el-tab-pane>
+        <el-tab-pane label="评审预警" name="alerts"
+          ><ReviewAlertsPanel v-if="tab === 'alerts'" @open="openTaskById"
+        /></el-tab-pane>
         <el-tab-pane label="流程与评分规则" name="flow">
           <div class="flow-heading">
             <div>
@@ -340,7 +421,7 @@ async function saveConfiguration() {
       {{
         modeText(
           "评分和评语由服务端保存并锁定；专家只读取已分配任务的脱敏材料。流程发布新版本后影响后续实例。",
-          "评分、评语与流程配置仅保存在当前页面会话，刷新恢复示例。匿名展示只是界面演示，真实盲审字段与访问权限仍需服务端控制。",
+          "新建模拟任务按本机时间窗限制评分，历史仅日期样例保留原体验。延期、预警与自动通知仅真实服务提供；本地评分和配置刷新后恢复示例，未执行服务端鉴权。",
         )
       }}
     </p>
@@ -369,6 +450,42 @@ async function saveConfiguration() {
             >
           </p>
         </div>
+        <el-alert
+          v-if="!isHttpMode && !hasMockTimeWindow(activeTask)"
+          title="历史日期样例：日期仅供展示，不作为评分时间限制。新分配的完整时间窗口按本机时钟校验；延期和自动提醒需真实服务。"
+          type="info"
+          :closable="false"
+        />
+        <div class="review-window-summary">
+          <p>开始：{{ beijingTime(activeTask.startsAt) }}</p>
+          <p>截止：{{ beijingTime(activeTask.dueAt) }}</p>
+          <p>
+            时间状态：{{ windowLabel(activeTask)
+            }}<span v-if="activeTask.windowVersion">
+              · 时间版本 {{ activeTask.windowVersion }}</span
+            >
+          </p>
+          <el-button
+            v-if="
+              isHttpMode &&
+              can('submissions:write') &&
+              activeTask.status === '待评分'
+            "
+            @click="windowOpen = true"
+            >调整评审时间</el-button
+          >
+        </div>
+        <el-alert
+          v-if="!canScore"
+          :title="
+            isHttpMode
+              ? scoreUnavailable(activeTask)
+              : mockScoreUnavailable(activeTask)
+          "
+          type="info"
+          :closable="false"
+          show-icon
+        />
         <el-collapse
           ><el-collapse-item title="展开阅读作品内容" name="content"
             ><div class="review-manuscript">
@@ -453,6 +570,7 @@ async function saveConfiguration() {
         </div></template
       >
     </el-drawer>
+    <ReviewWindowDialog v-model="windowOpen" :task="activeTask" />
     <el-dialog
       v-model="configureOpen"
       title="评审流程配置"
@@ -485,9 +603,10 @@ async function saveConfiguration() {
           ><el-switch
             v-model="flowDraft.blind"
             :disabled="isHttpMode"
-            aria-label="匿名展示" />
+            aria-label="匿名展示"
+          />
           <span v-if="isHttpMode" class="muted">本期采用匿名评审</span>
-          </el-form-item></el-form
+        </el-form-item></el-form
       ><el-alert
         v-if="configurationError"
         :title="configurationError"
@@ -507,6 +626,16 @@ async function saveConfiguration() {
 </template>
 
 <style scoped>
+.review-window-summary {
+  margin: 18px 0;
+  padding: 16px;
+  background: #f6f7f3;
+  line-height: 1.7;
+}
+.review-window-summary p {
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+}
 .review-overview {
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 1fr;

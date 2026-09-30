@@ -37,7 +37,12 @@ DELETE FROM jf_idempotency;
 DELETE FROM jf_audit;
 DELETE FROM jf_login_attempt;
 DELETE FROM jf_file;
+DELETE FROM jf_review_delivery;
+DELETE FROM jf_review_window;
+UPDATE jf_review_reminder_state SET enabled=FALSE,initialized=FALSE,
+  cutoff_ms=UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3))*1000 WHERE id=1;
 DELETE FROM jf_entity;
+UPDATE jf_public_cache_state SET epoch=UUID(),catalog_generation=0,stats_generation=0 WHERE id=1;
 DELETE FROM jf_search_outbox;
 UPDATE jf_search_state SET installation_id=REPLACE(UUID(),'-',''),
   cursor_secret=CONCAT(REPLACE(UUID(),'-',''),REPLACE(UUID(),'-','')),

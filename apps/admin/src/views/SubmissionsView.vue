@@ -1,4 +1,11 @@
 <script setup lang="ts">
+import {
+  beijingInput,
+  beijingTime,
+  windowInstant,
+  windowError,
+} from "../domain/reviewWindow";
+import { reviewFlow } from "../domain/review";
 import { isHttpMode, modeText } from "../services/mode";
 
 import {
@@ -28,6 +35,8 @@ import {
   type SubmissionStatus,
 } from "../domain/review";
 
+const immediateStart = ref(true),
+  defaultDueAt = ref("");
 const search = ref(""),
   status = ref(""),
   region = ref(""),
@@ -43,12 +52,28 @@ const activeId = ref(""),
   assignmentOpen = ref(false);
 const reason = ref(""),
   expertId = ref(""),
+  startsAt = ref(""),
   dueAt = ref("");
 const returnError = ref(""),
   assignmentError = ref("");
 const active = computed(() =>
   reviewState.submissions.find((item) => item.id === activeId.value),
 );
+const assignmentDays = computed(
+  () => active.value?.flowSnapshot?.deadlineDays ?? reviewFlow.deadlineDays,
+);
+watch([startsAt, immediateStart, assignmentDays], () => {
+  if (dueAt.value !== defaultDueAt.value) return;
+  const start = immediateStart.value
+    ? Date.now()
+    : Date.parse(windowInstant(startsAt.value));
+  if (Number.isFinite(start)) {
+    dueAt.value = beijingInput(
+      new Date(start + assignmentDays.value * 86400000).toISOString(),
+    );
+    defaultDueAt.value = dueAt.value;
+  }
+});
 const scoped = computed(() =>
   reviewState.submissions.filter((item) => matchesRegion(item.region)),
 );
@@ -193,16 +218,33 @@ async function confirmReturn() {
 function openAssignment(row: Submission) {
   activeId.value = row.id;
   expertId.value = "";
-  dueAt.value = "";
+  immediateStart.value = true;
+  startsAt.value = beijingInput(new Date(Date.now() + 5 * 60000).toISOString());
+  dueAt.value = beijingInput(
+    new Date(Date.now() + assignmentDays.value * 86400000).toISOString(),
+  );
+  defaultDueAt.value = dueAt.value;
   assignmentError.value = "";
   assignmentOpen.value = true;
 }
 async function confirmAssignment() {
   if (!active.value) return;
+  const start = immediateStart.value
+    ? beijingInput(new Date().toISOString())
+    : startsAt.value;
+  assignmentError.value = windowError(start, dueAt.value);
+  if (
+    !assignmentError.value &&
+    !immediateStart.value &&
+    Date.parse(windowInstant(start)) <= Date.now()
+  )
+    assignmentError.value = "开始时间不能早于当前时间。";
+  if (assignmentError.value) return;
   const result = await assignReview(
     active.value.id,
     expertId.value,
-    dueAt.value,
+    dueAt.value === defaultDueAt.value ? "" : windowInstant(dueAt.value),
+    immediateStart.value ? undefined : windowInstant(startsAt.value),
   );
   if (!result.ok) {
     assignmentError.value = result.message;
@@ -546,7 +588,7 @@ async function publishResult() {
                   )?.name
                 }}</b
                 ><span class="muted"
-                  >{{ task.stage }} · 截止 {{ task.dueAt }}</span
+                  >{{ task.stage }} · 截止 {{ beijingTime(task.dueAt) }}</span
                 >
               </div>
               <el-tag
@@ -640,13 +682,35 @@ async function publishResult() {
               :key="expert.id"
               :value="expert.id"
               :label="`${expert.name} · ${expert.group}`" /></el-select></el-form-item
-        ><el-form-item label="截止日期" required
+        ><el-form-item label="开始时间（北京时间）" required
+          ><el-checkbox v-model="immediateStart"
+            >立即开始（以保存时的服务器时间为准）</el-checkbox
+          >
+          <el-date-picker
+            v-if="!immediateStart"
+            v-model="startsAt"
+            type="datetime"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            placeholder="选择未来的开始时间"
+            style="width: 100%" /></el-form-item
+        ><el-form-item label="截止时间（北京时间）" required
           ><el-date-picker
             v-model="dueAt"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择日期"
-            style="width: 100%" /></el-form-item></el-form
+            type="datetime"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            placeholder="选择截止时间"
+            style="width: 100%"
+        /></el-form-item>
+        <p class="muted">
+          未修改截止时间时，默认从开始起计
+          {{ assignmentDays }}
+          天。{{
+            modeText(
+              "开始前不可评分；截止后需管理员延期才能继续。",
+              "本地模拟按本机时间限制评分；延期与自动提醒需真实服务。",
+            )
+          }}
+        </p></el-form
       ><el-alert
         v-if="assignmentError"
         :title="assignmentError"

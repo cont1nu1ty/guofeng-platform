@@ -116,8 +116,8 @@ function preview(item: NotificationDraft) {
             ><el-icon><Document /></el-icon>操作日志</span
           ></template
         ></el-tab-pane
-      ><el-tab-pane v-if="isHttpMode" name="search" label="搜索服务" /></el-tabs
-    >
+      ><el-tab-pane v-if="isHttpMode" name="search" label="搜索服务"
+    /></el-tabs>
     <SearchStatus v-if="tab === 'search'" />
     <div v-if="tab === 'platform'" class="settings-grid">
       <div class="settings-main">
@@ -169,13 +169,27 @@ function preview(item: NotificationDraft) {
             <span class="step-number">02</span>
             <div>
               <h2>运营提醒偏好</h2>
-              <p>保存提醒选项，供后续通知服务对接</p>
+              <p>
+                {{
+                  modeText(
+                    "配置自动提醒；手动调整评审时间的通知始终发送。",
+                    "保存提醒选项，用于本地演示。",
+                  )
+                }}
+              </p>
             </div>
           </div>
           <div class="preference">
             <div>
               <b>评审待办提醒</b>
-              <p>记录评审任务提醒的配置偏好</p>
+              <p>
+                {{
+                  modeText(
+                    "开启后，24 小时内截止提醒专家，首次逾期提醒专家和分配管理员。关闭不影响评分时间校验、预警列表和时间调整通知。",
+                    "记录评审任务提醒的演示配置偏好。",
+                  )
+                }}
+              </p>
             </div>
             <el-switch
               v-model="config.reviewReminder"

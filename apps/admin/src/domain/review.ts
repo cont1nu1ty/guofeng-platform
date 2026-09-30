@@ -1,4 +1,5 @@
 import { reactive } from "vue";
+import { projectMockReviewTask, mockScoreUnavailable } from "./reviewWindow";
 import { recordActivity } from "./workspace";
 
 export type SubmissionStatus =
@@ -24,6 +25,7 @@ export interface Submission {
   version: number;
   attachments: string[];
   files?: { fileId: string; name: string }[];
+  flowSnapshot?: { deadlineDays?: number };
   blindContent?: string;
   blindConfirmed?: boolean;
   result?: string;
@@ -49,7 +51,12 @@ export interface ReviewTask {
   region: string;
   stage: string;
   assignedAt: string;
+  startsAt?: string;
   dueAt: string;
+  windowVersion?: number;
+  windowStatus?: import("./reviewWindow").WindowStatus;
+  lockVersion?: number;
+  serverNow?: string;
   status: "待评分" | "已完成" | "已取消";
   canScore?: boolean;
   ruleVersion?: string;
@@ -353,6 +360,7 @@ export function assignReview(
   submissionId: string,
   expertId: string,
   dueAt: string,
+  startsAt?: string,
 ): ActionResult {
   const submission = reviewState.submissions.find(
     (item) => item.id === submissionId,
@@ -362,12 +370,31 @@ export function assignReview(
     return fail("请先通过初审，再分配专家。");
   if (!expert || expert.availability !== "可分配")
     return fail("请选择可接收任务的专家。");
+  startsAt ||= new Date().toISOString();
+  dueAt ||= new Date(
+    Date.parse(startsAt) +
+      (submission.flowSnapshot?.deadlineDays ?? reviewFlow.deadlineDays) *
+        86400000,
+  ).toISOString();
+  const legacyDate = /^\d{4}-\d{2}-\d{2}$/.test(dueAt);
   if (
-    !/^\d{4}-\d{2}-\d{2}$/.test(dueAt) ||
-    dateKey(new Date(`${dueAt}T00:00:00`)) !== dueAt
+    !legacyDate &&
+    (!Number.isFinite(Date.parse(dueAt)) ||
+      !startsAt ||
+      !Number.isFinite(Date.parse(startsAt)) ||
+      Date.parse(dueAt) <= Date.parse(startsAt))
+  )
+    return fail("请选择有效的评审开始与截止时间。");
+  if (
+    legacyDate &&
+    (!/^\d{4}-\d{2}-\d{2}$/.test(dueAt) ||
+      dateKey(new Date(`${dueAt}T00:00:00`)) !== dueAt)
   )
     return fail("请选择有效的截止日期。");
-  if (dueAt < dateKey(new Date())) return fail("截止日期不能早于今天。");
+  if (
+    legacyDate ? dueAt < dateKey(new Date()) : Date.parse(dueAt) <= Date.now()
+  )
+    return fail("截止日期不能早于今天。");
   if (
     reviewState.tasks.some(
       (task) =>
@@ -382,7 +409,9 @@ export function assignReview(
     region: submission.region,
     stage: "文史专家评审",
     assignedAt: timestamp(),
+    startsAt,
     dueAt,
+    windowVersion: 1,
     status: "待评分",
   });
   addHistory(
@@ -400,6 +429,8 @@ export function submitReview(
   const task = reviewState.tasks.find((item) => item.id === taskId);
   if (!task || task.status !== "待评分")
     return fail("任务已完成或不存在，请勿重复提交。");
+  const currentWindow = projectMockReviewTask(task);
+  if (!currentWindow.canScore) return fail(mockScoreUnavailable(currentWindow));
   if (
     scores.length !== scoringDimensions.length ||
     scores.some(
