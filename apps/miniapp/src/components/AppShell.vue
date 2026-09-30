@@ -90,7 +90,7 @@ function selectRegion(id: RegionId) {
             :aria-label="t('全站搜索', 'Search the platform')"
             @click="navigate('search')"
           >
-            <wd-icon name="search" size="18px" />
+            <wd-icon name="search-line" size="18px" />
           </button>
           <button class="locale-toggle" @click="toggleLocale">
             {{ locale === 'zh' ? 'EN' : '中文' }}

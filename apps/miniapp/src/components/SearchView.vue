@@ -76,7 +76,7 @@ function kindLabel(id: SearchKind) {
       "
     />
     <view class="search-field">
-      <wd-icon name="search" />
+      <wd-icon name="search-line" />
       <input
         class="search-keyword-input"
         v-model="query"
