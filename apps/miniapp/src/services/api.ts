@@ -53,15 +53,21 @@ export interface RemoteReviewTask {
   submissionId: string
   version: number
   ruleVersion: string
-  status: 'pending' | 'submitted'
+  status: 'pending' | 'submitted' | 'cancelled'
   title: string
   content: string
+  startsAt?: string
   dueAt?: string
+  windowVersion?: number
+  windowStatus?: import('../domain/reviewWindow').ReviewWindowStatus
+  canScore?: boolean
+  serverNow?: string
   dimensions: { id: string; label: string; min?: number; max: number }[]
   scores?: number[]
   comment?: string
 }
 export interface RemoteWorkspace {
+  serverNow?: string
   recitations: CloudRecitation[]
   familyPromises: FamilyPromise[]
   banners: HomeBanner[]

@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-09-30T09:55:50.362305+00:00",
+  "project": "jiafeng-dev",
+  "counters": {
+    "build_micros": 113023,
+    "builds": 2,
+    "catalog_hit": 32,
+    "catalog_miss": 1,
+    "redis_calls": 68,
+    "redis_max_micros": 24494,
+    "redis_micros": 108284,
+    "stats_hit": 32,
+    "stats_miss": 1
+  },
+  "hitRatio": 0.9696969696969697,
+  "scope": "Cumulative public projection reads since deployment, including first cold request, benchmark and read-only smoke checks; not a production hit-rate forecast."
+}

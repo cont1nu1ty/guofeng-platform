@@ -446,7 +446,7 @@ public class JfCatalog {
   }
 
   private boolean activityVisible(String region, String id) {
-    return store.all("activity").stream()
+    return store.select("activity", "id=?", id).stream()
         .anyMatch(
             e ->
                 e.id().equals(id)
@@ -470,7 +470,7 @@ public class JfCatalog {
           default -> "";
         };
     if (kind.isEmpty()) return false;
-    return store.all(kind).stream()
+    return store.select(kind, "id=?", id).stream()
         .anyMatch(
             e ->
                 e.id().equals(id)
@@ -597,18 +597,6 @@ public class JfCatalog {
     if (e.kind().equals("venue")
         && !str(d, "activityId").isEmpty()
         && !activityVisible(e.region(), str(d, "activityId"))) d.put("activityId", "");
-    if (e.kind().equals("media")) {
-      d.put(
-          "likes",
-          store.all("mediaLike").stream()
-              .filter(x -> str(x.data(), "contentId").equals(e.id()))
-              .count());
-      d.put(
-          "favorites",
-          store.all("mediaFavorite").stream()
-              .filter(x -> str(x.data(), "contentId").equals(e.id()))
-              .count());
-    }
     return d;
   }
 
@@ -648,50 +636,49 @@ public class JfCatalog {
     out.put("homepageConfig", store.dto(store.find("setting", "homepageConfig", false)));
   }
 
-  public void addMember(Map<String, Object> out, JfAuth.Actor actor) {
-    KINDS.forEach(
-        (key, kind) ->
-            out.put(
-                key, sorted(kind).stream().filter(this::visible).map(this::publicDto).toList()));
+  /** Only published, audience-independent fields enter the shared public catalog. */
+  public void addPublic(Map<String, Object> out) {
+    KINDS.forEach((key, kind) -> out.put(key,
+        store.select(kind, "status='已发布'").stream()
+            .sorted(Comparator.comparingLong((JfStore.Entity e) -> number(e.data().getOrDefault("sortOrder", 0)))
+                .thenComparing(JfStore.Entity::id))
+            .filter(this::visible).map(this::publicDto).toList()));
     out.put("homepageConfig", copy(store.find("setting", "homepageConfig", false).data()));
-    List<JfStore.Entity> works = store.all("submission");
-    out.put(
-        "homeStats",
-        m(
-            "submissions",
-            works.size(),
-            "participants",
-            works.stream().map(JfStore.Entity::owner).filter(Objects::nonNull).distinct().count(),
-            "regions",
-            works.stream()
-                .map(JfStore.Entity::region)
-                .filter(r -> !r.equals("all"))
-                .distinct()
-                .count(),
-            "asOf",
-            now()));
+  }
+
+  /** Includes future starts: an unpublished-yet scheduled banner must become visible on time. */
+  public Instant nextBoundary() {
+    Instant now = Instant.now(), next = Instant.MAX;
+    for (var banner : store.select("banner", "status='已发布'"))
+      for (String field : List.of("startsAt", "endsAt")) {
+        String raw = str(banner.data(), field);
+        if (raw.isEmpty()) continue;
+        Instant boundary = instant(raw);
+        if (boundary.isAfter(now) && boundary.isBefore(next)) next = boundary;
+      }
+    return next;
+  }
+
+  /** Private overlays are rebuilt for the current account and never returned to a cache builder. */
+  public void addMember(Map<String, Object> out, JfAuth.Actor actor) {
     out.put(
         "mediaSubmissions",
         actor == null
             ? List.of()
-            : store.all("media").stream()
-                .filter(e -> Objects.equals(e.owner(), actor.id))
+            : store.select("media", "owner_id=?", actor.id).stream()
                 .map(this::privateDto)
                 .toList());
     out.put(
         "supportTickets",
         actor == null
             ? List.of()
-            : store.all("supportTicket").stream()
-                .filter(e -> Objects.equals(e.owner(), actor.id))
+            : store.select("supportTicket", "owner_id=?", actor.id).stream()
                 .map(e -> ticket(e, false))
                 .toList());
     var prefs =
         m("categories", List.of(), "updates", false, "digest", "instant", "quietHours", true);
     if (actor != null)
-      store.all("profile").stream()
-          .filter(
-              e -> e.id().equals("newsPrefs_" + actor.id) && Objects.equals(e.owner(), actor.id))
+      store.select("profile", "id=? AND owner_id=?", "newsPrefs_" + actor.id, actor.id).stream()
           .findFirst()
           .ifPresent(e -> prefs.putAll(e.data()));
     out.put("newsPreferences", prefs);

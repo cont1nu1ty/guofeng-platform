@@ -3,6 +3,7 @@ package org.dromara.jiafeng;
 import static org.dromara.jiafeng.Jf.*;
 
 import java.util.*;
+import java.time.Instant;
 import org.springframework.stereotype.Service;
 
 /** Audience-specific projections. Expert responses never contain manuscript originals. */
@@ -12,12 +13,17 @@ public class JfProjection {
   private final JfSubmissions submissions;
   private final JfCatalog catalog;
   private final JfPersonalRecords personalRecords;
+  private final JfPublicCache cache;
+  private final JfReviewWindows reviewWindows;
 
-  public JfProjection(JfStore s, JfSubmissions w, JfCatalog catalog, JfPersonalRecords personalRecords) {
+  public JfProjection(JfStore s, JfSubmissions w, JfCatalog catalog, JfPersonalRecords personalRecords,
+      JfPublicCache cache, JfReviewWindows reviewWindows) {
     store = s;
     submissions = w;
     this.catalog = catalog;
     this.personalRecords = personalRecords;
+    this.cache = cache;
+    this.reviewWindows = reviewWindows;
   }
 
   private List<JfStore.Entity> scoped(String kind, JfAuth.Actor a) {
@@ -91,11 +97,8 @@ public class JfProjection {
             .map(
                 e -> {
                   var d = store.dto(e);
-                  d.put(
-                      "canScore",
-                      a.roles.contains("expert")
-                          && Objects.equals(a.id, e.owner())
-                          && e.status().equals("待评分"));
+                  d.putAll(reviewWindows.projection(e, a));
+                  if (!a.operator()) d.remove("windowHistory");
                   return d;
                 })
             .toList());
@@ -179,9 +182,10 @@ public class JfProjection {
       }
     out.put("users", users);
     List<Map<String, Object>> groups = new ArrayList<>();
+    var learningRecords = scoped("learning", a);
     for (var course : scoped("course", a)) {
       List<JfStore.Entity> records =
-          scoped("learning", a).stream()
+          learningRecords.stream()
               .filter(e -> str(e.data(), "courseId").equals(course.id()))
               .toList();
       groups.add(
@@ -234,6 +238,7 @@ public class JfProjection {
                 row.get("nick_name")));
       }
     out.put("activityLog", logs);
+    out.put("serverNow", now());
     return out;
   }
 
@@ -297,24 +302,21 @@ public class JfProjection {
     return d;
   }
 
-  public Map<String, Object> member(JfAuth.Actor a) {
+  private JfPublicCache.Snapshot publicBase() {
+    Instant validUntil = catalog.nextBoundary();
     Map<String, Object> out = new LinkedHashMap<>();
-    catalog.addMember(out, a);
-    personalRecords.addMember(out, a);
+    catalog.addPublic(out);
     out.put("scoringDimensions", DIMENSIONS);
     out.put(
         "reviewRuleVersion", store.find("setting", "reviewFlow", false).data().get("ruleVersion"));
-    out.put(
-        "works",
-        store.all("submission").stream()
-            .filter(
-                e -> JfSubmissions.isPublic(e) || (a != null && Objects.equals(a.id, e.owner())))
-            .map(e -> submissions.work(e, a))
-            .toList());
+    var works = store.select("submission", PUBLIC_WORK);
+    out.put("works", works.stream().map(e -> submissions.work(e, null)).toList());
+    Map<String, Object> order = new LinkedHashMap<>();
+    works.forEach(e -> order.put(e.id(), Instant.parse(e.createdAt()).toEpochMilli()));
+    out.put("_workOrder", order);
     out.put(
         "news",
-        store.all("content").stream()
-            .filter(e -> e.status().equals("已发布"))
+        store.select("content", "status='已发布'").stream()
             .map(
                 e -> {
                   var d = store.dto(e);
@@ -323,8 +325,7 @@ public class JfProjection {
                 })
             .toList());
     List<Map<String, Object>> classics = new ArrayList<>();
-    for (var e : store.all("collection")) {
-      if (!e.status().equals("已入藏")) continue;
+    for (var e : store.select("collection", "status='已入藏'")) {
       List<Object> chapters = list(e.data().get("chapters"));
       String body =
           String.join(
@@ -361,8 +362,7 @@ public class JfProjection {
     }
     out.put("classics", classics);
     List<Map<String, Object>> activities = new ArrayList<>();
-    for (var e : store.all("activity")) {
-      if (e.status().equals("草稿")) continue;
+    for (var e : store.select("activity", "status<>'草稿'")) {
       var p = e.data();
       activities.add(
           m(
@@ -388,8 +388,6 @@ public class JfProjection {
               p.get("type"),
               "capacity",
               p.get("capacity"),
-              "registeredCount",
-              registrations(e.id()).size(),
               "status",
               e.status(),
               "version",
@@ -400,16 +398,79 @@ public class JfProjection {
     out.put("activities", activities);
     out.put(
         "courses",
-        store.all("course").stream()
-            .filter(e -> e.status().equals("已上架"))
+        store.select("course", "status='已上架'").stream()
             .map(store::dto)
             .toList());
     out.put(
         "products",
-        store.all("product").stream()
-            .filter(e -> e.status().equals("已上架"))
+        store.select("product", "status='已上架'").stream()
             .map(store::dto)
             .toList());
+    out.put("platformConfig", copy(store.find("setting", "platformConfig", false).data()));
+    return new JfPublicCache.Snapshot(out, validUntil);
+  }
+
+  private JfPublicCache.Snapshot publicStats() {
+    var totals = store.db().queryForMap("SELECT COUNT(*) submissions,COUNT(DISTINCT owner_id) participants,"
+        + "COUNT(DISTINCT CASE WHEN region_id<>'all' THEN region_id END) regions FROM jf_entity WHERE kind='submission'");
+    Map<String, Object> out = new LinkedHashMap<>();
+    out.put("homeStats", m("submissions", number(totals.get("submissions")),
+        "participants", number(totals.get("participants")), "regions", number(totals.get("regions")), "asOf", now()));
+    Map<String, Object> media = new LinkedHashMap<>();
+    for (var row : store.db().queryForList("SELECT interaction.kind,JSON_UNQUOTE(JSON_EXTRACT(interaction.payload,'$.contentId')) content_id,"
+        + "COUNT(*) total FROM jf_entity interaction JOIN jf_entity media ON media.kind='media' AND media.status='已发布'"
+        + " AND media.id=JSON_UNQUOTE(JSON_EXTRACT(interaction.payload,'$.contentId'))"
+        + " WHERE interaction.kind IN ('mediaLike','mediaFavorite') GROUP BY interaction.kind,content_id")) {
+      String id = str(row, "content_id");
+      var counts = obj(media.computeIfAbsent(id, key -> m("likes", 0L, "favorites", 0L)));
+      counts.put(str(row, "kind").equals("mediaLike") ? "likes" : "favorites", number(row.get("total")));
+    }
+    out.put("media", media);
+    Map<String, Object> registrations = new LinkedHashMap<>();
+    for (var row : store.db().queryForList("SELECT r.activity_id,COUNT(*) total FROM jf_registration r"
+        + " JOIN sys_user u ON u.user_id=r.user_id JOIN jf_entity activity ON activity.id=r.activity_id"
+        + " AND activity.kind='activity' AND activity.status<>'草稿' WHERE r.status='registered' GROUP BY r.activity_id"))
+      registrations.put(str(row, "activity_id"), number(row.get("total")));
+    out.put("registrations", registrations);
+    return new JfPublicCache.Snapshot(out);
+  }
+
+  static final String PUBLIC_WORK = "status IN ('shortlisted','awarded','collected')"
+      + " AND JSON_UNQUOTE(JSON_EXTRACT(payload,'$.published'))='true'";
+
+  public Map<String, Object> member(JfAuth.Actor a) {
+    Map<String, Object> out = cache.get("catalog", this::publicBase);
+    Map<String, Object> stats = cache.get("stats", this::publicStats);
+    out.put("homeStats", stats.get("homeStats"));
+    for (Object item : list(out.get("mediaItems"))) {
+      var media = obj(item);
+      var counts = obj(obj(stats.get("media")).get(str(media, "id")));
+      media.put("likes", number(counts.getOrDefault("likes", 0L)));
+      media.put("favorites", number(counts.getOrDefault("favorites", 0L)));
+    }
+    for (Object item : list(out.get("activities"))) {
+      var activity = obj(item);
+      activity.put("registeredCount", number(obj(stats.get("registrations")).getOrDefault(str(activity, "id"), 0L)));
+    }
+    var order = obj(out.remove("_workOrder"));
+    if (a != null) {
+      var works = new LinkedHashMap<String, Object>();
+      for (Object item : list(out.get("works"))) works.put(str(obj(item), "id"), item);
+      // Operator-specific fields also remain an uncached, current-authority projection.
+      var own = a.operator()
+          ? store.select("submission", "(" + PUBLIC_WORK + ") OR owner_id=?", a.id)
+          : store.select("submission", "owner_id=?", a.id);
+      for (var e : own) {
+        works.put(e.id(), submissions.work(e, a));
+        order.put(e.id(), Instant.parse(e.createdAt()).toEpochMilli());
+      }
+      out.put("works", works.values().stream().sorted(Comparator
+          .comparingLong((Object item) -> number(order.get(str(obj(item), "id")))).reversed()
+          .thenComparing(item -> str(obj(item), "id"))).toList());
+    }
+    catalog.addMember(out, a);
+    personalRecords.addMember(out, a);
+    out.put("serverNow", now());
     for (String k :
         List.of(
             "registrations",
@@ -425,7 +486,6 @@ public class JfProjection {
     Map<String, Object> learning =
         m("courses", new LinkedHashMap<>(), "checkIns", new LinkedHashMap<>());
     out.put("learning", learning);
-    out.put("platformConfig", store.find("setting", "platformConfig", false).data());
     if (a == null) return out;
     List<Map<String, Object>> regs = new ArrayList<>();
     for (var row :
@@ -466,8 +526,7 @@ public class JfProjection {
             "mediaLike");
     for (var extra : extras.entrySet()) {
       List<Object> result = new ArrayList<>();
-      for (var e : store.all(extra.getValue())) {
-        if (!Objects.equals(e.owner(), a.id)) continue;
+      for (var e : store.select(extra.getValue(), "owner_id=?", a.id)) {
         if (Set.of("favorite", "mediaFavorite", "mediaLike").contains(e.kind()))
           result.add(str(e.data(), "contentId"));
         else if (e.kind().equals("claim")) result.add(claim(e));
@@ -481,12 +540,11 @@ public class JfProjection {
       }
       out.put(extra.getKey(), result);
     }
-    for (var e : store.all("learning"))
-      if (Objects.equals(e.owner(), a.id))
-        obj(learning.get("courses")).put(str(e.data(), "courseId"), e.data());
+    for (var e : store.select("learning", "owner_id=?", a.id))
+      obj(learning.get("courses")).put(str(e.data(), "courseId"), e.data());
     out.put(
         "reviewTasks",
-        store.all("task").stream()
+        store.select("task", "owner_id=? AND status<>'已取消'", a.id).stream()
             .filter(
                 e ->
                     a.roles.contains("expert")
@@ -504,6 +562,8 @@ public class JfProjection {
                           "status",
                           e.status().equals("待评分") ? "pending" : "submitted"));
                   d.remove("managerId");
+                  d.putAll(reviewWindows.projection(e, a));
+                  if (!a.operator()) d.remove("windowHistory");
                   return d;
                 })
             .toList());

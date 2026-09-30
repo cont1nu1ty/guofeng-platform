@@ -57,7 +57,8 @@ public class JfSchema implements ApplicationRunner {
       }
       try {
         String[] migrations = {
-          "V001__domain.sql", "V002__revision_files.sql", "V003__private_records.sql", "V004__search.sql"
+          "V001__domain.sql", "V002__revision_files.sql", "V003__private_records.sql", "V004__search.sql",
+          "V005__review_windows.sql", "V006__public_cache.sql"
         };
         for (int i = 0; i < migrations.length; i++) {
           int version = i + 1;

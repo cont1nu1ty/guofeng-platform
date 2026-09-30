@@ -171,3 +171,7 @@ SHA-256 清单；按含敏感业务数据的文件妥善保存。
 ## 增量首页与目录展示数据
 
 `seed-demo` 已包含基础场景、目录场景及个人记录阶段，新环境无需再调用其他导入命令。单独的 `./deploy/dev seed-catalog` 保留为基础场景完成后的目录维护入口；它根据数据库检查点跳过已完成项，不覆盖用户编辑、不清空数据。旧环境如果只有本地清单、已有目录记录但没有数据库安装标记，会拒绝再次导入并提示需要核对迁移；原数据仍可正常使用，无需为了此命令清空旧环境。`reset-demo`会统一重建三个阶段的场景，`--empty`仍保留空环境。详情见[目录管理](../docs/frontend/catalog-management.md)。
+
+## 公开业务缓存
+
+默认启用公开目录与统计缓存；配置 `JIAFENG_PUBLIC_CACHE_ENABLED=false` 后重建 server 容器可禁用。Compose 项目名隔离缓存键，发布/下架自动切换内容版本，不需要手工清空 Redis。目录最长300秒，统计最长30秒，私人工作区不缓存。详细规则见[评审窗口与缓存](../docs/engineering/review-windows-cache.md)。`JIAFENG_SERVER_IMAGE`、`JIAFENG_WEB_IMAGE` 可为隔离验证指定镜像标签，默认仍为本地构建标签。

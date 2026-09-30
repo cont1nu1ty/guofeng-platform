@@ -1,0 +1,29 @@
+{
+  "checks": [
+    "cold and warm public responses are equivalent",
+    "public catalog and stats use separate Redis entries",
+    "shared projection excludes private workspace arrays catalog",
+    "cache has bounded expiry catalog",
+    "shared projection excludes private workspace arrays stats",
+    "cache has bounded expiry stats",
+    "personal records and own-work flags stay account scoped",
+    "anonymous workspace contains no private records",
+    "committed publish invalidates the public catalog immediately",
+    "database rollback preserves the public version and response",
+    "homepage configuration commits invalidate cache",
+    "future banner is initially hidden",
+    "banner begins without a database write",
+    "banner ends without a database write",
+    "withdrawn content is absent on the next read",
+    "command workspace reads its own uncommitted interaction",
+    "stats timestamp refreshes within its fixed 30-second lifetime",
+    "anonymous public cache falls back when Redis is unavailable",
+    "Redis fallback has bounded request latency",
+    "public cache recovers after Redis returns",
+    "database epoch change prevents reuse of old cache keys"
+  ],
+  "passed": 21,
+  "fallbackMs": 124.11346000044432,
+  "testedAt": "2026-09-30T09:49:26.034373+00:00",
+  "project": "jiafeng-demo-review-cache"
+}

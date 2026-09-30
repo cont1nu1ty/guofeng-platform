@@ -31,6 +31,14 @@ import {
   canVisit,
 } from "./services/session";
 import { loadWorkspace, clearWorkspace } from "./services/workspaceData";
+import {
+  reviewNotices,
+  refreshReviewNotices,
+  clearReviewNotices,
+  markReviewAlertRead,
+  type ReviewNotice,
+} from "./services/reviewAlerts";
+import { beijingTime } from "./domain/reviewWindow";
 import { connection, reportError } from "./services/http";
 const initialized = ref(!isHttpMode);
 const hasWorkspace = ref(!isHttpMode);
@@ -38,6 +46,7 @@ async function authenticate() {
   try {
     await loadWorkspace();
     hasWorkspace.value = true;
+    await refreshReviewNotices();
   } catch {
     hasWorkspace.value = false;
   }
@@ -62,12 +71,22 @@ async function signOut() {
   try {
     await logout();
     clearWorkspace();
+    clearReviewNotices();
     hasWorkspace.value = false;
   } catch (error) {
     reportError(error);
   }
 }
+async function openReviewNotice(item: ReviewNotice) {
+  try {
+    await markReviewAlertRead(item.id);
+    await router.push({ path: "/reviews", query: { taskId: item.targetId } });
+  } catch (error) {
+    reportError(error);
+  }
+}
 function expired() {
+  clearReviewNotices();
   expireSession();
   clearWorkspace();
   hasWorkspace.value = false;
@@ -193,33 +212,77 @@ async function reset() {
                 :label="region"
             /></el-select>
           </div>
-          <el-popover placement="bottom-end" :width="310" trigger="click">
+          <el-popover
+            placement="bottom-end"
+            :width="310"
+            trigger="click"
+            @show="refreshReviewNotices"
+          >
             <template #reference
               ><el-button
                 text
                 :icon="Bell"
-                aria-label="查看操作动态"
+                aria-label="查看我的评审提醒"
                 class="notification-button"
-                ><span class="unread-dot" /></el-button
-            ></template>
-            <div class="popover-heading">
-              本次操作动态
-              <el-tag size="small" type="info">{{
-                modeText("业务记录", "示例")
-              }}</el-tag>
-            </div>
-            <div
-              v-for="item in activityLog.slice(0, 4)"
-              :key="item.id"
-              class="notification-item"
+                ><span
+                  v-if="isHttpMode ? reviewNotices.unreadCount > 0 : true"
+                  class="unread-dot"
+                /><span v-if="isHttpMode && reviewNotices.unreadCount">{{
+                  reviewNotices.unreadCount
+                }}</span></el-button
+              ></template
             >
-              <b>{{ item.action }}</b
-              ><span>{{ item.target }}</span
-              ><small>{{ item.time }}</small>
-            </div>
-            <el-button text type="primary" @click="router.push('/settings')"
-              >查看操作日志</el-button
-            >
+            <template v-if="isHttpMode">
+              <div class="popover-heading">
+                我的评审提醒
+                <el-tag size="small"
+                  >{{ reviewNotices.unreadCount }} 条未读</el-tag
+                >
+              </div>
+              <p v-if="reviewNotices.error" class="muted">
+                {{ reviewNotices.error }}
+              </p>
+              <p v-else-if="!reviewNotices.items.length" class="muted">
+                暂无发给当前账号的评审提醒。
+              </p>
+              <div
+                v-for="item in reviewNotices.items.slice(0, 5)"
+                :key="item.id"
+                class="notification-item"
+              >
+                <b>{{ item.read ? "" : "未读 · " }}{{ item.title }}</b
+                ><span>{{ item.content }}</span
+                ><small>{{ beijingTime(item.createdAt) }}</small>
+                <el-button link type="primary" @click="openReviewNotice(item)"
+                  >查看任务</el-button
+                >
+              </div>
+              <el-button
+                text
+                type="primary"
+                @click="
+                  router.push({ path: '/reviews', query: { tab: 'alerts' } })
+                "
+                >查看评审预警</el-button
+              >
+            </template>
+            <template v-else>
+              <div class="popover-heading">
+                本次操作动态 <el-tag size="small" type="info">示例</el-tag>
+              </div>
+              <div
+                v-for="item in activityLog.slice(0, 4)"
+                :key="item.id"
+                class="notification-item"
+              >
+                <b>{{ item.action }}</b
+                ><span>{{ item.target }}</span
+                ><small>{{ item.time }}</small>
+              </div>
+              <el-button text type="primary" @click="router.push('/settings')"
+                >查看操作日志</el-button
+              >
+            </template>
           </el-popover>
           <div class="topbar-divider" />
           <el-dropdown trigger="click" @command="accountCommand">

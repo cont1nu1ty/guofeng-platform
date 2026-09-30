@@ -89,7 +89,7 @@ deploy("up")
 after_restart_counts = counts()
 assert before_counts == after_restart_counts, "Full stack recreation changed business row counts"
 health = api("/health")
-assert health == {"status": "ok", "schemaVersion": 2}
+assert health == {"status": "ok", "schemaVersion": 6}
 after_data = data(login())
 assert before_data == after_data, "Business or private S3 data changed after restart"
 report = {"checkedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),

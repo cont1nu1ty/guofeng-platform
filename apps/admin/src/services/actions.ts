@@ -52,7 +52,16 @@ export const returnSubmission = dispatch(
 export const assignReview = dispatch(
   "assignReview",
   review.assignReview,
-  (id, expertId, dueAt) => ({ id, data: { expertId, dueAt: /^\d{4}-\d{2}-\d{2}$/.test(dueAt) ? new Date(`${dueAt}T23:59:59+08:00`).toISOString() : dueAt } }),
+  (id, expertId, dueAt, startsAt) => ({
+    id,
+    data: {
+      expertId,
+      startsAt,
+      dueAt: /^\d{4}-\d{2}-\d{2}$/.test(dueAt)
+        ? new Date(`${dueAt}T23:59:59+08:00`).toISOString()
+        : dueAt,
+    },
+  }),
 );
 export const submitReview = dispatch(
   "submitReview",
@@ -121,11 +130,21 @@ export async function addSampleChapter(item: editorial.CollectionItem) {
 }
 export const importChapter = (collectionId: string, submissionId: string) =>
   command("importChapter", { submissionId }, collectionId);
-const activityTimestamp = (value: string) => /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(value) ? new Date(`${value.replace(' ', 'T')}:00+08:00`).toISOString() : value;
+const activityTimestamp = (value: string) =>
+  /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(value)
+    ? new Date(`${value.replace(" ", "T")}:00+08:00`).toISOString()
+    : value;
 export const saveActivity = dispatch(
   "saveActivity",
   editorial.saveActivity,
-  (draft, id) => ({ id, data: { ...draft, startAt: activityTimestamp(draft.startAt), endAt: activityTimestamp(draft.endAt) } }),
+  (draft, id) => ({
+    id,
+    data: {
+      ...draft,
+      startAt: activityTimestamp(draft.startAt),
+      endAt: activityTimestamp(draft.endAt),
+    },
+  }),
 );
 export const setActivityStatus = dispatch(
   "setActivityStatus",

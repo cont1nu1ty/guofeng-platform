@@ -1,0 +1,53 @@
+{
+  "testedAt": "2026-09-30T09:47:23.812233+00:00",
+  "project": "jiafeng-demo-review-cache",
+  "baseUrl": "http://127.0.0.1:18082",
+  "submissionId": "submission_0f808699adf44071abda21a4f8c44f39",
+  "taskId": "task_8436dac6118c427bb91de7e319fd3246",
+  "submittedVersion": 1,
+  "responses": [
+    {
+      "operation": "score",
+      "httpStatus": 200,
+      "errorCode": null
+    },
+    {
+      "operation": "extension",
+      "httpStatus": 412,
+      "errorCode": "VERSION_CONFLICT"
+    }
+  ],
+  "winner": "score",
+  "finalTask": {
+    "dueAt": "2026-10-02T09:47:22.944719Z",
+    "scores": [
+      27,
+      28,
+      22,
+      13
+    ],
+    "status": "已完成",
+    "version": 2,
+    "startsAt": "2026-09-30T09:47:23.035701566Z",
+    "completedAt": "2026-09-30T09:47:23.290605161Z",
+    "indexedDueMs": 1790934442944,
+    "indexedStatus": "已完成",
+    "windowVersion": 1,
+    "indexedWindowVersion": 1
+  },
+  "finalManuscript": {
+    "reviewCount": 1,
+    "progressIndex": 2
+  },
+  "checks": [
+    "existing flow has an expert stage without changing global settings",
+    "new task starts in an active scoring window",
+    "exactly one concurrent operation succeeds",
+    "loser is rejected by version or completed-task guard",
+    "single committed task update matches its durable index",
+    "scoring/extension never moves the original start",
+    "score winner commits scores and advances flow without extending deadline"
+  ],
+  "passed": 7,
+  "globalConfigurationChanged": false
+}

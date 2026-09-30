@@ -1,0 +1,28 @@
+{
+  "testedAt": "2026-09-30T09:54:09.784161+00:00",
+  "project": "jiafeng-dev",
+  "baseUrl": "http://127.0.0.1:18080",
+  "schemaVersion": 6,
+  "allPreviousEntityIdsPreserved": true,
+  "accountsAndFilesUnchanged": true,
+  "originalVolumesPreserved": true,
+  "accounts": 13,
+  "files": 19,
+  "submissions": 16,
+  "revisions": 17,
+  "tasks": 51,
+  "windowIndexRows": 51,
+  "healthyServices": [
+    "mysql",
+    "redis",
+    "search",
+    "server",
+    "storage",
+    "web"
+  ],
+  "adminLogin": true,
+  "expertLogin": true,
+  "anonymousPrivateArraysEmpty": true,
+  "expertWindowsPresent": true,
+  "adminAlertsReadable": true
+}

@@ -33,6 +33,7 @@ export type WorkspaceData = {
   permissions: string[];
   roles: string[];
   privateRecordStats?: PrivateRecordStats;
+  serverNow?: string;
 };
 // Reconcile existing identities so open drawers observe the authoritative saved values.
 function reconcile(target: any[], source: any[]) {

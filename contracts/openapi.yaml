@@ -135,6 +135,36 @@ paths:
       - {}
       - bearerAuth: []
       description: 未登录只返回已发布公开内容。带有效会话时额外返回本人稿件、消息、报名和学习记录；专家仅取得分配给自己的脱敏材料。草稿、下架内容及其他用户私有数据不可见。列表暂为本机规模完整集合，没有分页或容量承诺。
+  /admin/review-alerts:
+    get:
+      operationId: adminReviewAlerts
+      summary: 当前临期和逾期任务，以及本人评审通知
+      description: 服务端按角色与地区裁剪；专家仅可查看本人任务，材料保持匿名。scope=mine 为本人负责或本人分配任务，all 为全部授权范围。历史逾期任务只展示不补发提醒。notifications 为本人最新最多100条评审通知，未读优先；unreadCount 为本人完整未读数。
+      parameters:
+      - name: page
+        in: query
+        schema: {type: integer, minimum: 1, default: 1}
+      - name: pageSize
+        in: query
+        schema: {type: integer, minimum: 1, maximum: 100, default: 20}
+      - name: phase
+        in: query
+        schema: {type: string, enum: [all, due_soon, overdue], default: all}
+      - name: scope
+        in: query
+        schema: {type: string, enum: [mine, all], default: mine}
+      - name: unreadOnly
+        in: query
+        schema: {type: boolean, default: false}
+      responses:
+        '200':
+          description: 已按当前会话裁剪
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewAlertsResponse'
+        default:
+          $ref: '#/components/responses/Error'
   /admin/workspace:
     get:
       operationId: adminWorkspace
@@ -910,8 +940,108 @@ components:
           - 15
           - 25
           - 30
+    ReviewWindowFields:
+      type: object
+      description: 服务器按当前时间计算的时间窗状态。客户端须严格以 canScore 控制评分入口，后端提交时再次校验。时间以 ISO 8601 UTC 传输、北京时间完整展示。
+      properties:
+        startsAt: {type: string, format: date-time}
+        dueAt: {type: string, format: date-time}
+        windowVersion: {type: integer, minimum: 1}
+        windowStatus:
+          type: string
+          enum: [not_started, active, due_soon, overdue, completed, cancelled]
+        canScore: {type: boolean}
+        serverNow: {type: string, format: date-time}
+    AdminReviewTask:
+      allOf:
+      - $ref: '#/components/schemas/Entity'
+      - $ref: '#/components/schemas/ReviewWindowFields'
+      - type: object
+        properties:
+          submissionId: {type: string}
+          expertId: {type: string}
+          status: {type: string, enum: [待评分, 已完成, 已取消]}
+          stage: {type: string}
+          assignedAt: {type: string, format: date-time}
+          ruleVersion: {type: string}
+          scores:
+            type: array
+            items: {type: number}
+          comment: {type: string}
+    ReviewAlert:
+      allOf:
+      - $ref: '#/components/schemas/ReviewWindowFields'
+      - type: object
+        properties:
+          id: {type: string, description: 与taskId相同}
+          taskId: {type: string}
+          submissionId: {type: string}
+          title: {type: string}
+          stage: {type: string}
+          expertName: {type: string}
+          regionId: {type: string}
+          status: {type: string}
+          lockVersion: {type: integer}
+          version: {type: integer}
+          notificationIds:
+            type: array
+            description: 当前账号收到的对应任务通知ID，不能标记他人的通知。
+            items: {type: string}
+          unread: {type: boolean}
+    ReviewNotification:
+      type: object
+      properties:
+        id: {type: string}
+        title: {type: string}
+        content: {type: string}
+        createdAt: {type: string, format: date-time}
+        read: {type: boolean}
+        targetId: {type: string, description: 评审任务ID，用于跳转任务}
+        sourceType: {type: string, enum: [review-task]}
+        phase: {type: string, enum: [due_soon, overdue, window_updated]}
+        windowVersion: {type: integer}
+    ReviewAlertsResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/ReviewAlert'}
+        total: {type: integer}
+        page: {type: integer}
+        pageSize: {type: integer}
+        unreadCount: {type: integer}
+        serverNow: {type: string, format: date-time}
+        notifications:
+          type: array
+          items: {$ref: '#/components/schemas/ReviewNotification'}
+      required: [items, total, page, pageSize, unreadCount, serverNow, notifications]
+    AdminUpdateReviewWindowCommand:
+      type: object
+      description: 开始前可调整开始和截止；开始后仅允许延长截止。已完成或取消不可调整。每次变更须原因，并增加windowVersion、通知专家；外层version为实体lockVersion，与windowVersion不同。
+      properties:
+        command: {type: string, enum: [updateReviewWindow]}
+        entityId: {type: string, description: 评审任务ID}
+        version: {type: integer, description: 期望实体lockVersion，用于并发校验}
+        data:
+          type: object
+          properties:
+            startsAt: {type: string, format: date-time, description: 省略时保持原开始时间不变}
+            dueAt: {type: string, format: date-time}
+            reason: {type: string, minLength: 5, maxLength: 2000}
+          required: [dueAt, reason]
+      required: [command, entityId, version, data]
+    AdminMarkReviewAlertReadCommand:
+      type: object
+      description: 仅标记当前账号收到的评审提醒，已读操作幂等。
+      properties:
+        command: {type: string, enum: [markReviewAlertRead]}
+        entityId: {type: string, description: 通知ID}
+        data: {type: object}
+      required: [command, entityId, data]
     ReviewTask:
       type: object
+      allOf:
+      - $ref: '#/components/schemas/ReviewWindowFields'
       properties:
         id:
           type: string
@@ -928,6 +1058,7 @@ components:
           enum:
           - pending
           - submitted
+          - cancelled
         title:
           type: string
         content:
@@ -951,6 +1082,9 @@ components:
     MemberWorkspace:
       type: object
       properties:
+        serverNow:
+          type: string
+          format: date-time
         reviewRuleVersion:
           type: string
           description: 当前公示量表版本；实例任务另行冻结所属版本。
@@ -1116,6 +1250,9 @@ components:
     AdminWorkspace:
       type: object
       properties:
+        serverNow:
+          type: string
+          format: date-time
         submissions:
           type: array
           items:
@@ -1127,7 +1264,7 @@ components:
         tasks:
           type: array
           items:
-            $ref: '#/components/schemas/Entity'
+            $ref: '#/components/schemas/AdminReviewTask'
         contents:
           type: array
           items:
@@ -1336,9 +1473,15 @@ components:
           properties:
             expertId:
               type: string
+            startsAt:
+              type: string
+              format: date-time
+              description: ISO 8601 UTC 开始时间；省略则使用服务器当前时间。
             dueAt:
               type: string
               format: date-time
+              description: ISO 8601 UTC截止时间；省略则按开始时间加任务冻结的评审天数计算。
+          required: [expertId]
       required:
       - command
       - data
@@ -2104,6 +2247,8 @@ components:
       - $ref: '#/components/schemas/AdminBatchApproveSubmissionsCommand'
       - $ref: '#/components/schemas/AdminReturnSubmissionCommand'
       - $ref: '#/components/schemas/AdminAssignReviewCommand'
+      - $ref: '#/components/schemas/AdminUpdateReviewWindowCommand'
+      - $ref: '#/components/schemas/AdminMarkReviewAlertReadCommand'
       - $ref: '#/components/schemas/AdminSubmitReviewCommand'
       - $ref: '#/components/schemas/AdminUpdateExpertCommand'
       - $ref: '#/components/schemas/AdminConfigureReviewFlowCommand'
@@ -2151,6 +2296,8 @@ components:
           batchApproveSubmissions: '#/components/schemas/AdminBatchApproveSubmissionsCommand'
           returnSubmission: '#/components/schemas/AdminReturnSubmissionCommand'
           assignReview: '#/components/schemas/AdminAssignReviewCommand'
+          updateReviewWindow: '#/components/schemas/AdminUpdateReviewWindowCommand'
+          markReviewAlertRead: '#/components/schemas/AdminMarkReviewAlertReadCommand'
           submitReview: '#/components/schemas/AdminSubmitReviewCommand'
           updateExpert: '#/components/schemas/AdminUpdateExpertCommand'
           configureReviewFlow: '#/components/schemas/AdminConfigureReviewFlowCommand'

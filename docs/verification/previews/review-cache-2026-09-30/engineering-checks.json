@@ -1,0 +1,22 @@
+{
+  "openapiYamlParsed": true,
+  "internalReferencesResolved": 211,
+  "admin": {
+    "tests": 42,
+    "files": 7,
+    "typecheck": true,
+    "build": true,
+    "evidence": "deploy/.local/review-cache/admin-*-final.log"
+  },
+  "miniapp": {
+    "tests": 123,
+    "files": 19,
+    "typecheck": true,
+    "h5Build": true,
+    "weixinBuild": true,
+    "mainPackageBytes": 1620138,
+    "evidence": "frontend agent commands and success outputs in task tool history"
+  },
+  "deploymentUnitTests": 22,
+  "wechatRealDeviceTested": false
+}

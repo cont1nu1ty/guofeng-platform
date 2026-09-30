@@ -1,0 +1,29 @@
+{
+  "checks": [
+    "scheduled start is authoritative and anonymous",
+    "before-start edit increments window version",
+    "missing reason, cross-region and stale updates are rejected",
+    "window notification deep link is task based",
+    "notifications can only be marked read by their owner",
+    "expired task cannot score",
+    "alerts are paginated and region scoped",
+    "other region does not see task",
+    "overdue extension restores score on same workflow task",
+    "started tasks cannot shorten or move start",
+    "concurrent extensions yield one success and one version conflict",
+    "completed tasks are immutable and leave warning list",
+    "two backend instances are running against the same ledger",
+    "near-deadline reminder goes only to expert",
+    "first overdue reminder reaches expert and assigned operator once",
+    "restart does not duplicate reminders",
+    "re-enable cutoff excludes historical overdue",
+    "disabled/reenabled history has no overdue delivery",
+    "extended window obtains a fresh reminder cycle",
+    "cancelled tasks are immutable",
+    "ordinary member cannot access admin alert API",
+    "invalid pagination rejected"
+  ],
+  "passed": 22,
+  "testedAt": "2026-09-30T09:28:36.344535+00:00",
+  "project": "jiafeng-demo-review-cache"
+}

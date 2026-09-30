@@ -14,7 +14,7 @@ import uuid
 urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler({})))
 ROOT=Path(__file__).resolve().parents[2]
 BASE=os.environ.get('JIAFENG_TEST_URL','http://127.0.0.1:18080')+'/api/v1'
-ENV=dict(line.split('=',1) for line in (ROOT/'deploy/.env').read_text().splitlines() if line and not line.startswith('#'))
+ENV=dict(line.split('=',1) for line in Path(os.environ.get('JIAFENG_ENV_FILE', ROOT/'deploy/.env')).read_text().splitlines() if line and not line.startswith('#'))
 RESULTS=[]
 STAMP=dt.datetime.now(dt.timezone.utc).strftime('%m%d%H%M%S')
 

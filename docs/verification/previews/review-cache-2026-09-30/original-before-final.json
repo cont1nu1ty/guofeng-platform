@@ -1,0 +1,10 @@
+{
+  "samples": 30,
+  "p50ms": 28.567875499902584,
+  "p95ms": 41.23191700091411,
+  "firstRequestMs": 32.44961500058707,
+  "responseBytes": 60439,
+  "jfEntitySelects": 1291,
+  "perRequestEntitySelects": 43.03333333333333,
+  "project": "jiafeng-dev"
+}

@@ -1,5 +1,7 @@
 # 项目文档导航
 
+2026-09-30 新增：[评审时间窗口、站内预警与公开缓存](engineering/review-windows-cache.md) · [本轮验证](verification/review-cache-2026-09-30.md)。
+
 更新：2026-09-27。当前新增**个人云端记录、音频处理与 Elasticsearch 搜索**，保留既有用户端和后台界面。先看 [实际实现与运行边界](engineering/backend-implementation.md)、[启动部署](../deploy/README.md) 和 [本轮真实验证](verification/records-search-2026-09-27.md)。原 PDF 仍是完整需求基线，远期生产要求不混入本机完成状态。
 
 当前本机数据已重新整理为原创虚构场景，用于网页联动展示：[账号与演示路线](frontend/showcase-data.md) · [数据重建与网页验证](verification/demo-data-2026-09-26.md)。使用真实 HTTP、数据库与私有文件，不代表实际运营记录；原测试数据已备份。

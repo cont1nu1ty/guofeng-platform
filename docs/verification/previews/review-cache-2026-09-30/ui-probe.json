@@ -1,0 +1,24 @@
+{
+  "checks": [
+    "admin-tasks-1440 no page overflow",
+    "admin-alerts-1440 no page overflow",
+    "started window locks start 1440",
+    "admin-window-1440 no page overflow",
+    "window form requires reason",
+    "window extension saved through real UI",
+    "admin-tasks-390 no page overflow",
+    "admin-alerts-390 no page overflow",
+    "started window locks start 390",
+    "admin-window-390 no page overflow",
+    "expert-tasks-390 no page overflow",
+    "expired expert submission is disabled",
+    "expert-expired-390 no page overflow",
+    "expert-notifications-390 no page overflow",
+    "review notification opens the targeted expert task",
+    "review notification is read after opening",
+    "expert-notification-target-390 no page overflow",
+    "browser has no JavaScript errors"
+  ],
+  "passed": 18,
+  "pageErrors": []
+}

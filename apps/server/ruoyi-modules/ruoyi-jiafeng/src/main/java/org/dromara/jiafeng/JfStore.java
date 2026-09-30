@@ -51,6 +51,16 @@ public class JfStore {
         "SELECT * FROM jf_entity WHERE kind=? ORDER BY created_at DESC,id", this::row, kind);
   }
 
+  /** Predicates are server-owned SQL, never request fragments. */
+  public List<Entity> select(String kind, String predicate, Object... args) {
+    Object[] parameters = new Object[args.length + 1];
+    parameters[0] = kind;
+    System.arraycopy(args, 0, parameters, 1, args.length);
+    return db.query(
+        "SELECT * FROM jf_entity WHERE kind=? AND (" + predicate + ") ORDER BY created_at DESC,id",
+        this::row, parameters);
+  }
+
   public Entity find(String kind, String id, boolean lock) {
     List<Entity> rows =
         db.query(
@@ -76,6 +86,8 @@ public class JfStore {
         json(data));
     var entity = find(kind, id, false);
     enqueueSearch(entity);
+    JfReviewWindows.sync(db, entity);
+    JfPublicCache.touch(db, entity.kind(), entity.id());
     return entity;
   }
 
@@ -94,6 +106,8 @@ public class JfStore {
     require(n == 1, 412, "VERSION_CONFLICT", "记录已更新，请刷新后重试");
     var entity = find(e.kind, e.id, false);
     enqueueSearch(entity);
+    JfReviewWindows.sync(db, entity);
+    JfPublicCache.touch(db, entity.kind(), entity.id());
     return entity;
   }
 

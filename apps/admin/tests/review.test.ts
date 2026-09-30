@@ -51,6 +51,18 @@ describe("稿件初审与分配", () => {
     expect(manuscript.status).toBe("退回修改");
     expect(manuscript.history.at(-1)?.detail).toBe("请补充家训引用出处。");
   });
+  it("立即开始且未改默认截止时，演示适配器按当前开始与配置天数计算", () => {
+    const manuscript = reviewState.submissions[0]!;
+    approveSubmission(manuscript.id);
+    expect(assignReview(manuscript.id, "EXP-001", "").ok).toBe(true);
+    const task = reviewState.tasks.find(
+      (item) => item.submissionId === manuscript.id,
+    )!;
+    expect(task.startsAt).toBe(new Date().toISOString());
+    expect(Date.parse(task.dueAt) - Date.parse(task.startsAt!)).toBe(
+      reviewFlow.deadlineDays * 86400000,
+    );
+  });
   it("限制可分配稿件、接单专家与有效截止日期", () => {
     const manuscript = reviewState.submissions[0]!;
     expect(assignReview(manuscript.id, "EXP-001", "2026-09-25").ok).toBe(false);
