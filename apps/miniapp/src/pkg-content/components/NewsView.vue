@@ -211,7 +211,7 @@ function resetFilters() {
           </view>
         </view>
         <view class="content-search">
-          <wd-icon name="search" />
+          <wd-icon name="search-line" />
           <input
             v-model="keyword"
             :placeholder="t('搜索资讯标题或内容', 'Search titles or summaries')"
