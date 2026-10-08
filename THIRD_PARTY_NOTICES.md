@@ -69,3 +69,7 @@
 | FFmpeg / ffprobe 8.1.2-r0 | 在固定Alpine 3.24/Temurin镜像内通过官方apk安装，作为独立进程将私人录音转换为MP3；不修改FFmpeg源码 | [FFmpeg n8.1.2源码](https://github.com/FFmpeg/FFmpeg/tree/n8.1.2)；Alpine包声明GPL-2.0-or-later与LGPL-2.1-or-later，实际构建含`--enable-gpl --enable-version3`，`ffmpeg -L`明确声明**GPL-3.0-or-later**，不能仅标LGPL或GPLv2。保留`licenses/ffmpeg-8.1.2.COPYING.GPLv2`、`COPYING.LGPLv2.1`、`COPYING.GPLv3`及`LICENSE.md`，实际构建和许可输出见`licenses/ffmpeg-8.1.2.runtime-inventory.txt`；依赖OS组件遵从各自许可。 |
 
 私人记录、搜索同步与接口、增量种子和验证代码为本项目编写；具体增量种子与数据依赖探针仅保留在演示分支。四份故事 MP3 复用既有原创文字与合成音频（`scripts/audio-sample-manifest.json`），仅在演示分支显式导入时上传 S3，明确为演示声音，不是用户真实录音。FFmpeg二进制进入本轮服务器镜像，与早期仅用本机工具生成样例的历史范围不同。
+
+## 2026-10-08 · 演示分支全景来源
+
+演示分支使用 Greg Zaal 的 Autumn Hockey（Poly Haven，CC0）作为公园球面技术示例，不代表展馆实景；[具体来源与用途](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/deploy/fixtures/non_ai/education-media-sources.md)固定到本轮演示提交。main 不附带该演示素材或人物种子数据。

@@ -602,7 +602,7 @@
       },
       {
         "path": "deploy/dev",
-        "sha256": "36fa174e335ec1f9d886e9f2910ceb0ebee6ed1bb128ce71f377efa2aca54e82"
+        "sha256": "8dbc7aa2b38a92193cc2cc86f4489efa317d013d0ca7e42aa8cb22df8052bf38"
       },
       {
         "path": "deploy/demo_state.py",
@@ -610,7 +610,7 @@
       },
       {
         "path": "deploy/tests/test_demo_seed.py",
-        "sha256": "8f862c803f5f5e235f8dcd5a17313c2f1e85510d9d93941b59a3ba51ab4ee569"
+        "sha256": "182ef12c9248f3f6fb637f38d783826c6623911c0a48b71617accce7cd58ab88"
       }
     ],
     "installation": {
@@ -621,7 +621,8 @@
       "dataScope": "External demo-branch fictional scenarios and source attachments; not a runtime database snapshot",
       "availableOnBranch": "codex/demo-data-bootstrap",
       "availableOnMain": false,
-      "mainBehavior": "Refuse missing data package before seed or non-empty reset; never fetch a package automatically"
+      "mainBehavior": "Refuse missing data package before seed or non-empty reset; never fetch a package automatically",
+      "extensionEntrypoint": "./deploy/dev seed-non-ai"
     },
     "demoResources": "externalDemoResources; not present in the main working tree"
   },
@@ -751,5 +752,80 @@
     },
     "fontManifest": "scripts/font-data/server-manifest.json",
     "word": "Project-authored OOXML writer; no new Word library"
+  },
+  "nonAiShowcase": {
+    "checkedAt": "2026-10-08",
+    "datasetVersion": "non-ai-showcase-v1",
+    "baseBranch": "codex/demo-data-bootstrap",
+    "scope": "Fictional business scenarios via real APIs, explicit opt-in additive import; no AI development",
+    "externalPanorama": {
+      "title": "Autumn Hockey",
+      "author": "Greg Zaal",
+      "license": "CC0-1.0",
+      "source": "https://polyhaven.com/a/autumn_hockey",
+      "licenseSource": "https://polyhaven.com/license",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/autumn_hockey.jpg",
+      "byteLength": 10433748,
+      "providerContentSha1": "a4f5cb881cec2e8d87cd9cd35a48598658c6d264",
+      "retrieval": "External HTTPS reference; provider SHA1 from response header, not a locally computed hash",
+      "scope": "Park photography for H5 viewer demonstration; not a historic-person venue photograph"
+    },
+    "includedOnMain": false,
+    "commit": "152e886ffc0518c44120bd4029e574f90194365f",
+    "installation": "Use a separate checkout of codex/demo-data-bootstrap at the recorded commit; main refuses missing base and extension packages before initialization",
+    "resources": [
+      {
+        "resource": "deploy/seed-non-ai.py",
+        "sha256": "fcd909e775c67ca5d3c15104674bdcfc85e05d43d71330a0b41a3e5311088bc9",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/deploy/seed-non-ai.py"
+      },
+      {
+        "resource": "deploy/scenarios/accounts_credentials.py",
+        "sha256": "f2aa60da03f842d3fb0f28f18b7be46282c3729a85c14b5cba21fc271412855e",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/deploy/scenarios/accounts_credentials.py"
+      },
+      {
+        "resource": "deploy/scenarios/common.py",
+        "sha256": "2027f9f278ebcee201fd898d6256c6c5b3d98acc89015dff79c4095949d4c8fd",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/deploy/scenarios/common.py"
+      },
+      {
+        "resource": "deploy/scenarios/education_media.py",
+        "sha256": "1f5e3ce185b8a109fa0d452985e271168bf8737a003039dc3b50b69e96d5f862",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/deploy/scenarios/education_media.py"
+      },
+      {
+        "resource": "deploy/scenarios/operations.py",
+        "sha256": "c9e7a4d395b1f57358e30f7ffe3a245099581774d76570507ce895e115eb8c60",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/deploy/scenarios/operations.py"
+      },
+      {
+        "resource": "deploy/scenarios/review_regions.py",
+        "sha256": "de13842a4b0a4ddb0e69d9158ae021c8859787c131c369b10b0319540606081c",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/deploy/scenarios/review_regions.py"
+      },
+      {
+        "resource": "deploy/fixtures/non_ai/dataset.json",
+        "sha256": "55a60899dd8238f0d9ba469f221c36228f0ffaf7a71e3a7f40c3f9fbc40a470b",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/deploy/fixtures/non_ai/dataset.json"
+      },
+      {
+        "resource": "deploy/fixtures/non_ai/education-media-sources.md",
+        "sha256": "cd278a40aa4d9b336196302aac5d59a8e09d259b1f96096f2b36fff47538f747",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/deploy/fixtures/non_ai/education-media-sources.md"
+      },
+      {
+        "resource": "deploy/fixtures/non_ai/generate_panorama.py",
+        "sha256": "30a0567526b4c0f429d453bf6854d0f36d8459bfe2feb8033aa47ff914ab1b88",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/deploy/fixtures/non_ai/generate_panorama.py"
+      },
+      {
+        "resource": "deploy/fixtures/non_ai/shouyue-study-panorama.png",
+        "sha256": "b68a2010693e5364f42ddb84184b3b4a478ef28813194b369e4dd7483b16d675",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/deploy/fixtures/non_ai/shouyue-study-panorama.png"
+      }
+    ],
+    "guide": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/frontend/non-ai-showcase-2026-10-08.md",
+    "verification": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/verification/non-ai-showcase-2026-10-08.md"
   }
 }

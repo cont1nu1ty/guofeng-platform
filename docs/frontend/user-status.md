@@ -1,5 +1,7 @@
 # 用户端需求与当前界面对照
 
+2026-10-08：非 AI 业务源码已同步。完整数据与新增场景保留在演示分支，见[账号与查看路线](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/frontend/non-ai-showcase-2026-10-08.md)及[演示环境核验](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/verification/non-ai-showcase-2026-10-08.md)；main 不包含专用数据包，也不会在启动时导入。
+
 ## 2026-10-07 非 AI 功能增量（HTTP 当前状态）
 
 完整实施与边界见[本轮说明](../engineering/non-ai-implementation-2026-10-07.md)，实际检查见[本轮验证](../verification/non-ai-2026-10-07.md)。本节及下表的 HTTP 更新优先于后文保留的 demo 演示描述。

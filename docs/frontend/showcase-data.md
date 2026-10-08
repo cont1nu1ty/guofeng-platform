@@ -1,5 +1,7 @@
 # 秋日邻里故事 · 本机展示数据
 
+2026-10-08：非 AI 业务源码已同步。完整数据与新增场景保留在演示分支，见[账号与查看路线](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/frontend/non-ai-showcase-2026-10-08.md)及[演示环境核验](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/verification/non-ai-showcase-2026-10-08.md)；main 不包含专用数据包，也不会在启动时导入。
+
 更新：2026-09-26。本页保留当时演示环境的账号与场景说明。复现数据由 [codex/demo-data-bootstrap](https://github.com/cont1nu1ty/guofeng-platform/tree/codex/demo-data-bootstrap) 提供；main 当前文件树不包含可导入数据和专用种子脚本，空卷不会自动拥有这些账号、场景或记录。
 
 - [用户端](http://127.0.0.1:18080/)：公开阅读、投稿、评审任务、报名、学习及个人记录。

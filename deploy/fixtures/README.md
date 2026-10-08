@@ -1,5 +1,7 @@
 # 演示数据分支与主分支边界
 
+2026-10-08：非 AI 业务源码已同步。完整数据与新增场景保留在演示分支，见[账号与查看路线](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/frontend/non-ai-showcase-2026-10-08.md)及[演示环境核验](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/verification/non-ai-showcase-2026-10-08.md)；main 不包含专用数据包，也不会在启动时导入。
+
 `main` 本目录只保留这份说明，不包含可导入的模拟 JSON/PDF。数据与包含具体演示姓名、文案的三个种子脚本保留在 [codex/demo-data-bootstrap](https://github.com/cont1nu1ty/guofeng-platform/tree/codex/demo-data-bootstrap)；下列链接固定到该分支已验证的提交 `a94f494`，不是 main 本地文件。需在演示分支显式执行 `./deploy/dev seed-demo`，完整步骤与失败处理见[部署说明](../README.md#显式导入演示数据)。默认启动不会导入，也不会从远端取数据。
 
 | 文件或位置 | 用途 |
@@ -21,3 +23,5 @@
 本数据包复现的是仓库定义的初始演示状态，不是某台电脑编辑后的逐条快照。完整导入后，重复执行会保留用户后续修改；需要重新生成初始状态时使用先备份的 `reset-demo`。
 
 主分支保留应用原有的前端 Mock 和静态音视频，以兼容界面演示与单元测试；这些资源不会在 HTTP 模式下自动变成数据库记录。主分支的导入命令缺包时提前拒绝，普通启动、迁移、备份和恢复不依赖此数据包。历史提交中已有的演示数据不改写历史；当前 main 文件树按上述边界排除。
+
+当前新增 schema14 的重置清理清单尚未审核，`reset-demo` 会主动拒绝；请在独立空卷开发环境安装完整演示分支，勿绕过重置保护。`seed-non-ai` 与基础导入一样，在缺包时先于配置和容器访问退出。

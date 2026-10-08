@@ -1,5 +1,7 @@
 # 用户端前端待办
 
+2026-10-08：非 AI 业务源码已同步。完整数据与新增场景保留在演示分支，见[账号与查看路线](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/frontend/non-ai-showcase-2026-10-08.md)及[演示环境核验](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/verification/non-ai-showcase-2026-10-08.md)；main 不包含专用数据包，也不会在启动时导入。
+
 ## 2026-10-07 已实施与剩余验收
 
 已执行本轮非 AI 计划，详见[实施结果](../engineering/non-ai-implementation-2026-10-07.md)。FE-02 的逐级标准/版本、FE-04 的平台确认历史、FE-07 的授权资源目录与真实下载、FE-10 的市县目录、FE-13 的 H5 球面查看已接入；保留原编号用于追溯，不再作为从零开发项。

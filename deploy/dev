@@ -138,7 +138,7 @@ def backup(values, *, resume_services=True):
 def query(sql):
     return compose("exec", "-T", "mysql", "sh", "-c",
         'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql --default-character-set=utf8mb4 '
-        '--batch --skip-column-names -u root jiafeng', input=sql,
+        '--batch --raw --skip-column-names -u root jiafeng', input=sql,
         capture_output=True, text=True).stdout.strip()
 
 
@@ -178,13 +178,32 @@ def require_demo_package():
             'Missing: ' + ', '.join(missing))
 
 
+def require_non_ai_package():
+    """Require base and extension files before initialization or service access."""
+    require_demo_package()
+    required = [
+        'seed-non-ai.py', 'scenarios/common.py', 'scenarios/review_regions.py',
+        'scenarios/education_media.py', 'scenarios/accounts_credentials.py',
+        'scenarios/operations.py', 'fixtures/non_ai/dataset.json',
+        'fixtures/non_ai/education-media-sources.md',
+        'fixtures/non_ai/generate_panorama.py',
+        'fixtures/non_ai/shouyue-study-panorama.png',
+    ]
+    missing = [name for name in required if not (HERE / name).is_file()]
+    if missing:
+        raise ValueError(
+            'The optional non-AI demo extension is incomplete. Use a complete checkout of '
+            'codex/demo-data-bootstrap for sample data. No database or files were changed. '
+            'Missing: ' + ', '.join(missing))
+
+
 def seed_demo(values, *, already_locked=False):
     """Explicit opt-in import. Never reset or replace a populated database."""
     require_demo_package()
     if not already_locked:
         with demo_lifecycle_lock():
             return seed_demo(values, already_locked=True)
-    reset_scope(values)  # Read-only ownership/development checks, no cleanup.
+    demo_scope(values)  # Read-only ownership/development checks, no cleanup.
     state = demo_state_module()
     receipt = state.Receipt(query, values['COMPOSE_PROJECT_NAME'], state.fingerprint(HERE))
     phase = state.next_phase(receipt.read())
@@ -214,12 +233,20 @@ def seed_demo_records(values, *, already_locked=False):
     if not already_locked:
         with demo_lifecycle_lock():
             return seed_demo_records(values, already_locked=True)
-    reset_scope(values)
+    demo_scope(values)
     run([sys.executable, HERE / 'seed-demo-records.py'],
         env={**os.environ, 'JIAFENG_ENV_FILE': str(ENV_FILE)})
 
 
-def reset_scope(values):
+def seed_non_ai(values):
+    require_non_ai_package()
+    demo_scope(values)
+    # The extension entrypoint owns the shared lifecycle lock and DB checkpoints.
+    run([sys.executable, HERE / 'seed-non-ai.py'],
+        env={**os.environ, 'JIAFENG_ENV_FILE': str(ENV_FILE)})
+
+
+def demo_scope(values):
     """Refuse foreign containers/volumes, restored environments and production flags."""
     project = values["COMPOSE_PROJECT_NAME"]
     if not re.fullmatch(r"jiafeng-(?:dev|demo-[a-z0-9][a-z0-9_-]*)", project):
@@ -257,6 +284,12 @@ def reset_scope(values):
         volumes[service] = volume
     if volumes["storage"] != project + "_storage-data":
         raise ValueError("Refusing storage: backup and reset must refer to the same project volume")
+    return volumes
+
+
+def reset_scope(values):
+    """Destructive reset additionally requires the exact audited table inventory."""
+    volumes = demo_scope(values)
     expected = {"jf_account", "jf_entity", "jf_revision", "jf_draft", "jf_file",
         "jf_registration", "jf_idempotency", "jf_audit", "jf_login_attempt",
         "jf_revision_file", "jf_schema_version", "jf_bootstrap_ready",
@@ -375,7 +408,7 @@ def restore(source):
 def main():
     command = sys.argv[1] if len(sys.argv) > 1 else "help"
     if command == "help":
-        print("Usage: ./deploy/dev {up|init|build|down|status|logs [service]|backup|restore BACKUP_DIR|seed-demo|seed-demo-records|reset-demo [--empty]|seed-catalog}")
+        print("Usage: ./deploy/dev {up|init|build|down|status|logs [service]|backup|restore BACKUP_DIR|seed-demo|seed-demo-records|seed-non-ai|reset-demo [--empty]|seed-catalog}")
         return
     if command == "restore":
         if len(sys.argv) != 3:
@@ -385,6 +418,10 @@ def main():
     if command in ('seed-demo', 'seed-demo-records', 'seed-catalog') or (
             command == 'reset-demo' and '--empty' not in sys.argv[2:]):
         require_demo_package()
+    if command == 'seed-non-ai':
+        if sys.argv[2:]:
+            raise ValueError('Usage: ./deploy/dev seed-non-ai')
+        require_non_ai_package()
     values = initialize()
     if command == "init":
         print(f"Configuration ready for {values['COMPOSE_PROJECT_NAME']}")
@@ -412,11 +449,13 @@ def main():
         if sys.argv[2:]:
             raise ValueError('Usage: ./deploy/dev seed-demo-records')
         seed_demo_records(values)
+    elif command == "seed-non-ai":
+        seed_non_ai(values)
     elif command == "seed-catalog":
         if sys.argv[2:]:
             raise ValueError('Usage: ./deploy/dev seed-catalog')
         with demo_lifecycle_lock():
-            reset_scope(values)
+            demo_scope(values)
             run([sys.executable, HERE / "seed-catalog.py"], env={**os.environ, "JIAFENG_ENV_FILE": str(ENV_FILE)})
     elif command == "reset-demo":
         if sys.argv[2:] not in ([], ["--empty"]):

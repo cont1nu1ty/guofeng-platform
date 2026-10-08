@@ -1,5 +1,7 @@
 # 运营后台界面演示
 
+2026-10-08：非 AI 业务源码已同步。完整数据与新增场景保留在演示分支，见[账号与查看路线](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/frontend/non-ai-showcase-2026-10-08.md)及[演示环境核验](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/verification/non-ai-showcase-2026-10-08.md)；main 不包含专用数据包，也不会在启动时导入。
+
 `main` 的空卷 HTTP 环境不预装业务内容；需要下述完整模拟场景时使用 [演示数据分支](https://github.com/cont1nu1ty/guofeng-platform/tree/codex/demo-data-bootstrap) 并按[部署说明](../../deploy/README.md#显式导入演示数据)显式导入。已有前端 Mock 与静态示例资源仍保留。
 
 ## 2026-10-07 HTTP 新增操作

@@ -1,5 +1,7 @@
 # 项目文档导航
 
+2026-10-08：非 AI 业务源码已同步。完整数据与新增场景保留在演示分支，见[账号与查看路线](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/frontend/non-ai-showcase-2026-10-08.md)及[演示环境核验](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/verification/non-ai-showcase-2026-10-08.md)；main 不包含专用数据包，也不会在启动时导入。
+
 2026-10-07 新增：[非 AI 功能实施结果](engineering/non-ai-implementation-2026-10-07.md) · [本轮验证](verification/non-ai-2026-10-07.md)。岗位、版本评审与课程、人工证书、资源与导出、调度报表、地区咨询和普通媒体已接入独立 19084 验证环境；原展示环境保留，正式微信/生产验收另列。
 
 2026-09-30 新增：[评审时间窗口、站内预警与公开缓存](engineering/review-windows-cache.md) · [本轮验证](verification/review-cache-2026-09-30.md)。
