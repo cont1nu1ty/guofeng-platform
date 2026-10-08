@@ -1,5 +1,7 @@
 # 项目文档导航
 
+2026-10-08 新增：[完整演示数据与非 AI 场景路线](frontend/non-ai-showcase-2026-10-08.md) · [安装与核验](verification/non-ai-showcase-2026-10-08.md)。19084 已切换到演示分支数据加本次场景增量，原18080不变。
+
 2026-10-07 新增：[非 AI 功能实施结果](engineering/non-ai-implementation-2026-10-07.md) · [本轮验证](verification/non-ai-2026-10-07.md)。岗位、版本评审与课程、人工证书、资源与导出、调度报表、地区咨询和普通媒体已接入独立 19084 验证环境；原展示环境保留，正式微信/生产验收另列。
 
 2026-09-30 新增：[评审时间窗口、站内预警与公开缓存](engineering/review-windows-cache.md) · [本轮验证](verification/review-cache-2026-09-30.md)。

@@ -1,0 +1,8 @@
+{
+  "datasetVersion": "non-ai-showcase-v1",
+  "fictional": true,
+  "sourceBranch": "codex/demo-data-bootstrap",
+  "sourceCommit": "9b2cd193b79a350870b642de85f6c77b5c5fc781",
+  "scope": ["岗位与人工资质", "版本评审与线下归集", "多章课程测验班组与承诺", "证书与授权资源", "地区与定制咨询", "人工字幕朗读与全景", "导出报告与投递偏好"],
+  "policy": "显式追加，通过真实业务API生成记录，完成后重跑保留用户编辑；不导入历史验收随机记录，不伪造签章、运营量或真人素材。"
+}

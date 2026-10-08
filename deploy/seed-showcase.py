@@ -45,7 +45,7 @@ ACCOUNTS = [
 
 def sql(query):
     return deploy.compose('exec', '-T', 'mysql', 'sh', '-c',
-        'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql --default-character-set=utf8mb4 -u root -N -B jiafeng',
+        'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysql --default-character-set=utf8mb4 -u root -N -B --raw jiafeng',
         input=query, text=True, encoding='utf-8', capture_output=True).stdout.strip()
 
 
@@ -96,6 +96,17 @@ class Client:
             body['version'] = version
         return self.call('POST', '/admin/commands' if admin else '/commands', body,
                          {'Idempotency-Key': key})[0]
+
+    def education(self, command, entity='', data=None, version=None, admin=False):
+        """Use the versioned education API without changing legacy command envelopes."""
+        self.sequence += 1
+        key = str(uuid.uuid5(uuid.NAMESPACE_URL,
+            f'jiafeng-showcase-v1:{self.name}:{self.sequence}:education:{command}:{entity}'))
+        body = {'command': command, 'entityId': entity, 'data': data or {}}
+        if version is not None:
+            body['version'] = version
+        return self.call('POST', '/admin/education/commands' if admin else '/education/commands',
+                         body, {'Idempotency-Key': key})[0]
 
     def act(self, command, collection, entity, data=None):
         current = next(x for x in self.workspace(True)[collection] if x['id'] == entity)
@@ -213,6 +224,7 @@ def main():
     clients = {row[1]: Client(row[1], 'admin' if row[3] == 'staff' else 'member')
                for row in ACCOUNTS if row[-1]}
     admin = clients['devadmin']
+    authorize_showcase_reviewers(admin, clients, dataset)
     refs = {kind: {} for kind in ('submissions', 'contents', 'collections', 'activities', 'courses', 'products', 'knowledgeDocuments', 'dictionaryWords', 'notificationDrafts', 'claims', 'drafts')}
     checks = []
     config = admin.workspace(True)['platformConfig']
@@ -286,7 +298,6 @@ def main():
         refs['drafts'][item['key']] = {'actor': item['actor'], 'title': data['title']}
     for kind, command, status_command, collection in (
         ('contents', 'saveContent', 'setContentStatus', 'contents'),
-        ('courses', 'saveCourse', 'toggleCourse', 'courses'),
         ('products', 'saveProduct', 'toggleProduct', 'products'),
         ('dictionaryWords', 'saveDictionaryWord', '', 'dictionaryWords'),
         ('notificationDrafts', 'saveNotificationDraft', '', 'notificationDrafts')):
@@ -301,6 +312,7 @@ def main():
                 operator.act('toggleDictionaryWord', collection, value['id'], {'enabled': False})
             if kind == 'notificationDrafts' and target in ('已发送', 'published'):
                 operator.act('publishNotification', collection, value['id'])
+    seed_courses(admin, clients, dataset['courses'], refs['courses'])
     for item in dataset['collections']:
         value = admin.command('saveCollection', data=item['data'], admin=True)['result']
         refs['collections'][item['key']] = {'id': value['id'], 'title': item['data']['title']}
@@ -347,11 +359,7 @@ def main():
         value = admin.command('saveKnowledgeDocument', data={**item['data'], 'fileId': file['fileId']}, admin=True)['result']
         refs['knowledgeDocuments'][item['key']] = {'id': value['id'], 'fileId': file['fileId'], 'title': item['data']['title']}
     # Personal records are also written through the same APIs used by the web UI.
-    published_courses = [x for x in admin.workspace(True)['courses'] if x['status'] == '已上架']
-    for index, course in enumerate(published_courses):
-        for lesson in course['lessons']:
-            members[0].command('course.progress', course['id'], {'lessonId': lesson['id']})
-        members[1].command('course.progress', course['id'], {'lessonId': course['lessons'][0]['id']})
+    seed_learning(admin, members[0], members[1])
     products = [x for x in admin.workspace(True)['products'] if x['status'] == '已上架' and x['stock'] >= 2]
     if not products:
         raise ValueError('At least one published product with stock >=2 is needed')
@@ -384,13 +392,68 @@ def main():
     manifest = {'datasetVersion': dataset.get('metadata', {}).get('version', '1.0'), 'seededAt': NOW.isoformat(),
         'fixtureSha256': hashlib.sha256(FIXTURE.read_bytes()).hexdigest(), 'project': project,
         'fictional': True, 'refs': refs, 'checks': checks,
-        'accounts': [{'username': r[1], 'name': r[2], 'role': r[5], 'region': r[4], 'enabled': r[-1]} for r in ACCOUNTS],
+        'accounts': [{'username': r[1], 'name': r[2], 'role': r[5], 'region': r[4],
+            'regionIds': clients[r[1]].user['regionIds'] if r[-1] else [r[4]], 'enabled': r[-1]} for r in ACCOUNTS],
         'counts': json.loads(sql("SELECT JSON_OBJECT('accounts',(SELECT COUNT(*) FROM jf_account),'manuscripts',(SELECT COUNT(*) FROM jf_entity WHERE kind='submission'),'revisions',(SELECT COUNT(*) FROM jf_revision),'tasks',(SELECT COUNT(*) FROM jf_entity WHERE kind='task'),'files',(SELECT COUNT(*) FROM jf_file),'registrations',(SELECT COUNT(*) FROM jf_registration WHERE status='registered'),'claims',(SELECT COUNT(*) FROM jf_entity WHERE kind='claim'));"))}
     installed.update(phase='base-complete', baseManifest=manifest)
     receipt.save(installed)
     MANIFEST.parent.mkdir(parents=True, exist_ok=True)
     MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+'\n')
     print(json.dumps({'status': 'ready', 'counts': manifest['counts'], 'verifiedChecks': len(checks), 'manifest': str(MANIFEST)}, ensure_ascii=False, indent=2))
+
+
+
+
+def authorize_showcase_reviewers(admin, clients, dataset):
+    """Explicit fictional joint-panel scopes; normal backend assignment checks stay active."""
+    regions = sorted({item['data']['region'] for item in dataset['submissions']})
+    for name in ('expert_zj', 'expert_bj'):
+        expert = clients[name]
+        account = admin.call('GET', '/admin/accounts/' + str(expert.user['id']))[0]
+        admin.call('POST', '/admin/accounts/' + account['id'] + '/roles',
+            {'version': account['version'], 'roles': ['expert'], 'regionIds': regions},
+            {'Idempotency-Key': 'showcase:joint-panel-scope:' + name})
+        # Role/scope grants invalidate old sessions. Do not reuse the pre-grant token.
+        clients[name] = Client(name, 'admin')
+
+
+def seed_courses(admin, clients, courses, refs):
+    """Keep original drafts unpublished and explicitly freeze published course versions."""
+    for item in courses:
+        operator = clients.get(item.get('actor'), admin)
+        saved = operator.education('saveCourse', data=item['data'], admin=True)
+        target = item.get('desiredStatus', '草稿')
+        if target not in ('草稿', '已上架', '已下架'):
+            raise ValueError('Unsupported course fixture status: ' + target)
+        publication = 0
+        if target != '草稿':
+            changed = operator.education('publishCourse' if target == '已上架' else 'unpublishCourse',
+                saved['id'], version=saved['lockVersion'], admin=True)
+            publication = changed.get('publishedVersion', 0)
+        refs[item['key']] = {'id': saved['id'], 'title': item['data']['title'],
+                            'publicationVersion': publication, 'status': target}
+
+
+def seed_learning(admin, complete_actor, partial_actor):
+    """Store actual per-publication reading/quiz progress, never synthetic legacy learning."""
+    courses = admin.call('GET', '/admin/education')[0]['courses']
+    for course in courses:
+        if course['status'] != '已上架':
+            continue
+        publication = course['publishedVersion']
+        if publication < 1:
+            raise ValueError('Published showcase course has no frozen publication: ' + course['id'])
+        for lesson in course['lessons']:
+            complete_actor.education('course.progress', course['id'],
+                {'publicationVersion': publication, 'lessonId': lesson['id']})
+        exam = set(course.get('examQuestionIds', []))
+        if exam:
+            answers = {question['id']: question['answerId'] for question in course['questions']
+                       if question['id'] in exam}
+            complete_actor.education('course.progress', course['id'],
+                {'publicationVersion': publication, 'answers': answers})
+        partial_actor.education('course.progress', course['id'],
+            {'publicationVersion': publication, 'lessonId': course['lessons'][0]['id']})
 
 
 def check_dataset(admin, clients, dataset, refs, checks):

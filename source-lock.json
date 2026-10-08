@@ -602,7 +602,7 @@
       },
       {
         "path": "deploy/seed-showcase.py",
-        "sha256": "11c1ff54c4d5b51dd910966a7c0dd137ca3d5512b428bc1b358aaf5d50b1bdd4"
+        "sha256": "b29e2137cc009a525c8482de5b0e277d5488656a323e38fca38b2e379d1fbafe"
       },
       {
         "path": "deploy/mysql/reset-demo.sql",
@@ -622,7 +622,7 @@
       },
       {
         "path": "deploy/dev",
-        "sha256": "b5bbfb023350e5ad35d1ccae7ba89c31b4fe098d0a1deb8d2bd7bccb762fec2c"
+        "sha256": "3177695fc505a7754b9a8ead9bff611eb6fbdcf877e047a0ffc460131138f199"
       },
       {
         "path": "deploy/demo_state.py",
@@ -630,7 +630,7 @@
       },
       {
         "path": "deploy/tests/test_demo_seed.py",
-        "sha256": "9de44082586f323862f392ab55bbe5739a3afd32049b32ea4db8e6d12cad9cf2"
+        "sha256": "9933102c9e68935c3014667a2add59428388abf039fa590c5c251ad087a3d893"
       },
       {
         "path": "deploy/tests/demo_bootstrap_probe.py",
@@ -727,5 +727,66 @@
     },
     "fontManifest": "scripts/font-data/server-manifest.json",
     "word": "Project-authored OOXML writer; no new Word library"
+  },
+  "nonAiShowcase": {
+    "checkedAt": "2026-10-08",
+    "datasetVersion": "non-ai-showcase-v1",
+    "baseBranch": "codex/demo-data-bootstrap",
+    "scope": "Fictional business scenarios via real APIs, explicit opt-in additive import; no AI development",
+    "installation": "./deploy/dev seed-demo then ./deploy/dev seed-non-ai; completed modules preserve user edits",
+    "files": [
+      {
+        "path": "deploy/seed-non-ai.py",
+        "sha256": "fcd909e775c67ca5d3c15104674bdcfc85e05d43d71330a0b41a3e5311088bc9"
+      },
+      {
+        "path": "deploy/scenarios/accounts_credentials.py",
+        "sha256": "f2aa60da03f842d3fb0f28f18b7be46282c3729a85c14b5cba21fc271412855e"
+      },
+      {
+        "path": "deploy/scenarios/common.py",
+        "sha256": "2027f9f278ebcee201fd898d6256c6c5b3d98acc89015dff79c4095949d4c8fd"
+      },
+      {
+        "path": "deploy/scenarios/education_media.py",
+        "sha256": "1f5e3ce185b8a109fa0d452985e271168bf8737a003039dc3b50b69e96d5f862"
+      },
+      {
+        "path": "deploy/scenarios/operations.py",
+        "sha256": "c9e7a4d395b1f57358e30f7ffe3a245099581774d76570507ce895e115eb8c60"
+      },
+      {
+        "path": "deploy/scenarios/review_regions.py",
+        "sha256": "de13842a4b0a4ddb0e69d9158ae021c8859787c131c369b10b0319540606081c"
+      },
+      {
+        "path": "deploy/fixtures/non_ai/dataset.json",
+        "sha256": "55a60899dd8238f0d9ba469f221c36228f0ffaf7a71e3a7f40c3f9fbc40a470b"
+      },
+      {
+        "path": "deploy/fixtures/non_ai/education-media-sources.md",
+        "sha256": "cd278a40aa4d9b336196302aac5d59a8e09d259b1f96096f2b36fff47538f747"
+      },
+      {
+        "path": "deploy/fixtures/non_ai/generate_panorama.py",
+        "sha256": "30a0567526b4c0f429d453bf6854d0f36d8459bfe2feb8033aa47ff914ab1b88"
+      },
+      {
+        "path": "deploy/fixtures/non_ai/shouyue-study-panorama.png",
+        "sha256": "b68a2010693e5364f42ddb84184b3b4a478ef28813194b369e4dd7483b16d675"
+      }
+    ],
+    "externalPanorama": {
+      "title": "Autumn Hockey",
+      "author": "Greg Zaal",
+      "license": "CC0-1.0",
+      "source": "https://polyhaven.com/a/autumn_hockey",
+      "licenseSource": "https://polyhaven.com/license",
+      "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/autumn_hockey.jpg",
+      "byteLength": 10433748,
+      "providerContentSha1": "a4f5cb881cec2e8d87cd9cd35a48598658c6d264",
+      "retrieval": "External HTTPS reference; provider SHA1 from response header, not a locally computed hash",
+      "scope": "Park photography for H5 viewer demonstration; not a historic-person venue photograph"
+    }
   }
 }

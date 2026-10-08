@@ -35,13 +35,19 @@ class DemoSeedTest(unittest.TestCase):
     @contextlib.contextmanager
     def lifecycle(self, receipt):
         query = Mock(return_value=json.dumps(receipt) if receipt else '')
-        with patch.object(deploy, 'reset_scope'), \
+        with patch.object(deploy, 'demo_scope'), \
                 patch.object(deploy, 'seed_demo_records'), \
                 patch.object(deploy, 'demo_state_module', return_value=state), \
                 patch.object(state, 'fingerprint', return_value='fixture-hash'), \
                 patch.object(deploy, 'query', query), \
                 patch.object(deploy, 'run') as run, contextlib.redirect_stdout(io.StringIO()):
             yield query, run
+
+    def test_reset_still_refuses_unreviewed_schema(self):
+        with patch.object(deploy, 'demo_scope', return_value={'storage': 'test'}), \
+                patch.object(deploy, 'query', return_value='jf_account\njf_new_business_table'):
+            with self.assertRaisesRegex(ValueError, 'Business schema changed'):
+                deploy.reset_scope(self.values)
 
     def test_up_never_requests_demo_data(self):
         with patch.object(deploy.sys, 'argv', ['dev', 'up']), \

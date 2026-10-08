@@ -69,3 +69,7 @@
 | FFmpeg / ffprobe 8.1.2-r0 | 在固定Alpine 3.24/Temurin镜像内通过官方apk安装，作为独立进程将私人录音转换为MP3；不修改FFmpeg源码 | [FFmpeg n8.1.2源码](https://github.com/FFmpeg/FFmpeg/tree/n8.1.2)；Alpine包声明GPL-2.0-or-later与LGPL-2.1-or-later，实际构建含`--enable-gpl --enable-version3`，`ffmpeg -L`明确声明**GPL-3.0-or-later**，不能仅标LGPL或GPLv2。保留`licenses/ffmpeg-8.1.2.COPYING.GPLv2`、`COPYING.LGPLv2.1`、`COPYING.GPLv3`及`LICENSE.md`，实际构建和许可输出见`licenses/ffmpeg-8.1.2.runtime-inventory.txt`；依赖OS组件遵从各自许可。 |
 
 私人记录、搜索同步与接口、增量种子和验证代码为本项目编写。四份故事MP3复用既有原创文字与合成音频（`scripts/audio-sample-manifest.json`），通过显式导入上传S3，明确为演示声音，不是用户真实录音。FFmpeg二进制进入本轮服务器镜像，与早期仅用本机工具生成样例的历史范围不同。
+
+## 2026-10-08 · 非 AI 场景全景素材
+
+演示人物沈守约使用 Greg Zaal 的 [Autumn Hockey](https://polyhaven.com/a/autumn_hockey) Tonemapped JPG 作为球面浏览技术示例，资产依据 [Poly Haven CC0 许可](https://polyhaven.com/license)。通过原站 HTTPS URL 引用，未将公园摄影说成展馆实景；人物和故事为项目原创虚构。来源/文件标识见 `source-lock.json` 的 `nonAiShowcase` 与 `deploy/fixtures/non_ai/education-media-sources.md`。本地几何书屋纹理为程序绘制的原创样例，没有引入第三方代码或新增运行库。
