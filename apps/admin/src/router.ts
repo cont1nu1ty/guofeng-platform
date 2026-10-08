@@ -27,6 +27,9 @@ export const router = createRouter({
     },
     { path: "/welfare", component: () => import("./views/WelfareView.vue") },
     { path: "/users", component: () => import("./views/UsersView.vue") },
+    { path: "/certificates", component: () => import("./views/CertificatesView.vue") },
+    { path: "/resources", component: () => import("./views/ResourcesView.vue") },
+    { path: "/jobs", component: () => import("./views/JobsView.vue") },
     { path: "/ai", component: () => import("./views/AiView.vue") },
     {
       path: "/analytics",

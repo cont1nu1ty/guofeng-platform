@@ -12,12 +12,14 @@ public class JfReview {
   private final JfAuth auth;
   private final JfReviewFlow flow;
   private final JfReviewWindows windows;
+  private final JfRubrics rubrics;
 
-  public JfReview(JfStore s, JfAuth a, JfReviewFlow f, JfReviewWindows windows) {
+  public JfReview(JfStore s, JfAuth a, JfReviewFlow f, JfReviewWindows windows, JfRubrics rubrics) {
     store = s;
     auth = a;
     flow = f;
     this.windows = windows;
+    this.rubrics = rubrics;
   }
 
   private JfStore.Entity manuscript(JfAuth.Actor a, String id, Object version) {
@@ -47,6 +49,8 @@ public class JfReview {
       long days = number(data.get("deadlineDays"));
       require(days >= 1 && days <= 90, 422, "INVALID_DEADLINE", "评审期限为1至90天");
       Map<String, Object> d = copy(e.data());
+      if (data.containsKey("rubrics")) d.put("rubrics", JfRubrics.normalizeStages(data.get("rubrics")));
+      else d = JfRubrics.snapshot(d);
       d.putAll(
           m(
               "blind",
@@ -89,9 +93,13 @@ public class JfReview {
     switch (command) {
       case "approveSubmission" -> {
         require(status.equals("pending_initial_review"), 409, "INVALID_STATE", "稿件当前不能初审");
-        var config = store.find("setting", "reviewFlow", true);
-        d.put("flowSnapshot", config.data());
-        d.put("flowInstanceId", flow.start(str(d, "revisionId"), config.data(), a.id));
+        require(!str(d, "source").equals("线下归集") || bool(d.get("copyrightAccepted")), 409, "AUTHOR_CONFIRMATION_REQUIRED", "线下归集稿件须由所属账号核对正文并确认投稿声明后再初审");
+        String revisionId = str(d, "revisionId");
+        var config = rubrics.bound(revisionId).orElseGet(() -> rubrics.bind(revisionId,
+            store.find("setting", "reviewFlow", true).data(), "first_approval"));
+        d.put("flowSnapshot", config);
+        d.put("flowInstanceId", flow.start(revisionId, config, a.id));
+        rubrics.attachInstance(revisionId, str(d, "flowInstanceId"));
         d.put("reviewManagerId", a.id);
         d.put("progressIndex", flow.currentStage(str(d, "flowInstanceId")));
         status = "in_review";
@@ -104,7 +112,7 @@ public class JfReview {
             "当前状态不能退修");
         String reason = required(data, "reason", 5, 2000);
         flow.terminate(str(d, "flowInstanceId"), a.id, reason);
-        for (var t : store.all("task"))
+        for (var t : store.select("task", "id IN (SELECT task_id FROM jf_review_window WHERE submission_id=?)", id))
           if (str(t.data(), "submissionId").equals(id) && t.status().equals("待评分"))
             store.save(t, t.region(), "已取消", t.data());
         d.put("returnReason", reason);
@@ -122,7 +130,7 @@ public class JfReview {
       case "assignReview" -> {
         require(status.equals("in_review"), 409, "INVALID_STATE", "稿件当前不可分配评审");
         require(bool(d.get("blindConfirmed")), 422, "BLIND_MATERIAL_REQUIRED", "请先准备并确认脱敏正文");
-        for (var pending : store.all("task")) {
+        for (var pending : store.select("task", "id IN (SELECT task_id FROM jf_review_window WHERE submission_id=?)", id)) {
           if (str(pending.data(), "submissionId").equals(id) && pending.status().equals("待评分")) {
             require(
                 !JfReviewWindows.dueAt(pending).isAfter(windows.now()),
@@ -152,9 +160,11 @@ public class JfReview {
             "专家当前不可接单");
         require(!Objects.equals(e.owner(), expert.owner()), 409, "REVIEW_CONFLICT", "投稿人不能评审自己的稿件");
         require(a.national() || a.region(expert.region()), 404, "NOT_FOUND", "专家不可见");
+        require(expertActor.region(e.region()), 409, "EXPERT_SCOPE_MISMATCH", "专家未获授权处理该地区稿件");
         var window = windows.initialWindow(data,
             number(obj(d.get("flowSnapshot")).getOrDefault("deadlineDays", 7)));
         Map<String, Object> task = flow.assign(str(d, "flowInstanceId"), expert.owner(), a.id);
+        var rubric = JfRubrics.atStage(obj(d.get("flowSnapshot")), str(task, "nodeCode"));
         task.putAll(
             m(
                 "submissionId",
@@ -172,13 +182,14 @@ public class JfReview {
                 "assignedAt",
                 windows.now().toString(),
                 "ruleVersion",
-                "jiafeng-four-v1",
+                rubric.get("ruleVersion"),
                 "flowInstanceId",
                 str(d, "flowInstanceId"),
                 "managerId",
                 a.id,
                 "dimensions",
-                DIMENSIONS));
+                rubric.get("dimensions"),
+                "rubricTitle", rubric.get("title")));
         task.putAll(window);
         store.create("task", expert.owner(), e.region(), "待评分", task);
       }
@@ -270,17 +281,12 @@ public class JfReview {
         "TASK_INVALID",
         "任务对应的稿件版本已失效");
     List<Object> scores = list(input.get("scores"));
-    require(scores.size() == 4, 422, "INVALID_SCORE", "请填写四个评分维度");
-    int total = 0;
-    for (int i = 0; i < 4; i++) {
-      long score = number(scores.get(i));
-      require(
-          score >= 0 && score <= number(DIMENSIONS.get(i).get("max")),
-          422,
-          "INVALID_SCORE",
-          "评分超出维度范围");
-      total += score;
-    }
+    var dimensions = list(t.data().get("dimensions"));
+    if (dimensions.isEmpty() && str(t.data(), "ruleVersion").equals("jiafeng-four-v1"))
+      dimensions = new ArrayList<>(DIMENSIONS);
+    int total = JfRubrics.validateScores(scores, dimensions);
+    if (input.containsKey("ruleVersion")) require(str(input, "ruleVersion").equals(str(t.data(), "ruleVersion")),
+        409, "RUBRIC_VERSION_CONFLICT", "任务量表版本不一致，请重新打开任务");
     String comment = required(input, "comment", 5, 5000);
     int next =
         flow.complete(
@@ -315,7 +321,7 @@ public class JfReview {
             "action",
             "score",
             "ruleVersion",
-            "jiafeng-four-v1"));
+            str(t.data(), "ruleVersion"), "dimensions", dimensions));
     work.put("reviews", reviews);
     work.put("progressIndex", next);
     store.save(e, e.region(), e.status(), work);

@@ -72,6 +72,14 @@ public class JfStore {
     return rows.getFirst();
   }
 
+  /** Predicates and ordering are owned by the application; paging always happens in SQL. */
+  public List<Entity> page(String kind, String predicate, List<Object> args, int offset, int limit) {
+    List<Object> values = new ArrayList<>();
+    values.add(kind); values.addAll(args); values.add(limit); values.add(offset);
+    return db.query("SELECT * FROM jf_entity WHERE kind=? AND (" + predicate
+        + ") ORDER BY created_at DESC,id LIMIT ? OFFSET ?", this::row, values.toArray());
+  }
+
   @Transactional
   public Entity create(
       String kind, Long owner, String region, String status, Map<String, Object> data) {

@@ -26,12 +26,14 @@ public class JfFiles {
   private final software.amazon.awssdk.services.s3.presigner.S3Presigner downloads;
   private final String bucket;
   private final JfAudio audio;
+  private final JfVideo video;
   private final org.springframework.transaction.support.TransactionTemplate transaction;
 
   public JfFiles(
       JfStore store,
       JfAuth auth,
       JfAudio audio,
+      JfVideo video,
       org.springframework.transaction.PlatformTransactionManager transactions,
       @Value("${JIAFENG_S3_ENDPOINT:http://storage:8333}") String endpoint,
       @Value("${JIAFENG_S3_PUBLIC_ENDPOINT:http://127.0.0.1:18333}") String publicEndpoint,
@@ -41,6 +43,7 @@ public class JfFiles {
     this.store = store;
     this.auth = auth;
     this.audio = audio;
+    this.video = video;
     this.transaction = new org.springframework.transaction.support.TransactionTemplate(transactions);
     this.bucket = bucket;
     OssProperties p = new OssProperties();
@@ -100,18 +103,19 @@ public class JfFiles {
     require(
         (recitation
                 ? Set.of("mp3", "wav", "m4a", "aac", "ogg", "webm")
-                : media ? Set.of("png", "jpg", "jpeg", "mp4", "mp3", "wav")
+                : media ? Set.of("png", "jpg", "jpeg", "mp4", "mov", "webm", "mp3", "wav")
                 : Set.of("png", "jpg", "jpeg", "pdf", "doc", "docx"))
             .contains(ext),
         422,
         "INVALID_FILE_TYPE",
-        recitation ? "诵读上传仅接受MP3/WAV/M4A/AAC/OGG/WebM音频" : media ? "媒体上传仅接受MP4/MP3/WAV及PNG/JPEG封面" : "仅接受PNG/JPEG/PDF/Word文件");
+        recitation ? "诵读上传仅接受MP3/WAV/M4A/AAC/OGG/WebM音频" : media ? "媒体上传接受MP4/MOV/WebM视频、MP3/WAV音频及PNG/JPEG图片" : "仅接受PNG/JPEG/PDF/Word文件");
     if (Set.of("png", "jpg", "jpeg").contains(ext))
       require(file.getSize() <= 10L * 1024 * 1024, 413, "FILE_TOO_LARGE", "图片须在10MB以内");
     Path temp = Files.createTempFile("jiafeng-upload-", "." + ext);
     Path inputTemp = temp;
     String originalName = name;
-    String objectKey = actor.id + "/" + id("file_") + "." + (recitation ? "mp3" : ext);
+    boolean convertVideo=media&&Set.of("mp4","mov","webm").contains(ext);
+    String objectKey = actor.id + "/" + id("file_") + "." + (recitation ? "mp3" : convertVideo ? "mp4" : ext);
     long durationMs = 0;
     boolean uploaded = false;
     try {
@@ -127,6 +131,7 @@ public class JfFiles {
         ext = "mp3";
         name = originalName.substring(0, originalName.lastIndexOf('.') > 0 ? originalName.lastIndexOf('.') : originalName.length()) + ".mp3";
       }
+      if(convertVideo){var converted=video.convert(inputTemp);temp=converted.path();durationMs=converted.durationMs();ext="mp4";name=originalName.substring(0,originalName.lastIndexOf('.')>0?originalName.lastIndexOf('.'):originalName.length())+".mp4";}
       byte[] head;
       try (InputStream in = Files.newInputStream(temp)) {
         head = in.readNBytes(16);
@@ -187,7 +192,7 @@ public class JfFiles {
       String region = actor.regions.stream().findFirst().orElse("all");
       long storedSize = Files.size(temp);
       String storedSha = sourceSha256;
-      if (recitation) {
+      if (recitation || convertVideo) {
         MessageDigest normalizedDigest = MessageDigest.getInstance("SHA-256");
         try (InputStream in = new DigestInputStream(Files.newInputStream(temp), normalizedDigest)) {
           in.transferTo(OutputStream.nullOutputStream());
@@ -203,7 +208,7 @@ public class JfFiles {
                 + "file_type,size,sha256,purpose,duration_ms,original_name,source_sha256)"
                 + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
             id, actor.id, region, objectKey, finalName, mime, type, storedSize, finalSha, purpose,
-            recitation ? finalDuration : null, originalName, sourceSha256);
+            recitation || convertVideo ? finalDuration : null, originalName, sourceSha256);
         store.audit(actor, recitation ? "recitation.upload" : "upload", id, region, m("size", storedSize, "type", type));
       });
       return m("id", id, "fileId", id, "name", name, "size", storedSize, "type", type,
@@ -278,6 +283,7 @@ public class JfFiles {
   public Map<String, Object> download(String id) {
     var a = auth.require();
     var f = lookup(id);
+    require(!str(f, "purpose").equals("generated"), 404, "NOT_FOUND", "请从对应业务记录下载文件");
     boolean allowed = number(f.get("owner_id")) == a.id;
     if (allowed && str(f, "purpose").equals("recitation")) {
       // Deleted private records revoke new download URLs unless a media submission still references it.
@@ -302,15 +308,15 @@ public class JfFiles {
                       + " r.id=f.revision_id JOIN jf_entity s ON s.id=r.submission_id WHERE"
                       + " f.file_id=?",
                   id))
-        if (a.region(text(row.get("region_id")))) {
+        if (JfAccess.can(a,"submissions:read") && a.region(text(row.get("region_id")))) {
           allowed = true;
           break;
         }
-      if (!allowed)
+      if (!allowed && JfAccess.can(a,"ai:read"))
         allowed =
             store.all("knowledge").stream()
                 .anyMatch(e -> a.region(e.region()) && str(e.data(), "fileId").equals(id));
-      if (!allowed)
+      if (!allowed && JfAccess.can(a,"content:read"))
         for (String kind : List.of("banner", "media"))
           if (store.all(kind).stream()
               .anyMatch(
@@ -323,7 +329,28 @@ public class JfFiles {
           }
     }
     require(allowed, 404, "NOT_FOUND", "文件不存在或不可见");
+    store.audit(a, "file.download", id, str(f, "region_id"), m("purpose", f.get("purpose")));
     return signed(f);
+  }
+
+  /** Private generated files are downloadable only through an authorizing domain endpoint. */
+  public Map<String, Object> generated(long owner, String region, String name, String mime, byte[] bytes) throws IOException {
+    require(bytes.length > 0 && bytes.length <= 50 * 1024 * 1024, 422, "FILE_TOO_LARGE", "生成文件超过50MB限制，请缩小范围");
+    String fileId = id("file_"), key = "generated/" + owner + "/" + fileId;
+    Path temporary = Files.createTempFile("jf-generated-", ".bin");
+    boolean uploaded = false;
+    try {
+      Files.write(temporary, bytes); oss.upload(key, temporary); uploaded = true;
+      String checksum;
+      try { checksum = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes)); }
+      catch (java.security.NoSuchAlgorithmException impossible) { throw new IllegalStateException(impossible); }
+      store.db().update("INSERT INTO jf_file(id,owner_id,region_id,object_key,name,mime_type,file_type,size,sha256,purpose,original_name) VALUES(?,?,?,?,?,?,'document',?,?,'generated',?)",
+          fileId, owner, region, key, name, mime, bytes.length, checksum, name);
+      return m("fileId", fileId, "name", name, "mimeType", mime, "size", bytes.length, "sha256", checksum);
+    } catch (Exception error) {
+      if (uploaded) try { oss.delete(key); } catch (Exception ignored) { /* Private orphan; no business URL is issued. */ }
+      throw error;
+    } finally { Files.deleteIfExists(temporary); }
   }
 
   Map<String, Object> publicDownload(String id) {

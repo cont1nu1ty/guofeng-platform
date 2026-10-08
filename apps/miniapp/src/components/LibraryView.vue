@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { isHttpMode } from '../config/dataMode'
+import { recordEngagement } from '../composables/useEngagement'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
+import ResourceDirectory from './ResourceDirectory.vue'
 import {
   repo,
   region,
@@ -46,6 +48,7 @@ const source = computed(() => {
     ? (repo.getClassic(params.value.id) ?? repo.getWork(params.value.id))
     : undefined
 })
+watch(() => source.value?.id, () => { if(source.value) void recordEngagement(isClassic(source.value) ? 'collection' : 'submission', source.value.id) }, { immediate: true })
 const formattedWork = computed(() =>
   source.value && !isClassic(source.value) && source.value.contentDelta
     ? writingHtml(source.value.contentDelta, source.value.content)
@@ -210,7 +213,7 @@ async function saveSelectedExcerpt() {
     notify(
       t(
         isHttpMode ? '摘抄与感想已保存到当前账号' : '摘抄与感想已保存到本机',
-        'Excerpt and reflection saved on this device',
+        isHttpMode ? 'Excerpt and reflection saved to your account' : 'Excerpt and reflection saved on this device',
       ),
     )
 }
@@ -761,6 +764,7 @@ function exportDocument() {
           )
         "
       />
+      <ResourceDirectory v-if="isHttpMode" />
       <view class="library-banner">
         <view>
           <text class="eyebrow">

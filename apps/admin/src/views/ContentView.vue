@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { selectRecordCollection } from "../services/workspaceData";
 import { isHttpMode, modeText } from "../services/mode";
 
 import { saveContent, setContentStatus } from "../services/actions";
@@ -27,6 +28,7 @@ import {
 } from "../domain/editorial";
 
 const workspaceTab = ref<"articles" | CatalogSection>("articles");
+watch(workspaceTab, value => { if(value !== "homepage") void selectRecordCollection(value === "articles" ? "contents" : value); });
 const workspaceTabs = {
   articles: "文章资讯",
   banners: "首页轮播",
@@ -56,7 +58,7 @@ const filtered = computed(() =>
   ),
 );
 const visible = computed(() =>
-  filtered.value.slice((page.value - 1) * limit.value, page.value * limit.value),
+  isHttpMode ? filtered.value : filtered.value.slice((page.value - 1) * limit.value, page.value * limit.value),
 );
 const published = computed(
   () => scoped.value.filter((item) => item.status === "已发布").length,
@@ -342,7 +344,7 @@ const tagType = (value: string) =>
           </article>
           <el-empty v-if="!visible.length" description="暂无匹配内容" />
         </div>
-        <Pagination
+        <Pagination v-if="!isHttpMode"
           v-model:page="page"
           v-model:limit="limit"
           :total="filtered.length"

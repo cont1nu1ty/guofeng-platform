@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: 家风中华行本机真实业务接口
-  version: 1.2.0-local
+  version: 1.3.0-local
   description: 已实现的HTTP契约。采用若依Sa-Token会话，家风模块返回直接DTO；原生若依系统接口保留但不作为本契约。单库服务端地区/归属/任务授权。开发账号仅开发配置启用；微信、模型推理、支付、电子签章与全国容量未交付。数据库保存业务ID、S3对象键和版本；公开发布、处理状态、最终结果独立。
 servers:
 - url: http://127.0.0.1:18080/api/v1
@@ -41,7 +41,7 @@ paths:
   /auth/login:
     post:
       operationId: login
-      summary: 开发账号登录（仅开发配置启用）
+      summary: 账号密码登录；开发账号与受控正式密码登录由独立配置启用
       responses:
         '200':
           description: 成功
@@ -139,23 +139,44 @@ paths:
     get:
       operationId: adminReviewAlerts
       summary: 当前临期和逾期任务，以及本人评审通知
-      description: 服务端按角色与地区裁剪；专家仅可查看本人任务，材料保持匿名。scope=mine 为本人负责或本人分配任务，all 为全部授权范围。历史逾期任务只展示不补发提醒。notifications 为本人最新最多100条评审通知，未读优先；unreadCount 为本人完整未读数。
+      description: 服务端按角色与地区裁剪；专家仅可查看本人任务，材料保持匿名。scope=mine 为本人负责或本人分配任务，all 为全部授权范围。历史逾期任务只展示不补发提醒。notifications
+        为本人最新最多100条评审通知，未读优先；unreadCount 为本人完整未读数。
       parameters:
       - name: page
         in: query
-        schema: {type: integer, minimum: 1, default: 1}
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
       - name: pageSize
         in: query
-        schema: {type: integer, minimum: 1, maximum: 100, default: 20}
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
       - name: phase
         in: query
-        schema: {type: string, enum: [all, due_soon, overdue], default: all}
+        schema:
+          type: string
+          enum:
+          - all
+          - due_soon
+          - overdue
+          default: all
       - name: scope
         in: query
-        schema: {type: string, enum: [mine, all], default: mine}
+        schema:
+          type: string
+          enum:
+          - mine
+          - all
+          default: mine
       - name: unreadOnly
         in: query
-        schema: {type: boolean, default: false}
+        schema:
+          type: boolean
+          default: false
       responses:
         '200':
           description: 已按当前会话裁剪
@@ -266,7 +287,8 @@ paths:
                   format: binary
               required:
               - file
-      description: 默认每文件1字节至10MiB，PNG/JPEG/PDF/DOC/DOCX；purpose=media接受MP4/MP3/WAV≤50MiB及图片≤10MiB。校验扩展名和文件头，DOCX验证容器结构。只接受已登录账号；失败不产生可提交的fileId。不属于病毒扫描、媒体解码兼容或文档内容安全鉴定。小程序通过uni.uploadFile。 purpose=recitation仅会员，最大10MiB/180秒，接受MP3/WAV/M4A/AAC/OGG/WebM，实际解码验证并归一化MP3后存储；忙碌或处理失败不产生有效fileId。
+      description: 默认每文件1字节至10MiB，PNG/JPEG/PDF/DOC/DOCX；purpose=media接受MP4/MP3/WAV≤50MiB及图片≤10MiB。校验扩展名和文件头，DOCX验证容器结构。只接受已登录账号；失败不产生可提交的fileId。不属于病毒扫描、媒体解码兼容或文档内容安全鉴定。小程序通过uni.uploadFile。
+        purpose=recitation仅会员，最大10MiB/180秒，接受MP3/WAV/M4A/AAC/OGG/WebM，实际解码验证并归一化MP3后存储；忙碌或处理失败不产生有效fileId。
       parameters:
       - name: purpose
         in: query
@@ -276,7 +298,8 @@ paths:
           - manuscript
           - media
           - recitation
-        description: 省略或manuscript：原图/PDF/Word限制10MiB；media：MP4/MP3/WAV≤50MiB，图片≤10MiB。后端校验实际文件头；不能把媒体绑定为稿件附件。 recitation：私有诵读纯音频，10MiB/180秒，输出MP3。
+        description: 省略或manuscript：原图/PDF/Word限制10MiB；media：MP4/MP3/WAV≤50MiB，图片≤10MiB。后端校验实际文件头；不能把媒体绑定为稿件附件。
+          recitation：私有诵读纯音频，10MiB/180秒，输出MP3。
   /files/{id}/download:
     get:
       operationId: downloadFile
@@ -428,7 +451,7 @@ paths:
       summary: 执行授权后台业务动作
       responses:
         '200':
-          description: 成功
+          description: 成功；默认保留受当前权限过滤的legacy workspace，compact模式省略workspace并返回permissions/roles。
           content:
             application/json:
               schema:
@@ -449,6 +472,14 @@ paths:
               $ref: '#/components/schemas/AdminCommand'
       parameters:
       - $ref: '#/components/parameters/IdempotencyKey'
+      - name: X-Workspace-Mode
+        in: header
+        schema:
+          type: string
+          enum:
+          - compact
+        description: compact returns result, current roles and permissions without
+          all workspace arrays; clients refresh the bounded active page.
       description: 写入在数据库事务内执行。更新已有记录必须携带workspace.lockVersion；batchApproveSubmissions使用data.versions。首次请求需幂等键，同键同载荷重放结果，工作区按当前权限重新投影；同键不同载荷409。认证、权限、校验失败不会演示回退。
   /files/{id}/public:
     get:
@@ -479,7 +510,8 @@ paths:
     get:
       operationId: searchPublicContent
       summary: 检索九类已发布公开内容，独立于用户工作区
-      description: 标题、摘要和正文全文检索；私人记录、原附件和评审材料排除。分类counts遵循关键词/地区/语言，但不受kind限制。地区匹配当前地区与all共享内容。索引同步期间503 SEARCH_UPDATING，故障503 SEARCH_UNAVAILABLE；旧游标409 SEARCH_CHANGED后从首页重试。无Mock回退。
+      description: 标题、摘要和正文全文检索；私人记录、原附件和评审材料排除。分类counts遵循关键词/地区/语言，但不受kind限制。地区匹配当前地区与all共享内容。索引同步期间503
+        SEARCH_UPDATING，故障503 SEARCH_UNAVAILABLE；旧游标409 SEARCH_CHANGED后从首页重试。无Mock回退。
       security: []
       parameters:
       - name: q
@@ -519,7 +551,7 @@ paths:
           default: zh
       - name: cursor
         in: query
-        schema: &id001
+        schema:
           type: string
       - name: pageSize
         in: query
@@ -571,6 +603,1859 @@ paths:
                     - queued
         default:
           $ref: '#/components/responses/Error'
+  /admin/accounts:
+    get:
+      summary: List scoped accounts
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: query
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 80
+          default: ''
+      - name: role
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - national_admin
+          - regional_admin
+          - content_operator
+          - review_manager
+          - data_operator
+          - expert
+          - member
+      - name: region
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - enabled
+          - disabled
+          - pending
+          - approved
+          - rejected
+          - returned
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+      - name: pageSize
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialAccountPage'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: Scope is independent from job role. Non-national operators can
+        only see target accounts whose entire region set is contained in their scope,
+        and cannot see national administrators.
+      x-permissions:
+      - users:read
+    post:
+      summary: Create an account through RuoYi user service
+      security:
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/CredentialIdempotencyKey'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialMutationResult'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: Requires national_admin as well as permission. New expert grants
+        require completed manual material review, so create as another role first.
+        Role bindings reuse sys_user_role; permissions use sys_role_menu. No external
+        identity verification is claimed.
+      x-permissions:
+      - users:create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredentialAccountCreate'
+  /admin/accounts/{id}:
+    get:
+      summary: Read account and permitted manual review history
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialManagedAccount'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: reviews is empty without users:review permission. Scope applies.
+      x-permissions:
+      - users:read
+  /admin/accounts/{id}/{action}:
+    post:
+      summary: Change role, status, password or manual review record
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: action
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - roles
+          - status
+          - resetPassword
+          - materials
+          - review
+      - $ref: '#/components/parameters/CredentialIdempotencyKey'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialMutationResult'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: roles requires users:roles and national_admin, with roles+regionIds;
+        status requires users:status and enabled; resetPassword requires users:resetPassword
+        and national_admin, with password. materials/review require users:review and
+        subject+summary; materials additionally requires materialReference; review
+        requires result and prior submitted material. Materials and decisions append
+        immutable history and do not automatically grant expert role. Self roles/status/resetPassword/review
+        are refused. Every action requires current version. Role/status/reset changes
+        advance authEpoch; old sessions are rejected immediately on next authenticated
+        request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredentialAccountAction'
+  /rights/agreement:
+    get:
+      summary: Current submission confirmation terms
+      security: []
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialAgreement'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: Versioned checkbox terms, not an electronic signature or copyright
+        registration.
+  /me/copyright-confirmations:
+    get:
+      summary: Own explicit copyright confirmations
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialCopyrightHistory'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: Latest 200 records, account-scoped; historic checkbox states are
+        not backfilled into evidence.
+  /submissions/{id}/copyright-confirmations:
+    post:
+      summary: Confirm current submission revision as its owner
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/CredentialIdempotencyKey'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialMutationResult'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: Owner only; exact current revisionId, work version and current
+        agreementVersion required. Persists full terms and hash, clears requiresAuthorConfirmation,
+        sets copyrightAccepted; immutable jf_revision is not rewritten. Old terms
+        or changed revision return 412.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredentialCopyrightInput'
+  /admin/certificates/eligible:
+    get:
+      summary: Find eligible award or completion sources
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: query
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 80
+          default: ''
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialEligibleSources'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: Maximum 100 entries per type, scoped by source region. Issuance
+        rechecks live eligibility; source list is not approval.
+      x-permissions:
+      - certificates:write
+  /admin/certificates:
+    get:
+      summary: List region-scoped certificates
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+      - name: pageSize
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialCertificatePage'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: ''
+      x-permissions:
+      - certificates:read
+    post:
+      summary: Manually issue and store a certificate PDF
+      security:
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/CredentialIdempotencyKey'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialMutationResult'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: Award requires currently awarded submission and copyrightAccepted.
+        Completion requires completed_at in jf_course_learning for this user, course
+        and immutable publication version. One active certificate per source qualification;
+        revoked issuance can be superseded while history remains. Issuer identifies
+        platform manual issuance, not external e-signature.
+      x-permissions:
+      - certificates:write
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredentialCertificateIssue'
+  /admin/certificates/{id}/revoke:
+    post:
+      summary: Revoke certificate and retain public verification history
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/CredentialIdempotencyKey'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialMutationResult'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: Region-scoped, exact version required; records actor, timestamp
+        and reason. Refuses future download links. Previously downloaded bytes cannot
+        be recalled; already-issued signed links remain usable until expiry.
+      x-permissions:
+      - certificates:write
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredentialCertificateRevoke'
+  /me/certificates:
+    get:
+      summary: List own certificate records
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+      - name: pageSize
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialCertificatePage'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: ''
+  /certificates/{id}/download:
+    get:
+      summary: Authorize current certificate download
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialAuthorizedDownload'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: Owner, or certificates:read plus source region. Revoked certificates
+        return 410. Writes download audit with file hash; minted signed link is short-lived.
+        Direct generic download of generated file is denied.
+  /certificates/verify/{token}:
+    get:
+      summary: Anonymous certificate status check
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[a-f0-9]{32}$
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialPublicVerification'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: 'Public allow-list only: number, generic certificate title, issuer,
+        status, issue/revocation timestamps, file hash. Does not disclose owner/name,
+        work/course title, source key, account ID, private revocation reason or file
+        URL.'
+  /resources:
+    get:
+      summary: List published authorized resource metadata
+      security:
+      - {}
+      - bearerAuth: []
+      parameters:
+      - name: query
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 80
+          default: ''
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+      - name: pageSize
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialResourcePage'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: Optional bearer authentication. Anonymous readers see all_members
+        metadata only; signed-in readers also see resources for authorized regions.
+        No fileId or direct object URL is returned.
+  /admin/resources:
+    get:
+      summary: List managed region-scoped resources
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: query
+        in: query
+        required: false
+        schema:
+          type: string
+          maxLength: 80
+          default: ''
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100000
+          default: 1
+      - name: pageSize
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialResourcePage'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: ''
+      x-permissions:
+      - resources:read
+    post:
+      summary: Create an authorized resource directory entry
+      security:
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/CredentialIdempotencyKey'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialMutationResult'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: PDF, Word or image file must be uploaded by actor. Generated private
+        documents are forbidden. Own region scope required; publishing requires explicit
+        authorized=true.
+      x-permissions:
+      - resources:write
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredentialResourceSave'
+  /admin/resources/{id}:
+    post:
+      summary: Update resource licence, file, audience or status
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/CredentialIdempotencyKey'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialMutationResult'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: Current version required. Retaining original file is allowed to
+        scoped editors; replacement must be actor-owned upload. License, file hash,
+        audience and status are audited.
+      x-permissions:
+      - resources:write
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredentialResourceSave'
+  /resources/{id}/download:
+    post:
+      summary: Acknowledge current licence and authorize download
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialAuthorizedDownload'
+        default:
+          description: 'API error: code, message, requestId; may include fieldErrors.
+            401 authentication, 403 permission, 404 scope/owner/unknown, 409 business
+            conflict, 412 stale version, 422 validation, 428 missing version.'
+      description: Authenticated account required. Resource must still be published
+        and audience must be all_members or match account region. Exact resource version
+        and acceptedLicense=true required. Audit captures version, file hash and licence
+        hash; URL expires normally after 300 seconds.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredentialResourceDownload'
+  /education/courses:
+    get:
+      summary: Published course catalog, including read-only legacy imports at publicationVersion
+        0
+      description: Public snapshots omit correct answers, explanations and unselected
+        questions. Version 0 is not completion evidence.
+      responses:
+        '200':
+          description: Published course items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EducationPublishedCourse'
+      security:
+      - {}
+      - bearerAuth: []
+  /education/courses/{id}:
+    get:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+      description: Current version is public. An older version requires the authenticated
+        user's learning record or group assignment. Unpublished courses are unavailable.
+        Correct answers are never returned.
+      responses:
+        '200':
+          description: Frozen course content and authenticated user's own progress
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  course:
+                    $ref: '#/components/schemas/EducationPublishedCourse'
+                  progress:
+                    $ref: '#/components/schemas/EducationProgress'
+        '404':
+          description: Unavailable course/version
+      security:
+      - {}
+      - bearerAuth: []
+  /education/me:
+    get:
+      security:
+      - bearerAuth: []
+      description: Own assigned groups, manual identity review, version-specific learning
+        history, commitment confirmations and explicitly unverified legacy records.
+        No other learner's member-level records.
+      responses:
+        '200':
+          description: Own education account
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groups:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EducationGroup'
+                  identity:
+                    type: object
+                    nullable: true
+                  history:
+                    type: array
+                    items:
+                      type: object
+                  legacyRecords:
+                    type: array
+                    items:
+                      type: object
+                  declarations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EducationDeclaration'
+  /education/commands:
+    post:
+      security:
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/EducationIdempotencyKey'
+      description: course.progress takes publicationVersion plus lessonId or answers
+        mapping questionId to optionId. Version 0 is read-only. All lessons must be
+        confirmed before a server-graded quiz. Retries create attempts; completion
+        persists once achieved for that frozen version. No accredited time claim.
+        education.requestIdentity takes organization/requestNote and current identity
+        version when updating. education.confirmDeclaration takes group entityId,
+        current group version, accepted=true and textHash. Current visibility/membership
+        is checked before idempotent replay. Confirmation stores the exact text and
+        hash; it is not an electronic signature.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationCommand'
+      responses:
+        '200':
+          description: Saved own result; course.progress returns progress
+          result.score/passed and publicationVersion: null
+        '409':
+          description: Missing versioned publication
+          unread lessons or conflicting idempotency input: null
+        '412':
+          description: Optimistic version conflict
+        '422':
+          description: Invalid lesson
+          answers or confirmation: null
+  /admin/education:
+    get:
+      security:
+      - bearerAuth: []
+      description: Requires education:read. SQL-scoped to current operator regions.
+        Courses, groups and identity applications are independent pages of 20 rows.
+        Members are at most 50 initial candidates, not the complete account directory.
+      parameters:
+      - name: coursePage
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: groupPage
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: identityPage
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: q
+        in: query
+        description: Course title/team search
+        schema:
+          type: string
+          maxLength: 100
+      responses:
+        '200':
+          description: Draft editing workspace; answer keys are restricted to authorized
+            education operators
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  courses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EducationDraftCourse'
+                  learningGroups:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EducationGroup'
+                  identities:
+                    type: array
+                    items:
+                      type: object
+                  members:
+                    type: array
+                    maxItems: 50
+                    items:
+                      type: object
+                  pageSize:
+                    type: integer
+                    enum:
+                    - 20
+                  courseTotal:
+                    type: integer
+                  groupTotal:
+                    type: integer
+                  identityTotal:
+                    type: integer
+  /admin/education/members:
+    get:
+      security:
+      - bearerAuth: []
+      description: education:read, SQL region scope, active member accounts only.
+        Search nickname or exact account ID; max 50 candidates ordered by ID.
+      parameters:
+      - name: q
+        in: query
+        schema:
+          type: string
+          maxLength: 100
+      responses:
+        '200':
+          description: '{items: [{id,name,regions}]}'
+  /admin/education/commands:
+    post:
+      security:
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/EducationIdempotencyKey'
+      description: Requires education:write before idempotency lookup; entity-region
+        scope and optimistic version are checked. saveCourse writes only a draft.
+        publishCourse appends an immutable publication; unpublishCourse withdraws
+        the course. toggleCourse preserves the legacy adapter. education.saveGroup
+        uses name,region,courseId,publicationVersion,cadreOnly,declarationText,memberIds
+        (max 500). A group's region and assigned course version cannot change. Cadre-only
+        assignments require manually approved identity. education.reviewIdentity uses
+        user entityId, identity version, status approved/rejected and reason (2+ characters);
+        self-approval is disallowed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationCommand'
+      responses:
+        '200':
+          description: Saved result with stable id and resulting version
+        '403':
+          description: Missing education permission or region scope
+        '412':
+          description: Stale optimistic version
+        '422':
+          description: Invalid draft
+          group membership or identity review: null
+  /media/{id}/accessibility:
+    get:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      description: Only separately published manual captions/narration for a currently
+        published media item. Replacing its source file hides old captions until republished.
+        Draft fields and file IDs are never public. narrationUrl is a short-lived
+        signed URL.
+      responses:
+        '200':
+          description: Published captions and optional narration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  language:
+                    type: string
+                    enum:
+                    - zh
+                    - en
+                  cues:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MediaCaptionCue'
+                  narrationUrl:
+                    type: string
+                  publishedAt:
+                    type: string
+                    format: date-time
+        '404':
+          description: Main media not published
+      security:
+      - {}
+      - bearerAuth: []
+  /admin/media/{id}/accessibility:
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      security:
+      - bearerAuth: []
+      description: content:read plus current parent media's region scope
+      responses:
+        '200':
+          description: '{mediaId,version,draft:{language,cues,narrationFileId},publishedAt};
+            version 0 means no draft yet'
+    post:
+      security:
+      - bearerAuth: []
+      parameters:
+      - $ref: '#/components/parameters/EducationIdempotencyKey'
+      description: content:write and current region scope are checked before idempotent
+        replay. save validates ordered nonoverlapping cues and stores only draft.
+        Newly linked narration must be the editor's uploaded media audio. publish
+        copies saved draft and binds current sourceFileId; parent must be published.
+        Unpublish immediately blocks new public lookups. Changes require current version,
+        including initial version 0. Existing signed URLs expire separately.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - action
+              - version
+              properties:
+                action:
+                  type: string
+                  enum:
+                  - save
+                  - publish
+                  - unpublish
+                version:
+                  type: integer
+                  minimum: 0
+                data:
+                  type: object
+                  properties:
+                    language:
+                      type: string
+                      enum:
+                      - zh
+                      - en
+                    narrationFileId:
+                      type: string
+                      maxLength: 80
+                    cues:
+                      type: array
+                      maxItems: 500
+                      items:
+                        $ref: '#/components/schemas/MediaCaptionCue'
+      responses:
+        '200':
+          description: Updated administrator track DTO
+        '409':
+          description: Stale version
+        '422':
+          description: Invalid cues
+          file ownership/type: null
+          or unpublished main media: null
+  /admin/bootstrap:
+    get:
+      operationId: adminBootstrap
+      summary: Authorized configuration and permissions without business arrays
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  permissions:
+                    type: array
+                    items:
+                      type: string
+                  roles:
+                    type: array
+                    items:
+                      type: string
+                  reviewFlow:
+                    type: object
+                  platformConfig:
+                    type: object
+                  homepageConfig:
+                    type: object
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/records/{collection}:
+    get:
+      operationId: adminRecordsPage
+      summary: SQL-scoped business list with module read authorization
+      description: The UI uses bounded reads and compact command responses. Page filters
+        query all matching rows; local UI categories may additionally filter the current
+        page. Submission Chinese status labels are mapped to persisted states. Activity
+        rows expose counts; registrations have a separate paginated endpoint. Audit
+        rows exclude private recitation/family-promise content.
+      parameters:
+      - name: collection
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+      - name: q
+        in: query
+        schema:
+          type: string
+          maxLength: 150
+      - name: status
+        in: query
+        schema:
+          type: string
+      - name: region
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessRecordPage'
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/records/{collection}/{id}:
+    get:
+      operationId: adminRecordDetail
+      summary: Authorized domain detail
+      parameters:
+      - name: collection
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/collection-candidates:
+    get:
+      operationId: collectionCandidates
+      summary: Search published selected works for collection import; collections:write
+        required
+      parameters:
+      - name: q
+        in: query
+        schema:
+          type: string
+      - name: region
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    maxItems: 100
+                    items:
+                      type: object
+                  limit:
+                    type: integer
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/activities/{id}/registrations:
+    get:
+      operationId: activityRegistrationPage
+      summary: SQL-paginated registered attendees in authorized activity
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+      - name: q
+        in: query
+        schema:
+          type: string
+          maxLength: 100
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - ''
+          - checked
+          - pending
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessRecordPage'
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/statistics:
+    get:
+      operationId: adminStatistics
+      summary: Database aggregates within analytics:read and region scope
+      parameters:
+      - name: region
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabaseStatistics'
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/exports:
+    get:
+      operationId: listExportJobs
+      summary: Current account export jobs; snapshots are not returned
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ExportJob'
+                  total:
+                    type: integer
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      operationId: createExportJob
+      summary: Freeze an authorized snapshot then enqueue a durable export
+      description: Reports require analytics:export; collections require collections:export;
+        submission CSV requires submissions:export; other CSV requires jobs:export
+        plus module read. One CSV request is limited to 5000 records; 1-20 collections;
+        PDF/DOCX documents to 500000 characters. Database snapshot contains the actual
+        authorized records, not only a timestamp.
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - status
+                properties:
+                  id:
+                    type: string
+                  status:
+                    enum:
+                    - queued
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/exports/{id}/{action}:
+    post:
+      operationId: controlExportJob
+      summary: Retry a failed job or cancel a queued/running/failed job
+      description: Revalidates current export permission and frozen authorized scope.
+        Generation fencing prevents cancelled workers from publishing results.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: action
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - retry
+          - cancel
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/exports/{id}/download:
+    get:
+      operationId: downloadExport
+      summary: Issue a short-lived private URL after owner, permission and scope recheck
+      description: Non-report exports expire after 7 days. Archived report files have
+        no application expiry. Existing signed URLs remain valid until their short
+        expiry; no claim to recall downloaded copies. Every request is audited.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizedDownload'
+        default:
+          $ref: '#/components/responses/Error'
+  /me/delivery-preferences:
+    get:
+      operationId: deliveryPreferences
+      summary: Own digest, draft and report preferences
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryPreferences'
+        default:
+          $ref: '#/components/responses/Error'
+    put:
+      operationId: updateDeliveryPreferences
+      summary: Save preferences executed by durable scheduling
+      description: Digests/reports default off. Draft notifications are gated by the
+        platform draftNotice switch. Daily/weekly digests count prior complete periods;
+        monthly/quarterly/yearly reports begin at a period boundary after enabling.
+        All periods use Asia/Shanghai. Reports additionally require analytics:export.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryPreferences'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryPreferences'
+        default:
+          $ref: '#/components/responses/Error'
+  /engagement/events:
+    post:
+      operationId: recordEngagement
+      summary: Record a signed-in view or share intent for published content
+      description: Deduplicates by account/content/action/Beijing calendar day. No
+        anonymous fingerprint or IP is stored. Share intent is not evidence of successful
+        forwarding.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - kind
+              - targetId
+              - action
+              properties:
+                kind:
+                  type: string
+                  enum:
+                  - media
+                  - submission
+                  - content
+                  - collection
+                targetId:
+                  type: string
+                  maxLength: 64
+                action:
+                  type: string
+                  enum:
+                  - view
+                  - share_intent
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recorded:
+                    type: boolean
+                  metricVersion:
+                    type: string
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/review-assignments/candidates:
+    get:
+      operationId: reviewAssignmentCandidates
+      summary: 读取当前稿件可分配专家
+      description: Requires reviews:manage and manuscript province scope. Filters
+        active expert-role accounts, own-author conflicts, account scope and availability;
+        independent of paginated UI expert list.
+      parameters:
+      - in: query
+        name: submissionId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    region:
+                      type: string
+                    group:
+                      type: string
+                    availability:
+                      type: string
+                    openTasks:
+                      type: integer
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/review-assignments/preview:
+    post:
+      operationId: previewReviewAssignments
+      summary: 预览确定性批量分配
+      description: Requires reviews:manage. Read-only. Selects scope/group/availability,
+        fewest active pending tasks, then stable expert ID. Selected work versions
+        are checked. No WarmFlow mutation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentPlan'
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/review-assignments/confirm:
+    post:
+      operationId: confirmReviewAssignments
+      summary: 确认预览分配
+      description: Requires reviews:manage. Locks manuscripts and experts, recomputes
+        preview fingerprint. Stale state returns 409; supplied stale work version
+        returns 412. Transactional all selected assignments reuse existing assignReview
+        and WarmFlow.
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+        description: Persist key across retries. Same owner/key with changed payload
+          returns 409.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentConfirmation'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  assigned:
+                    type: integer
+                  excluded:
+                    type: array
+                    items:
+                      type: object
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/submission-imports/preview:
+    post:
+      operationId: previewOfflineSubmissions
+      summary: 预检线下文字稿件
+      description: Requires submissions:write; existing member owner, own account
+        province and operator province required. Maximum 100 rows. Source name+reference
+        unique globally. Reports row errors; creates no data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfflineImportInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OfflineImportPlan'
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/submission-imports/confirm:
+    post:
+      operationId: confirmOfflineSubmissions
+      summary: 确认线下归集
+      description: 'Requires submissions:write. Rechecks fingerprint/all errors; saves
+        immutable revision, source and workflow/rubric binding, sends account message.
+        Does not sign for author: copyrightAccepted=false and requiresAuthorConfirmation=true;
+        initial approval remains blocked until owner''s independent copyright confirmation.'
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+        description: Persist key across retries. Same owner/key with changed payload
+          returns 409.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfflineImportConfirmation'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  imported:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        revisionId:
+                          type: string
+        default:
+          $ref: '#/components/responses/Error'
+  /regions/children:
+    get:
+      operationId: publicRegionChildren
+      summary: 读取已启用的市县子节点
+      description: Empty parentId returns existing province dictionary; unpublished/disabled
+        ancestors are hidden. Display taxonomy never changes province-level authorization.
+      security: []
+      parameters:
+      - in: query
+        name: parentId
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RegionNode'
+                  notice:
+                    type: string
+        default:
+          $ref: '#/components/responses/Error'
+  /regions/venues:
+    get:
+      operationId: publicRegionVenues
+      summary: 读取市县已发布阵地 ID
+      description: Exact county or city with its direct counties; only enabled nodes
+        and published venues. Invalid/disabled node 404.
+      security: []
+      parameters:
+      - in: query
+        name: areaId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ids:
+                    type: array
+                    items:
+                      type: string
+        default:
+          $ref: '#/components/responses/Error'
+  /regions/venue-map/{id}:
+    get:
+      operationId: publicVenueMapSettings
+      summary: 读取已发布阵地坐标系
+      description: Public only for published venue. Coordinate provenance explicitly
+        maintained by staff. No implicit WGS84/GCJ02 conversion.
+      security: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  coordinateSystem:
+                    type: string
+                    enum:
+                    - unknown
+                    - wgs84
+                    - gcj02
+        default:
+          $ref: '#/components/responses/Error'
+  /regions/venue-coordinates:
+    get:
+      operationId: publicVenueCoordinates
+      summary: 读取经核对 WGS84 阵地坐标
+      description: Only published non-sample venues explicitly marked wgs84. Used
+        for client-side distance sorting; no user location is sent to server.
+      security: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        latitude:
+                          type: number
+                        longitude:
+                          type: number
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/regions:
+    get:
+      operationId: adminRegionChildren
+      summary: 读取授权地区子目录
+      description: Requires regions:read and parent province scope. Includes disabled
+        nodes.
+      parameters:
+      - in: query
+        name: parentId
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RegionNode'
+                  notice:
+                    type: string
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      operationId: saveRegionNode
+      summary: 新增或维护市县节点
+      description: Requires regions:write and parent province scope. At most province/city/county.
+        Parent of an existing node immutable; updates require version. Source required;
+        no fabricated nationwide city dataset.
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+        description: Persist key across retries. Same owner/key with changed payload
+          returns 409.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegionInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionNode'
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/regions/venues/{id}:
+    get:
+      operationId: getVenueAreaBinding
+      summary: 读取阵地市县与坐标来源
+      description: Requires content:write and venue province scope.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VenueAreaBinding'
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      operationId: saveVenueAreaBinding
+      summary: 保存阵地市县与坐标来源
+      description: Requires content:write, same-province enabled city/county, and
+        current venue version. Empty areaId removes association. Bumps venue version
+        and public generation. Changes neither venue coordinates nor province scope.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+        description: Persist key across retries. Same owner/key with changed payload
+          returns 409.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VenueAreaInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VenueAreaBinding'
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/consultations/{id}:
+    get:
+      operationId: getAdminConsultation
+      summary: 读取定制咨询跟进
+      description: Requires welfare:read and claim province scope; only kind=custom.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consultation'
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      operationId: followUpConsultation
+      summary: 保存人工沟通或参考报价
+      description: Requires welfare:write, province scope, current claim version,
+        kind=custom. Cancelled claims reject follow-up. Appends immutable customer-visible
+        event and sends station notification. Does not create payment/order/logistics
+        or change inventory. May record a new stage after closed; prior history remains.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+        description: Persist key across retries. Same owner/key with changed payload
+          returns 409.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsultationInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consultation'
+        default:
+          $ref: '#/components/responses/Error'
+  /me/consultations/{id}:
+    get:
+      operationId: getMyConsultation
+      summary: 本人查询定制咨询历史
+      description: Authenticated owner only; other owners and non-custom claims get
+        404. No operator identity is returned.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consultation'
+        default:
+          $ref: '#/components/responses/Error'
 components:
   securitySchemes:
     bearerAuth:
@@ -599,6 +2484,24 @@ components:
         minLength: 8
         maxLength: 128
       description: 同一逻辑操作失败重试保持相同键；新的操作必须换键。
+    CredentialIdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 128
+      description: Keep identical key and payload for retries. Different payload under
+        the same key conflicts. Scope includes actor and operation.
+    EducationIdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+      description: Reuse the same key and body when retrying an uncertain result;
+        never reuse for a different operation body.
   responses:
     Error:
       description: 400请求格式；401会话；403岗位；404不可见；409业务/幂等冲突；412版本冲突；413文件大小；422校验；428缺版本/幂等键；429登录限流；500内部错误；503未启用适配。
@@ -733,7 +2636,8 @@ components:
         duration:
           type: number
           description: 录音归一化后的秒数
-        originalName: *id001
+        originalName:
+          type: string
       required:
       - fileId
       - id
@@ -942,102 +2846,206 @@ components:
           - 30
     ReviewWindowFields:
       type: object
-      description: 服务器按当前时间计算的时间窗状态。客户端须严格以 canScore 控制评分入口，后端提交时再次校验。时间以 ISO 8601 UTC 传输、北京时间完整展示。
+      description: 服务器按当前时间计算的时间窗状态。客户端须严格以 canScore 控制评分入口，后端提交时再次校验。时间以 ISO 8601
+        UTC 传输、北京时间完整展示。
       properties:
-        startsAt: {type: string, format: date-time}
-        dueAt: {type: string, format: date-time}
-        windowVersion: {type: integer, minimum: 1}
+        startsAt:
+          type: string
+          format: date-time
+        dueAt:
+          type: string
+          format: date-time
+        windowVersion:
+          type: integer
+          minimum: 1
         windowStatus:
           type: string
-          enum: [not_started, active, due_soon, overdue, completed, cancelled]
-        canScore: {type: boolean}
-        serverNow: {type: string, format: date-time}
+          enum:
+          - not_started
+          - active
+          - due_soon
+          - overdue
+          - completed
+          - cancelled
+        canScore:
+          type: boolean
+        serverNow:
+          type: string
+          format: date-time
     AdminReviewTask:
       allOf:
       - $ref: '#/components/schemas/Entity'
       - $ref: '#/components/schemas/ReviewWindowFields'
       - type: object
         properties:
-          submissionId: {type: string}
-          expertId: {type: string}
-          status: {type: string, enum: [待评分, 已完成, 已取消]}
-          stage: {type: string}
-          assignedAt: {type: string, format: date-time}
-          ruleVersion: {type: string}
+          submissionId:
+            type: string
+          expertId:
+            type: string
+          status:
+            type: string
+            enum:
+            - 待评分
+            - 已完成
+            - 已取消
+          stage:
+            type: string
+          assignedAt:
+            type: string
+            format: date-time
+          ruleVersion:
+            type: string
           scores:
             type: array
-            items: {type: number}
-          comment: {type: string}
+            items:
+              type: number
+          comment:
+            type: string
     ReviewAlert:
       allOf:
       - $ref: '#/components/schemas/ReviewWindowFields'
       - type: object
         properties:
-          id: {type: string, description: 与taskId相同}
-          taskId: {type: string}
-          submissionId: {type: string}
-          title: {type: string}
-          stage: {type: string}
-          expertName: {type: string}
-          regionId: {type: string}
-          status: {type: string}
-          lockVersion: {type: integer}
-          version: {type: integer}
+          id:
+            type: string
+            description: 与taskId相同
+          taskId:
+            type: string
+          submissionId:
+            type: string
+          title:
+            type: string
+          stage:
+            type: string
+          expertName:
+            type: string
+          regionId:
+            type: string
+          status:
+            type: string
+          lockVersion:
+            type: integer
+          version:
+            type: integer
           notificationIds:
             type: array
             description: 当前账号收到的对应任务通知ID，不能标记他人的通知。
-            items: {type: string}
-          unread: {type: boolean}
+            items:
+              type: string
+          unread:
+            type: boolean
     ReviewNotification:
       type: object
       properties:
-        id: {type: string}
-        title: {type: string}
-        content: {type: string}
-        createdAt: {type: string, format: date-time}
-        read: {type: boolean}
-        targetId: {type: string, description: 评审任务ID，用于跳转任务}
-        sourceType: {type: string, enum: [review-task]}
-        phase: {type: string, enum: [due_soon, overdue, window_updated]}
-        windowVersion: {type: integer}
+        id:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        read:
+          type: boolean
+        targetId:
+          type: string
+          description: 评审任务ID，用于跳转任务
+        sourceType:
+          type: string
+          enum:
+          - review-task
+        phase:
+          type: string
+          enum:
+          - due_soon
+          - overdue
+          - window_updated
+        windowVersion:
+          type: integer
     ReviewAlertsResponse:
       type: object
       properties:
         items:
           type: array
-          items: {$ref: '#/components/schemas/ReviewAlert'}
-        total: {type: integer}
-        page: {type: integer}
-        pageSize: {type: integer}
-        unreadCount: {type: integer}
-        serverNow: {type: string, format: date-time}
+          items:
+            $ref: '#/components/schemas/ReviewAlert'
+        total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        unreadCount:
+          type: integer
+        serverNow:
+          type: string
+          format: date-time
         notifications:
           type: array
-          items: {$ref: '#/components/schemas/ReviewNotification'}
-      required: [items, total, page, pageSize, unreadCount, serverNow, notifications]
+          items:
+            $ref: '#/components/schemas/ReviewNotification'
+      required:
+      - items
+      - total
+      - page
+      - pageSize
+      - unreadCount
+      - serverNow
+      - notifications
     AdminUpdateReviewWindowCommand:
       type: object
       description: 开始前可调整开始和截止；开始后仅允许延长截止。已完成或取消不可调整。每次变更须原因，并增加windowVersion、通知专家；外层version为实体lockVersion，与windowVersion不同。
       properties:
-        command: {type: string, enum: [updateReviewWindow]}
-        entityId: {type: string, description: 评审任务ID}
-        version: {type: integer, description: 期望实体lockVersion，用于并发校验}
+        command:
+          type: string
+          enum:
+          - updateReviewWindow
+        entityId:
+          type: string
+          description: 评审任务ID
+        version:
+          type: integer
+          description: 期望实体lockVersion，用于并发校验
         data:
           type: object
           properties:
-            startsAt: {type: string, format: date-time, description: 省略时保持原开始时间不变}
-            dueAt: {type: string, format: date-time}
-            reason: {type: string, minLength: 5, maxLength: 2000}
-          required: [dueAt, reason]
-      required: [command, entityId, version, data]
+            startsAt:
+              type: string
+              format: date-time
+              description: 省略时保持原开始时间不变
+            dueAt:
+              type: string
+              format: date-time
+            reason:
+              type: string
+              minLength: 5
+              maxLength: 2000
+          required:
+          - dueAt
+          - reason
+      required:
+      - command
+      - entityId
+      - version
+      - data
     AdminMarkReviewAlertReadCommand:
       type: object
       description: 仅标记当前账号收到的评审提醒，已读操作幂等。
       properties:
-        command: {type: string, enum: [markReviewAlertRead]}
-        entityId: {type: string, description: 通知ID}
-        data: {type: object}
-      required: [command, entityId, data]
+        command:
+          type: string
+          enum:
+          - markReviewAlertRead
+        entityId:
+          type: string
+          description: 通知ID
+        data:
+          type: object
+      required:
+      - command
+      - entityId
+      - data
     ReviewTask:
       type: object
       allOf:
@@ -1481,7 +3489,8 @@ components:
               type: string
               format: date-time
               description: ISO 8601 UTC截止时间；省略则按开始时间加任务冻结的评审天数计算。
-          required: [expertId]
+          required:
+          - expertId
       required:
       - command
       - data
@@ -2670,21 +4679,21 @@ components:
     BannerDraft:
       type: object
       properties:
-        title: &id002
+        title:
           type: string
-        language: &id003
+        language:
           type: string
           enum:
           - zh
           - en
-        region: &id004
+        region:
           type: string
           description: 稳定地区ID；区域运营只能使用已授权地区
-        sortOrder: &id005
+        sortOrder:
           type: integer
           minimum: 0
           maximum: 9999
-        sample: &id006
+        sample:
           type: boolean
         category:
           type: string
@@ -2738,11 +4747,22 @@ components:
     MediaDraft:
       type: object
       properties:
-        title: *id002
-        language: *id003
-        region: *id004
-        sortOrder: *id005
-        sample: *id006
+        title:
+          type: string
+        language:
+          type: string
+          enum:
+          - zh
+          - en
+        region:
+          type: string
+          description: 稳定地区ID；区域运营只能使用已授权地区
+        sortOrder:
+          type: integer
+          minimum: 0
+          maximum: 9999
+        sample:
+          type: boolean
         category:
           type: string
           enum:
@@ -2786,11 +4806,22 @@ components:
     VenueDraft:
       type: object
       properties:
-        title: *id002
-        language: *id003
-        region: *id004
-        sortOrder: *id005
-        sample: *id006
+        title:
+          type: string
+        language:
+          type: string
+          enum:
+          - zh
+          - en
+        region:
+          type: string
+          description: 稳定地区ID；区域运营只能使用已授权地区
+        sortOrder:
+          type: integer
+          minimum: 0
+          maximum: 9999
+        sample:
+          type: boolean
         category:
           type: string
           enum:
@@ -2838,11 +4869,22 @@ components:
     HallPersonDraft:
       type: object
       properties:
-        title: *id002
-        language: *id003
-        region: *id004
-        sortOrder: *id005
-        sample: *id006
+        title:
+          type: string
+        language:
+          type: string
+          enum:
+          - zh
+          - en
+        region:
+          type: string
+          description: 稳定地区ID；区域运营只能使用已授权地区
+        sortOrder:
+          type: integer
+          minimum: 0
+          maximum: 9999
+        sample:
+          type: boolean
         era:
           type: string
         theme:
@@ -3282,15 +5324,19 @@ components:
     Recitation:
       type: object
       properties:
-        id: *id001
-        title: *id001
+        id:
+          type: string
+        title:
+          type: string
         category:
           type: string
           enum:
           - reading
-        fileId: *id001
-        fileName: *id001
-        size: &id007
+        fileId:
+          type: string
+        fileName:
+          type: string
+        size:
           type: integer
         duration:
           type: number
@@ -3301,7 +5347,8 @@ components:
         updatedAt:
           type: string
           format: date-time
-        lockVersion: *id007
+        lockVersion:
+          type: integer
       required:
       - id
       - title
@@ -3310,9 +5357,12 @@ components:
     FamilyPromise:
       type: object
       properties:
-        id: *id001
-        personId: *id001
-        personName: *id001
+        id:
+          type: string
+        personId:
+          type: string
+        personName:
+          type: string
         personLanguage:
           type: string
           enum:
@@ -3322,7 +5372,7 @@ components:
           type: string
           minLength: 4
           maxLength: 180
-        targetAvailable: &id008
+        targetAvailable:
           type: boolean
         createdAt:
           type: string
@@ -3330,7 +5380,8 @@ components:
         updatedAt:
           type: string
           format: date-time
-        lockVersion: *id007
+        lockVersion:
+          type: integer
       required:
       - id
       - personId
@@ -3339,16 +5390,21 @@ components:
     PrivateRecordStats:
       type: object
       properties:
-        recitations: *id007
-        familyPromises: *id007
+        recitations:
+          type: integer
+        familyPromises:
+          type: integer
         byRegion:
           type: array
           items:
             type: object
             properties:
-              regionId: *id001
-              recitations: *id007
-              familyPromises: *id007
+              regionId:
+                type: string
+              recitations:
+                type: integer
+              familyPromises:
+                type: integer
     MemberRecitationCreateCommand:
       type: object
       properties:
@@ -3363,7 +5419,8 @@ components:
               type: string
               minLength: 2
               maxLength: 100
-            fileId: *id001
+            fileId:
+              type: string
             consent:
               type: boolean
               enum:
@@ -3383,8 +5440,10 @@ components:
           type: string
           enum:
           - recitation.remove
-        entityId: *id001
-        version: *id007
+        entityId:
+          type: string
+        version:
+          type: integer
         data:
           type: object
           properties: {}
@@ -3400,11 +5459,13 @@ components:
           type: string
           enum:
           - familyPromise.save
-        version: *id007
+        version:
+          type: integer
         data:
           type: object
           properties:
-            personId: *id001
+            personId:
+              type: string
             text:
               type: string
               minLength: 4
@@ -3424,8 +5485,10 @@ components:
           type: string
           enum:
           - familyPromise.remove
-        entityId: *id001
-        version: *id007
+        entityId:
+          type: string
+        version:
+          type: integer
         data:
           type: object
           properties: {}
@@ -3437,12 +5500,15 @@ components:
     SearchText:
       type: object
       properties:
-        zh: *id001
-        en: *id001
+        zh:
+          type: string
+        en:
+          type: string
     SearchResult:
       type: object
       properties:
-        id: *id001
+        id:
+          type: string
         kind:
           type: string
           enum:
@@ -3455,8 +5521,10 @@ components:
           - hall
           - product
           - venue
-        contentId: *id001
-        screen: *id001
+        contentId:
+          type: string
+        screen:
+          type: string
         title:
           $ref: '#/components/schemas/SearchText'
         summary:
@@ -3466,7 +5534,8 @@ components:
           enum:
           - zh
           - en
-        region: *id001
+        region:
+          type: string
     SearchResponse:
       type: object
       properties:
@@ -3474,14 +5543,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SearchResult'
-        total: *id007
+        total:
+          type: integer
         counts:
           type: object
-          additionalProperties: *id007
+          additionalProperties:
+            type: integer
         nextCursor:
           type: string
           nullable: true
-        generation: *id007
+        generation:
+          type: integer
       required:
       - items
       - total
@@ -3490,11 +5562,1406 @@ components:
     SearchStatus:
       type: object
       properties:
-        ready: *id008
-        available: *id008
-        generation: *id007
-        indexedGeneration: *id007
-        pending: *id007
-        status: *id001
-        lastError: *id001
-        rebuildRequested: *id008
+        ready:
+          type: boolean
+        available:
+          type: boolean
+        generation:
+          type: integer
+        indexedGeneration:
+          type: integer
+        pending:
+          type: integer
+        status:
+          type: string
+        lastError:
+          type: string
+        rebuildRequested:
+          type: boolean
+    CredentialMutationResult:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        id:
+          type: string
+        message:
+          type: string
+        certificateNo:
+          type: string
+        version:
+          type: integer
+          minimum: 1
+        signature:
+          type: boolean
+      required:
+      - ok
+    CredentialManagedAccount:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        name:
+          type: string
+        organization:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+            enum:
+            - national_admin
+            - regional_admin
+            - content_operator
+            - review_manager
+            - data_operator
+            - expert
+            - member
+        roleLabels:
+          type: array
+          items:
+            type: string
+        regionIds:
+          type: array
+          items:
+            type: string
+        regionLabels:
+          type: array
+          items:
+            type: string
+        enabled:
+          type: boolean
+        accountReviewStatus:
+          type: string
+          enum:
+          - pending
+          - approved
+          - rejected
+          - returned
+        expertReviewStatus:
+          type: string
+          enum:
+          - pending
+          - approved
+          - rejected
+          - returned
+        legacyStatus:
+          type: string
+        version:
+          type: integer
+          minimum: 1
+        createdAt:
+          type: string
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialAccountReview'
+      required:
+      - id
+      - username
+      - roles
+      - regionIds
+      - enabled
+      - version
+    CredentialAccountReview:
+      type: object
+      properties:
+        id:
+          type: string
+        subject:
+          type: string
+          enum:
+          - account
+          - expert
+        action:
+          type: string
+          enum:
+          - submitted
+          - approved
+          - rejected
+          - returned
+        actorName:
+          type: string
+        summary:
+          type: string
+        materialReference:
+          type: string
+        createdAt:
+          type: string
+      required:
+      - id
+      - subject
+      - action
+      - summary
+    CredentialAccountPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialManagedAccount'
+        total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        roles:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+                enum:
+                - national_admin
+                - regional_admin
+                - content_operator
+                - review_manager
+                - data_operator
+                - expert
+                - member
+              label:
+                type: string
+        permissions:
+          type: array
+          items:
+            type: string
+    CredentialAccountCreate:
+      type: object
+      properties:
+        username:
+          type: string
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9_.-]{2,29}$
+        name:
+          type: string
+          minLength: 1
+          maxLength: 30
+        organization:
+          type: string
+          minLength: 1
+          maxLength: 120
+        password:
+          type: string
+          minLength: 12
+          description: Letter and digit required; maximum 72 UTF-8 bytes for BCrypt;
+            not echoed.
+        roles:
+          type: array
+          items:
+            type: string
+            enum:
+            - national_admin
+            - regional_admin
+            - content_operator
+            - review_manager
+            - data_operator
+            - expert
+            - member
+        regionIds:
+          type: array
+          items:
+            type: string
+      required:
+      - username
+      - name
+      - organization
+      - password
+      - roles
+      - regionIds
+    CredentialAccountAction:
+      type: object
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        roles:
+          type: array
+          items:
+            type: string
+            enum:
+            - national_admin
+            - regional_admin
+            - content_operator
+            - review_manager
+            - data_operator
+            - expert
+            - member
+        regionIds:
+          type: array
+          items:
+            type: string
+        enabled:
+          type: boolean
+        password:
+          type: string
+          minLength: 12
+          description: Maximum 72 UTF-8 bytes; letter and digit required.
+        subject:
+          type: string
+          enum:
+          - account
+          - expert
+        result:
+          type: string
+          enum:
+          - approved
+          - rejected
+          - returned
+        summary:
+          type: string
+          minLength: 5
+          maxLength: 2000
+        materialReference:
+          type: string
+          maxLength: 1000
+      required:
+      - version
+    CredentialAgreement:
+      type: object
+      properties:
+        version:
+          type: string
+        text:
+          type: string
+        hash:
+          type: string
+        signature:
+          type: boolean
+          enum:
+          - false
+      required:
+      - version
+      - text
+      - hash
+      - signature
+    CredentialCopyrightInput:
+      type: object
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        revisionId:
+          type: string
+        agreementVersion:
+          type: string
+        accepted:
+          type: boolean
+          enum:
+          - true
+      required:
+      - version
+      - revisionId
+      - agreementVersion
+      - accepted
+    CredentialCopyrightRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        submissionId:
+          type: string
+        revisionId:
+          type: string
+        agreementVersion:
+          type: string
+        agreementText:
+          type: string
+        agreementHash:
+          type: string
+        acceptedAt:
+          type: string
+    CredentialCopyrightHistory:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialCopyrightRecord'
+        agreement:
+          $ref: '#/components/schemas/CredentialAgreement'
+    CredentialPublicVerification:
+      type: object
+      properties:
+        certificateNo:
+          type: string
+        title:
+          type: string
+        issuer:
+          type: string
+        status:
+          type: string
+          enum:
+          - issued
+          - revoked
+        issuedAt:
+          type: string
+        revokedAt:
+          type: string
+          nullable: true
+        fileHash:
+          type: string
+      required:
+      - certificateNo
+      - title
+      - issuer
+      - status
+      - issuedAt
+      - fileHash
+    CredentialCertificate:
+      allOf:
+      - $ref: '#/components/schemas/CredentialPublicVerification'
+      - type: object
+        properties:
+          id:
+            type: string
+          kind:
+            type: string
+            enum:
+            - award
+            - completion
+          ownerId:
+            type: string
+          holderName:
+            type: string
+          sourceTitle:
+            type: string
+          region:
+            type: string
+          verifyToken:
+            type: string
+          version:
+            type: integer
+            minimum: 1
+          revokeReason:
+            type: string
+            nullable: true
+    CredentialCertificatePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialCertificate'
+        total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+    CredentialCertificateSource:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - award
+          - completion
+        sourceId:
+          type: string
+        ownerId:
+          type: string
+        name:
+          type: string
+        title:
+          type: string
+        region:
+          type: string
+        courseVersion:
+          type: integer
+    CredentialEligibleSources:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialCertificateSource'
+        limitPerKind:
+          type: integer
+          enum:
+          - 100
+    CredentialCertificateIssue:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - award
+          - completion
+        sourceId:
+          type: string
+        ownerId:
+          type: string
+          description: Required for completion; award owner is derived from the submission.
+        courseVersion:
+          type: integer
+          minimum: 1
+          description: Required for completion; exact published course version.
+        issuer:
+          type: string
+          minLength: 2
+          maxLength: 120
+      required:
+      - kind
+      - sourceId
+      - issuer
+    CredentialCertificateRevoke:
+      type: object
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 1000
+      required:
+      - version
+      - reason
+    CredentialAuthorizedDownload:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+        expiresIn:
+          type: integer
+          description: Signed links normally expire after 300 seconds; use durable
+            business endpoint for future downloads.
+    CredentialResource:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        regionId:
+          type: string
+        region:
+          type: string
+        fileId:
+          type: string
+          description: Admin response only; omitted from public catalog.
+        fileName:
+          type: string
+        mimeType:
+          type: string
+        size:
+          type: integer
+        sha256:
+          type: string
+        licenseText:
+          type: string
+        attribution:
+          type: string
+        audience:
+          type: string
+          enum:
+          - all_members
+          - authorized_regions
+        status:
+          type: string
+          enum:
+          - draft
+          - published
+          - withdrawn
+        version:
+          type: integer
+          minimum: 1
+        updatedAt:
+          type: string
+    CredentialResourcePage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialResource'
+        total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+    CredentialResourceSave:
+      type: object
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        title:
+          type: string
+          minLength: 2
+          maxLength: 160
+        description:
+          type: string
+          minLength: 5
+          maxLength: 2000
+        regionId:
+          type: string
+        fileId:
+          type: string
+        licenseText:
+          type: string
+          minLength: 10
+          maxLength: 4000
+        attribution:
+          type: string
+          minLength: 2
+          maxLength: 500
+        audience:
+          type: string
+          enum:
+          - all_members
+          - authorized_regions
+        status:
+          type: string
+          enum:
+          - draft
+          - published
+          - withdrawn
+        authorized:
+          type: boolean
+          description: 'Must be true to publish: current operator confirms distribution
+            authority.'
+      required:
+      - title
+      - description
+      - regionId
+      - fileId
+      - licenseText
+      - attribution
+      - audience
+      - status
+    CredentialResourceDownload:
+      type: object
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        acceptedLicense:
+          type: boolean
+          enum:
+          - true
+      required:
+      - version
+      - acceptedLicense
+    EducationCommand:
+      type: object
+      required:
+      - command
+      - data
+      properties:
+        command:
+          type: string
+        entityId:
+          type: string
+        version:
+          type: integer
+        data:
+          type: object
+    EducationLesson:
+      type: object
+      required:
+      - id
+      - title
+      - body
+      properties:
+        id:
+          type: string
+          pattern: ^[A-Za-z0-9_-]{1,64}$
+        title:
+          type: string
+        body:
+          type: string
+        practice:
+          type: string
+    EducationQuestion:
+      type: object
+      required:
+      - id
+      - prompt
+      - options
+      properties:
+        id:
+          type: string
+        prompt:
+          type: string
+        options:
+          type: array
+          minItems: 2
+          maxItems: 6
+          items:
+            type: object
+            required:
+            - id
+            - text
+            properties:
+              id:
+                type: string
+              text:
+                type: string
+    EducationPublishedCourse:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        teacher:
+          type: string
+        category:
+          type: string
+        duration:
+          type: integer
+          description: Reference duration
+          not verified study time: null
+        region:
+          type: string
+        publicationVersion:
+          type: integer
+          minimum: 0
+        passPercent:
+          type: integer
+          minimum: 1
+          maximum: 100
+        lessons:
+          type: array
+          minItems: 1
+          maxItems: 50
+          items:
+            $ref: '#/components/schemas/EducationLesson'
+        questions:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/EducationQuestion'
+    EducationDraftCourse:
+      allOf:
+      - $ref: '#/components/schemas/EducationPublishedCourse'
+      - type: object
+        properties:
+          lockVersion:
+            type: integer
+          publishedVersion:
+            type: integer
+          questions:
+            type: array
+            maxItems: 200
+            items:
+              allOf:
+              - $ref: '#/components/schemas/EducationQuestion'
+              - type: object
+                required:
+                - answerId
+                properties:
+                  answerId:
+                    type: string
+                  explanation:
+                    type: string
+          examQuestionIds:
+            type: array
+            maxItems: 100
+            uniqueItems: true
+            items:
+              type: string
+          versions:
+            type: array
+            items:
+              type: object
+    EducationProgress:
+      type: object
+      properties:
+        lessons:
+          type: array
+          items:
+            type: string
+        quizPassed:
+          type: boolean
+        bestScore:
+          type: integer
+          nullable: true
+        complete:
+          type: boolean
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+        percent:
+          type: integer
+          minimum: 0
+          maximum: 100
+    EducationGroup:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        region:
+          type: string
+        courseId:
+          type: string
+        publicationVersion:
+          type: integer
+          minimum: 1
+        cadreOnly:
+          type: boolean
+        declarationText:
+          type: string
+        declarationHash:
+          type: string
+        version:
+          type: integer
+        members:
+          type: integer
+        completed:
+          type: integer
+        declarations:
+          type: integer
+        confirmed:
+          type: boolean
+        memberRecords:
+          type: array
+          description: Authorized administrators only
+          items:
+            type: object
+        declarationHistory:
+          type: array
+          description: Authorized administrators only
+          items:
+            $ref: '#/components/schemas/EducationDeclaration'
+    EducationDeclaration:
+      type: object
+      properties:
+        id:
+          type: string
+        groupId:
+          type: string
+        groupVersion:
+          type: integer
+        text:
+          type: string
+        textHash:
+          type: string
+        confirmedAt:
+          type: string
+          format: date-time
+    MediaCaptionCue:
+      type: object
+      required:
+      - startMs
+      - endMs
+      - text
+      properties:
+        startMs:
+          type: integer
+          minimum: 0
+          maximum: 599999
+        endMs:
+          type: integer
+          minimum: 1
+          maximum: 600000
+        text:
+          type: string
+          minLength: 1
+          maxLength: 1000
+    BusinessRecordPage:
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - pageSize
+      properties:
+        items:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            additionalProperties: true
+        total:
+          type: integer
+          minimum: 0
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        asOf:
+          type: string
+          format: date-time
+    DatabaseStatistics:
+      type: object
+      properties:
+        totals:
+          type: object
+          properties:
+            submissions:
+              type: integer
+            participants:
+              type: integer
+            reviewing:
+              type: integer
+            selected:
+              type: integer
+        regions:
+          type: array
+          items:
+            type: object
+        trend:
+          type: array
+          maxItems: 90
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              submitted:
+                type: integer
+        engagement:
+          type: object
+          properties:
+            signedInViews:
+              type: integer
+            shareIntents:
+              type: integer
+        asOf:
+          type: string
+          format: date-time
+        definition:
+          type: string
+        metricVersion:
+          type: string
+        engagementDefinition:
+          type: string
+    ExportRequest:
+      type: object
+      required:
+      - kind
+      properties:
+        kind:
+          type: string
+          enum:
+          - csv
+          - collection
+          - report
+        collection:
+          type: string
+        ids:
+          type: array
+          minItems: 1
+          maxItems: 20
+          uniqueItems: true
+          items:
+            type: string
+        format:
+          type: string
+          enum:
+          - pdf
+          - docx
+        q:
+          type: string
+        status:
+          type: string
+        region:
+          type: string
+        from:
+          type: string
+          format: date
+        to:
+          type: string
+          format: date
+          description: Exclusive Asia/Shanghai date boundary
+    ExportJob:
+      type: object
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+        status:
+          type: string
+          enum:
+          - queued
+          - running
+          - completed
+          - failed
+          - cancelled
+        attempts:
+          type: integer
+        errorCode:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        request:
+          $ref: '#/components/schemas/ExportRequest'
+        result:
+          type: object
+          properties:
+            fileId:
+              type: string
+            name:
+              type: string
+            mimeType:
+              type: string
+            sha256:
+              type: string
+            size:
+              type: integer
+    AuthorizedDownload:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+        expiresIn:
+          type: integer
+        name:
+          type: string
+    DeliveryPreferences:
+      type: object
+      required:
+      - digest
+      - draftNotice
+      - reports
+      properties:
+        digest:
+          type: string
+          enum:
+          - 'off'
+          - daily
+          - weekly
+        draftNotice:
+          type: boolean
+        reports:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+            enum:
+            - month
+            - quarter
+            - year
+    ReviewDimension:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        max:
+          type: integer
+          minimum: 1
+          maximum: 100
+        description:
+          type: string
+      required:
+      - id
+      - label
+      - max
+    ReviewRubric:
+      type: object
+      properties:
+        title:
+          type: string
+        ruleVersion:
+          type: string
+        dimensions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewDimension'
+          minItems: 1
+          maxItems: 10
+      required:
+      - title
+      - ruleVersion
+      - dimensions
+    ReviewTimeline:
+      type: object
+      properties:
+        revisionNumber:
+          type: integer
+        flowVersion:
+          type: integer
+          nullable: true
+        source:
+          type: string
+        started:
+          type: boolean
+        notice:
+          type: string
+        stages:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              label:
+                type: string
+              enabled:
+                type: boolean
+                nullable: true
+              state:
+                enum:
+                - completed
+                - current
+                - disabled
+                - stopped
+                - pending
+                - not_started
+                - unknown
+                type: string
+              completedAt:
+                type: string
+                nullable: true
+              rubric:
+                $ref: '#/components/schemas/ReviewRubric'
+        events:
+          type: array
+          items:
+            type: object
+            properties:
+              nodeCode:
+                type: string
+              stage:
+                type: string
+              outcome:
+                type: string
+                enum:
+                - completed
+                - stopped
+                - recorded
+              time:
+                type: string
+                format: date-time
+    AssignmentInput:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 100
+        versions:
+          type: object
+          additionalProperties:
+            type: integer
+        group:
+          type: string
+      required:
+      - ids
+    AssignmentPlan:
+      type: object
+      properties:
+        fingerprint:
+          type: string
+        rule:
+          type: string
+        rows:
+          type: array
+          items:
+            type: object
+            properties:
+              submissionId:
+                type: string
+              title:
+                type: string
+              version:
+                type: integer
+              expertId:
+                type: string
+              expertName:
+                type: string
+              openTasks:
+                type: integer
+        excluded:
+          type: array
+          items:
+            type: object
+            properties:
+              submissionId:
+                type: string
+              title:
+                type: string
+              reason:
+                type: string
+      required:
+      - fingerprint
+      - rows
+      - excluded
+    AssignmentConfirmation:
+      allOf:
+      - $ref: '#/components/schemas/AssignmentInput'
+      - type: object
+        properties:
+          fingerprint:
+            type: string
+        required:
+        - fingerprint
+    OfflineImportRow:
+      type: object
+      properties:
+        ownerId:
+          type: string
+        sourceName:
+          type: string
+        sourceRef:
+          type: string
+        title:
+          type: string
+        author:
+          type: string
+        content:
+          type: string
+        region:
+          type: string
+        genre:
+          type: string
+        channel:
+          type: string
+        themes:
+          type: array
+          items:
+            type: string
+        overseasLocation:
+          type: string
+      required:
+      - ownerId
+      - sourceName
+      - sourceRef
+      - title
+      - author
+      - content
+      - region
+      - genre
+      - channel
+      - themes
+    OfflineImportInput:
+      type: object
+      properties:
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfflineImportRow'
+          minItems: 1
+          maxItems: 100
+      required:
+      - rows
+    OfflineImportPlan:
+      type: object
+      properties:
+        fingerprint:
+          type: string
+        notice:
+          type: string
+        rows:
+          type: array
+          items:
+            type: object
+            properties:
+              row:
+                type: integer
+              ownerId:
+                type: integer
+              ownerName:
+                type: string
+              ownerVersion:
+                type: integer
+              sourceKey:
+                type: string
+              data:
+                type: object
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              row:
+                type: integer
+              code:
+                type: string
+              message:
+                type: string
+    OfflineImportConfirmation:
+      allOf:
+      - $ref: '#/components/schemas/OfflineImportInput'
+      - type: object
+        properties:
+          fingerprint:
+            type: string
+        required:
+        - fingerprint
+    RegionNode:
+      type: object
+      properties:
+        id:
+          type: string
+        parentId:
+          type: string
+        provinceId:
+          type: string
+        level:
+          type: integer
+          minimum: 0
+          maximum: 2
+        name:
+          type: string
+        nameEn:
+          type: string
+        officialCode:
+          type: string
+        source:
+          type: string
+        enabled:
+          type: boolean
+        version:
+          type: integer
+    RegionInput:
+      type: object
+      properties:
+        id:
+          type: string
+        parentId:
+          type: string
+        name:
+          type: string
+          maxLength: 100
+        nameEn:
+          type: string
+          maxLength: 200
+        officialCode:
+          type: string
+          maxLength: 40
+        source:
+          type: string
+          minLength: 2
+          maxLength: 1000
+        enabled:
+          type: boolean
+        version:
+          type: integer
+      required:
+      - parentId
+      - name
+      - source
+      - enabled
+    VenueAreaBinding:
+      type: object
+      properties:
+        venueId:
+          type: string
+        version:
+          type: integer
+        coordinateSystem:
+          type: string
+          enum:
+          - unknown
+          - wgs84
+          - gcj02
+        area:
+          $ref: '#/components/schemas/RegionNode'
+          nullable: true
+    VenueAreaInput:
+      type: object
+      properties:
+        version:
+          type: integer
+        areaId:
+          type: string
+          description: Empty removes city/county association.
+        coordinateSystem:
+          type: string
+          enum:
+          - unknown
+          - wgs84
+          - gcj02
+      required:
+      - version
+      - coordinateSystem
+    ConsultationEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        stage:
+          type: string
+          enum:
+          - accepted
+          - discussion
+          - quoted
+          - closed
+        note:
+          type: string
+        quoteAmount:
+          type: number
+          nullable: true
+        quoteDescription:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    Consultation:
+      type: object
+      properties:
+        id:
+          type: string
+        version:
+          type: integer
+        stage:
+          type: string
+          enum:
+          - pending
+          - accepted
+          - discussion
+          - quoted
+          - closed
+        cancelled:
+          type: boolean
+        notice:
+          type: string
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsultationEvent'
+    ConsultationInput:
+      type: object
+      properties:
+        version:
+          type: integer
+        stage:
+          type: string
+          enum:
+          - accepted
+          - discussion
+          - quoted
+          - closed
+        note:
+          type: string
+          minLength: 2
+          maxLength: 2000
+        quoteAmount:
+          type: string
+          description: CNY decimal text (0..999999999999.99), at most 2 fractional
+            digits; required only for quoted.
+        quoteDescription:
+          type: string
+          maxLength: 2000
+          description: Required with minimum 5 characters for quoted; otherwise empty.
+      required:
+      - version
+      - stage
+      - note

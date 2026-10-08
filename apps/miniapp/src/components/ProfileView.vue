@@ -5,9 +5,11 @@ import { commerceStatusLabels } from '../domain/showcaseCatalog'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import AccountPanel from './AccountPanel.vue'
+import DeliveryPreferences from './DeliveryPreferences.vue'
 import FamilyPromiseEditor from './FamilyPromiseEditor.vue'
 import CloudRecitationRecords from './CloudRecitationRecords.vue'
 import CertificateExport from './CertificateExport.vue'
+import PersonalCertificates from './PersonalCertificates.vue'
 import {
   myWorks,
   favorites,
@@ -190,7 +192,7 @@ const tabs = computed(() => [
       (isHttpMode ? remoteWorkspace.mediaSubmissions.length : videoSubmissionRecords.value.length),
   },
   { id: 'messages', label: t('消息中心', 'Messages'), count: unreadCount.value },
-  { id: 'certificates', label: t('证书夹', 'Certificates'), count: certificateCards.value.length },
+  { id: 'certificates', label: t('证书夹', 'Certificates'), count: isHttpMode ? 0 : certificateCards.value.length },
   {
     id: 'favorites',
     label: t('我的收藏', 'Favourites'),
@@ -548,11 +550,17 @@ const panelHelp = computed(
         isHttpMode
           ? '查看平台处理进度的站内通知。微信订阅通知另行接入。'
           : '消息由本机流程生成，不发送真实微信通知。',
-        'Local demo updates; no real WeChat notification is sent.',
+        isHttpMode
+          ? 'In-app updates about platform activity. WeChat notifications are not connected.'
+          : 'Local demo updates; no real WeChat notification is sent.',
       ),
       certificates: t(
-        '作品、课程与活动的证书样张，不具有认证效力。',
-        'Sample certificates for contributions, courses and activities. Not credentials.',
+        isHttpMode
+          ? '人工签发证书与投稿须知确认记录。'
+          : '作品、课程与活动的证书样张，不具有认证效力。',
+        isHttpMode
+          ? 'Issued certificates and submission confirmation records.'
+          : 'Sample certificates for contributions, courses and activities. Not credentials.',
       ),
       favorites: t(
         '收藏作品、典籍和视频，留住喜欢的家风故事。',
@@ -560,7 +568,9 @@ const panelHelp = computed(
       ),
       events: t(
         isHttpMode ? '查看当前账号的活动预约和签到记录。' : '预约、签到和参与记录仅用于界面演示。',
-        'Bookings, check-ins and participation are interface demonstrations.',
+        isHttpMode
+          ? 'View bookings and check-in records for your current account.'
+          : 'Bookings, check-ins and participation are interface demonstrations.',
       ),
       learning: isHttpMode
         ? t(
@@ -579,13 +589,17 @@ const panelHelp = computed(
         isHttpMode
           ? '申请由平台处理，状态以实际处理结果为准。本次不涉及支付。'
           : '演示申请不构成订单、支付或实际发货。',
-        'Sample requests do not create purchases, payments or deliveries.',
+        isHttpMode
+          ? 'Requests are processed by the platform. Status reflects the recorded outcome. No payment is taken.'
+          : 'Sample requests do not create purchases, payments or deliveries.',
       ),
       archive: t(
         isHttpMode
           ? '摘抄与创作记录保存到当前账号。预设助手文本不代表模型推理。'
           : '摘抄与创作示例保存在本机，可随时返回编辑。',
-        'Local excerpts and writing samples are ready to revisit.',
+        isHttpMode
+          ? 'Excerpts and saved writing belong to your account. Prepared assistant text is not model inference.'
+          : 'Local excerpts and writing samples are ready to revisit.',
       ),
     })[tab.value] ?? '',
 )
@@ -673,8 +687,8 @@ function openInformation(kind: 'privacy' | 'about') {
         {{ t('完成课程', 'Courses completed') }}
       </button>
       <button class="profile-overview-button" @click="tab = 'certificates'">
-        <text>{{ certificateCards.length }}</text>
-        {{ t('证书样张', 'Sample certificates') }}
+        <text>{{ isHttpMode ? t('查看', 'View') : certificateCards.length }}</text>
+        {{ isHttpMode ? t('我的证书', 'My certificates') : t('证书样张', 'Sample certificates') }}
       </button>
       <button class="profile-overview-button" @click="tab = 'messages'">
         <text>{{ unreadCount }}</text>
@@ -700,6 +714,7 @@ function openInformation(kind: 'privacy' | 'about') {
             {{ t('全部已读', 'Mark all read') }}
           </button>
         </view>
+        <DeliveryPreferences v-if="isHttpMode && tab === 'messages'" />
         <view v-if="tab === 'works'" class="profile-subfilters">
           <button
             v-for="item in workFilters"
@@ -710,7 +725,8 @@ function openInformation(kind: 'privacy' | 'about') {
             {{ item.label }}
           </button>
         </view>
-        <view v-if="tab === 'certificates'" class="profile-certificate-grid">
+        <PersonalCertificates v-if="isHttpMode && tab === 'certificates'" />
+        <view v-else-if="tab === 'certificates'" class="profile-certificate-grid">
           <button
             v-for="item in certificateCards"
             :key="item.id"
@@ -858,7 +874,7 @@ function openInformation(kind: 'privacy' | 'about') {
               : tab === 'learning' && isHttpMode && remoteWorkspace.recitations.length
                 ? false
                 : tab === 'certificates'
-                  ? !certificateCards.length
+                  ? !isHttpMode && !certificateCards.length
                   : !rows.length && !visibleMediaRecords.length
           "
           class="empty-state"
@@ -1025,9 +1041,11 @@ function openInformation(kind: 'privacy' | 'about') {
           {{
             t(
               isHttpMode
-                ? '云端记录按账号隔离。试点登录不等于完成实名认证；证书样张不代表正式签发。'
+                ? '云端记录按账号隔离。登录不等于完成实名认证；人工签发的证书可在证书夹查询状态。'
                 : '可体验本机模拟登录与认证。真实授权、实名认证和跨设备同步尚未接入。',
-              'Local sign-in and verification states can be previewed. Real authorisation, identity checks and cross-device sync are not connected.',
+              isHttpMode
+                ? 'Cloud records are isolated by account. Login is not verified identity; manually issued certificates can be checked in your certificate folder.'
+                : 'Local sign-in and verification states can be previewed. Real authorisation, identity checks and cross-device sync are not connected.',
             )
           }}
         </text>
@@ -1094,7 +1112,9 @@ function openInformation(kind: 'privacy' | 'about') {
         <text class="section-title">
           {{
             information === 'privacy'
-              ? t('隐私与本机数据', 'Privacy and local data')
+              ? isHttpMode
+                ? t('隐私与账号数据', 'Privacy and account data')
+                : t('隐私与本机数据', 'Privacy and local data')
               : t('家风中华行', 'Family Values · China')
           }}
         </text>
@@ -1105,7 +1125,17 @@ function openInformation(kind: 'privacy' | 'about') {
                 isHttpMode
                   ? '草稿、投稿、附件、收藏、学习、预约和申请记录会通过服务接口保存在平台，并关联当前账号。媒体本机样片和离线样张仍保留其明确标识。'
                   : '草稿、投稿、收藏、学习、预约和文创演示记录保存在当前设备，未连接真实账户或后台服务。请使用虚构信息体验。',
-                'Drafts, submissions, favourites, learning, bookings and sample gift requests are stored on this device. No real account or backend is connected. Use fictional information.',
+                isHttpMode
+                  ? 'Drafts, submissions, attachments, favourites, learning, bookings and requests are saved by the platform and linked to your account. Local sample media and offline certificate samples remain labelled as such.'
+                  : 'Drafts, submissions, favourites, learning, bookings and sample gift requests are stored on this device. No real account or backend is connected. Use fictional information.',
+              )
+            }}
+          </text>
+          <text v-if="isHttpMode" class="profile-dialog-paragraph">
+            {{
+              t(
+                '登录后阅读或复制分享链接，会记录账号、内容、动作与日期，用于按日去重的访问和分享意向统计；不采集匿名设备指纹或IP，也不会把复制链接计为实际转发。',
+                'When signed in, reading or copying a share link records your account, content, action and date for daily deduplicated view and share-intent statistics. No anonymous device fingerprint or IP is collected for these metrics. Copying a link does not confirm an actual share.',
               )
             }}
           </text>
@@ -1115,7 +1145,9 @@ function openInformation(kind: 'privacy' | 'about') {
                 isHttpMode
                   ? '清理设备存储会移除登录状态和本机设置，不会删除服务端账号记录。此为试点功能说明，正式隐私协议与留存期限须由运营方另行发布。'
                   : '清理浏览器或小程序存储会清除记录；更换设备不会自动同步。本说明描述演示的数据行为，不是正式服务隐私协议。',
-                'Clearing browser or mini-program storage removes records. Data does not sync to another device. This describes the demo and is not a production privacy policy.',
+                isHttpMode
+                  ? 'Clearing device storage removes your session and local preferences, not server account records. This describes pilot functionality. The operator must publish the formal privacy policy and retention periods.'
+                  : 'Clearing browser or mini-program storage removes records. Data does not sync to another device. This describes the demo and is not a production privacy policy.',
               )
             }}
           </text>
@@ -1124,16 +1156,24 @@ function openInformation(kind: 'privacy' | 'about') {
           <text class="profile-dialog-paragraph">
             {{
               t(
-                '记录家庭故事，传承优良家风。当前版本用于前端界面展示和需求沟通。',
-                'Record family stories and share lasting values. This version supports interface demonstration and requirements discussion.',
+                isHttpMode
+                  ? '记录家庭故事，传承优良家风。当前连接平台业务服务。'
+                  : '记录家庭故事，传承优良家风。当前版本用于前端界面展示和需求沟通。',
+                isHttpMode
+                  ? 'Record family stories and share lasting values. This version connects to platform services.'
+                  : 'Record family stories and share lasting values. This version supports interface demonstration and requirements discussion.',
               )
             }}
           </text>
           <text class="profile-dialog-paragraph">
             {{
               t(
-                '基于 Uni-app、Vue 3 与 Wot UI 构建，使用本地思源字体子集。文章、活动、课程、证书与业务数据均为样例。',
-                'Built with Uni-app, Vue 3 and Wot UI, with local Source Han font subsets. Articles, activities, courses, certificates and business data are samples.',
+                isHttpMode
+                  ? '文章、活动、课程和业务记录来自平台，标注为样例的内容仅供展示；正式证书以签发记录及验真结果为准。'
+                  : '基于 Uni-app、Vue 3 与 Wot UI 构建，使用本地思源字体子集。文章、活动、课程、证书与业务数据均为样例。',
+                isHttpMode
+                  ? 'Articles, activities, courses and business records come from the platform. Labelled samples are for demonstration. Official certificates are supported by issue records and verification.'
+                  : 'Built with Uni-app, Vue 3 and Wot UI, with local Source Han font subsets. Articles, activities, courses, certificates and business data are samples.',
               )
             }}
           </text>

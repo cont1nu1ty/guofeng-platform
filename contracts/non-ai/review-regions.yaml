@@ -1,0 +1,892 @@
+x-integration-notes:
+- Merge paths and components into main OpenAPI. Existing /submissions/{id}/progress
+  now includes timeline and revisionTimelines (ReviewTimeline) and whitelisted revision
+  content.
+- 'configureReviewFlow accepts rubrics: ReviewRubric[6]; each revision freezes configured
+  stages and rubrics on submission/resubmission/import. Missing historical evidence
+  stays unknown.'
+- Author timeline derives completed/current/stopped from WarmFlow facts and strips
+  staff identities. Expert task/review DTO dimensions and ruleVersion are immutable
+  per assigned node.
+- H5 map explicitly activated by user loads official OpenStreetMap iframe with its
+  attribution intact. Requires public network and verified WGS84. Third party receives
+  network address but not user's device location. Mini-program map requires verified
+  GCJ02; existing navigation preserved.
+paths:
+  /admin/review-assignments/candidates:
+    get:
+      operationId: reviewAssignmentCandidates
+      summary: 读取当前稿件可分配专家
+      description: Requires reviews:manage and manuscript province scope. Filters
+        active expert-role accounts, own-author conflicts, account scope and availability;
+        independent of paginated UI expert list.
+      parameters:
+      - in: query
+        name: submissionId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    region:
+                      type: string
+                    group:
+                      type: string
+                    availability:
+                      type: string
+                    openTasks:
+                      type: integer
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/review-assignments/preview:
+    post:
+      operationId: previewReviewAssignments
+      summary: 预览确定性批量分配
+      description: Requires reviews:manage. Read-only. Selects scope/group/availability,
+        fewest active pending tasks, then stable expert ID. Selected work versions
+        are checked. No WarmFlow mutation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentPlan'
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/review-assignments/confirm:
+    post:
+      operationId: confirmReviewAssignments
+      summary: 确认预览分配
+      description: Requires reviews:manage. Locks manuscripts and experts, recomputes
+        preview fingerprint. Stale state returns 409; supplied stale work version
+        returns 412. Transactional all selected assignments reuse existing assignReview
+        and WarmFlow.
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+        description: Persist key across retries. Same owner/key with changed payload
+          returns 409.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentConfirmation'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  assigned:
+                    type: integer
+                  excluded:
+                    type: array
+                    items:
+                      type: object
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/submission-imports/preview:
+    post:
+      operationId: previewOfflineSubmissions
+      summary: 预检线下文字稿件
+      description: Requires submissions:write; existing member owner, own account
+        province and operator province required. Maximum 100 rows. Source name+reference
+        unique globally. Reports row errors; creates no data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfflineImportInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OfflineImportPlan'
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/submission-imports/confirm:
+    post:
+      operationId: confirmOfflineSubmissions
+      summary: 确认线下归集
+      description: 'Requires submissions:write. Rechecks fingerprint/all errors; saves
+        immutable revision, source and workflow/rubric binding, sends account message.
+        Does not sign for author: copyrightAccepted=false and requiresAuthorConfirmation=true;
+        initial approval remains blocked until owner''s independent copyright confirmation.'
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+        description: Persist key across retries. Same owner/key with changed payload
+          returns 409.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfflineImportConfirmation'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  imported:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        revisionId:
+                          type: string
+        default:
+          $ref: '#/components/responses/Error'
+  /regions/children:
+    get:
+      operationId: publicRegionChildren
+      summary: 读取已启用的市县子节点
+      description: Empty parentId returns existing province dictionary; unpublished/disabled
+        ancestors are hidden. Display taxonomy never changes province-level authorization.
+      security: []
+      parameters:
+      - in: query
+        name: parentId
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RegionNode'
+                  notice:
+                    type: string
+        default:
+          $ref: '#/components/responses/Error'
+  /regions/venues:
+    get:
+      operationId: publicRegionVenues
+      summary: 读取市县已发布阵地 ID
+      description: Exact county or city with its direct counties; only enabled nodes
+        and published venues. Invalid/disabled node 404.
+      security: []
+      parameters:
+      - in: query
+        name: areaId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ids:
+                    type: array
+                    items:
+                      type: string
+        default:
+          $ref: '#/components/responses/Error'
+  /regions/venue-map/{id}:
+    get:
+      operationId: publicVenueMapSettings
+      summary: 读取已发布阵地坐标系
+      description: Public only for published venue. Coordinate provenance explicitly
+        maintained by staff. No implicit WGS84/GCJ02 conversion.
+      security: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  coordinateSystem:
+                    type: string
+                    enum:
+                    - unknown
+                    - wgs84
+                    - gcj02
+        default:
+          $ref: '#/components/responses/Error'
+  /regions/venue-coordinates:
+    get:
+      operationId: publicVenueCoordinates
+      summary: 读取经核对 WGS84 阵地坐标
+      description: Only published non-sample venues explicitly marked wgs84. Used
+        for client-side distance sorting; no user location is sent to server.
+      security: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        latitude:
+                          type: number
+                        longitude:
+                          type: number
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/regions:
+    get:
+      operationId: adminRegionChildren
+      summary: 读取授权地区子目录
+      description: Requires regions:read and parent province scope. Includes disabled
+        nodes.
+      parameters:
+      - in: query
+        name: parentId
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RegionNode'
+                  notice:
+                    type: string
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      operationId: saveRegionNode
+      summary: 新增或维护市县节点
+      description: Requires regions:write and parent province scope. At most province/city/county.
+        Parent of an existing node immutable; updates require version. Source required;
+        no fabricated nationwide city dataset.
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+        description: Persist key across retries. Same owner/key with changed payload
+          returns 409.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegionInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionNode'
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/regions/venues/{id}:
+    get:
+      operationId: getVenueAreaBinding
+      summary: 读取阵地市县与坐标来源
+      description: Requires content:write and venue province scope.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VenueAreaBinding'
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      operationId: saveVenueAreaBinding
+      summary: 保存阵地市县与坐标来源
+      description: Requires content:write, same-province enabled city/county, and
+        current venue version. Empty areaId removes association. Bumps venue version
+        and public generation. Changes neither venue coordinates nor province scope.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+        description: Persist key across retries. Same owner/key with changed payload
+          returns 409.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VenueAreaInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VenueAreaBinding'
+        default:
+          $ref: '#/components/responses/Error'
+  /admin/consultations/{id}:
+    get:
+      operationId: getAdminConsultation
+      summary: 读取定制咨询跟进
+      description: Requires welfare:read and claim province scope; only kind=custom.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consultation'
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      operationId: followUpConsultation
+      summary: 保存人工沟通或参考报价
+      description: Requires welfare:write, province scope, current claim version,
+        kind=custom. Cancelled claims reject follow-up. Appends immutable customer-visible
+        event and sends station notification. Does not create payment/order/logistics
+        or change inventory. May record a new stage after closed; prior history remains.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+        description: Persist key across retries. Same owner/key with changed payload
+          returns 409.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsultationInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consultation'
+        default:
+          $ref: '#/components/responses/Error'
+  /me/consultations/{id}:
+    get:
+      operationId: getMyConsultation
+      summary: 本人查询定制咨询历史
+      description: Authenticated owner only; other owners and non-custom claims get
+        404. No operator identity is returned.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consultation'
+        default:
+          $ref: '#/components/responses/Error'
+components:
+  schemas:
+    ReviewDimension:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        max:
+          type: integer
+          minimum: 1
+          maximum: 100
+        description:
+          type: string
+      required:
+      - id
+      - label
+      - max
+    ReviewRubric:
+      type: object
+      properties:
+        title:
+          type: string
+        ruleVersion:
+          type: string
+        dimensions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewDimension'
+          minItems: 1
+          maxItems: 10
+      required:
+      - title
+      - ruleVersion
+      - dimensions
+    ReviewTimeline:
+      type: object
+      properties:
+        revisionNumber:
+          type: integer
+        flowVersion:
+          type: integer
+          nullable: true
+        source:
+          type: string
+        started:
+          type: boolean
+        notice:
+          type: string
+        stages:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              label:
+                type: string
+              enabled:
+                type: boolean
+                nullable: true
+              state:
+                enum:
+                - completed
+                - current
+                - disabled
+                - stopped
+                - pending
+                - not_started
+                - unknown
+                type: string
+              completedAt:
+                type: string
+                nullable: true
+              rubric:
+                $ref: '#/components/schemas/ReviewRubric'
+        events:
+          type: array
+          items:
+            type: object
+            properties:
+              nodeCode:
+                type: string
+              stage:
+                type: string
+              outcome:
+                type: string
+                enum:
+                - completed
+                - stopped
+                - recorded
+              time:
+                type: string
+                format: date-time
+    AssignmentInput:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 100
+        versions:
+          type: object
+          additionalProperties:
+            type: integer
+        group:
+          type: string
+      required:
+      - ids
+    AssignmentPlan:
+      type: object
+      properties:
+        fingerprint:
+          type: string
+        rule:
+          type: string
+        rows:
+          type: array
+          items:
+            type: object
+            properties:
+              submissionId:
+                type: string
+              title:
+                type: string
+              version:
+                type: integer
+              expertId:
+                type: string
+              expertName:
+                type: string
+              openTasks:
+                type: integer
+        excluded:
+          type: array
+          items:
+            type: object
+            properties:
+              submissionId:
+                type: string
+              title:
+                type: string
+              reason:
+                type: string
+      required:
+      - fingerprint
+      - rows
+      - excluded
+    AssignmentConfirmation:
+      allOf:
+      - $ref: '#/components/schemas/AssignmentInput'
+      - type: object
+        properties:
+          fingerprint:
+            type: string
+        required:
+        - fingerprint
+    OfflineImportRow:
+      type: object
+      properties:
+        ownerId:
+          type: string
+        sourceName:
+          type: string
+        sourceRef:
+          type: string
+        title:
+          type: string
+        author:
+          type: string
+        content:
+          type: string
+        region:
+          type: string
+        genre:
+          type: string
+        channel:
+          type: string
+        themes:
+          type: array
+          items:
+            type: string
+        overseasLocation:
+          type: string
+      required:
+      - ownerId
+      - sourceName
+      - sourceRef
+      - title
+      - author
+      - content
+      - region
+      - genre
+      - channel
+      - themes
+    OfflineImportInput:
+      type: object
+      properties:
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfflineImportRow'
+          minItems: 1
+          maxItems: 100
+      required:
+      - rows
+    OfflineImportPlan:
+      type: object
+      properties:
+        fingerprint:
+          type: string
+        notice:
+          type: string
+        rows:
+          type: array
+          items:
+            type: object
+            properties:
+              row:
+                type: integer
+              ownerId:
+                type: integer
+              ownerName:
+                type: string
+              ownerVersion:
+                type: integer
+              sourceKey:
+                type: string
+              data:
+                type: object
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              row:
+                type: integer
+              code:
+                type: string
+              message:
+                type: string
+    OfflineImportConfirmation:
+      allOf:
+      - $ref: '#/components/schemas/OfflineImportInput'
+      - type: object
+        properties:
+          fingerprint:
+            type: string
+        required:
+        - fingerprint
+    RegionNode:
+      type: object
+      properties:
+        id:
+          type: string
+        parentId:
+          type: string
+        provinceId:
+          type: string
+        level:
+          type: integer
+          minimum: 0
+          maximum: 2
+        name:
+          type: string
+        nameEn:
+          type: string
+        officialCode:
+          type: string
+        source:
+          type: string
+        enabled:
+          type: boolean
+        version:
+          type: integer
+    RegionInput:
+      type: object
+      properties:
+        id:
+          type: string
+        parentId:
+          type: string
+        name:
+          type: string
+          maxLength: 100
+        nameEn:
+          type: string
+          maxLength: 200
+        officialCode:
+          type: string
+          maxLength: 40
+        source:
+          type: string
+          minLength: 2
+          maxLength: 1000
+        enabled:
+          type: boolean
+        version:
+          type: integer
+      required:
+      - parentId
+      - name
+      - source
+      - enabled
+    VenueAreaBinding:
+      type: object
+      properties:
+        venueId:
+          type: string
+        version:
+          type: integer
+        coordinateSystem:
+          type: string
+          enum:
+          - unknown
+          - wgs84
+          - gcj02
+        area:
+          $ref: '#/components/schemas/RegionNode'
+          nullable: true
+    VenueAreaInput:
+      type: object
+      properties:
+        version:
+          type: integer
+        areaId:
+          type: string
+          description: Empty removes city/county association.
+        coordinateSystem:
+          type: string
+          enum:
+          - unknown
+          - wgs84
+          - gcj02
+      required:
+      - version
+      - coordinateSystem
+    ConsultationEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        stage:
+          type: string
+          enum:
+          - accepted
+          - discussion
+          - quoted
+          - closed
+        note:
+          type: string
+        quoteAmount:
+          type: number
+          nullable: true
+        quoteDescription:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    Consultation:
+      type: object
+      properties:
+        id:
+          type: string
+        version:
+          type: integer
+        stage:
+          type: string
+          enum:
+          - pending
+          - accepted
+          - discussion
+          - quoted
+          - closed
+        cancelled:
+          type: boolean
+        notice:
+          type: string
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsultationEvent'
+    ConsultationInput:
+      type: object
+      properties:
+        version:
+          type: integer
+        stage:
+          type: string
+          enum:
+          - accepted
+          - discussion
+          - quoted
+          - closed
+        note:
+          type: string
+          minLength: 2
+          maxLength: 2000
+        quoteAmount:
+          type: string
+          description: CNY decimal text (0..999999999999.99), at most 2 fractional
+            digits; required only for quoted.
+        quoteDescription:
+          type: string
+          maxLength: 2000
+          description: Required with minimum 5 characters for quoted; otherwise empty.
+      required:
+      - version
+      - stage
+      - note

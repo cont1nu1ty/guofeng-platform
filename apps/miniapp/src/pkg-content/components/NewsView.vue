@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { isHttpMode } from '../../config/dataMode'
+import { recordEngagement } from '../../composables/useEngagement'
 import { region } from '../../composables/useDemo'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
@@ -26,6 +27,7 @@ watch(
   { immediate: true },
 )
 const article = computed(() => newsArticles.find((item) => item.id === params.value.id))
+watch(() => article.value?.id, id => { if(id) void recordEngagement('content', id) }, { immediate: true })
 const activeTopic = computed(() => familyTopics.find((item) => item.id === topic.value))
 const filtered = computed(() =>
   newsArticles.filter(

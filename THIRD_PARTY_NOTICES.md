@@ -1,5 +1,7 @@
 # 第三方来源与许可
 
+2026-10-07 新增服务端文档生成：Apache PDFBox 3.0.7 用于 PDF，保留 `licenses/pdfbox-3.0.7-LICENSE.txt` 与 `licenses/pdfbox-3.0.7-NOTICE.txt`；Noto Sans SC 字体用于中文 PDF 嵌入，保留 `licenses/NotoSansSC-OFL.txt`。固定来源、SHA256 与 FontTools 4.65.0 构建步骤见 `scripts/font-data/server-manifest.json` 和 `scripts/build_server_font.py`。Word 文件由本项目 OOXML 写入器生成。字体用于报表、典籍与证书正文，不代表正式电子签章。
+
 本项目包含需求沟通界面及本机真实服务试点，原创业务代码尚未替用户选择对外开源许可。第三方软件保留其原许可；`private: true` 不替代许可证义务。
 
 | 内容                                                      | 本次使用方式                                                                                       | 来源与许可证                                                                                                                                                                                                                |

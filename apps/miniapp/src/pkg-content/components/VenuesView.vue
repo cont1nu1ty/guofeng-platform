@@ -5,6 +5,10 @@ import { regions } from '../../domain/fixtures'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
 import VenueJourney from './VenueJourney.vue'
+import VenueRegionFilter from './VenueRegionFilter.vue'
+import VenueLocationMap from './VenueLocationMap.vue'
+import { distanceKm } from '../domain/venueRegions'
+import { request } from '../../services/api'
 import { navigate, goBack, useRouteParams } from '../../composables/useNavigation'
 import { t } from '../../composables/useLocale'
 import { region } from '../../composables/useDemo'
@@ -19,6 +23,22 @@ watch(region, (value) => {
 const selectedPin = ref<string>(venues[0]?.id || '')
 const routeVisible = ref(false)
 const category = ref('all')
+const areaVenueIds = ref<string[] | null>(null)
+const nearby = ref<{ latitude: number; longitude: number } | null>(null)
+const locating = ref(false)
+const coordinateIndex = ref<Record<string, {latitude: number; longitude: number}>>({})
+async function locateNearby() {
+  if (locating.value) return
+  locating.value = true
+  try {
+    const result = await request<{ items: {id:string;latitude:number;longitude:number}[] }>('/regions/venue-coordinates')
+    coordinateIndex.value=Object.fromEntries(result.data.items.map(item=>[item.id,item]))
+    uni.getLocation({ type: 'wgs84', success: position => { nearby.value = { latitude: position.latitude, longitude: position.longitude } }, fail: () => uni.showToast({ title: t('定位不可用，可继续按地区查找。', 'Location unavailable. Browse by region.'), icon: 'none' }), complete: () => { locating.value = false } })
+  } catch { locating.value=false; uni.showToast({title:t('坐标读取失败，请稍后重试。','Coordinates unavailable. Please retry.'),icon:'none'}) }
+}
+function distance(item: { id: string; sample?: boolean }) {
+  return nearby.value && !item.sample && coordinateIndex.value[item.id] ? distanceKm(nearby.value, coordinateIndex.value[item.id]!) : Infinity
+}
 const regionOptions = computed(() =>
   regions.filter((r) => r.id === 'all' || venues.some((v) => v.region === r.id)),
 )
@@ -45,8 +65,9 @@ const filtered = computed(() =>
       (selectedRegion.value === 'all' ||
         item.region === 'all' ||
         item.region === selectedRegion.value) &&
-      (category.value === 'all' || item.category === category.value),
-  ),
+      (category.value === 'all' || item.category === category.value) &&
+      (areaVenueIds.value === null || areaVenueIds.value.includes(item.id)),
+  ).sort((a, b) => nearby.value ? distance(a) - distance(b) : 0),
 )
 const highlighted = computed(
   () => filtered.value.find((item) => item.id === selectedPin.value) ?? filtered.value[0],
@@ -118,7 +139,8 @@ const highlighted = computed(
         </view>
       </view>
       <VenueJourney v-if="!isHttpMode" :destination="L(venue.title)" />
-      <view v-else class="content-button-row">
+      <VenueLocationMap v-if="isHttpMode && canNavigateVenue(venue)" :venue-id="venue.id" :latitude="venue.latitude!" :longitude="venue.longitude!" :title="L(venue.title)" />
+      <view v-if="isHttpMode" class="content-button-row">
         <wd-button v-if="canNavigateVenue(venue)" variant="plain" @click="openMap">
           {{ t('在地图中查看', 'Open in map') }}
         </wd-button>
@@ -203,7 +225,7 @@ const highlighted = computed(
         :subtitle="
           t(
             '从一间共读空间到一座文化书院，寻找可参与的家风课堂。',
-            'Explore sample reading rooms, academies and community workshops.',
+            isHttpMode ? 'Explore published reading rooms, academies and community workshops.' : 'Explore sample reading rooms, academies and community workshops.',
           )
         "
       />
@@ -216,6 +238,12 @@ const highlighted = computed(
         >
           {{ t(item.label) }}
         </view>
+      </view>
+      <VenueRegionFilter v-if="isHttpMode" :province-id="selectedRegion" @filter="areaVenueIds = $event" />
+      <view v-if="isHttpMode" class="content-button-row">
+        <wd-button size="small" variant="plain" :loading="locating" @click="locateNearby">{{ t('按离我距离排列', 'Sort by distance') }}</wd-button>
+        <wd-button v-if="nearby" size="small" variant="plain" @click="nearby = null">{{ t('关闭附近排序', 'Stop nearby sorting') }}</wd-button>
+        <text class="scope-note">{{ t('定位仅用于本次距离排序，不保存位置。仅核对过 WGS84 坐标的阵地参与距离计算。', 'Location is used only for this sort and is not saved. Distances use venues with verified WGS84 coordinates.') }}</text>
       </view>
       <view v-if="isHttpMode" class="content-filter-tabs">
         <button
@@ -251,7 +279,8 @@ const highlighted = computed(
         </wd-button>
       </view>
       <view v-else class="content-venue-map-layout">
-        <view class="content-map">
+        <VenueLocationMap v-if="isHttpMode && highlighted && canNavigateVenue(highlighted)" :venue-id="highlighted.id" :latitude="highlighted.latitude!" :longitude="highlighted.longitude!" :title="L(highlighted.title)" />
+        <view v-else-if="!isHttpMode" class="content-map">
           <view class="content-map-grid" />
           <view class="content-map-river" />
           <view class="content-map-road content-map-road-one" />
@@ -282,6 +311,7 @@ const highlighted = computed(
           <text class="content-red-label">{{ L(highlighted.city) }}</text>
           <text class="content-card-title">{{ L(highlighted.title) }}</text>
           <text class="content-description">{{ L(highlighted.description) }}</text>
+          <text v-if="isHttpMode" class="scope-note">{{ L(highlighted.address) }}</text>
           <view class="content-chip-row">
             <text
               v-for="(item, index) in highlighted.highlights"
@@ -318,6 +348,7 @@ const highlighted = computed(
           <view class="content-venue-card-body">
             <text class="content-red-label">{{ L(item.city) }}</text>
             <text class="content-card-title">{{ L(item.title) }}</text>
+            <text v-if="nearby && Number.isFinite(distance(item))" class="content-caption">{{ t('约 ', 'About ') }}{{ distance(item).toFixed(1) }} km</text>
             <text class="content-description">{{ L(item.description) }}</text>
             <view class="content-card-footer">
               <text class="content-caption">

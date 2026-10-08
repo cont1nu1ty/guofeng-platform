@@ -203,7 +203,7 @@
         "adaptedFiles": [
           {
             "path": "apps/admin/src/services/session.ts",
-            "sha256": "59e5fcef50a44801d1267022c3ef63a99264ff38ef7e547c108e9230db43ae11"
+            "sha256": "9ce57ee09b8a194540788bdad391f8d70c96f580f938aa596c6b0fd3c32acd21"
           }
         ]
       },
@@ -214,7 +214,7 @@
         "adaptedFiles": [
           {
             "path": "apps/admin/src/services/session.ts",
-            "sha256": "59e5fcef50a44801d1267022c3ef63a99264ff38ef7e547c108e9230db43ae11"
+            "sha256": "9ce57ee09b8a194540788bdad391f8d70c96f580f938aa596c6b0fd3c32acd21"
           }
         ]
       },
@@ -225,7 +225,7 @@
         "adaptedFiles": [
           {
             "path": "apps/admin/src/services/session.ts",
-            "sha256": "59e5fcef50a44801d1267022c3ef63a99264ff38ef7e547c108e9230db43ae11"
+            "sha256": "9ce57ee09b8a194540788bdad391f8d70c96f580f938aa596c6b0fd3c32acd21"
           }
         ]
       },
@@ -598,11 +598,11 @@
     "files": [
       {
         "path": "deploy/mysql/reset-demo.sql",
-        "sha256": "10bbfa69b3a371fe0bbf335d841f4ddceb049756735b38e5d45e75664349435a"
+        "sha256": "8a4f761a1368f026b3581baa32d6a67bb576ca786e8011d1d199902db00ffc71"
       },
       {
         "path": "deploy/dev",
-        "sha256": "22a5d4c23b5033874b9adc6eae491ee94fad1818ea1ceb6e032af3c1f1b5fe6b"
+        "sha256": "36fa174e335ec1f9d886e9f2910ceb0ebee6ed1bb128ce71f377efa2aca54e82"
       },
       {
         "path": "deploy/demo_state.py",
@@ -636,7 +636,7 @@
     "files": [
       {
         "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfCatalog.java",
-        "sha256": "b5f65549d40ec8874aeb9ea0e28080c2efe4ecf81f4fd2c3104a8c43a0b3a460"
+        "sha256": "f44ff041201646d3572d8c34a2543bd914997fc91285e59797eb55c22c24eafb"
       },
       {
         "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfMultipartErrors.java",
@@ -740,5 +740,16 @@
         "sha256": "a1fa0b8e546374ad36d4ec1cbd1fa56f8e867a4ddd78a374310834263732048a"
       }
     ]
+  },
+  "serverDocuments": {
+    "pdfbox": {
+      "version": "3.0.7",
+      "source": "https://github.com/apache/pdfbox/tree/3.0.7",
+      "license": "Apache-2.0",
+      "licenseFile": "licenses/pdfbox-3.0.7-LICENSE.txt",
+      "noticeFile": "licenses/pdfbox-3.0.7-NOTICE.txt"
+    },
+    "fontManifest": "scripts/font-data/server-manifest.json",
+    "word": "Project-authored OOXML writer; no new Word library"
   }
 }

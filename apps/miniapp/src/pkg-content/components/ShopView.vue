@@ -4,6 +4,7 @@ import { commerceStatusLabels } from '../../domain/showcaseCatalog'
 import { readInputValue } from '../../composables/readInputValue'
 import { computed, reactive, ref, watch } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
+import ConsultationHistory from './ConsultationHistory.vue'
 import {
   culturalProducts,
   validateCommerceForm,
@@ -37,7 +38,7 @@ const visibleProducts = computed(() =>
 )
 const recordsMode = computed(() => params.value.view === 'records')
 const activeRecords = computed(
-  () => commerceRequests.value.filter((request) => request.status === 'recorded').length,
+  () => commerceRequests.value.filter((request) => request.status !== 'cancelled').length,
 )
 const productName = (id: string) => {
   const product = culturalProducts.find((item) => item.id === id)
@@ -96,7 +97,7 @@ async function submitRequest() {
 async function cancel(id: string) {
   try {
     await cancelCommerceRequest(id)
-    uni.showToast({ title: t('已取消本机演示记录', 'Local demo request cancelled'), icon: 'none' })
+    uni.showToast({ title: isHttpMode ? t('申请已取消', 'Request cancelled') : t('已取消本机演示记录', 'Local demo request cancelled'), icon: 'none' })
   } catch {
     uni.showToast({ title: errorMessages.value['showcase-storage'], icon: 'none' })
   }
@@ -131,17 +132,17 @@ function fillExample() {
         :title="t('我的公益申领与定制咨询', 'My community requests and inquiries')"
         :subtitle="
           t(
-            '每一条记录只保存在当前设备，没有真实配送或付款。',
-            'Records are stored on this device. There is no delivery or payment.',
+            isHttpMode ? '申请记录保存在当前账号，由平台处理公益审核与发放或定制咨询；本次不涉及付款或物流对接。' : '每一条记录只保存在当前设备，没有真实配送或付款。',
+            isHttpMode ? 'Requests are saved to your account for community-request processing or custom inquiries. Payment and shipping integrations are not included.' : 'Records are stored on this device. There is no delivery or payment.',
           )
         "
       />
       <view class="shop-record-summary">
         <text>{{ activeRecords }}</text>
         <view>
-          {{ t('条有效演示记录', 'active demo requests') }}
+          {{ isHttpMode ? t('条未取消记录', 'non-cancelled records') : t('条有效演示记录', 'active demo requests') }}
           <text class="showcase-note">
-            {{ t('状态用于沟通页面流程', 'Statuses illustrate the interface flow') }}
+            {{ isHttpMode ? t('点击记录查看当前处理与跟进', 'Open a record to view progress and follow-up') : t('状态用于沟通页面流程', 'Statuses illustrate the interface flow') }}
           </text>
         </view>
       </view>
@@ -162,14 +163,14 @@ function fillExample() {
           <text class="showcase-kicker">
             {{
               request.kind === 'public'
-                ? t('公益申领 · 演示', 'Community request · demo')
-                : t('定制咨询 · 演示', 'Custom inquiry · demo')
+                ? (isHttpMode ? t('公益申领', 'Community request') : t('公益申领 · 演示', 'Community request · demo'))
+                : (isHttpMode ? t('定制咨询', 'Custom inquiry') : t('定制咨询 · 演示', 'Custom inquiry · demo'))
             }}
           </text>
           <text :class="['shop-status', { cancelled: request.status === 'cancelled' }]">
             {{
               isHttpMode
-                ? commerceStatusLabels[request.status]
+                ? (request.kind === 'custom' && request.status !== 'cancelled' ? t('查看咨询跟进', 'View inquiry progress') : commerceStatusLabels[request.status])
                 : request.status === 'cancelled'
                   ? t('已取消', 'Cancelled')
                   : t('已记录，待沟通', 'Recorded for discussion')
@@ -182,6 +183,7 @@ function fillExample() {
         <text class="showcase-note" selectable>
           {{ request.id }} · {{ request.createdAt.slice(0, 10) }}
         </text>
+        <ConsultationHistory v-if="isHttpMode && request.kind === 'custom'" :claim-id="request.id" :cancelled="request.status === 'cancelled'" />
         <view class="showcase-actions">
           <wd-button
             size="small"
@@ -196,7 +198,7 @@ function fillExample() {
             variant="plain"
             @click="cancel(request.id)"
           >
-            {{ t('取消演示记录', 'Cancel demo request') }}
+            {{ isHttpMode ? t('取消申请', 'Cancel request') : t('取消演示记录', 'Cancel demo request') }}
           </wd-button>
         </view>
       </view>
@@ -327,7 +329,7 @@ function fillExample() {
               isHttpMode
                 ? '我同意将申请发送给平台处理。本次不产生报价、合同或付款。'
                 : '我了解这只是本机演示，不产生真实申领、报价、合同或付款。',
-              'I understand this local demo creates no real request, quote, contract or payment.',
+              isHttpMode ? 'I agree to send this request to the platform. This does not create a quote, contract or payment.' : 'I understand this local demo creates no real request, quote, contract or payment.',
             )
           }}
         </wd-checkbox>
@@ -380,11 +382,11 @@ function fillExample() {
           </view>
           <view>
             <text>2</text>
-            {{ t('本机记录', 'Save locally') }}
+            {{ isHttpMode ? t('账号记录', 'Account record') : t('本机记录', 'Save locally') }}
           </view>
           <view class="future">
             <text>3</text>
-            {{ t('真实受理待接入', 'Service integration pending') }}
+            {{ isHttpMode ? t('等待平台处理', 'Awaiting platform processing') : t('真实受理待接入', 'Service integration pending') }}
           </view>
         </view>
         <wd-button @click="navigate('shop', { view: 'records' })">

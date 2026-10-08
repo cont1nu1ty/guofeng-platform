@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { isHttpMode } from '../../config/dataMode'
+import { remoteUser } from '../../services/api'
+import { recordEngagement } from '../../composables/useEngagement'
 import { region } from '../../composables/useDemo'
 import MediaSubmissionPanel from './MediaSubmissionPanel.vue'
 import MediaAudioPlayer from './MediaAudioPlayer.vue'
+import MediaAccessibilityPanel from './MediaAccessibilityPanel.vue'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
 import MediaCreationPanel from './MediaCreationPanel.vue'
@@ -25,11 +28,23 @@ const regionalMedia = computed(() =>
   ),
 )
 const current = computed(() => mediaCatalog.find((item) => item.id === params.value.id))
+watch(
+  () => [current.value?.id, remoteUser.value?.id],
+  () => {
+    if (current.value) void recordEngagement('media', current.value.id)
+  },
+  { immediate: true },
+)
 const replayCache = useReplayCache(current)
 const filter = ref('all')
 const shareOpen = ref(false)
 const playerError = ref(false)
 const playerLoading = ref(false)
+const currentTime = ref(0)
+function onTimeUpdate(event: unknown) {
+  playerLoading.value = false
+  currentTime.value = (event as { detail?: { currentTime?: number } }).detail?.currentTime || 0
+}
 const copied = ref(false)
 const lt = (value: BilingualText) => t(value.zh, value.en)
 const filters = computed(() => [
@@ -55,6 +70,7 @@ watch(
     shareOpen.value = false
     playerError.value = false
     copied.value = false
+    currentTime.value = 0
   },
 )
 async function toggleAction(action: 'favorite' | 'like') {
@@ -86,6 +102,7 @@ function copyShare() {
     data: `${link ? link + '\n' : ''}${lt(current.value.title)} · ${isHttpMode ? t('家风中华行', 'Family Heritage') : t('家风中华行前端演示', 'Family Heritage frontend demo')}\n${t('在短视频展播搜索片名查看。', 'Search the title in the media gallery.')}`,
     success() {
       copied.value = true
+      if (current.value) void recordEngagement('media', current.value.id, 'share_intent')
     },
     fail() {
       uni.showToast({
@@ -123,7 +140,7 @@ function copyShare() {
               :autoplay="false"
               @waiting="playerLoading = true"
               @loadedmetadata="playerLoading = false"
-              @timeupdate="playerLoading = false"
+              @timeupdate="onTimeUpdate"
               @error="playerError = true"
             />
             <view v-else class="media-player-fallback">
@@ -142,6 +159,11 @@ function copyShare() {
               </wd-button>
             </view>
           </view>
+          <MediaAccessibilityPanel
+            v-if="isHttpMode"
+            :media-id="current.id"
+            :current-time="currentTime"
+          />
           <text v-if="playerLoading && !playerError" class="showcase-note" role="status">
             {{ t('正在缓冲…', 'Buffering…') }}
           </text>
@@ -333,8 +355,8 @@ function copyShare() {
               {{
                 isHttpMode
                   ? t(
-                      '媒体由后台审核发布，点赞和收藏保存在当前账号。直播和转码服务尚未配置。',
-                      'Media is reviewed and published by editors. Likes and saved items belong to your account. Live streaming and transcoding are not configured.',
+                      '媒体由后台审核发布，点赞和收藏保存在当前账号。上传视频统一转换为MP4，可选人工字幕与朗读；直播尚未接入。',
+                      'Media is reviewed and published by editors. Likes and saved items belong to your account. Uploaded videos are normalized to MP4. Editors can add captions and recordings; live streaming is not connected.',
                     )
                   : t(
                       '样片为本项目自制的文字动画。讲堂内容用于演示回放布局，没有正在进行的直播。点赞与收藏仅保存在当前设备。',

@@ -3,7 +3,7 @@ import { isHttpMode, modeText } from "../services/mode";
 
 import { savePlatformConfig, saveNotificationDraft } from "../services/actions";
 
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watch, watchEffect } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
   Plus,
@@ -16,13 +16,16 @@ import {
 } from "@element-plus/icons-vue";
 import PageHeading from "../components/PageHeading.vue";
 import SearchStatus from "../components/SearchStatus.vue";
+import RegionManager from "../components/RegionManager.vue";
+import { can } from "../services/session";
 import {
   platformConfig,
   notificationDrafts,
   type NotificationDraft,
 } from "../domain/operations";
 import { activityLog } from "../domain/workspace";
-import { command } from "../services/workspaceData";
+import { command, selectRecordCollection } from "../services/workspaceData";
+import { accessibleSettingsTabs } from "../domain/settingsAccess";
 async function sendNotification(item: NotificationDraft) {
   try {
     await ElMessageBox.confirm(
@@ -42,6 +45,13 @@ async function sendNotification(item: NotificationDraft) {
 }
 const tab = ref("platform"),
   query = ref("");
+const availableTabs = computed(() => accessibleSettingsTabs(can, isHttpMode));
+watchEffect(() => { if (!availableTabs.value.includes(tab.value)) tab.value = availableTabs.value[0] || ""; });
+watch(tab, (value) => {
+  if (!isHttpMode) return;
+  if (value === "notifications") void selectRecordCollection("notificationDrafts");
+  if (value === "logs") void selectRecordCollection("activityLog");
+}, { immediate: true });
 const config = reactive({ ...platformConfig });
 const dirty = computed(
   () => JSON.stringify(config) !== JSON.stringify(platformConfig),
@@ -98,28 +108,29 @@ function preview(item: NotificationDraft) {
   />
   <section class="panel settings-panel">
     <el-tabs v-model="tab" @tab-change="query = ''"
-      ><el-tab-pane name="platform"
+      ><el-tab-pane v-if="can('settings:read')" name="platform"
         ><template #label
           ><span class="tab-label"
             ><el-icon><Setting /></el-icon>平台配置</span
           ></template
         ></el-tab-pane
-      ><el-tab-pane name="notifications"
+      ><el-tab-pane v-if="can('notifications:read')" name="notifications"
         ><template #label
           ><span class="tab-label"
             ><el-icon><Bell /></el-icon>通知草稿</span
           ></template
         ></el-tab-pane
-      ><el-tab-pane name="logs"
+      ><el-tab-pane v-if="can('audit:read')" name="logs"
         ><template #label
           ><span class="tab-label"
             ><el-icon><Document /></el-icon>操作日志</span
           ></template
         ></el-tab-pane
-      ><el-tab-pane v-if="isHttpMode" name="search" label="搜索服务"
-    /></el-tabs>
-    <SearchStatus v-if="tab === 'search'" />
-    <div v-if="tab === 'platform'" class="settings-grid">
+      ><el-tab-pane v-if="isHttpMode && can('settings:read')" name="search" label="搜索服务"
+    /><el-tab-pane v-if="isHttpMode && can('regions:read')" name="regions" label="市县目录" /></el-tabs>
+    <SearchStatus v-if="tab === 'search' && can('settings:read')" />
+    <RegionManager v-if="tab === 'regions' && can('regions:read')" />
+    <div v-if="tab === 'platform' && can('settings:read')" class="settings-grid">
       <div class="settings-main">
         <div class="settings-section">
           <div class="settings-section-heading">
@@ -256,7 +267,7 @@ function preview(item: NotificationDraft) {
         </div>
       </aside>
     </div>
-    <template v-else-if="tab === 'notifications'"
+    <template v-else-if="tab === 'notifications' && can('notifications:read')"
       ><div class="notification-heading">
         <div>
           <h2 class="section-title">把每一条通知准备妥当</h2>
@@ -270,7 +281,7 @@ function preview(item: NotificationDraft) {
           </p>
         </div>
         <el-button
-          v-has-permi="'settings:write'"
+          v-has-permi="'notifications:write'"
           type="primary"
           :icon="Plus"
           @click="createDraft"
@@ -310,7 +321,7 @@ function preview(item: NotificationDraft) {
               >预览通知</el-button
             ><el-button
               v-if="isHttpMode && row.status !== '已发送'"
-              v-has-permi="'settings:write'"
+              v-has-permi="'notifications:write'"
               type="primary"
               link
               @click="sendNotification(row)"
@@ -325,7 +336,7 @@ function preview(item: NotificationDraft) {
         {{ modeText("服务端持久保存", "仅当前会话保留") }}
       </div></template
     >
-    <template v-else-if="tab === 'logs'"
+    <template v-else-if="tab === 'logs' && can('audit:read')"
       ><div class="log-heading">
         <h2 class="section-title">操作记录</h2>
         <p class="muted">
@@ -412,7 +423,7 @@ function preview(item: NotificationDraft) {
     /><template #footer
       ><el-button @click="newDraftOpen = false">取消</el-button
       ><el-button
-        v-has-permi="'settings:write'"
+        v-has-permi="'notifications:write'"
         type="primary"
         @click="saveDraft"
         >保存草稿</el-button

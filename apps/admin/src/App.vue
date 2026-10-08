@@ -14,6 +14,7 @@ import {
 } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import SidebarNav from "./components/SidebarNav.vue";
+import ServerPageBar from "./components/ServerPageBar.vue";
 import {
   activityLog,
   navigation,
@@ -123,7 +124,7 @@ const menuMatches = computed(() =>
 const miniappUrl =
   import.meta.env.VITE_MINIAPP_URL ||
   (isHttpMode
-    ? "/miniapp/"
+    ? "/"
     : `${window.location.protocol}//${window.location.hostname}:5173/`);
 function navigate(path: string) {
   router.push(path);
@@ -343,6 +344,7 @@ async function reset() {
             >重新加载数据</el-button
           ></el-alert
         >
+        <ServerPageBar v-if="hasWorkspace && canVisit(route.path)" />
         <router-view v-if="hasWorkspace && canVisit(route.path)" />
         <el-empty
           v-else-if="hasWorkspace"

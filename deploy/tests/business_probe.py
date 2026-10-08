@@ -94,14 +94,16 @@ def main():
     check('regional list/detail/write/file boundaries')
     zj.act('returnSubmission','submissions',sid,{'reason':'请补充家风故事的真实细节后再次提交。'})
     returned=next(x for x in a.workspace()['works'] if x['id']==sid)
+    flow=admin.workspace(True)['reviewFlow'];original={k:flow[k] for k in ('blind','deadlineDays','enabled','rubrics') if k in flow}
+    admin.command('configureReviewFlow',data={'blind':True,'deadlineDays':7,'enabled':[True,True,False,False,False,False]},version=flow['lockVersion'],admin=True)
     revised={**d,'content':d['content']+'这是修改后的新版本，补充了更多故事细节。'}
-    w2=a.call('POST',f'/submissions/{sid}/revisions',revised,{'Idempotency-Key':str(uuid.uuid4()),'If-Match':f'"{returned["version"]}"'})[1]
+    try:
+        w2=a.call('POST',f'/submissions/{sid}/revisions',revised,{'Idempotency-Key':str(uuid.uuid4()),'If-Match':f'"{returned["version"]}"'})[1]
+    finally:
+        cfg=admin.workspace(True)['reviewFlow'];admin.command('configureReviewFlow',data=original,version=cfg['lockVersion'],admin=True)
     progress=a.call('GET',f'/submissions/{sid}/progress')[1]
     check('return and resubmit keep work ID with immutable original revision',w2['id']==sid and len(progress['revisions'])==2 and progress['revisions'][0]['content']['content']==d['content'])
-    flow=admin.workspace(True)['reviewFlow'];original={k:flow[k] for k in ('blind','deadlineDays','enabled')}
-    admin.command('configureReviewFlow',data={'blind':True,'deadlineDays':7,'enabled':[True,True,False,False,False,False]},version=flow['lockVersion'],admin=True)
     zj.act('approveSubmission','submissions',sid)
-    cfg=admin.workspace(True)['reviewFlow'];admin.command('configureReviewFlow',data=original,version=cfg['lockVersion'],admin=True)
     zj.act('assignReview','submissions',sid,{'expertId':'10004'},expected=422)
     zj.act('prepareBlindMaterial','submissions',sid,{'content':'这份脱敏家书记述了家风传承与日常生活，不包含作者身份或原始文件。','confirmed':True})
     expertAccount=next(x for x in admin.workspace(True)['users']if x['id']=='10004')
@@ -110,6 +112,8 @@ def main():
     assert zj.call('GET','/auth/me')[1]['id']=='10002'
     expertAccount=next(x for x in admin.workspace(True)['users']if x['id']=='10004')
     admin.command('toggleUser','10004',{'enabled':True},expertAccount['lockVersion'],True)
+    expert.call('GET','/auth/me',expected=401)
+    expert=Client('expert_zj','admin')
     check('disabled experts cannot receive tasks without invalidating operator session')
     zj.act('assignReview','submissions',sid,{'expertId':'10004','dueAt':(dt.datetime.now(dt.timezone.utc)+dt.timedelta(seconds=2)).isoformat()})
     task=next(x for x in expert.workspace()['reviewTasks'] if x['submissionId']==sid)
@@ -160,11 +164,16 @@ def main():
     zj.act('setActivityStatus','activities',aid,{'status':'进行中'});a.command('activity.checkIn',aid)
     check('cancellation/re-registration/duplicate/check-in ledger',len(zj.entity('activities',aid)['registrations'])==1 and zj.entity('activities',aid)['registrations'][0]['checkedIn'])
     check('check-in timestamp is recorded independently of registration',bool(a.workspace()['learning']['checkIns'].get(aid)))
-    course=zj.command('saveCourse',data={'title':'真实学习台账验收 '+STAMP,'category':'家风教育','duration':20,'chapters':3,'description':'这门试点课程用于检验导读完成与真实学习记录聚合。','teacher':'家风教研组'},admin=True)['result'];courseid=course['id'];zj.act('toggleCourse','courses',courseid,{'status':'已上架'})
-    changedDescription='课程导读已真实修订，用于确认后台编辑后用户端正文同步更新。'
-    zj.command('saveCourse',courseid,{'title':course['title'],'category':'家风教育','duration':20,'chapters':1,'description':changedDescription,'teacher':'家风教研组'},zj.entity('courses',courseid)['lockVersion'],True)
-    check('course edits update the actual published introductory lesson',next(c for c in a.workspace()['courses'] if c['id']==courseid)['lessons'][0]['body']==changedDescription)
-    a.command('course.progress',courseid,{'lessonId':'missing'},expected=422);a.command('course.progress',courseid,{'lessonId':'intro'})
+    courseTitle='真实学习台账验收 '+STAMP
+    course=zj.command('saveCourse',data={'title':courseTitle,'category':'家风教育','duration':20,'chapters':3,'description':'这门试点课程用于检验导读完成与真实学习记录聚合。','teacher':'家风教研组'},admin=True)['result'];courseid=course['id'];zj.act('toggleCourse','courses',courseid,{'status':'已上架'})
+    originalCourse=next(c for c in a.workspace()['courses'] if c['id']==courseid)
+    changedDescription='课程导读已真实修订，用于确认后台草稿编辑不会改变已发布的学习版本。'
+    zj.command('saveCourse',courseid,{'title':courseTitle,'category':'家风教育','duration':20,'chapters':1,'description':changedDescription,'teacher':'家风教研组'},zj.entity('courses',courseid)['lockVersion'],True)
+    check('course edits remain draft until a new immutable version is published',next(c for c in a.workspace()['courses'] if c['id']==courseid)['description']==originalCourse['description'])
+    zj.act('publishCourse','courses',courseid)
+    publishedCourse=next(c for c in a.workspace()['courses'] if c['id']==courseid)
+    a.command('course.progress',courseid,{'lessonId':'missing'},expected=422)
+    for lesson in publishedCourse['lessons']:a.command('course.progress',courseid,{'lessonId':lesson['id'],'publicationVersion':publishedCourse['publicationVersion']})
     check('learning completion uses actual published lessons',bool(a.workspace()['learning']['courses'][courseid].get('completedAt')))
     product=zj.command('saveProduct',data={'title':'公益库存验收 '+STAMP,'stock':2,'quota':2,'region':'浙江省','description':'真实库存事务验证'},admin=True)['result'];pid=product['id'];claimkey=str(uuid.uuid4());claimdata={'kind':'public','organization':'验收单位','quantity':2,'purpose':'验证公益库存发放的数据库事务。'}
     claim=a.command('welfare.claim',pid,claimdata,key=claimkey)['result'];same=a.command('welfare.claim',pid,claimdata,key=claimkey)['result'];assert claim['id']==same['id']

@@ -79,7 +79,7 @@ const filtered = computed(() =>
   ),
 );
 const rows = computed(() =>
-  filtered.value.slice(
+  isHttpMode ? filtered.value : filtered.value.slice(
     (page.value - 1) * limit.value,
     page.value * limit.value,
   ),
@@ -340,7 +340,7 @@ async function assign() {
           ></el-table-column
         >
       </el-table>
-      <Pagination
+      <Pagination v-if="!isHttpMode"
         v-model:page="page"
         v-model:limit="limit"
         :total="filtered.length"

@@ -3,10 +3,11 @@ import { isHttpMode, modeText } from "../services/mode";
 
 import { toggleProduct, saveProduct, processClaim } from "../services/actions";
 
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { Search, Box, Present, Van } from "@element-plus/icons-vue";
 import PageHeading from "../components/PageHeading.vue";
+import ConsultationManager from "../components/ConsultationManager.vue";
 import {
   products,
   welfareClaims,
@@ -15,7 +16,7 @@ import {
   type WelfareClaim,
 } from "../domain/operations";
 import { matchesRegion } from "../domain/workspace";
-import { command } from "../services/workspaceData";
+import { command, selectRecordCollection } from "../services/workspaceData";
 import { regions } from "../domain/workspace";
 const newProductOpen = ref(false);
 const productForm = reactive({
@@ -40,6 +41,7 @@ const tab = ref("products"),
   query = ref(""),
   category = ref(""),
   claimStatus = ref("");
+watch(tab, value => { void selectRecordCollection(value === "products" ? "products" : "welfareClaims"); });
 const visibleProducts = computed(() =>
   products.filter(
     (item) =>
@@ -87,6 +89,12 @@ async function changeProduct(item: Product) {
 const claimOpen = ref(false),
   currentClaim = ref<WelfareClaim | null>(null),
   returnNote = ref("");
+const customClaim = computed(() => (currentClaim.value as (WelfareClaim & {kind?: string}) | null)?.kind === "custom");
+function claimLabel(item: WelfareClaim) {
+  const value=item as WelfareClaim & {kind?: string; consultationStage?: string};
+  if(value.kind !== "custom" || value.status === "已取消") return value.status;
+  return ({pending:"待受理",accepted:"已受理",discussion:"沟通中",quoted:"已报价",closed:"已结束"} as Record<string,string>)[value.consultationStage || "pending"] || "待受理";
+}
 function openClaim(item: WelfareClaim) {
   currentClaim.value = item;
   returnNote.value = "";
@@ -135,7 +143,7 @@ async function act(action: "approve" | "return" | "deliver") {
     <div class="stat-card">
       <el-icon><Box /></el-icon><span>待审核申领</span
       ><strong
-        >{{ regionalClaims.filter((i) => i.status === "待审核").length
+        >{{ regionalClaims.filter((i) => i.status === "待审核" && (i as WelfareClaim & {kind?: string}).kind !== 'custom').length
         }}<small>笔</small></strong
       >
     </div>
@@ -150,7 +158,7 @@ async function act(action: "approve" | "return" | "deliver") {
   <section class="panel">
     <el-tabs v-model="tab" @tab-change="query = ''"
       ><el-tab-pane label="文创资源" name="products" /><el-tab-pane
-        label="公益申领与发放"
+        label="申领与定制咨询"
         name="claims"
     /></el-tabs>
     <div class="filter-bar">
@@ -236,7 +244,7 @@ async function act(action: "approve" | "return" | "deliver") {
       <p class="empty-note">
         {{
           modeText(
-            "商品、库存和申领记录由服务端保存。定制文创暂不涉及报价、支付和订单。",
+            "公益申领记录审核、库存与发放；定制咨询记录人工跟进和参考报价，支付、商业订单与物流另行确认。",
             "商品与库存均为预置样例。定制文创暂展示资源，不涉及报价、支付和实际订单。",
           )
         }}
@@ -246,7 +254,7 @@ async function act(action: "approve" | "return" | "deliver") {
       ><el-table :data="visibleClaims" row-key="id"
         ><el-table-column label="申领机构" min-width="210"
           ><template #default="{ row }"
-            ><b class="institution">{{ row.organization }}</b
+            ><b class="institution">{{ row.organization }}</b><small>{{ row.kind === 'custom' ? '定制咨询' : '公益申领' }}</small
             ><small class="muted claim-id">{{ row.id }}</small></template
           ></el-table-column
         ><el-table-column
@@ -275,13 +283,13 @@ async function act(action: "approve" | "return" | "deliver") {
                       : 'primary'
               "
               size="small"
-              >{{ row.status }}</el-tag
+              >{{ claimLabel(row) }}</el-tag
             ></template
           ></el-table-column
         ><el-table-column label="操作" width="110" fixed="right"
           ><template #default="{ row }"
             ><el-button link type="primary" @click="openClaim(row)">{{
-              row.status === "待审核"
+              row.kind === 'custom' ? '跟进咨询' : row.status === "待审核"
                 ? "审核申请"
                 : row.status === "待发放"
                   ? "处理发放"
@@ -336,7 +344,7 @@ async function act(action: "approve" | "return" | "deliver") {
       ></template
     ></el-dialog
   >
-  <el-drawer v-model="claimOpen" title="公益申领详情" size="min(620px, 100vw)"
+  <el-drawer v-model="claimOpen" :title="customClaim ? '定制咨询详情' : '公益申领详情'" size="min(620px, 100vw)" destroy-on-close
     ><template v-if="currentClaim"
       ><el-tag effect="plain">{{ currentClaim.id }}</el-tag>
       <h2 class="claim-title">{{ currentClaim.organization }}</h2>
@@ -353,7 +361,7 @@ async function act(action: "approve" | "return" | "deliver") {
           currentClaim.date
         }}</el-descriptions-item
         ><el-descriptions-item label="当前状态">{{
-          currentClaim.status
+          claimLabel(currentClaim)
         }}</el-descriptions-item></el-descriptions
       >
       <h3 class="drawer-subtitle">申领用途</h3>
@@ -361,7 +369,7 @@ async function act(action: "approve" | "return" | "deliver") {
       <template v-if="currentClaim.note"
         ><h3 class="drawer-subtitle">处理备注</h3>
         <p class="drawer-copy">{{ currentClaim.note }}</p></template
-      ><template v-if="currentClaim.status === '待审核'"
+      ><ConsultationManager v-if="isHttpMode && customClaim" :claim-id="currentClaim.id" /><template v-else-if="currentClaim.status === '待审核'"
         ><h3 class="drawer-subtitle">退回说明</h3>
         <el-input
           v-model="returnNote"
