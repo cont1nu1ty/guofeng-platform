@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { isHttpMode, modeText } from "../services/mode";
+import { api, newRequestId, reportError } from "../services/http";
+import { can } from "../services/session";
+import { useRouter } from "vue-router";
 
 import {
   saveCollection,
@@ -35,8 +38,13 @@ import {
 import { reviewState } from "../domain/review";
 const importOpen = ref(false),
   importId = ref("");
+const router=useRouter();
+const exportOpen=ref(false),exportIds=ref<string[]>([]),exportFormat=ref('pdf'),exportBusy=ref(false);
+async function exportVolumes(){exportBusy.value=true;try{await api('/admin/exports',{method:'POST',headers:{'Idempotency-Key':newRequestId()},body:JSON.stringify({kind:'collection',ids:exportIds.value,format:exportFormat.value,region:workspace.region})});exportOpen.value=false;await router.push('/jobs');}catch(e){reportError(e);}finally{exportBusy.value=false;}}
+const candidateQuery=ref(''), candidateWorks=ref<{id:string;title:string}[]>([]),candidateBusy=ref(false);
+async function searchCandidates(){candidateBusy.value=true;try{const result=await api<{items:{id:string;title:string}[]}>(`/admin/collection-candidates?q=${encodeURIComponent(candidateQuery.value)}&region=${encodeURIComponent(workspace.region)}`);candidateWorks.value=result.items;}catch(e){reportError(e);}finally{candidateBusy.value=false;}}
 const selectedWorks = computed(() =>
-  reviewState.submissions.filter(
+  isHttpMode ? candidateWorks.value : reviewState.submissions.filter(
     (item) =>
       (item.status === "已入围" ||
         ["shortlisted", "awarded", "collected"].includes(item.result || "")) &&
@@ -138,6 +146,7 @@ async function addSample() {
   if (isHttpMode) {
     importId.value = "";
     importOpen.value = true;
+    await searchCandidates();
     return;
   }
   try {
@@ -169,6 +178,7 @@ async function publish(item: CollectionItem) {
       title="典籍编纂"
       description="以总典为纲、地方为卷，将散落的家风记忆编织成册。"
       ><template #actions
+        ><el-button v-if="isHttpMode && can('collections:export')" @click="exportIds=[];exportOpen=true">PDF / Word 导出</el-button
         ><el-button
           v-has-permi="'collections:write'"
           type="primary"
@@ -288,6 +298,12 @@ async function publish(item: CollectionItem) {
       </p>
     </div>
 
+    <el-dialog v-model="exportOpen" title="典籍文件导出" width="min(560px, 95vw)">
+      <p>选择本页卷册，最多20卷。任务保存当前章节快照，多卷会打包为ZIP。</p>
+      <el-select v-model="exportIds" multiple placeholder="选择卷册" aria-label="导出卷册"><el-option v-for="volume in editorialState.collections" :key="volume.id" :value="volume.id" :label="volume.title" /></el-select>
+      <el-radio-group v-model="exportFormat" aria-label="文件格式"><el-radio value="pdf">PDF</el-radio><el-radio value="docx">Word（DOCX）</el-radio></el-radio-group>
+      <template #footer><el-button @click="exportOpen=false">取消</el-button><el-button type="primary" :loading="exportBusy" :disabled="!exportIds.length || exportIds.length>20" @click="exportVolumes">创建导出任务</el-button></template>
+    </el-dialog>
     <el-dialog
       v-model="dialog"
       :title="editingId ? '编辑分卷信息' : '新建典籍分卷'"
@@ -524,7 +540,7 @@ async function publish(item: CollectionItem) {
       v-model="importOpen"
       title="添加已入选作品"
       width="min(520px,94vw)"
-      ><el-select
+      ><el-input v-if="isHttpMode" v-model="candidateQuery" placeholder="搜索可入藏稿件（最多100条）" aria-label="搜索可入藏稿件" @keyup.enter="searchCandidates"><template #append><el-button :loading="candidateBusy" @click="searchCandidates">查询</el-button></template></el-input><el-select
         v-model="importId"
         placeholder="选择已入选作品"
         filterable

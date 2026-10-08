@@ -7,6 +7,9 @@ import {
 } from "../domain/reviewWindow";
 import { reviewFlow } from "../domain/review";
 import { isHttpMode, modeText } from "../services/mode";
+import { assignmentCandidates, previewAssignments, confirmAssignments, type AssignmentCandidate, type AssignmentPlan, type AssignmentInput } from "../services/reviewAssignments";
+import { newRequestId } from "../services/http";
+import { loadWorkspace } from "../services/workspaceData";
 
 import {
   approveSubmission,
@@ -27,6 +30,7 @@ import {
 import PageHeading from "../components/PageHeading.vue";
 import Pagination from "../components/upstream/Pagination.vue";
 import RightToolbar from "../components/upstream/RightToolbar.vue";
+import SubmissionImportDialog from "../components/SubmissionImportDialog.vue";
 import { workspace, matchesRegion } from "../domain/workspace";
 import {
   reviewState,
@@ -37,6 +41,7 @@ import {
 
 const immediateStart = ref(true),
   defaultDueAt = ref("");
+const importOpen = ref(false);
 const search = ref(""),
   status = ref(""),
   region = ref(""),
@@ -90,14 +95,45 @@ const filtered = computed(() =>
   ),
 );
 const rows = computed(() =>
-  filtered.value.slice(
+  isHttpMode ? filtered.value : filtered.value.slice(
     (page.value - 1) * limit.value,
     page.value * limit.value,
   ),
 );
 const availableExperts = computed(() =>
-  reviewState.experts.filter((item) => item.availability === "可分配"),
+  isHttpMode ? remoteCandidates.value : reviewState.experts.filter((item) => item.availability === "可分配"),
 );
+const remoteCandidates = ref<AssignmentCandidate[]>([]);
+const batchAssignmentOpen = ref(false), batchAssignmentBusy = ref(false), batchAssignmentError = ref("");
+const allocationGroup = ref("");
+const allocationPlan = ref<AssignmentPlan>();
+let allocationInput: AssignmentInput | undefined;
+let allocationKey = "";
+watch(allocationGroup, () => { allocationPlan.value = undefined; });
+function openBatchAssignment() {
+  allocationPlan.value = undefined; batchAssignmentError.value = ""; allocationGroup.value = "";
+  batchAssignmentOpen.value = true;
+}
+async function previewBatchAssignment() {
+  batchAssignmentBusy.value = true; batchAssignmentError.value = ""; allocationPlan.value = undefined;
+  try {
+    allocationInput = { ids: selected.value.map(item => item.id), versions: Object.fromEntries(selected.value.map(item => [item.id, item.lockVersion])), group: allocationGroup.value.trim() };
+    allocationPlan.value = await previewAssignments(allocationInput);
+    allocationKey = newRequestId();
+  } catch (error) { batchAssignmentError.value = error instanceof Error ? error.message : "预览失败，请重试"; }
+  finally { batchAssignmentBusy.value = false; }
+}
+async function confirmBatchAssignment() {
+  if (!allocationInput || !allocationPlan.value?.rows.length || batchAssignmentBusy.value) return;
+  batchAssignmentBusy.value = true; batchAssignmentError.value = "";
+  try {
+    const result = await confirmAssignments(allocationInput, allocationPlan.value.fingerprint, allocationKey);
+    await loadWorkspace();
+    ElMessage.success(`已分配 ${result.assigned} 篇稿件`);
+    batchAssignmentOpen.value = false; selected.value = []; tableRef.value?.clearSelection();
+  } catch (error) { batchAssignmentError.value = error instanceof Error ? error.message : "分配失败，请重试"; }
+  finally { batchAssignmentBusy.value = false; }
+}
 const activeTasks = computed(() =>
   reviewState.tasks.filter((task) => task.submissionId === activeId.value),
 );
@@ -215,7 +251,7 @@ async function confirmReturn() {
   ElMessage.success(result.message);
   returnOpen.value = false;
 }
-function openAssignment(row: Submission) {
+async function openAssignment(row: Submission) {
   activeId.value = row.id;
   expertId.value = "";
   immediateStart.value = true;
@@ -226,6 +262,11 @@ function openAssignment(row: Submission) {
   defaultDueAt.value = dueAt.value;
   assignmentError.value = "";
   assignmentOpen.value = true;
+  if (isHttpMode) {
+    remoteCandidates.value = [];
+    try { remoteCandidates.value = await assignmentCandidates(row.id); }
+    catch (error) { assignmentError.value = error instanceof Error ? error.message : "无法读取可分配专家"; }
+  }
 }
 async function confirmAssignment() {
   if (!active.value) return;
@@ -312,13 +353,14 @@ async function publishResult() {
 
 <template>
   <div class="submissions-view">
+    <SubmissionImportDialog v-model="importOpen" @imported="loadWorkspace" />
     <PageHeading
       title="投稿作品"
       description="从作品归集到初审、分配，让每一份家风记忆得到认真对待。"
       eyebrow="内容管理 / 投稿作品"
     >
       <template #actions
-        ><el-tag effect="plain" type="info"
+        ><el-button v-if="isHttpMode" v-has-permi="'submissions:write'" @click="importOpen = true">线下稿件归集</el-button><el-tag effect="plain" type="info"
           >{{ workspace.region }} · 工作空间</el-tag
         ></template
       >
@@ -395,16 +437,17 @@ async function publishResult() {
       <div class="table-tools">
         <div class="selection-note">
           已选 <b>{{ selected.length }}</b> 篇
-          <span class="muted">· 仅待初审稿件可批量处理</span>
+          <span class="muted">· 初审与评审分配分别处理</span>
         </div>
         <el-button
           v-has-permi="'submissions:write'"
-          :disabled="selected.length === 0"
+          :disabled="selected.length === 0 || selected.some(item => item.status !== '待初审')"
           :icon="CircleCheck"
           size="small"
           @click="batchApprove"
           >批量通过初审</el-button
         >
+        <el-button v-if="isHttpMode" v-has-permi="'reviews:manage'" :disabled="selected.length === 0" size="small" @click="openBatchAssignment">规则分配预览</el-button>
       </div>
       <el-table
         ref="tableRef"
@@ -416,7 +459,7 @@ async function publishResult() {
         <el-table-column
           type="selection"
           width="44"
-          :selectable="(row: Submission) => row.status === '待初审'"
+          :selectable="(row: Submission) => row.status === '待初审' || (isHttpMode && row.status === '评审中')"
         />
         <el-table-column label="作品 / 编号" min-width="260"
           ><template #default="{ row }"
@@ -470,6 +513,7 @@ async function publishResult() {
         >
       </el-table>
       <Pagination
+        v-if="!isHttpMode"
         v-model:page="page"
         v-model:limit="limit"
         :total="filtered.length"
@@ -658,6 +702,18 @@ async function publishResult() {
         ></template
       ></el-dialog
     >
+    <el-dialog v-model="batchAssignmentOpen" title="规则分配预览" width="min(900px, 94vw)" :close-on-click-modal="!batchAssignmentBusy">
+      <p class="dialog-description">所选稿件按编号排序，依授权地区、接单状态及分组筛选，再按有效待评分数量分配。仅预览不创建任务；确认时会重新校验。默认立即开始，时限使用各稿件绑定配置。</p>
+      <el-form label-position="top"><el-form-item label="专家分组（留空使用全部可用组）"><el-input v-model="allocationGroup" :disabled="batchAssignmentBusy" maxlength="50" /></el-form-item></el-form>
+      <el-button :loading="batchAssignmentBusy" @click="previewBatchAssignment">生成分配预览</el-button>
+      <template v-if="allocationPlan">
+        <p>{{ allocationPlan.rows.length }} 篇可分配，{{ allocationPlan.excluded.length }} 篇未纳入。</p>
+        <el-table :data="allocationPlan.rows"><el-table-column prop="title" label="稿件" min-width="180" /><el-table-column prop="expertName" label="拟分配专家" min-width="120" /><el-table-column prop="openTasks" label="分配前待评分数" width="150" /></el-table>
+        <el-table v-if="allocationPlan.excluded.length" :data="allocationPlan.excluded"><el-table-column prop="title" label="未纳入稿件" min-width="160" /><el-table-column prop="reason" label="原因" min-width="220" /></el-table>
+      </template>
+      <el-alert v-if="batchAssignmentError" :title="batchAssignmentError" type="error" :closable="false" />
+      <template #footer><el-button :disabled="batchAssignmentBusy" @click="batchAssignmentOpen = false">关闭</el-button><el-button v-has-permi="'reviews:manage'" type="primary" :disabled="!allocationPlan?.rows.length" :loading="batchAssignmentBusy" @click="confirmBatchAssignment">确认创建任务</el-button></template>
+    </el-dialog>
     <el-dialog
       v-model="assignmentOpen"
       title="分配评审专家"

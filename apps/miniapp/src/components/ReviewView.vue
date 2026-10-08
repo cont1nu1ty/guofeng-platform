@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { isHttpMode } from '../config/dataMode'
-import { request, remoteWorkspace, remoteLoading, refreshWorkspace } from '../services/api'
+import { request } from '../services/api'
 import type { Work } from '../domain/types'
 import { readInputValue } from '../composables/readInputValue'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import CertificateExport from './CertificateExport.vue'
+import ReviewProgressTimeline from './ReviewProgressTimeline.vue'
+import SubmissionRightsConfirm from './SubmissionRightsConfirm.vue'
+import { selectTimeline, type ReviewTimeline } from '../domain/reviewProgress'
 import { reviewStages, reviewStandards } from '../domain/fixtures'
 import { repo, openReader, myWorks, revision, reviewQuery, navigate } from '../composables/useDemo'
 import { useRouteParams } from '../composables/useNavigation'
@@ -13,7 +16,12 @@ import { t } from '../composables/useLocale'
 import type { WorkStatus, ReviewAction } from '../domain/types'
 const params = useRouteParams()
 const query = ref(reviewQuery.value)
-const remoteResult = ref<Work>()
+const remoteResult = ref<Work & { requiresAuthorConfirmation?: boolean }>()
+const remoteRevisionId = ref('')
+const remoteTimeline = ref<ReviewTimeline>()
+const revisionTimelines = ref<ReviewTimeline[]>([])
+const selectedRevision = ref(0)
+const visibleTimeline = computed(() => selectTimeline(revisionTimelines.value, selectedRevision.value, remoteTimeline.value))
 const queryError = ref('')
 const querying = ref(false)
 let querySequence = 0
@@ -21,9 +29,6 @@ const searchedId = ref('')
 const searched = ref(false)
 const publicTab = ref<'shortlisted' | 'awarded' | 'collected'>('shortlisted')
 const certificateVisible = ref(false)
-const scoringTotal = computed(() =>
-  remoteWorkspace.scoringDimensions.reduce((sum, item) => sum + item.max, 0),
-)
 const result = computed(() => {
   revision.value
   return isHttpMode
@@ -90,16 +95,25 @@ async function search(id?: string) {
     querying.value = true
     queryError.value = ''
     remoteResult.value = undefined
+    remoteRevisionId.value = ''
+    remoteTimeline.value = undefined
+    revisionTimelines.value = []
     if (!searchedId.value) {
       queryError.value = '请输入作品编号'
       querying.value = false
       return
     }
     try {
-      const response = await request<{ work: Work }>(
+      const response = await request<{ work: Work & { requiresAuthorConfirmation?: boolean }; revisions?: { id: string; revisionNumber: number }[]; timeline?: ReviewTimeline; revisionTimelines?: ReviewTimeline[] }>(
         `/submissions/${encodeURIComponent(searchedId.value)}/progress`,
       )
-      if (sequence === querySequence) remoteResult.value = response.data.work
+      if (sequence === querySequence) {
+        remoteResult.value = response.data.work
+        remoteRevisionId.value = response.data.revisions?.find(item => item.revisionNumber === response.data.work.revisionNumber)?.id ?? ''
+        remoteTimeline.value = response.data.timeline
+        revisionTimelines.value = response.data.revisionTimelines ?? []
+        selectedRevision.value = response.data.work.revisionNumber ?? 1
+      }
     } catch (error) {
       if (sequence === querySequence)
         queryError.value = error instanceof Error ? error.message : '查询失败，请重试'
@@ -191,7 +205,7 @@ watch(
   </view>
   <view v-if="result" class="review-result">
     <view>
-      <text class="tag">{{ t(result.statusLabel, statusNames[result.status] + ' · Demo') }}</text>
+      <text class="tag">{{ t(result.statusLabel, (statusNames[result.status] ?? result.statusLabel) + (isHttpMode ? '' : ' · Demo')) }}</text>
       <text class="story-title">{{ result.title }}</text>
       <text class="muted">
         {{ result.id }} · {{ result.author }} · {{ t('版本', 'Revision') }}
@@ -207,6 +221,7 @@ watch(
       </button>
     </view>
   </view>
+  <SubmissionRightsConfirm v-if="isHttpMode && remoteResult?.isMine && remoteResult.version !== undefined && remoteRevisionId && remoteResult.requiresAuthorConfirmation" :submission-id="remoteResult.id" :revision-id="remoteRevisionId" :version="remoteResult.version" :required="true" @confirmed="search(remoteResult?.id)" />
   <view v-if="result?.status === 'returned'" class="scope-note">
     {{
       t(
@@ -215,6 +230,12 @@ watch(
       )
     }}
   </view>
+  <view v-if="isHttpMode && result && revisionTimelines.length > 1" class="sample-query">
+    <wd-button v-for="item in revisionTimelines" :key="item.revisionNumber" size="small" :variant="selectedRevision === item.revisionNumber ? 'solid' : 'plain'" @click="selectedRevision = item.revisionNumber">
+      {{ t('稿件版本', 'Revision') }} {{ item.revisionNumber }}
+    </wd-button>
+  </view>
+  <ReviewProgressTimeline v-if="isHttpMode && result && visibleTimeline" :timeline="visibleTimeline" />
   <view v-if="result && result.reviews?.length" class="review-history">
     <text class="section-title">{{ t('评分与评审意见', 'Scores and reviewer feedback') }}</text>
     <view
@@ -341,54 +362,12 @@ watch(
       }}
     </view>
   </view>
-  <template v-if="isHttpMode">
-    <SectionHeading
-      :title="t('试点评审量表', 'Pilot review criteria')"
-      :subtitle="
-        remoteWorkspace.reviewRuleVersion
-          ? t(
-              `量表版本 ${remoteWorkspace.reviewRuleVersion}；最终结果由管理员确认，评分不会自动授奖。`,
-              `Rule version ${remoteWorkspace.reviewRuleVersion}. Administrators confirm results; scores do not grant awards automatically.`,
-            )
-          : t('读取服务端当前评分规则。', 'Loading the current server review rules.')
-      "
-    />
-    <view
-      v-if="remoteWorkspace.scoringDimensions.length"
-      class="review-standards remote-review-standards"
-    >
-      <view
-        v-for="dimension in remoteWorkspace.scoringDimensions"
-        :key="dimension.id"
-        class="review-standard-card"
-      >
-        <text class="story-title">{{ dimension.label }}</text>
-        <text class="reader-paragraph">
-          {{ t('本维度', 'Dimension') }} {{ dimension.min ?? 0 }}–{{ dimension.max }}
-          {{ t('分', 'points') }}
-        </text>
-        <text class="muted">{{ t('量表总分', 'Total maximum') }} {{ scoringTotal }}</text>
-      </view>
-    </view>
-    <view v-else class="empty-state">
-      <text>
-        {{
-          remoteLoading
-            ? t('正在加载评分规则…', 'Loading review rules…')
-            : t('评分规则暂不可用，请重新加载。', 'Review rules are unavailable. Please reload.')
-        }}
-      </text>
-      <wd-button
-        v-if="!remoteLoading"
-        variant="plain"
-        size="small"
-        @click="refreshWorkspace().catch(() => {})"
-      >
-        {{ t('重新加载', 'Reload') }}
-      </wd-button>
-    </view>
-  </template>
-  <template v-else>
+  <SectionHeading
+    v-if="isHttpMode && !visibleTimeline"
+    :title="t('评分标准随稿件版本保存', 'Review standards are saved with each revision')"
+    :subtitle="t('查询可访问作品后，在各节点查看对应评分标准；评分完成后仍由管理员人工决定和发布结果。', 'Query a submission you may access to view its stage-specific standards. Administrators decide and publish results after scoring.')"
+  />
+  <template v-if="!isHttpMode">
     <SectionHeading
       :title="t('评分参考标准 · 待定', 'Proposed scoring criteria')"
       :subtitle="

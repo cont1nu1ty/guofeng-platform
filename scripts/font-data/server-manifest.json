@@ -1,0 +1,15 @@
+{
+  "source": "https://github.com/google/fonts",
+  "revision": "2c605eeda2de57af2b34822b79986f5140299862",
+  "sourceFile": "ofl/notosanssc/NotoSansSC[wght].ttf",
+  "sourceSha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+  "file": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/resources/fonts/NotoSansSC-Regular.ttf",
+  "sha256": "6ffa493c03eb418760dae68bd334716dc2b722fe2f34c6ef8be37f04f0d164d4",
+  "instance": {
+    "wght": 400
+  },
+  "license": "licenses/NotoSansSC-OFL.txt",
+  "generator": "scripts/build_server_font.py",
+  "fonttools": "4.65.0",
+  "modifications": "Static wght=400 instance; remove duplicate compatibility-radical cmap aliases to preserve normal ideograph extraction in PDF ToUnicode; glyph outlines unchanged."
+}

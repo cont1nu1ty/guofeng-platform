@@ -54,6 +54,8 @@ export interface Registration {
   checkedIn: boolean;
 }
 export interface ActivityItem {
+  registrationCount?: number;
+  checkedInCount?: number;
   id: string;
   title: string;
   type: string;

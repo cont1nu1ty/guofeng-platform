@@ -140,7 +140,7 @@ function choose() {
   // #ifdef H5
   const picker = document.createElement('input')
   picker.type = 'file'
-  picker.accept = '.mp4,.mp3,.wav'
+  picker.accept = '.mp4,.mov,.webm,.mp3,.wav'
   picker.onchange = async () => {
     const file = picker.files?.[0]
     if (!file) return
@@ -157,7 +157,7 @@ function choose() {
   uni.chooseMessageFile({
     count: 1,
     type: 'file',
-    extension: ['mp4', 'mp3', 'wav'],
+    extension: ['mp4', 'mov', 'webm', 'mp3', 'wav'],
     success: (result) => {
       const file = result.tempFiles[0]
       if (file) void upload(file.path, file.name, file.size)
@@ -210,8 +210,8 @@ async function submit() {
     <text class="showcase-note">
       {{
         t(
-          '视频或朗诵音频上传后由运营审核，审核通过后才进入公开展播。直接上传支持 MP4 / MP3 / WAV，最大 50 MiB；诵读工具支持其他音频格式转换，不提供视频转码、直播或自动字幕。',
-          'Video and recitation uploads require editorial approval before public display. Direct uploads accept MP4 / MP3 / WAV up to 50 MiB. Reading tools convert other audio formats. Video transcoding, live streaming and automatic captions are unavailable.',
+          '视频或朗诵音频上传后由运营审核，审核通过后才进入公开展播。视频支持 MP4 / MOV / WebM（最长10分钟），转换为MP4；音频支持MP3 / WAV，最大50 MiB。可由编辑添加人工字幕与朗读，不提供直播或自动字幕。',
+          'Video and recitation uploads require editorial approval before public display. Videos accept MP4 / MOV / WebM up to 10 minutes and are converted to MP4. Audio accepts MP3 / WAV, with a 50 MiB upload limit. Editors can add manual captions and recordings. Live streaming and automatic captions are unavailable.',
         )
       }}
     </text>

@@ -1,0 +1,291 @@
+# Merge paths/components into contracts/openapi.yaml. This fragment has no independent server.
+paths:
+  /education/courses:
+    get:
+      summary: Published course catalog, including read-only legacy imports at publicationVersion 0
+      description: Public snapshots omit correct answers, explanations and unselected questions. Version 0 is not completion evidence.
+      responses:
+        '200':
+          description: Published course items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items: {type: array, items: {$ref: '#/components/schemas/EducationPublishedCourse'}}
+  /education/courses/{id}:
+    get:
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+        - {name: version, in: query, schema: {type: integer, minimum: 0}}
+      description: Current version is public. An older version requires the authenticated user's learning record or group assignment. Unpublished courses are unavailable. Correct answers are never returned.
+      responses:
+        '200':
+          description: Frozen course content and authenticated user's own progress
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  course: {$ref: '#/components/schemas/EducationPublishedCourse'}
+                  progress: {$ref: '#/components/schemas/EducationProgress'}
+        '404': {description: Unavailable course/version}
+  /education/me:
+    get:
+      security: [{bearerAuth: []}]
+      description: Own assigned groups, manual identity review, version-specific learning history, commitment confirmations and explicitly unverified legacy records. No other learner's member-level records.
+      responses:
+        '200':
+          description: Own education account
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groups: {type: array, items: {$ref: '#/components/schemas/EducationGroup'}}
+                  identity: {type: object, nullable: true}
+                  history: {type: array, items: {type: object}}
+                  legacyRecords: {type: array, items: {type: object}}
+                  declarations: {type: array, items: {$ref: '#/components/schemas/EducationDeclaration'}}
+  /education/commands:
+    post:
+      security: [{bearerAuth: []}]
+      parameters: [{$ref: '#/components/parameters/EducationIdempotencyKey'}]
+      description: >-
+        course.progress takes publicationVersion plus lessonId or answers mapping questionId to optionId.
+        Version 0 is read-only. All lessons must be confirmed before a server-graded quiz.
+        Retries create attempts; completion persists once achieved for that frozen version. No accredited time claim.
+        education.requestIdentity takes organization/requestNote and current identity version when updating.
+        education.confirmDeclaration takes group entityId, current group version, accepted=true and textHash.
+        Current visibility/membership is checked before idempotent replay. Confirmation stores the exact text and hash; it is not an electronic signature.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/EducationCommand'}
+      responses:
+        '200': {description: Saved own result; course.progress returns progress, result.score/passed and publicationVersion}
+        '409': {description: Missing versioned publication, unread lessons or conflicting idempotency input}
+        '412': {description: Optimistic version conflict}
+        '422': {description: Invalid lesson, answers or confirmation}
+  /admin/education:
+    get:
+      security: [{bearerAuth: []}]
+      description: Requires education:read. SQL-scoped to current operator regions. Courses, groups and identity applications are independent pages of 20 rows. Members are at most 50 initial candidates, not the complete account directory.
+      parameters:
+        - {name: coursePage, in: query, schema: {type: integer, minimum: 1, default: 1}}
+        - {name: groupPage, in: query, schema: {type: integer, minimum: 1, default: 1}}
+        - {name: identityPage, in: query, schema: {type: integer, minimum: 1, default: 1}}
+        - {name: q, in: query, description: Course title/team search, schema: {type: string, maxLength: 100}}
+      responses:
+        '200':
+          description: Draft editing workspace; answer keys are restricted to authorized education operators
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  courses: {type: array, items: {$ref: '#/components/schemas/EducationDraftCourse'}}
+                  learningGroups: {type: array, items: {$ref: '#/components/schemas/EducationGroup'}}
+                  identities: {type: array, items: {type: object}}
+                  members: {type: array, maxItems: 50, items: {type: object}}
+                  pageSize: {type: integer, enum: [20]}
+                  courseTotal: {type: integer}
+                  groupTotal: {type: integer}
+                  identityTotal: {type: integer}
+  /admin/education/members:
+    get:
+      security: [{bearerAuth: []}]
+      description: education:read, SQL region scope, active member accounts only. Search nickname or exact account ID; max 50 candidates ordered by ID.
+      parameters: [{name: q, in: query, schema: {type: string, maxLength: 100}}]
+      responses: {'200': {description: '{items: [{id,name,regions}]}'}}
+  /admin/education/commands:
+    post:
+      security: [{bearerAuth: []}]
+      parameters: [{$ref: '#/components/parameters/EducationIdempotencyKey'}]
+      description: >-
+        Requires education:write before idempotency lookup; entity-region scope and optimistic version are checked.
+        saveCourse writes only a draft. publishCourse appends an immutable publication; unpublishCourse withdraws the course.
+        toggleCourse preserves the legacy adapter. education.saveGroup uses name,region,courseId,publicationVersion,cadreOnly,declarationText,memberIds (max 500).
+        A group's region and assigned course version cannot change. Cadre-only assignments require manually approved identity.
+        education.reviewIdentity uses user entityId, identity version, status approved/rejected and reason (2+ characters); self-approval is disallowed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/EducationCommand'}
+      responses:
+        '200': {description: Saved result with stable id and resulting version}
+        '403': {description: Missing education permission or region scope}
+        '412': {description: Stale optimistic version}
+        '422': {description: Invalid draft, group membership or identity review}
+  /media/{id}/accessibility:
+    get:
+      parameters: [{name: id, in: path, required: true, schema: {type: string}}]
+      description: Only separately published manual captions/narration for a currently published media item. Replacing its source file hides old captions until republished. Draft fields and file IDs are never public. narrationUrl is a short-lived signed URL.
+      responses:
+        '200':
+          description: Published captions and optional narration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  language: {type: string, enum: [zh, en]}
+                  cues: {type: array, items: {$ref: '#/components/schemas/MediaCaptionCue'}}
+                  narrationUrl: {type: string}
+                  publishedAt: {type: string, format: date-time}
+        '404': {description: Main media not published}
+  /admin/media/{id}/accessibility:
+    parameters: [{name: id, in: path, required: true, schema: {type: string}}]
+    get:
+      security: [{bearerAuth: []}]
+      description: content:read plus current parent media's region scope
+      responses:
+        '200': {description: '{mediaId,version,draft:{language,cues,narrationFileId},publishedAt}; version 0 means no draft yet'}
+    post:
+      security: [{bearerAuth: []}]
+      parameters: [{$ref: '#/components/parameters/EducationIdempotencyKey'}]
+      description: >-
+        content:write and current region scope are checked before idempotent replay.
+        save validates ordered nonoverlapping cues and stores only draft. Newly linked narration must be the editor's uploaded media audio.
+        publish copies saved draft and binds current sourceFileId; parent must be published. Unpublish immediately blocks new public lookups.
+        Changes require current version, including initial version 0. Existing signed URLs expire separately.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action, version]
+              properties:
+                action: {type: string, enum: [save, publish, unpublish]}
+                version: {type: integer, minimum: 0}
+                data:
+                  type: object
+                  properties:
+                    language: {type: string, enum: [zh, en]}
+                    narrationFileId: {type: string, maxLength: 80}
+                    cues: {type: array, maxItems: 500, items: {$ref: '#/components/schemas/MediaCaptionCue'}}
+      responses:
+        '200': {description: Updated administrator track DTO}
+        '409': {description: Stale version}
+        '422': {description: Invalid cues, file ownership/type, or unpublished main media}
+components:
+  parameters:
+    EducationIdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: {type: string}
+      description: Reuse the same key and body when retrying an uncertain result; never reuse for a different operation body.
+  schemas:
+    EducationCommand:
+      type: object
+      required: [command, data]
+      properties:
+        command: {type: string}
+        entityId: {type: string}
+        version: {type: integer}
+        data: {type: object}
+    EducationLesson:
+      type: object
+      required: [id, title, body]
+      properties:
+        id: {type: string, pattern: '^[A-Za-z0-9_-]{1,64}$'}
+        title: {type: string}
+        body: {type: string}
+        practice: {type: string}
+    EducationQuestion:
+      type: object
+      required: [id, prompt, options]
+      properties:
+        id: {type: string}
+        prompt: {type: string}
+        options:
+          type: array
+          minItems: 2
+          maxItems: 6
+          items:
+            type: object
+            required: [id, text]
+            properties: {id: {type: string}, text: {type: string}}
+    EducationPublishedCourse:
+      type: object
+      properties:
+        id: {type: string}
+        title: {type: string}
+        description: {type: string}
+        teacher: {type: string}
+        category: {type: string}
+        duration: {type: integer, description: Reference duration, not verified study time}
+        region: {type: string}
+        publicationVersion: {type: integer, minimum: 0}
+        passPercent: {type: integer, minimum: 1, maximum: 100}
+        lessons: {type: array, minItems: 1, maxItems: 50, items: {$ref: '#/components/schemas/EducationLesson'}}
+        questions: {type: array, maxItems: 100, items: {$ref: '#/components/schemas/EducationQuestion'}}
+    EducationDraftCourse:
+      allOf:
+        - {$ref: '#/components/schemas/EducationPublishedCourse'}
+        - type: object
+          properties:
+            lockVersion: {type: integer}
+            publishedVersion: {type: integer}
+            questions:
+              type: array
+              maxItems: 200
+              items:
+                allOf:
+                  - {$ref: '#/components/schemas/EducationQuestion'}
+                  - type: object
+                    required: [answerId]
+                    properties: {answerId: {type: string}, explanation: {type: string}}
+            examQuestionIds: {type: array, maxItems: 100, uniqueItems: true, items: {type: string}}
+            versions: {type: array, items: {type: object}}
+    EducationProgress:
+      type: object
+      properties:
+        lessons: {type: array, items: {type: string}}
+        quizPassed: {type: boolean}
+        bestScore: {type: integer, nullable: true}
+        complete: {type: boolean}
+        completedAt: {type: string, format: date-time, nullable: true}
+        percent: {type: integer, minimum: 0, maximum: 100}
+    EducationGroup:
+      type: object
+      properties:
+        id: {type: string}
+        name: {type: string}
+        region: {type: string}
+        courseId: {type: string}
+        publicationVersion: {type: integer, minimum: 1}
+        cadreOnly: {type: boolean}
+        declarationText: {type: string}
+        declarationHash: {type: string}
+        version: {type: integer}
+        members: {type: integer}
+        completed: {type: integer}
+        declarations: {type: integer}
+        confirmed: {type: boolean}
+        memberRecords: {type: array, description: Authorized administrators only, items: {type: object}}
+        declarationHistory: {type: array, description: Authorized administrators only, items: {$ref: '#/components/schemas/EducationDeclaration'}}
+    EducationDeclaration:
+      type: object
+      properties:
+        id: {type: string}
+        groupId: {type: string}
+        groupVersion: {type: integer}
+        text: {type: string}
+        textHash: {type: string}
+        confirmedAt: {type: string, format: date-time}
+    MediaCaptionCue:
+      type: object
+      required: [startMs, endMs, text]
+      properties:
+        startMs: {type: integer, minimum: 0, maximum: 599999}
+        endMs: {type: integer, minimum: 1, maximum: 600000}
+        text: {type: string, minLength: 1, maxLength: 1000}
+# Existing POST /files?purpose=media additionally accepts MP4/MOV/WebM videos (50 MiB, <=10 min),
+# decodes local input and normalizes to MP4 H264/AAC with bounded slots/time/dimensions/output size.
+# Success returns duration seconds plus normalized name/MIME/SHA; source SHA is retained internally.
+# Busy/unavailable/timeout => 503; invalid/oversize/unsupported media => 422/413. No AI/live stream.

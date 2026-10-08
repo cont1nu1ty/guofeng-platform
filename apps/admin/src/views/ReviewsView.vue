@@ -2,6 +2,8 @@
 import { useRoute } from "vue-router";
 import ReviewAlertsPanel from "../components/ReviewAlertsPanel.vue";
 import ReviewWindowDialog from "../components/ReviewWindowDialog.vue";
+import ReviewRubricEditor from "../components/ReviewRubricEditor.vue";
+import { editableRubrics, validateRubrics } from "../domain/reviewRubrics";
 import {
   beijingTime,
   windowLabel,
@@ -56,6 +58,7 @@ const flowDraft = ref({
   blind: true,
   deadlineDays: 7,
   enabled: reviewFlow.stages.map((stage) => stage.enabled),
+  rubrics: editableRubrics(reviewFlow.rubrics),
 });
 const demoNow = ref(Date.now());
 const demoClock = isHttpMode
@@ -82,6 +85,7 @@ const activeSubmission = computed(() =>
   ),
 );
 const canScore = computed(() => activeTask.value?.canScore === true);
+const taskDimensions = computed(() => isHttpMode ? activeTask.value?.dimensions ?? [] : scoringDimensions);
 const totalScore = computed(() =>
   scores.value.reduce(
     (sum, score) => sum + (Number.isFinite(score) ? score : 0),
@@ -94,10 +98,10 @@ const scoped = computed(() =>
 const enriched = computed(() =>
   scoped.value.map((task) => ({
     ...task,
-    submission: reviewState.submissions.find(
+    submission: isHttpMode ? { title: task.title || task.submissionId } : reviewState.submissions.find(
       (item) => item.id === task.submissionId,
     ),
-    expert: reviewState.experts.find((item) => item.id === task.expertId),
+    expert: isHttpMode ? { name: task.expertName || task.expertId, group: "" } : reviewState.experts.find((item) => item.id === task.expertId),
   })),
 );
 const filtered = computed(() =>
@@ -109,8 +113,11 @@ const filtered = computed(() =>
       (!expert.value || task.expertId === expert.value),
   ),
 );
+const expertOptions = computed(() => isHttpMode
+  ? [...new Map(scoped.value.map(task => [task.expertId, { id: task.expertId, name: task.expertName || task.expertId }])).values()]
+  : reviewState.experts);
 const rows = computed(() =>
-  filtered.value.slice(
+  isHttpMode ? filtered.value : filtered.value.slice(
     (page.value - 1) * limit.value,
     page.value * limit.value,
   ),
@@ -130,7 +137,7 @@ watch([search, taskStatus, expert, () => workspace.region, limit], () => {
 });
 function openTask(task: ReviewTask) {
   activeId.value = task.id;
-  scores.value = task.scores ? [...task.scores] : [0, 0, 0, 0];
+  scores.value = task.scores ? [...task.scores] : (isHttpMode ? task.dimensions ?? [] : scoringDimensions).map(() => 0);
   comment.value = task.comment || "";
   scoreError.value = "";
   drawer.value = true;
@@ -200,11 +207,16 @@ function configure() {
     blind: isHttpMode ? true : reviewFlow.blind,
     deadlineDays: reviewFlow.deadlineDays,
     enabled: reviewFlow.stages.map((stage) => stage.enabled),
+    rubrics: editableRubrics(reviewFlow.rubrics),
   };
   configurationError.value = "";
   configureOpen.value = true;
 }
 async function saveConfiguration() {
+  if (isHttpMode) {
+    configurationError.value = validateRubrics(flowDraft.value.rubrics);
+    if (configurationError.value) return;
+  }
   const result = await configureReviewFlow(flowDraft.value);
   if (!result.ok) {
     configurationError.value = result.message;
@@ -229,7 +241,7 @@ async function saveConfiguration() {
           >刷新任务</el-button
         ><el-button
           :icon="Setting"
-          v-if="can('submissions:write')"
+          v-if="can('reviews:configure')"
           @click="configure"
           >评审流程配置</el-button
         ></template
@@ -282,7 +294,7 @@ async function saveConfiguration() {
               placeholder="全部专家"
               aria-label="评审专家"
               ><el-option
-                v-for="item in reviewState.experts"
+                v-for="item in expertOptions"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id" /></el-select
@@ -355,6 +367,7 @@ async function saveConfiguration() {
             >
           </el-table>
           <Pagination
+            v-if="!isHttpMode"
             v-model:page="page"
             v-model:limit="limit"
             :total="filtered.length"
@@ -367,9 +380,9 @@ async function saveConfiguration() {
           <div class="flow-heading">
             <div>
               <h2>{{ reviewFlow.name }}</h2>
-              <p>原文六级流程 · 最终节点及晋级规则待业务确认</p>
+              <p>{{ modeText('六个可配置节点 · 稿件按提交时的流程与量表版本评审', '原文六级流程 · 最终节点及晋级规则待业务确认') }}</p>
             </div>
-            <el-tag type="warning" effect="plain">讨论方案</el-tag>
+            <el-tag type="info" effect="plain">{{ modeText('当前发布版本', '讨论方案') }}</el-tag>
           </div>
           <div class="flow-grid">
             <div
@@ -384,7 +397,7 @@ async function saveConfiguration() {
                 size="small"
                 :type="stage.enabled ? 'success' : 'info'"
                 effect="plain"
-                >{{ stage.enabled ? "示意启用" : "示意关闭" }}</el-tag
+                >{{ stage.enabled ? modeText("已启用", "示意启用") : modeText("已关闭", "示意关闭") }}</el-tag
               ><el-icon v-if="index < 5" class="node-arrow"
                 ><ArrowRight
               /></el-icon>
@@ -409,7 +422,7 @@ async function saveConfiguration() {
             </div>
           </div>
           <el-alert
-            title="配置用于界面讨论，不执行流程引擎。修改节点和时限不会迁移或重算已分配任务；评分完成后也不会自动入围、公示或签发证书。"
+            :title="modeText('新稿件版本绑定发布时的配置；已绑定稿件、量表与既有任务不随配置修改。专家评分完成后仍需人工决定和发布结果。', '配置用于界面讨论，不执行流程引擎。评分完成后也不会自动入围、公示或签发证书。')"
             type="info"
             :closable="false"
             show-icon
@@ -432,19 +445,19 @@ async function saveConfiguration() {
       size="min(720px, 100vw)"
       destroy-on-close
     >
-      <template v-if="activeTask && activeSubmission">
+      <template v-if="activeTask && (isHttpMode || activeSubmission)">
         <div class="scoring-heading">
           <el-tag
             :type="activeTask.status === '已完成' ? 'success' : 'warning'"
             >{{ activeTask.status }}</el-tag
           >
-          <h2>{{ activeSubmission.title }}</h2>
+          <h2>{{ isHttpMode ? activeTask.title : activeSubmission?.title }}</h2>
           <p>
             {{
-              reviewFlow.blind
+              isHttpMode ? '作者信息已隐藏 · 仅使用脱敏评审材料' : reviewFlow.blind
                 ? "作者信息已隐藏 · 匿名展示示例"
-                : `${activeSubmission.author} · ${activeSubmission.region}`
-            }}<br />{{ activeSubmission.genre }} · {{ activeSubmission.id
+                : `${activeSubmission?.author} · ${activeSubmission?.region}`
+            }}<br />{{ activeSubmission?.genre }} · {{ activeTask.submissionId
             }}<span v-if="activeTask.ruleVersion">
               · 量表 {{ activeTask.ruleVersion }}</span
             >
@@ -468,7 +481,7 @@ async function saveConfiguration() {
           <el-button
             v-if="
               isHttpMode &&
-              can('submissions:write') &&
+              can('reviews:manage') &&
               activeTask.status === '待评分'
             "
             @click="windowOpen = true"
@@ -491,8 +504,8 @@ async function saveConfiguration() {
             ><div class="review-manuscript">
               {{
                 isHttpMode
-                  ? activeSubmission.blindContent || activeSubmission.content
-                  : activeSubmission.content
+                  ? activeTask.content
+                  : activeSubmission?.content
               }}
             </div></el-collapse-item
           ></el-collapse
@@ -506,7 +519,7 @@ async function saveConfiguration() {
         </div>
         <el-form label-position="top" class="score-form"
           ><div
-            v-for="(dimension, index) in scoringDimensions"
+            v-for="(dimension, index) in taskDimensions"
             :key="dimension.label"
             class="score-row"
           >
@@ -561,7 +574,7 @@ async function saveConfiguration() {
             )
           }}</span
           ><el-button
-            v-has-permi="'reviews:write'"
+            v-has-permi="'reviews:score'"
             v-if="activeTask?.status === '待评分' && canScore"
             type="primary"
             @click="submit"
@@ -578,7 +591,7 @@ async function saveConfiguration() {
       ><p class="dialog-description">
         {{
           modeText(
-            "保存后发布新的流程配置版本，仅影响后续启动的评审实例。",
+            "保存后发布新的流程和节点量表版本，仅绑定后续新提交的稿件版本。",
             "配置讨论方案的展示方式，不执行真实工作流。",
           )
         }}
@@ -606,7 +619,9 @@ async function saveConfiguration() {
             aria-label="匿名展示"
           />
           <span v-if="isHttpMode" class="muted">本期采用匿名评审</span>
-        </el-form-item></el-form
+        </el-form-item>
+        <ReviewRubricEditor v-if="isHttpMode" :rubrics="flowDraft.rubrics" :stages="reviewFlow.stages" />
+        </el-form
       ><el-alert
         v-if="configurationError"
         :title="configurationError"
@@ -615,7 +630,7 @@ async function saveConfiguration() {
       /><template #footer
         ><el-button @click="configureOpen = false">取消</el-button
         ><el-button
-          v-has-permi="'reviews:write'"
+          v-has-permi="'reviews:configure'"
           type="primary"
           @click="saveConfiguration"
           >{{ modeText("发布流程配置", "保存讨论方案") }}</el-button

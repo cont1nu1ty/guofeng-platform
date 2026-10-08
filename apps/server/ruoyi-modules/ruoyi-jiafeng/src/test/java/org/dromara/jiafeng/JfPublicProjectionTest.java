@@ -58,7 +58,7 @@ class JfPublicProjectionTest {
     }).when(privateRecords).addMember(anyMap(), nullable(JfAuth.Actor.class));
     var redis = new JfPublicCacheTest.MemoryTransport();
     var cache = new JfPublicCache(db, mock(PlatformTransactionManager.class), redis, true, "test", Clock.systemUTC());
-    var projection = new JfProjection(store, submissions, catalog, privateRecords, cache, mock(JfReviewWindows.class));
+    var projection = new JfProjection(store, submissions, catalog, privateRecords, cache, mock(JfReviewWindows.class), mock(JfEducation.class));
 
     var first = projection.member(member(1));
     assertEquals(List.of("private-owner-one", "public"), list(first.get("works")).stream().map(x -> str(obj(x), "id")).toList());
@@ -93,7 +93,7 @@ class JfPublicProjectionTest {
         "homeStats", m("submissions", 0, "participants", 0, "regions", 0, "asOf", now()),
         "media", m(), "registrations", m()));
     var projection = new JfProjection(mock(JfStore.class), mock(JfSubmissions.class), mock(JfCatalog.class),
-        mock(JfPersonalRecords.class), cache, mock(JfReviewWindows.class));
+        mock(JfPersonalRecords.class), cache, mock(JfReviewWindows.class), mock(JfEducation.class));
     var result = projection.member(null);
     var media = obj(list(result.get("mediaItems")).getFirst());
     assertEquals(0L, media.get("likes"));

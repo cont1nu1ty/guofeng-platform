@@ -4,6 +4,7 @@ import type { Directive } from "vue";
 import { api } from "./http";
 import { isHttpMode } from "./mode";
 import { getToken, setToken, removeToken } from "../utils/auth";
+import { canOpenSettings } from "../domain/settingsAccess";
 export interface SessionUser {
   id: string;
   name: string;
@@ -57,7 +58,7 @@ export function can(permission: string) {
   );
 }
 export function canVisit(path: string) {
-  return path === "/overview" || can(`${path.slice(1)}:read`);
+  return path === "/overview" || (path === "/settings" ? canOpenSettings(can) : can(`${path.slice(1)}:read`));
 }
 export const hasPermi: Directive<HTMLElement, string | string[]> = {
   mounted: updateVisibility,

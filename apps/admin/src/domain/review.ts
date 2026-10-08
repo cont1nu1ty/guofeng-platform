@@ -1,6 +1,7 @@
 import { reactive } from "vue";
 import { projectMockReviewTask, mockScoreUnavailable } from "./reviewWindow";
 import { recordActivity } from "./workspace";
+import type { ReviewRubric, ReviewDimension } from "./reviewRubrics";
 
 export type SubmissionStatus =
   | "待初审"
@@ -48,6 +49,7 @@ export interface ReviewTask {
   id: string;
   submissionId: string;
   expertId: string;
+  expertName?: string;
   region: string;
   stage: string;
   assignedAt: string;
@@ -60,6 +62,9 @@ export interface ReviewTask {
   status: "待评分" | "已完成" | "已取消";
   canScore?: boolean;
   ruleVersion?: string;
+  dimensions?: ReviewDimension[];
+  title?: string;
+  content?: string;
   scores?: number[];
   comment?: string;
   completedAt?: string;
@@ -477,6 +482,7 @@ export function updateExpert(
 }
 
 export const reviewFlow = reactive({
+  rubrics: [] as ReviewRubric[],
   name: "2026 家风作品征集 · 讨论方案",
   blind: true,
   deadlineDays: 7,
@@ -494,6 +500,7 @@ export function configureReviewFlow(input: {
   blind: boolean;
   deadlineDays: number;
   enabled: boolean[];
+  rubrics?: ReviewRubric[];
 }): ActionResult {
   if (
     !Number.isInteger(input.deadlineDays) ||

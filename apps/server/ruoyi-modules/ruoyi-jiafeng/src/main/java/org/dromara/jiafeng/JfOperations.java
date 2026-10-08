@@ -376,6 +376,7 @@ public class JfOperations {
       }
       case "processClaim" -> {
         var e = existing(a, "claim", id, version);
+        require(!str(e.data(), "kind").equals("custom"), 409, "CONSULTATION_WORKFLOW", "定制咨询请在咨询跟进中处理，不能执行公益库存发放");
         var product = store.find("product", str(e.data(), "productId"), true);
         auth.operate(a, product.region());
         var d = copy(e.data());
@@ -521,95 +522,39 @@ public class JfOperations {
         store.save(e, e.region(), "published", e.data());
         return ok();
       }
-      case "saveUserRoles", "toggleUser", "approveUser" -> {
-        long uid = number(id);
-        var target = auth.adminTarget(uid);
-        require(
-            a.national()
-                || (!target.national() && target.regions.stream().allMatch(a.regions::contains)),
-            404,
-            "NOT_FOUND",
-            "用户不可见");
-        require(version != null, 428, "VERSION_REQUIRED", "缺少用户版本");
-        require(number(version) == target.version, 412, "VERSION_CONFLICT", "用户已更新");
-        require(a.id != uid, 409, "SELF_CHANGE_FORBIDDEN", "不能通过此操作修改自己的权限或状态");
-        if (cmd.equals("saveUserRoles")) {
-          require(a.national(), 403, "FORBIDDEN", "仅全国管理员可调整岗位");
-          List<Object> roles = list(input.get("roles"));
-          require(!roles.isEmpty(), 422, "ROLE_REQUIRED", "至少选择一个岗位");
-          Set<String> mapped = new LinkedHashSet<>();
-          for (Object role : roles) {
-            String s = text(role);
-            mapped.add(
-                switch (s) {
-                  case "超级管理员", "全国管理员", "national_admin" -> "national_admin";
-                  case "专家", "expert" -> "expert";
-                  case "投稿用户", "member" -> "member";
-                  case "内容运营", "评审管理", "区域运营", "数据运营", "regional_admin" -> "regional_admin";
-                  default -> throw error(422, "INVALID_ROLE", "未知岗位");
-                });
-          }
-          store
-              .db()
-              .update(
-                  "UPDATE jf_account SET roles=?,version=version+1 WHERE user_id=?",
-                  json(mapped),
-                  uid);
-          if (mapped.contains("expert")
-              && store.all("expert").stream().noneMatch(e -> Objects.equals(e.owner(), uid)))
-            store
-                .db()
-                .update(
-                    "INSERT INTO jf_entity(id,kind,owner_id,region_id,status,payload)"
-                        + " VALUES(?,'expert',?,?,'active',?)",
-                    id,
-                    uid,
-                    target.regions.stream().findFirst().orElse("all"),
-                    json(
-                        m(
-                            "name",
-                            target.name,
-                            "title",
-                            "评审专家",
-                            "organization",
-                            "家风平台",
-                            "group",
-                            "文学创作组",
-                            "availability",
-                            "可分配",
-                            "specialties",
-                            List.of(),
-                            "biography",
-                            "")));
-        } else if (cmd.equals("toggleUser")) {
-          store
-              .db()
-              .update(
-                  "UPDATE jf_account SET enabled=?,version=version+1 WHERE user_id=?",
-                  bool(input.get("enabled")),
-                  uid);
-        } else {
-          store
-              .db()
-              .update(
-                  "UPDATE jf_account SET"
-                      + " profile=JSON_SET(profile,'$.status','已通过'),version=version+1 WHERE"
-                      + " user_id=?",
-                  uid);
-        }
-        return ok();
-      }
+      case "saveUserRoles", "toggleUser", "approveUser" ->
+          throw error(409, "ACCOUNT_API_REQUIRED", "请使用账号管理服务办理授权和人工审核");
       default -> throw error(422, "UNKNOWN_COMMAND", "不支持的运营动作");
     }
   }
 
-  public static String roleLabel(String role) {
-    return switch (role) {
-      case "national_admin" -> "全国管理员";
-      case "regional_admin" -> "区域运营";
-      case "expert" -> "专家";
-      default -> "投稿用户";
+  /** Replays must not return a formerly authorized entity after region revocation or transfer. */
+  public void authorizeResult(JfAuth.Actor actor, String command, String inputId, Object result) {
+    String kind = switch (command) {
+      case "saveContent", "setContentStatus" -> "content";
+      case "saveCollection", "saveChapter", "moveChapter", "importChapter", "collectVolume" -> "collection";
+      case "saveActivity", "setActivityStatus", "toggleAttendance" -> "activity";
+      case "saveProduct", "toggleProduct" -> "product";
+      case "processClaim" -> "claim";
+      case "saveDictionaryWord", "toggleDictionaryWord" -> "dictionary";
+      case "saveKnowledgeDocument" -> "knowledge";
+      case "saveNotificationDraft", "publishNotification" -> "notice";
+      default -> "";
     };
+    if (kind.isEmpty()) return;
+    var cached = obj(result);
+    String id = str(cached, "id").isEmpty() ? inputId : str(cached, "id");
+    if (id.isEmpty()) return;
+    // Check both the current entity and the historical response: an entity may have moved
+    // into or out of this actor's scope after the original operation.
+    auth.operate(actor, store.find(kind, id, false).region());
+    String previousRegion = str(cached, "regionId");
+    if (previousRegion.isBlank()) previousRegion = str(cached, "region");
+    if (!previousRegion.isBlank()) auth.operate(actor, region(previousRegion));
+  }
+
+  public static String roleLabel(String role) {
+    return JfAccess.roleLabel(role);
   }
 
   public static Instant date(String value) {

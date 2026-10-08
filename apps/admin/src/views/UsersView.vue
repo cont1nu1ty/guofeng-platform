@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { isHttpMode, modeText } from "../services/mode";
+import AccountManagement from "../components/accounts/AccountManagement.vue";
 
 import { saveUserRoles, toggleUser, approveUser } from "../services/actions";
 
@@ -95,6 +96,8 @@ const availableRoles = isHttpMode
 </script>
 
 <template>
+  <AccountManagement v-if="isHttpMode" />
+  <template v-else>
   <PageHeading
     title="用户与权限"
     description="连接每一位参与者，让岗位职责与区域范围清晰可见。"
@@ -355,6 +358,7 @@ const availableRoles = isHttpMode
       ></template
     ></el-dialog
   >
+  </template>
 </template>
 <style scoped>
 .user-stats .stat-card {

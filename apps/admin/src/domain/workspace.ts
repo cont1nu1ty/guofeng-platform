@@ -63,6 +63,7 @@ export const navGroups = [
       { path: "/submissions", title: "投稿作品", icon: "Document" },
       { path: "/reviews", title: "评审中心", icon: "Checked" },
       { path: "/experts", title: "专家库", icon: "UserFilled" },
+      { path: "/certificates", title: "证书签发", icon: "Document" },
     ],
   },
   {
@@ -70,6 +71,7 @@ export const navGroups = [
     items: [
       { path: "/content", title: "内容资讯", icon: "Reading" },
       { path: "/collections", title: "典籍编纂", icon: "Collection" },
+      { path: "/resources", title: "授权资源", icon: "Reading" },
       { path: "/activities", title: "全国活动", icon: "Calendar" },
       { path: "/education", title: "廉政教育", icon: "School" },
       { path: "/welfare", title: "文创公益", icon: "Present" },
@@ -81,6 +83,7 @@ export const navGroups = [
       { path: "/users", title: "用户与权限", icon: "User" },
       { path: "/ai", title: "AI 运维", icon: "MagicStick" },
       { path: "/analytics", title: "数据智库", icon: "DataAnalysis" },
+      { path: "/jobs", title: "导出与报告", icon: "Document" },
       { path: "/settings", title: "系统设置", icon: "Setting" },
     ],
   },

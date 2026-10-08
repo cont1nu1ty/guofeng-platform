@@ -14,11 +14,13 @@ const uploading = ref(false),
   error = ref("");
 async function select(file: UploadFile) {
   if (!file.raw || uploading.value) return;
-  const allowed = props.media ? /\.(mp4|mp3|wav)$/i : /\.(png|jpe?g)$/i;
+  const allowed = props.media
+    ? /\.(mp4|mov|webm|mp3|wav)$/i
+    : /\.(png|jpe?g)$/i;
   const limit = (props.media ? 50 : 10) * 1024 * 1024;
   if (!allowed.test(file.name) || file.raw.size > limit) {
     error.value = props.media
-      ? "请选择50MiB以内的MP4、MP3或WAV文件。"
+      ? "请选择50MiB以内的MP4、MOV、WebM、MP3或WAV文件。"
       : "请选择10MiB以内的PNG或JPEG图片。";
     return;
   }
@@ -30,7 +32,8 @@ async function select(file: UploadFile) {
     emit("update:modelValue", value.fileId);
     name.value = value.name || file.name;
   } catch (reason) {
-    error.value = reason instanceof Error ? reason.message : "上传失败，请重试。";
+    error.value =
+      reason instanceof Error ? reason.message : "上传失败，请重试。";
   } finally {
     uploading.value = false;
     emit("busy", false);
@@ -40,7 +43,9 @@ async function open() {
   try {
     await downloadFile(props.modelValue);
   } catch (reason) {
-    ElMessage.error(reason instanceof Error ? reason.message : "文件暂时无法打开");
+    ElMessage.error(
+      reason instanceof Error ? reason.message : "文件暂时无法打开",
+    );
   }
 }
 </script>
@@ -50,7 +55,7 @@ async function open() {
       <el-upload
         :auto-upload="false"
         :show-file-list="false"
-        :accept="media ? '.mp4,.mp3,.wav' : '.png,.jpg,.jpeg'"
+        :accept="media ? '.mp4,.mov,.webm,.mp3,.wav' : '.png,.jpg,.jpeg'"
         :on-change="select"
         :disabled="disabled || uploading"
       >
@@ -78,7 +83,7 @@ async function open() {
       uploading
         ? "上传中，请等待成功后再保存。"
         : media
-          ? "支持 MP4 / MP3 / WAV，最大50MiB。"
+          ? "视频支持MP4 / MOV / WebM（最长10分钟），转换为MP4；音频支持MP3 / WAV。最大50MiB。"
           : "支持 PNG / JPEG，最大10MiB。"
     }}</small>
   </div>

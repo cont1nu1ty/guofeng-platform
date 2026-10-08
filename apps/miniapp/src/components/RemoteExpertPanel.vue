@@ -29,7 +29,7 @@ const error = ref('')
 const canReview = computed(() => remoteUser.value?.roles.includes('expert'))
 function open(task: RemoteReviewTask) {
   selectedId.value = task.id
-  scores.value = [...(task.scores || [0, 0, 0, 0])]
+  scores.value = [...(task.scores || task.dimensions.map(() => 0))]
   comment.value = task.comment || ''
   error.value = ''
 }
@@ -37,9 +37,9 @@ async function submit() {
   const task = selected.value
   if (!task || busy.value || !maySubmit.value) return
   if (
-    scores.value.some(
+    scores.value.length !== task.dimensions.length || scores.value.some(
       (score, i) =>
-        !Number.isFinite(Number(score)) ||
+        !Number.isInteger(Number(score)) ||
         Number(score) < 0 ||
         Number(score) > task.dimensions[i]!.max,
     )
@@ -57,7 +57,7 @@ async function submit() {
     await command(
       'review.submit',
       task.id,
-      { scores: scores.value.map(Number), comment: comment.value.trim() },
+      { scores: scores.value.map(Number), comment: comment.value.trim(), ruleVersion: task.ruleVersion },
       task.version,
     )
     selectedId.value = task.id

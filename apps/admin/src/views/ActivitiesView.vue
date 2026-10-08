@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { api, reportError } from "../services/http";
+import { watch } from "vue";
 import { isHttpMode, modeText } from "../services/mode";
 
 import {
@@ -45,12 +47,12 @@ const filtered = computed(() =>
   ),
 );
 const registrationCount = computed(() =>
-  scoped.value.reduce((sum, item) => sum + item.registrations.length, 0),
+  scoped.value.reduce((sum, item) => sum + (item.registrationCount ?? item.registrations.length), 0),
 );
 const attendanceCount = computed(() =>
   scoped.value.reduce(
     (sum, item) =>
-      sum + item.registrations.filter((row) => row.checkedIn).length,
+      sum + (item.checkedInCount ?? item.registrations.filter((row) => row.checkedIn).length),
     0,
   ),
 );
@@ -71,9 +73,13 @@ const selected = ref<ActivityItem>();
 const detailOpen = ref(false);
 const registrationQuery = ref("");
 const attendanceFilter = ref("全部名单");
+const registrationPage=ref(1),registrationTotal=ref(0),serverRegistrations=ref<Registration[]>([]),registrationsBusy=ref(false);
+let registrationGeneration=0;
+async function loadRegistrations(){if(!isHttpMode || !selected.value)return;const generation=++registrationGeneration;registrationsBusy.value=true;try{const params=new URLSearchParams({page:String(registrationPage.value),pageSize:"25",q:registrationQuery.value,status:attendanceFilter.value==="全部名单"?"":attendanceFilter.value==="已签到"?"checked":"pending"});const result=await api<{items:Registration[];total:number}>(`/admin/activities/${selected.value.id}/registrations?${params}`);if(generation===registrationGeneration){serverRegistrations.value=result.items;registrationTotal.value=result.total;}}catch(e){reportError(e);}finally{if(generation===registrationGeneration)registrationsBusy.value=false;}}
+watch([registrationQuery,attendanceFilter],()=>{registrationPage.value=1;void loadRegistrations();});
 const selectedRegistrations = computed(
   () =>
-    selected.value?.registrations.filter(
+    isHttpMode ? serverRegistrations.value : selected.value?.registrations.filter(
       (item) =>
         (attendanceFilter.value === "全部名单" ||
           (attendanceFilter.value === "已签到"
@@ -129,6 +135,7 @@ function openRegistrations(item: ActivityItem) {
   registrationQuery.value = "";
   attendanceFilter.value = "全部名单";
   detailOpen.value = true;
+  registrationPage.value=1;void loadRegistrations();
 }
 async function transition(item: ActivityItem, next: ActivityStatus) {
   const label =
@@ -156,7 +163,14 @@ async function transition(item: ActivityItem, next: ActivityStatus) {
 async function checkIn(row: Registration) {
   if (!selected.value) return;
   try {
+    const checked=!row.checkedIn;
     await toggleAttendance(selected.value, row);
+    if(isHttpMode){
+      const refreshed=editorialState.activities.find(item=>item.id===selected.value?.id);
+      if(refreshed)selected.value=refreshed;
+      else if(selected.value?.checkedInCount!==undefined)selected.value.checkedInCount+=checked?1:-1;
+      await loadRegistrations();row.checkedIn=checked;
+    }
     ElMessage.success(row.checkedIn ? "签到完成" : "已撤销签到");
   } catch (reason) {
     if (reason instanceof Error) ElMessage.error(reason.message);
@@ -291,7 +305,7 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
             <div>
               <span>报名进度 <em>示例</em></span
               ><strong
-                >{{ item.registrations.length }}
+                >{{ (item.registrationCount ?? item.registrations.length) }}
                 <small>/ {{ item.capacity }} 人</small></strong
               >
             </div>
@@ -299,7 +313,7 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
               :percentage="
                 Math.min(
                   100,
-                  Math.round((item.registrations.length / item.capacity) * 100),
+                  Math.round(((item.registrationCount ?? item.registrations.length) / item.capacity) * 100),
                 )
               "
               :show-text="false"
@@ -471,12 +485,12 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
         </div>
         <div class="registration-stats">
           <div>
-            <strong>{{ selected.registrations.length }}</strong
+            <strong>{{ (selected.registrationCount ?? selected.registrations.length) }}</strong
             ><span>报名</span>
           </div>
           <div>
             <strong>{{
-              selected.registrations.filter((item) => item.checkedIn).length
+              (selected.checkedInCount ?? selected.registrations.filter((item) => item.checkedIn).length)
             }}</strong
             ><span>已签到</span>
           </div>
@@ -543,8 +557,9 @@ const dateLabel = (value: string) => value.slice(0, 10).replaceAll("-", ".");
             ></el-table-column
           ></el-table
         >
+        <el-pagination v-if="isHttpMode" v-model:current-page="registrationPage" :page-size="25" :total="registrationTotal" layout="total,prev,pager,next" @current-change="loadRegistrations"/>
         <p class="registration-note">
-          不采集手机号、身份证或真实个人信息。活动名额与名单用于界面沟通。
+          {{isHttpMode ? "名单保存账号姓名、机构与签到记录；仅限授权活动运营查看。" : "活动名额与名单为演示记录，用于界面沟通。"}}
         </p></template
       >
       <template #footer

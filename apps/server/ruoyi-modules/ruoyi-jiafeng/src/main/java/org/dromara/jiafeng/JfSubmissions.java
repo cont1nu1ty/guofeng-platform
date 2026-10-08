@@ -11,11 +11,15 @@ public class JfSubmissions {
   private final JfStore store;
   private final JfAuth auth;
   private final JfFiles files;
+  private final JfRubrics rubrics;
+  private final JfReviewProgress reviewProgress;
 
-  public JfSubmissions(JfStore s, JfAuth a, JfFiles f) {
+  public JfSubmissions(JfStore s, JfAuth a, JfFiles f, JfRubrics rubrics, JfReviewProgress reviewProgress) {
     store = s;
     auth = a;
     files = f;
+    this.rubrics = rubrics;
+    this.reviewProgress = reviewProgress;
   }
 
   public record Draft(Map<String, Object> data, long version) {}
@@ -172,6 +176,27 @@ public class JfSubmissions {
     return d;
   }
 
+  /** Offline provenance is not an author's agreement. Only text is imported in this workflow. */
+  public Map<String, Object> validateOffline(Map<String, Object> input, JfAuth.Actor owner) {
+    var fields = copy(input);
+    fields.put("copyrightAccepted", false);
+    fields.put("attachments", List.of());
+    fields.remove("contentDelta");
+    fields.remove("editingWorkId");
+    var clean = validate(fields, owner, false);
+    clean.put("title", required(input, "title", 2, 50));
+    clean.put("content", required(input, "content", 20, 10000));
+    require(!str(clean, "region").equals("all") && owner.region(str(clean, "region")), 422, "INVALID_REGION", "归集地区须属于接收账号获准范围");
+    require(!str(clean, "region").equals("overseas") || str(clean, "overseasLocation").length() >= 2, 422, "OVERSEAS_LOCATION_REQUIRED", "海外稿件须填写国家和城市");
+    clean.put("source", "线下归集");
+    clean.put("sourceRef", required(input, "sourceRef", 1, 100));
+    clean.put("sourceName", required(input, "sourceName", 1, 100));
+    clean.put("copyrightAccepted", false);
+    clean.put("requiresAuthorConfirmation", true);
+    clean.remove("agreementAcceptedAt");
+    return clean;
+  }
+
   @Transactional(isolation = org.springframework.transaction.annotation.Isolation.READ_COMMITTED)
   public Object submit(Map<String, Object> input, String submissionId, String key, String match) {
     var a = auth.require();
@@ -189,6 +214,8 @@ public class JfSubmissions {
             require(Objects.equals(a.id, existing.owner()), 404, "NOT_FOUND", "稿件不存在或不可见");
             match(existing.version(), match);
             require(existing.status().equals("returned"), 409, "INVALID_STATE", "只有退回稿件可重新提交");
+            for (String source : List.of("source", "sourceName", "sourceRef"))
+              if (existing.data().containsKey(source)) d.put(source, existing.data().get(source));
           }
           int revision =
               existing == null ? 1 : (int) number(existing.data().get("revisionNumber")) + 1;
@@ -228,6 +255,8 @@ public class JfSubmissions {
                   ? store.create("submission", a.id, str(d, "region"), "pending_initial_review", d)
                   : store.save(existing, str(d, "region"), "pending_initial_review", d);
           String revId = id("rev_");
+          var reviewSnapshot = JfRubrics.snapshot(store.find("setting", "reviewFlow", true).data());
+          d.put("flowSnapshot", reviewSnapshot);
           store
               .db()
               .update(
@@ -237,6 +266,7 @@ public class JfSubmissions {
                   result.id(),
                   revision,
                   json(d));
+          rubrics.bind(revId, reviewSnapshot, "submission");
           for (Object item : list(d.get("attachments")))
             store
                 .db()
@@ -321,8 +351,17 @@ public class JfSubmissions {
     d.remove("blindContent");
     d.remove("blindConfirmed");
     d.remove("flowSnapshot");
+    // Authors receive the evaluation, never the expert identity or internal staff history.
+    if (mine) {
+      d.put("reviews", list(d.get("reviews")).stream().map(raw -> {
+        var review = copy(obj(raw)); review.put("reviewer", "匿名评审专家"); return review;
+      }).toList());
+      d.put("history", list(d.get("history")).stream().map(raw -> {
+        var history = copy(obj(raw)); history.remove("actor"); return history;
+      }).toList());
+    }
     for (String internal :
-        List.of("blindPreparedBy", "flowInstanceId", "reviewManagerId", "revisionId"))
+        List.of("blindPreparedBy", "flowInstanceId", "reviewManagerId", "revisionId", "importedBy"))
       d.remove(internal);
     if (!mine && (a == null || !a.operator() || !a.region(e.region()))) {
       Set<String> publicFields =
@@ -356,6 +395,7 @@ public class JfSubmissions {
     var a = auth.require();
     var e = store.find("submission", id, false);
     auth.ownOrOperate(a, e);
+    if (!Objects.equals(a.id, e.owner())) JfAccess.require(a, "submissions:read");
     var result = work(e, a);
     List<Object> revisions = new ArrayList<>();
     for (var row :
@@ -372,9 +412,10 @@ public class JfSubmissions {
               "revisionNumber",
               row.get("revision_number"),
               "content",
-              parse(text(row.get("payload"))),
+              reviewProgress.revisionContent(parse(text(row.get("payload")))),
               "createdAt",
               timestamp(row.get("created_at"))));
-    return m("work", result, "revisions", revisions);
+    return m("work", result, "revisions", revisions, "timeline", reviewProgress.current(e),
+        "revisionTimelines", reviewProgress.revisions(e));
   }
 }

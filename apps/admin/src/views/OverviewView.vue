@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ServerAnalytics from "../components/ServerAnalytics.vue";
 import { isHttpMode, modeText } from "../services/mode";
 
 import { computed } from "vue";
@@ -119,6 +120,8 @@ const quickLinks = [
 ];
 </script>
 <template>
+  <ServerAnalytics v-if="isHttpMode" overview />
+  <template v-else>
   <PageHeading
     title="运营工作台"
     :description="`${workspace.region}视角 · 让每一份家风故事，都被认真对待。`"
@@ -343,6 +346,7 @@ const quickLinks = [
       ><el-icon><ArrowRight /></el-icon>
     </button>
   </div>
+  </template>
 </template>
 <style scoped>
 .pending-mobile-list {

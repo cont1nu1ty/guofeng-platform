@@ -6,6 +6,7 @@ import { readInputValue } from '../../composables/readInputValue'
 import { computed, ref, watch } from 'vue'
 import SectionHeading from '../../components/SectionHeading.vue'
 import HallExperiencePanel from './HallExperiencePanel.vue'
+import PanoramaViewer from './PanoramaViewer.vue'
 import FamilyPromiseEditor from '../../components/FamilyPromiseEditor.vue'
 import { hallPeople, type BilingualText } from '../../domain/showcaseCatalog'
 import { navigate, goBack, useRouteParams } from '../../composables/useNavigation'
@@ -259,11 +260,17 @@ function copySource() {
             </view>
           </view>
           <HallExperiencePanel v-if="!isHttpMode" :person="current" />
+          <PanoramaViewer
+            v-else-if="current.panoramaUrl"
+            :key="current.id"
+            :url="current.panoramaUrl"
+            :title="lt(current.name)"
+          />
           <view v-else class="scope-note">
             {{
               t(
-                '当前提供图文导览。真实全景查看器、AI讲解及语音合成尚未配置。',
-                'Illustrated guide available. Panorama viewing, AI narration and speech synthesis are not configured.',
+                '当前展馆尚未提供全景照片，可阅读图文导览。',
+                'No panorama photo has been supplied for this hall. The illustrated guide is available.',
               )
             }}
           </view>

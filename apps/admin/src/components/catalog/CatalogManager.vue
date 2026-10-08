@@ -18,6 +18,10 @@ import { workspace, matchesRegion, regions } from "../../domain/workspace";
 import { command } from "../../services/workspaceData";
 import { api, connection } from "../../services/http";
 import CatalogAssetField from "./CatalogAssetField.vue";
+import MediaAccessibilityEditor from "./MediaAccessibilityEditor.vue";
+import VenueAreaEditor from "./VenueAreaEditor.vue";
+const accessibilityId = ref("");
+const areaVenue = ref<CatalogItem>();
 
 const props = defineProps<{ kind: CatalogKind }>();
 const definition = computed(() => catalogDefinitions[props.kind]);
@@ -59,7 +63,11 @@ function edit(item?: CatalogItem) {
   editingVersion.value = item?.lockVersion;
   error.value = "";
   Object.keys(form).forEach((key) => delete form[key]);
-  Object.assign(form, newCatalogDraft(props.kind, workspace.region), item || {});
+  Object.assign(
+    form,
+    newCatalogDraft(props.kind, workspace.region),
+    item || {},
+  );
   open.value = true;
 }
 watch(
@@ -197,7 +205,8 @@ watch(previewOpen, (value) => {
 });
 const previewFields = computed(() =>
   definition.value.fields.filter(
-    (x) => x.type !== "asset" && x.type !== "target" && !!preview.value?.[x.name],
+    (x) =>
+      x.type !== "asset" && x.type !== "target" && !!preview.value?.[x.name],
   ),
 );
 function displayField(name: string, value: any) {
@@ -233,9 +242,15 @@ function displayField(name: string, value: any) {
         clearable
         placeholder="全部语言"
         aria-label="目录语言"
-        ><el-option label="中文" value="zh" /><el-option label="English" value="en"
+        ><el-option label="中文" value="zh" /><el-option
+          label="English"
+          value="en"
       /></el-select>
-      <el-select v-model="status" clearable placeholder="全部状态" aria-label="目录状态"
+      <el-select
+        v-model="status"
+        clearable
+        placeholder="全部状态"
+        aria-label="目录状态"
         ><el-option
           v-for="value in kind === 'mediaItems'
             ? ['草稿', '待审核', '已退回', '已发布', '已下架']
@@ -245,7 +260,11 @@ function displayField(name: string, value: any) {
           :value="value"
       /></el-select>
     </div>
-    <el-table :data="list" row-key="id" empty-text="暂无内容，可以新建草稿或调整筛选">
+    <el-table
+      :data="list"
+      row-key="id"
+      empty-text="暂无内容，可以新建草稿或调整筛选"
+    >
       <el-table-column label="标题" min-width="230"
         ><template #default="{ row }"
           ><el-button
@@ -262,9 +281,19 @@ function displayField(name: string, value: any) {
               · {{ row.authorName }}</span
             >
           </p>
-          <p v-if="kind === 'banners' && (row.startsAt || row.endsAt)" class="row-meta">
-            {{ row.startsAt ? new Date(row.startsAt).toLocaleString() : "不限开始" }} —
-            {{ row.endsAt ? new Date(row.endsAt).toLocaleString() : "不限结束" }}
+          <p
+            v-if="kind === 'banners' && (row.startsAt || row.endsAt)"
+            class="row-meta"
+          >
+            {{
+              row.startsAt
+                ? new Date(row.startsAt).toLocaleString()
+                : "不限开始"
+            }}
+            —
+            {{
+              row.endsAt ? new Date(row.endsAt).toLocaleString() : "不限结束"
+            }}
           </p></template
         ></el-table-column
       >
@@ -313,13 +342,23 @@ function displayField(name: string, value: any) {
             :disabled="busy"
             @click="returnMedia(row)"
             >退回</el-button
+          ><el-button
+            v-if="kind === 'mediaItems'"
+            v-has-permi="'content:read'"
+            link
+            @click="accessibilityId = row.id"
+            >字幕与朗读</el-button
+          ><el-button v-if="kind === 'venues'" v-has-permi="'content:write'" link @click="areaVenue = row">市县归属</el-button
           ></template
         ></el-table-column
       >
     </el-table>
     <p class="catalog-footnote">
       共
-      {{ list.length }} 条。顺序数字越小越靠前；草稿、退回和下架内容不会进入公开列表。
+      {{
+        list.length
+      }}
+      条。顺序数字越小越靠前；草稿、退回和下架内容不会进入公开列表。
     </p>
     <el-dialog
       v-model="open"
@@ -459,12 +498,25 @@ function displayField(name: string, value: any) {
         ></template
       >
     </el-dialog>
+    <el-drawer
+      :model-value="!!areaVenue" title="阵地市县归属" size="min(600px, 100vw)" @close="areaVenue = undefined" destroy-on-close><VenueAreaEditor v-if="areaVenue" :venue-id="areaVenue.id" :province-id="areaVenue.regionId" /></el-drawer>
+    <el-drawer
+      :model-value="!!accessibilityId"
+      title="人工字幕与朗读"
+      size="min(900px, 100vw)"
+      @close="accessibilityId = ''"
+      destroy-on-close
+      ><MediaAccessibilityEditor
+        v-if="accessibilityId"
+        :media-id="accessibilityId"
+    /></el-drawer>
     <el-drawer v-model="previewOpen" title="内容预览" size="min(720px, 100vw)">
       <article v-if="preview" class="catalog-preview">
         <el-tag>{{ preview.status }}</el-tag>
         <h2>{{ preview.title }}</h2>
         <p>
-          {{ preview.region }} · {{ preview.language === "en" ? "English" : "中文" }}
+          {{ preview.region }} ·
+          {{ preview.language === "en" ? "English" : "中文" }}
         </p>
         <el-alert
           v-if="previewAssets.error"
@@ -481,7 +533,9 @@ function displayField(name: string, value: any) {
         />
         <video
           v-if="
-            kind === 'mediaItems' && previewAssets.source && preview.type !== 'audio'
+            kind === 'mediaItems' &&
+            previewAssets.source &&
+            preview.type !== 'audio'
           "
           :src="previewAssets.source"
           :poster="previewAssets.poster"
@@ -490,7 +544,9 @@ function displayField(name: string, value: any) {
         />
         <audio
           v-if="
-            kind === 'mediaItems' && previewAssets.source && preview.type === 'audio'
+            kind === 'mediaItems' &&
+            previewAssets.source &&
+            preview.type === 'audio'
           "
           :src="previewAssets.source"
           controls

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ServerAnalytics from "../components/ServerAnalytics.vue";
 import { isHttpMode, modeText } from "../services/mode";
 
 import { computed, ref } from "vue";
@@ -85,6 +86,8 @@ function exportData() {
 }
 </script>
 <template>
+  <ServerAnalytics v-if="isHttpMode" />
+  <template v-else>
   <PageHeading
     title="数据智库"
     description="从征集、评审到传习，观察文化共建的每一步。图表按当前数据范围汇总。"
@@ -278,6 +281,7 @@ function exportData() {
       >
     </div></el-drawer
   >
+  </template>
 </template>
 <style scoped>
 .stat-card p {

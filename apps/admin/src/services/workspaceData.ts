@@ -4,10 +4,11 @@ import * as operations from "../domain/operations";
 import { activityLog, workspace } from "../domain/workspace";
 import { defaultWorkspaceRegion } from "../domain/regions";
 import { api, ApiError, connection, reportError, newRequestId } from "./http";
-import { session } from "./session";
+import { session, can } from "./session";
 import { isHttpMode } from "./mode";
 import { catalogState, homepageConfig } from "../domain/catalog";
 import { privateRecordStats, type PrivateRecordStats } from "../domain/privateRecords";
+import { reactive } from "vue";
 export const arrayTargets = {
   ...catalogState,
   ...reviewState,
@@ -49,9 +50,9 @@ function reconcile(target: any[], source: any[]) {
   target.splice(0, target.length, ...next);
 }
 export function applyWorkspace(data: WorkspaceData) {
-  Object.assign(privateRecordStats, data.privateRecordStats ?? { recitations: 0, familyPromises: 0, byRegion: [] });
+  if (data.privateRecordStats) Object.assign(privateRecordStats, data.privateRecordStats);
   for (const key of Object.keys(arrayTargets) as (keyof typeof arrayTargets)[])
-    reconcile(arrayTargets[key], Array.isArray(data[key]) ? data[key] : []);
+    if (Array.isArray(data[key])) reconcile(arrayTargets[key], data[key]);
   for (const item of editorialState.activities) {
     for (const key of ["startAt", "endAt"] as const) {
       if (item[key]?.includes("T") && Number.isFinite(Date.parse(item[key])))
@@ -82,16 +83,17 @@ export function applyWorkspace(data: WorkspaceData) {
     scoringDimensions.splice(0, scoringDimensions.length, ...data.scoringDimensions);
   if (data.platformConfig)
     Object.assign(operations.platformConfig, data.platformConfig);
-  homepageConfig.sections.splice(
+  if (data.homepageConfig) homepageConfig.sections.splice(
     0,
     homepageConfig.sections.length,
     ...(data.homepageConfig?.sections || []),
   );
-  homepageConfig.lockVersion = data.homepageConfig?.lockVersion;
-  session.permissions = data.permissions || [];
+  if (data.homepageConfig) homepageConfig.lockVersion = data.homepageConfig.lockVersion;
+  if (data.permissions) session.permissions = data.permissions;
   if (session.user && data.roles) session.user.roles = data.roles;
 }
 export function clearWorkspace() {
+  pageGeneration++;
   Object.assign(privateRecordStats, { recitations: 0, familyPromises: 0, byRegion: [] });
   for (const values of Object.values(arrayTargets)) values.splice(0);
   homepageConfig.sections.splice(0);
@@ -103,14 +105,50 @@ export async function loadWorkspace() {
   connection.error = "";
   connection.requestId = "";
   try {
-    applyWorkspace(await api<WorkspaceData>("/admin/workspace"));
+    applyWorkspace(await api<WorkspaceData>("/admin/bootstrap"));
     workspace.region = defaultWorkspaceRegion(session.user);
+    await loadCurrentPage();
   } catch (error) {
     reportError(error);
     throw error;
   } finally {
     connection.loading = false;
   }
+}
+export const recordPage = reactive({ collection: "", page: 1, pageSize: 25, total: 0, q: "", status: "", loading: false });
+const routeCollections: Record<string, string[]> = {
+  "/submissions": ["submissions"], "/reviews": ["tasks"], "/experts": ["experts"],
+  "/content": ["contents", "banners", "mediaItems", "venues", "hallPeople", "supportTickets"],
+  "/collections": ["collections"], "/activities": ["activities"], "/welfare": ["products", "welfareClaims"],
+  "/settings": ["notificationDrafts", "activityLog"],
+};
+let pageGeneration = 0;
+const collectionPermissions:Record<string,string>={ notificationDrafts:'notifications:read',activityLog:'audit:read',supportTickets:'consultations:read' };
+export function collectionsForRoute(path: string) { return (routeCollections[path] || []).filter(name => !collectionPermissions[name] || can(collectionPermissions[name])); }
+export function resetRecordPage(path: string) {
+  const collections = collectionsForRoute(path);
+  Object.assign(recordPage, { collection: collections[0] || "", page: 1, total: 0, q: "", status: "" });
+}
+export async function loadCurrentPage() {
+  if (!isHttpMode || !session.user) return;
+  const path = window.location?.hash?.replace(/^#/, "").split("?")[0] || "/overview";
+  const collections = collectionsForRoute(path);
+  if (!collections.includes(recordPage.collection)) resetRecordPage(path);
+  if (!recordPage.collection) return;
+  const generation = ++pageGeneration, owner = session.user.id;
+  recordPage.loading = true;
+  try {
+    const query = new URLSearchParams({ page: String(recordPage.page), pageSize: String(recordPage.pageSize), q: recordPage.q, status: recordPage.status, region: workspace.region });
+    const result = await api<{ items: any[]; total: number }>(`/admin/records/${recordPage.collection}?${query}`);
+    if (generation !== pageGeneration || session.user?.id !== owner) return;
+    recordPage.total = result.total;
+    applyWorkspace({ [recordPage.collection]: result.items } as unknown as WorkspaceData);
+  } finally { if (generation === pageGeneration) recordPage.loading = false; }
+}
+export async function selectRecordCollection(collection: string) {
+  if (!isHttpMode || recordPage.collection === collection) return;
+  Object.assign(recordPage, { collection, page: 1, q: "", status: "", total: 0 });
+  try { await loadCurrentPage(); } catch (error) { reportError(error); }
 }
 export function versionOf(
   id?: string,
@@ -188,15 +226,17 @@ export async function command<T>(
   connection.error = "";
   connection.requestId = "";
   try {
-    const response = await api<{ result: T; workspace: WorkspaceData }>(
+    const response = await api<{ result: T; workspace?: WorkspaceData; permissions?: string[] }>(
       "/admin/commands",
       {
         method: "POST",
-        headers: { "Idempotency-Key": idempotencyKey },
+        headers: { "Idempotency-Key": idempotencyKey, "X-Workspace-Mode": "compact" },
         body,
       },
     );
-    applyWorkspace(response.workspace);
+    if (response.workspace) applyWorkspace(response.workspace);
+    if (response.permissions) session.permissions = response.permissions;
+    await loadCurrentPage();
     retryKeys.delete(fingerprint);
     return response.result;
   } catch (error) {

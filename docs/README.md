@@ -1,5 +1,7 @@
 # 项目文档导航
 
+2026-10-07 新增：[非 AI 功能实施结果](engineering/non-ai-implementation-2026-10-07.md) · [本轮验证](verification/non-ai-2026-10-07.md)。岗位、版本评审与课程、人工证书、资源与导出、调度报表、地区咨询和普通媒体已接入独立 19084 验证环境；原展示环境保留，正式微信/生产验收另列。
+
 2026-09-30 新增：[评审时间窗口、站内预警与公开缓存](engineering/review-windows-cache.md) · [本轮验证](verification/review-cache-2026-09-30.md)。
 
 更新：2026-09-27。当前新增**个人云端记录、音频处理与 Elasticsearch 搜索**，保留既有用户端和后台界面。先看 [实际实现与运行边界](engineering/backend-implementation.md)、[启动部署](../deploy/README.md) 和 [本轮真实验证](verification/records-search-2026-09-27.md)。原 PDF 仍是完整需求基线，远期生产要求不混入本机完成状态。

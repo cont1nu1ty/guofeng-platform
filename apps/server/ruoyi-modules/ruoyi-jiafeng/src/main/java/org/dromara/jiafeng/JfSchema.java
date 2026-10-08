@@ -3,8 +3,10 @@ package org.dromara.jiafeng;
 import static org.dromara.jiafeng.Jf.*;
 
 import cn.hutool.crypto.digest.BCrypt;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +14,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +62,9 @@ public class JfSchema implements ApplicationRunner {
       try {
         String[] migrations = {
           "V001__domain.sql", "V002__revision_files.sql", "V003__private_records.sql", "V004__search.sql",
-          "V005__review_windows.sql", "V006__public_cache.sql"
+          "V005__review_windows.sql", "V006__public_cache.sql", "V007__permissions.sql",
+          "V008__review_versions.sql", "V009__education.sql", "V010__jobs.sql", "V011__credentials_resources.sql",
+          "V012__regions_consultations.sql", "V013__media_accessibility.sql", "V014__engagement.sql"
         };
         for (int i = 0; i < migrations.length; i++) {
           int version = i + 1;
@@ -69,7 +75,7 @@ public class JfSchema implements ApplicationRunner {
                   .db()
                   .queryForList("SELECT checksum FROM jf_schema_version WHERE version=?", version);
           if (rows.isEmpty()) {
-            ScriptUtils.executeSqlScript(connection, resource);
+            ScriptUtils.executeSqlScript(connection, pendingMigrationResource(connection, version, resource));
             store
                 .db()
                 .update(
@@ -119,6 +125,7 @@ public class JfSchema implements ApplicationRunner {
             "让好家风，成为时代的风景。"));
     seedSetting("homepageConfig", JfCatalog.defaultHomepage());
     if (!development) {
+      JfAccess.bootstrapLegacyRoles(store.db());
       initialized = true;
       return;
     }
@@ -133,7 +140,52 @@ public class JfSchema implements ApplicationRunner {
     account(10004, "expert_zj", "浙江评审专家", "staff", "zhejiang", "expert");
     account(10005, "member_zj", "浙江投稿用户", "member", "zhejiang", "member");
     account(10006, "member_bj", "北京投稿用户", "member", "beijing", "member");
+    JfAccess.bootstrapLegacyRoles(store.db());
     initialized = true;
+  }
+
+  /**
+   * V008 predates guarded index creation. MySQL DDL can survive an interrupted
+   * script before its checksum is recorded. Preserve the original checksum and
+   * skip only this exact ALTER when the already-created index is equivalent.
+   * Recorded migrations never enter this path; other SQL errors still propagate.
+   */
+  static Resource pendingMigrationResource(Connection connection, int version, Resource source)
+      throws SQLException, IOException {
+    if (version != 8) return source;
+    List<String> columns = List.of("submission_id", "status", "due_at_ms");
+    int count = 0;
+    try (var query = connection.prepareStatement(
+        "SELECT SEQ_IN_INDEX,COLUMN_NAME,NON_UNIQUE,SUB_PART,INDEX_TYPE,COLLATION,IS_VISIBLE,EXPRESSION "
+            + "FROM information_schema.statistics WHERE TABLE_SCHEMA=DATABASE() "
+            + "AND TABLE_NAME='jf_review_window' AND INDEX_NAME='jf_review_submission' ORDER BY SEQ_IN_INDEX")) {
+      try (var result = query.executeQuery()) {
+        while (result.next()) {
+          if (count >= columns.size() || result.getInt("SEQ_IN_INDEX") != count + 1
+              || !columns.get(count).equals(result.getString("COLUMN_NAME"))
+              || result.getInt("NON_UNIQUE") != 1 || result.getObject("SUB_PART") != null
+              || !"BTREE".equals(result.getString("INDEX_TYPE"))
+              || !"A".equals(result.getString("COLLATION"))
+              || !"YES".equals(result.getString("IS_VISIBLE"))
+              || result.getObject("EXPRESSION") != null) {
+            throw new IllegalStateException("V008 recovery refused: jf_review_submission index definition conflicts with migration");
+          }
+          count++;
+        }
+      }
+    }
+    if (count == 0) return source;
+    if (count != columns.size())
+      throw new IllegalStateException("V008 recovery refused: jf_review_submission index columns are incomplete");
+    String statement = "ALTER TABLE jf_review_window ADD INDEX jf_review_submission (submission_id,status,due_at_ms);";
+    String script = source.getContentAsString(StandardCharsets.UTF_8);
+    int start = script.indexOf(statement);
+    if (start < 0 || start != script.lastIndexOf(statement))
+      throw new IllegalStateException("V008 recovery refused: expected exactly one original index statement");
+    return new ByteArrayResource(
+        script.replace(statement, "-- V008 recovery: the existing index definition has been verified.")
+            .getBytes(StandardCharsets.UTF_8),
+        source.getDescription() + " (verified V008 interrupted-index recovery)");
   }
 
   private void seedSetting(String name, Map<String, Object> value) {

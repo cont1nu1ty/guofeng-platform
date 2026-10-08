@@ -169,7 +169,7 @@ export function canNavigateVenue(venue: Pick<Venue, 'sample' | 'latitude' | 'lon
   )
 }
 export function validateMediaFile(name: string, size: number) {
-  if (!/\.(mp4|mp3|wav)$/i.test(name)) return '请选择 MP4、MP3 或 WAV 文件。'
+  if (!/\.(mp4|mov|webm|mp3|wav)$/i.test(name)) return '请选择 MP4、MOV、WebM、MP3 或 WAV 文件。'
   if (!Number.isFinite(size) || size <= 0 || size > 50 * 1024 * 1024)
     return '媒体文件须大于 0 且不超过 50 MiB。'
   return ''

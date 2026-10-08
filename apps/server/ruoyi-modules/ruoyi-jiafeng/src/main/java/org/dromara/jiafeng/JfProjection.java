@@ -15,15 +15,17 @@ public class JfProjection {
   private final JfPersonalRecords personalRecords;
   private final JfPublicCache cache;
   private final JfReviewWindows reviewWindows;
+  private final JfEducation education;
 
   public JfProjection(JfStore s, JfSubmissions w, JfCatalog catalog, JfPersonalRecords personalRecords,
-      JfPublicCache cache, JfReviewWindows reviewWindows) {
+      JfPublicCache cache, JfReviewWindows reviewWindows, JfEducation education) {
     store = s;
     submissions = w;
     this.catalog = catalog;
     this.personalRecords = personalRecords;
     this.cache = cache;
     this.reviewWindows = reviewWindows;
+    this.education = education;
   }
 
   private List<JfStore.Entity> scoped(String kind, JfAuth.Actor a) {
@@ -239,7 +241,8 @@ public class JfProjection {
       }
     out.put("activityLog", logs);
     out.put("serverNow", now());
-    return out;
+    education.addAdmin(out, a);
+    return JfAccess.trimWorkspace(a, out);
   }
 
   public Map<String, Object> adminWork(JfStore.Entity e) {
@@ -250,7 +253,7 @@ public class JfProjection {
             "status",
             JfSubmissions.statusLabel(e.status()),
             "source",
-            "线上投稿",
+            p.getOrDefault("source", "线上投稿"),
             "version",
             p.get("revisionNumber"),
             "genre",
@@ -398,9 +401,7 @@ public class JfProjection {
     out.put("activities", activities);
     out.put(
         "courses",
-        store.select("course", "status='已上架'").stream()
-            .map(store::dto)
-            .toList());
+        education.publicCourses());
     out.put(
         "products",
         store.select("product", "status='已上架'").stream()
@@ -542,6 +543,7 @@ public class JfProjection {
     }
     for (var e : store.select("learning", "owner_id=?", a.id))
       obj(learning.get("courses")).put(str(e.data(), "courseId"), e.data());
+    education.addMember(out, a);
     out.put(
         "reviewTasks",
         store.select("task", "owner_id=? AND status<>'已取消'", a.id).stream()

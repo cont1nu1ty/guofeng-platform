@@ -24,6 +24,8 @@ public class JfController {
   private final JfOperations operations;
   private final JfMember member;
   private final JfCatalog catalog;
+  private final JfAccounts accounts;
+  private final JfEducation education;
   private static final Set<String> REVIEW_COMMANDS =
       Set.of(
           "configureReviewFlow",
@@ -49,7 +51,7 @@ public class JfController {
       JfReview review,
       JfOperations operations,
       JfMember member,
-      JfCatalog catalog) {
+      JfCatalog catalog, JfAccounts accounts, JfEducation education) {
     this.auth = auth;
     this.schema = schema;
     this.store = store;
@@ -60,13 +62,15 @@ public class JfController {
     this.operations = operations;
     this.member = member;
     this.catalog = catalog;
+    this.accounts = accounts;
+    this.education = education;
   }
 
   @GetMapping("/health")
   public ResponseEntity<?> health() {
     if (!schema.ready()) return ResponseEntity.status(503).body(m("status", "starting"));
     store.db().queryForObject("SELECT 1", Integer.class);
-    return ResponseEntity.ok(m("status", "ok", "schemaVersion", 6));
+    return ResponseEntity.ok(m("status", "ok", "schemaVersion", 14));
   }
 
   @PostMapping("/auth/login")
@@ -170,9 +174,11 @@ public class JfController {
   @Transactional(isolation = org.springframework.transaction.annotation.Isolation.READ_COMMITTED)
   public Object adminCommand(
       @RequestBody Map<String, Object> input,
-      @RequestHeader(value = "Idempotency-Key", required = false) String key) {
+      @RequestHeader(value = "Idempotency-Key", required = false) String key,
+      @RequestHeader(value = "X-Workspace-Mode", required = false) String workspaceMode) {
     var actor = auth.admin();
     String command = required(input, "command", 1, 80), entityId = str(input, "entityId");
+    JfAccess.authorizeCommand(actor, command);
     require(
         command.equals("submitReview") ? actor.roles.contains("expert")
             : command.equals("markReviewAlertRead")
@@ -191,7 +197,11 @@ public class JfController {
             () -> {
               var data = obj(input.get("data"));
               Object outcome =
-                  JfCatalog.ADMIN_COMMANDS.contains(command)
+                  Set.of("saveUserRoles", "toggleUser", "approveUser").contains(command)
+                      ? accounts.legacyCommand(actor, command, entityId, input.get("version"), data)
+                      : JfEducation.ADMIN_COMMANDS.contains(command)
+                      ? education.adminCommand(actor, command, entityId, input.get("version"), data)
+                      : JfCatalog.ADMIN_COMMANDS.contains(command)
                       ? catalog.adminCommand(actor, command, entityId, input.get("version"), data)
                       : REVIEW_COMMANDS.contains(command)
                           ? review.command(actor, command, entityId, input.get("version"), data)
@@ -204,7 +214,10 @@ public class JfController {
     // Rebuild under current authorization even on a replay; do not cache workspace permissions.
     if (JfCatalog.ADMIN_COMMANDS.contains(command))
       catalog.authorizeAdminResult(actor, command, result);
-    return m("result", result, "workspace", projection.admin(actor));
+    operations.authorizeResult(actor, command, entityId, result);
+    return "compact".equals(workspaceMode)
+        ? m("result", result, "permissions", actor.permissions(), "roles", actor.roles)
+        : m("result", result, "workspace", projection.admin(actor));
   }
 
   @PostMapping("/commands")
@@ -214,6 +227,7 @@ public class JfController {
       @RequestHeader(value = "Idempotency-Key", required = false) String key) {
     var actor = auth.require();
     String command = required(input, "command", 1, 80), entityId = str(input, "entityId");
+    if(command.equals("course.progress"))education.authorizeMemberCommand(actor,command,entityId,obj(input.get("data")));
     Object result =
         store.idempotent(
             actor,
@@ -222,7 +236,9 @@ public class JfController {
             input,
             () -> {
               Object outcome =
-                  JfCatalog.MEMBER_COMMANDS.contains(command)
+                  command.equals("course.progress")
+                      ? education.progress(actor, entityId, obj(input.get("data")))
+                      : JfCatalog.MEMBER_COMMANDS.contains(command)
                       ? catalog.memberCommand(
                           actor, command, entityId, input.get("version"), obj(input.get("data")))
                       : member.command(
