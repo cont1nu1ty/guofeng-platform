@@ -274,6 +274,23 @@ public class JfFiles {
     return lookup(id);
   }
 
+  /** AI workers accept only a previously authorized database file ID, never a client URL. */
+  Map<String, Object> aiFile(String id, long owner, boolean knowledge) {
+    var file = lookup(id);
+    require(number(file.get("owner_id")) == owner, 404, "NOT_FOUND", "文件不存在或不可见");
+    require(number(file.get("size")) <= 10L * 1024 * 1024
+            && (knowledge ? Set.of("image", "pdf", "word") : Set.of("image", "pdf"))
+                .contains(str(file, "file_type")),
+        422, "INVALID_AI_FILE", knowledge ? "资料仅支持10MB以内的图片、PDF和Word" : "OCR仅支持10MB以内的图片或PDF");
+    byte[] bytes = oss.download(str(file, "object_key"), (metadata, stream) -> {
+      try { return stream.readNBytes(10 * 1024 * 1024 + 1); }
+      catch (IOException error) { throw Jf.error(503, "FILE_READ_FAILED", "读取文件失败，请重试"); }
+    });
+    require(bytes.length <= 10 * 1024 * 1024 && bytes.length == number(file.get("size"))
+        && hash(bytes).equals(str(file, "sha256")), 422, "FILE_INTEGRITY_FAILED", "文件校验失败，请重新上传");
+    return m("name", file.get("name"), "mime", file.get("mime_type"), "base64", Base64.getEncoder().encodeToString(bytes));
+  }
+
   private Map<String, Object> lookup(String id) {
     var rows = store.db().queryForList("SELECT * FROM jf_file WHERE id=?", id);
     require(!rows.isEmpty(), 404, "NOT_FOUND", "文件不存在或不可见");

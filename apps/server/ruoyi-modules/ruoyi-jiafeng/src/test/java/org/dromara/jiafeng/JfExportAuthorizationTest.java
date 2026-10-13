@@ -11,6 +11,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
 class JfExportAuthorizationTest {
+  @org.junit.jupiter.api.BeforeAll static void initializeJsonMapper() {
+    var beans = new org.springframework.beans.factory.support.DefaultListableBeanFactory();
+    beans.registerSingleton("jsonMapper", tools.jackson.databind.json.JsonMapper.builder().build());
+    new org.dromara.common.core.utils.SpringUtils().postProcessBeanFactory(beans);
+  }
+
   private JfAuth.Actor actor(String... permissions) {
     return new JfAuth.Actor(m("user_id",42,"version",2,"roles",List.of("data_operator"),
         "region_ids",List.of("zhejiang"),"permissions",List.of(permissions)));

@@ -9,6 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 class JfEducationTest {
+  @org.junit.jupiter.api.BeforeAll static void initializeJsonMapper() {
+    var beans = new org.springframework.beans.factory.support.DefaultListableBeanFactory();
+    beans.registerSingleton("jsonMapper", tools.jackson.databind.json.JsonMapper.builder().build());
+    new org.dromara.common.core.utils.SpringUtils().postProcessBeanFactory(beans);
+  }
+
   private Map<String, Object> course() {
     return m("title", "诚信家风课程", "description", "通过阅读家庭故事理解诚信与责任的课程。", "teacher", "教研组", "category", "清廉家风", "duration", 30,
         "lessons", List.of(m("id", "lesson_1", "title", "诚信", "body", "认真阅读并反思。", "practice", "共同讨论")),

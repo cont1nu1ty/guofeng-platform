@@ -16,9 +16,10 @@ public class JfProjection {
   private final JfPublicCache cache;
   private final JfReviewWindows reviewWindows;
   private final JfEducation education;
+  private final JfAi ai;
 
   public JfProjection(JfStore s, JfSubmissions w, JfCatalog catalog, JfPersonalRecords personalRecords,
-      JfPublicCache cache, JfReviewWindows reviewWindows, JfEducation education) {
+      JfPublicCache cache, JfReviewWindows reviewWindows, JfEducation education, JfAi ai) {
     store = s;
     submissions = w;
     this.catalog = catalog;
@@ -26,6 +27,7 @@ public class JfProjection {
     this.cache = cache;
     this.reviewWindows = reviewWindows;
     this.education = education;
+    this.ai = ai;
   }
 
   private List<JfStore.Entity> scoped(String kind, JfAuth.Actor a) {
@@ -536,6 +538,7 @@ public class JfProjection {
           d.putAll(
               m("id", e.id(), "createdAt", e.createdAt(), "isDemo", false, "version", e.version()));
           if (e.kind().equals("notification")) d.put("read", e.status().equals("read"));
+          if (e.kind().equals("archive")) ai.archiveView(a, d);
           result.add(d);
         }
       }

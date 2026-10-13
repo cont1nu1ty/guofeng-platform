@@ -12,13 +12,15 @@ public class JfMember {
   private final JfProjection projection;
   private final JfReview review;
   private final JfPersonalRecords personalRecords;
+  private final JfAi ai;
 
-  public JfMember(JfStore s, JfAuth a, JfProjection p, JfReview r, JfPersonalRecords personalRecords) {
+  public JfMember(JfStore s, JfAuth a, JfProjection p, JfReview r, JfPersonalRecords personalRecords, JfAi ai) {
     store = s;
     auth = a;
     projection = p;
     review = r;
     this.personalRecords = personalRecords;
+    this.ai = ai;
   }
 
   public Object command(
@@ -230,7 +232,7 @@ public class JfMember {
       }
       case "archive.excerpt.save", "archive.ai.save" -> {
         String kind = cmd.contains("excerpt") ? "excerpt" : "archive";
-        var clean = copy(data);
+        var clean = kind.equals("archive") ? ai.archive(a, data) : copy(data);
         for (String key :
             List.of("id", "ownerId", "userId", "region", "regionId", "status", "isDemo"))
           clean.remove(key);
