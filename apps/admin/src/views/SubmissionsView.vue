@@ -28,6 +28,8 @@ import {
   User,
 } from "@element-plus/icons-vue";
 import PageHeading from "../components/PageHeading.vue";
+import SubmissionAiPanel from "../components/SubmissionAiPanel.vue";
+import { can } from "../services/session";
 import Pagination from "../components/upstream/Pagination.vue";
 import RightToolbar from "../components/upstream/RightToolbar.vue";
 import SubmissionImportDialog from "../components/SubmissionImportDialog.vue";
@@ -609,6 +611,9 @@ async function publishResult() {
                 }}
               </p>
             </div>
+          </el-tab-pane>
+          <el-tab-pane v-if="isHttpMode && can('submissions:write')" label="AI 辅助" lazy>
+            <SubmissionAiPanel :key="active.id" :submission-id="active.id" :version="active.lockVersion" />
           </el-tab-pane>
           <el-tab-pane label="流转记录"
             ><el-timeline class="submission-timeline"

@@ -1,4 +1,5 @@
 import { getAssistantExample, getAssistantTool } from './assistantExamples'
+import type { AiCitation, AiTask } from './aiTasks'
 import type { AssistantMode } from './personalArchive'
 export type ChatLanguage = 'zh' | 'en'
 export interface ConversationContext {
@@ -11,12 +12,17 @@ export interface ConversationContext {
 export interface ConversationReply {
   text: string
   content?: string
-  source: 'preset' | 'rules' | 'guidance'
+  source: 'preset' | 'rules' | 'guidance' | 'model'
   exampleId?: string
   mode: AssistantMode
   prompt: string
   language: ChatLanguage
   context: ConversationContext
+  citations?: AiCitation[]
+  model?: string
+  taskId?: string
+  issues?: AiTask['issues']
+  similarities?: AiTask['similarities']
 }
 export interface ConversationMessage {
   id: string

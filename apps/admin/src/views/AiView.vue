@@ -3,8 +3,8 @@ import { isHttpMode, modeText } from "../services/mode";
 
 import { saveDictionaryWord, toggleDictionaryWord } from "../services/actions";
 
-import { computed, reactive, ref } from "vue";
-import { ElMessage } from "element-plus";
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 import {
   Search,
   Plus,
@@ -14,6 +14,9 @@ import {
   EditPen,
 } from "@element-plus/icons-vue";
 import PageHeading from "../components/PageHeading.vue";
+import AiTaskResult from "../components/AiTaskResult.vue";
+import { aiModeLabels, aiStatusLabels, readAiStatus, readAiTasks, readAiTask, indexKnowledge, withdrawKnowledge, waitForAiTask, type AiStatus, type AiTask } from "../services/ai";
+import { session } from "../services/session";
 import {
   knowledgeBases,
   aiRecords,
@@ -22,12 +25,49 @@ import {
   type DictionaryWord,
 } from "../domain/operations";
 import { matchesRegion } from "../domain/workspace";
-import { command } from "../services/workspaceData";
+import { command, loadWorkspace } from "../services/workspaceData";
 import { uploadFile } from "../services/files";
 import { regions } from "../domain/workspace";
 import type { UploadFile } from "element-plus";
 const documentOpen = ref(false),
   documentBusy = ref(false);
+const serviceStatus = ref<AiStatus>();
+const serviceError = ref("");
+const recordsError = ref("");
+const liveTasks = ref<AiTask[]>([]);
+const refreshing = ref(false);
+const knowledgeBusy = ref(false);
+const knowledgeError = ref("");
+const knowledgeTask = ref<AiTask>();
+const audience = ref<"public" | "staff">("staff");
+const knowledgeLanguage = ref<"zh" | "en">("zh");
+let generation = 0;
+let knowledgeController: AbortController | undefined;
+async function refreshAi() {
+  if (!isHttpMode) return;
+  const active = generation;
+  refreshing.value = true;
+  serviceError.value = ""; recordsError.value = "";
+  const [status, records] = await Promise.allSettled([readAiStatus(), readAiTasks()]);
+  if (active !== generation) return;
+  if (status.status === "fulfilled") serviceStatus.value = status.value;
+  else { serviceStatus.value = undefined; serviceError.value = status.reason instanceof Error ? status.reason.message : "读取模型状态失败"; }
+  if (records.status === "fulfilled") liveTasks.value = records.value.items || [];
+  else { liveTasks.value = []; recordsError.value = records.reason instanceof Error ? records.reason.message : "读取任务日志失败"; }
+  refreshing.value = false;
+}
+onMounted(refreshAi);
+function stopKnowledge() { generation++; knowledgeController?.abort(); knowledgeBusy.value = false; }
+onBeforeUnmount(stopKnowledge);
+watch(() => session.user?.id, () => { stopKnowledge(); liveTasks.value = []; serviceStatus.value = undefined; knowledgeTask.value = undefined; selectedBase.value = null; baseOpen.value = false; recordOpen.value = false; void refreshAi(); });
+const filteredTasks = computed(() => liveTasks.value.filter((task) =>
+  (!query.value.trim() || `${task.id} ${task.model || ""} ${task.submissionId || ""}`.includes(query.value.trim())) &&
+  (!mode.value || task.mode === mode.value),
+));
+const serviceLabel = computed(() => !isHttpMode ? "原型预览" : refreshing.value && !serviceStatus.value ? "读取状态中" : !serviceStatus.value ? "状态读取失败" : serviceStatus.value.enabled ? "模型已配置" : "服务未启用");
+function knowledgeStatus(base: (typeof knowledgeBases)[number]) {
+  return base.indexStatus === "indexed" ? "已索引" : base.indexStatus === "withdrawn" ? "已撤回" : base.status;
+}
 const documentFile = ref<File>();
 const documentForm = reactive({
   title: "",
@@ -50,6 +90,8 @@ async function saveDocument() {
     documentOpen.value = false;
     documentFile.value = undefined;
     ElMessage.success("资料已保存，检索索引尚未建立");
+  } catch (cause) {
+    ElMessage.error(cause instanceof Error ? cause.message : "资料保存失败，请重试");
   } finally {
     documentBusy.value = false;
   }
@@ -94,8 +136,46 @@ const wordForm = reactive({
   note: "",
 });
 function openBase(item: (typeof knowledgeBases)[number]) {
+  knowledgeController?.abort(); knowledgeBusy.value = false; knowledgeTask.value = undefined; knowledgeError.value = "";
   selectedBase.value = item;
+  audience.value = item.audience || "staff";
+  knowledgeLanguage.value = item.language || "zh";
   baseOpen.value = true;
+}
+watch(baseOpen, (value) => { if (!value) { knowledgeController?.abort(); knowledgeBusy.value = false; } });
+async function buildIndex(resume = false) {
+  const base = selectedBase.value;
+  if (!base || base.lockVersion === undefined || knowledgeBusy.value) return;
+  try {
+    if (!resume) await ElMessageBox.confirm(audience.value === "public" ? "索引后，资料片段可用于用户端知识问答。请确认资料已经审校，并具有公开使用授权。" : "索引后，资料仅供已授权的后台审核辅助使用。请确认资料已审校并具有相应使用授权。", "确认资料检索范围", { confirmButtonText: "确认并建立索引", cancelButtonText: "取消", type: "warning" });
+  } catch { return; }
+  knowledgeController?.abort(); knowledgeController = new AbortController();
+  const signal = knowledgeController.signal;
+  knowledgeBusy.value = true; knowledgeError.value = "";
+  try {
+    const task = resume && knowledgeTask.value ? await readAiTask(knowledgeTask.value.id) : await indexKnowledge(base.id, base.lockVersion, audience.value, knowledgeLanguage.value);
+    if (signal.aborted) return;
+    knowledgeTask.value = task;
+    const result = await waitForAiTask(task, { signal, onUpdate(value) { if (!signal.aborted) knowledgeTask.value = value; } });
+    if (result.status === "succeeded") ElMessage.success("知识资料已建立索引");
+    await loadWorkspace(); await refreshAi();
+  } catch (cause) { if (!signal.aborted) knowledgeError.value = cause instanceof Error ? cause.message : "资料索引失败"; }
+  finally { if (!signal.aborted) knowledgeBusy.value = false; }
+}
+async function withdrawIndex() {
+  const base = selectedBase.value;
+  if (!base || base.lockVersion === undefined || knowledgeBusy.value) return;
+  try { await ElMessageBox.confirm("撤回后，该资料不再用于新的知识检索。原文件与操作记录保留。", "撤回知识资料", { confirmButtonText: "撤回索引", cancelButtonText: "取消", type: "warning" }); }
+  catch { return; }
+  knowledgeBusy.value = true; knowledgeError.value = "";
+  try { await withdrawKnowledge(base.id, base.lockVersion); knowledgeTask.value = undefined; await loadWorkspace(); await refreshAi(); ElMessage.success("资料已撤回检索"); }
+  catch (cause) { knowledgeError.value = cause instanceof Error ? cause.message : "撤回索引失败"; }
+  finally { knowledgeBusy.value = false; }
+}
+async function refreshKnowledge() {
+  knowledgeError.value = "";
+  try { await loadWorkspace(); await refreshAi(); }
+  catch (cause) { knowledgeError.value = cause instanceof Error ? cause.message : "刷新资料失败"; }
 }
 function openRecord(item: AiRecord) {
   selectedRecord.value = item;
@@ -118,15 +198,16 @@ async function submitWord() {
 }
 async function toggleWord(item: DictionaryWord) {
   await toggleDictionaryWord(item.id);
-  ElMessage.success("词条状态已更新，未执行模型审核");
+  ElMessage.success("词条状态已更新；已有分析结果不会自动重算");
 }
 </script>
 <template>
   <PageHeading
     title="AI 运营中心"
-    description="围绕知识来源、内容追溯与人工复核，准备可持续的助手运营体系。"
+    description="管理知识资料、调用任务和内容词库，保持知识来源可核对、审核建议可追溯。"
     eyebrow="AI OPERATIONS"
     ><template #actions
+      ><el-button v-if="isHttpMode" :loading="refreshing" @click="refreshAi">刷新服务与任务</el-button
       ><el-button
         v-if="isHttpMode"
         v-has-permi="'ai:write'"
@@ -141,19 +222,27 @@ async function toggleWord(item: DictionaryWord) {
       <el-icon><Connection /></el-icon>
     </div>
     <div class="ai-banner-copy">
-      <span class="service-label"><i></i>服务状态 · 尚未接入模型</span>
+      <span class="service-label"><i></i>服务状态 · {{ serviceLabel }}</span>
       <h2>可信的回答，从有据可循开始</h2>
       <p>
         {{
           modeText(
-            "当前支持资料与词库管理，调用记录仅记录实际请求。模型推理、OCR 与检索索引暂不可用。",
+            "知识资料经审校后可索引或撤回。调用记录只展示实际任务元信息，个人对话和私人稿件正文不在此展示。",
             "此处展示预置知识库结构、输入输出样例及词库配置。没有模型推理、OCR、检索或自动审核调用。",
           )
         }}
       </p>
     </div>
-    <span class="ai-badge">{{ modeText("模型不可用", "原型预览") }}</span>
+    <span class="ai-badge">{{ serviceStatus?.external ? "开发 API" : serviceLabel }}</span>
   </div>
+  <el-alert v-if="serviceError" class="service-note" :title="serviceError" type="error" :closable="false" />
+  <el-descriptions v-if="isHttpMode && serviceStatus" class="service-note" :column="2" border>
+    <el-descriptions-item label="模型提供方">{{ serviceStatus.provider || '未配置' }}</el-descriptions-item>
+    <el-descriptions-item label="模型">{{ serviceStatus.model || '未配置' }}</el-descriptions-item>
+    <el-descriptions-item label="OCR">{{ serviceStatus.ocrEnabled ? '已配置' : '未启用' }}</el-descriptions-item>
+    <el-descriptions-item label="公开索引资料">{{ serviceStatus.knowledgeCount }}</el-descriptions-item>
+  </el-descriptions>
+  <el-alert v-if="serviceStatus?.external" class="service-note" title="当前使用开发用外部模型 API。模型仅由服务端调用；后续可切换本地模型地址。" type="warning" :closable="false" show-icon />
   <section class="panel">
     <el-tabs
       v-model="tab"
@@ -172,7 +261,7 @@ async function toggleWord(item: DictionaryWord) {
           tab === 'knowledge'
             ? '搜索知识库名称'
             : tab === 'records'
-              ? '搜索编号、用户或输入输出关键词'
+              ? (isHttpMode ? '搜索任务编号、稿件编号或模型' : '搜索编号、用户或样例内容')
               : '搜索词条或备注'
         "
         :prefix-icon="Search"
@@ -185,16 +274,10 @@ async function toggleWord(item: DictionaryWord) {
         clearable
         aria-label="能力类型"
         ><el-option
-          v-for="item in [
-            '家书创作',
-            '知识问答',
-            '文稿审核',
-            '家训拟写',
-            '手稿校对',
-          ]"
-          :key="item"
-          :value="item"
-          :label="item" /></el-select
+          v-for="(label, value) in aiModeLabels"
+          :key="value"
+          :value="isHttpMode ? value : label"
+          :label="label" /></el-select
       ><el-button
         v-has-permi="'ai:write'"
         v-if="tab === 'dictionary'"
@@ -216,14 +299,14 @@ async function toggleWord(item: DictionaryWord) {
             <span class="knowledge-icon" :class="`tone-${index}`"
               ><el-icon><Collection /></el-icon></span
             ><el-tag size="small" effect="plain" type="info">{{
-              base.status
+              knowledgeStatus(base)
             }}</el-tag>
           </div>
           <h3>{{ base.title }}</h3>
           <p>{{ base.description }}</p>
           <div class="knowledge-meta">
             <span>{{ base.category }}</span
-            ><span>{{ base.version }}</span>
+            ><span>{{ base.version }}</span><el-tag v-if="isHttpMode" size="small" :type="base.audience === 'public' ? 'success' : 'info'">{{ base.audience === 'public' ? '范围：用户端' : '范围：后台' }}</el-tag>
           </div>
           <div class="knowledge-footer">
             <div>
@@ -231,7 +314,7 @@ async function toggleWord(item: DictionaryWord) {
               ><small>份资料</small>
             </div>
             <el-button link type="primary" @click="openBase(base)"
-              >查看资料结构 →</el-button
+              >{{ isHttpMode ? '管理索引 →' : '查看资料结构 →' }}</el-button
             >
           </div>
         </article>
@@ -245,11 +328,24 @@ async function toggleWord(item: DictionaryWord) {
         <div>
           <b>知识来源与版本独立记录</b>
           <p>
-            正式接入时，将文档来源、使用许可、审校状态与索引版本一并记录。模型与知识库可独立替换，保留人工审核环节。
+            上传文件后需人工核对授权、内容与使用范围，再建立索引。“用户端可检索”资料会参与公开知识问答；“仅后台辅助”资料只在授权的后台任务中使用。
           </p>
         </div>
       </div></template
     >
+    <template v-else-if="tab === 'records' && isHttpMode">
+      <el-alert v-if="recordsError" :title="recordsError" type="error" :closable="false" />
+      <el-table v-loading="refreshing" :data="filteredTasks" row-key="id" empty-text="当前授权范围内没有实际调用任务">
+        <el-table-column label="任务编号 / 创建时间" min-width="220"><template #default="{ row }"><b class="record-id">{{ row.id }}</b><small class="record-time">{{ row.createdAt }}</small></template></el-table-column>
+        <el-table-column label="能力" width="110"><template #default="{ row }">{{ aiModeLabels[row.mode as keyof typeof aiModeLabels] || row.mode }}</template></el-table-column>
+        <el-table-column label="状态" width="110"><template #default="{ row }"><el-tag :type="row.status === 'failed' ? 'danger' : row.status === 'succeeded' ? 'success' : 'warning'">{{ aiStatusLabels[row.status as keyof typeof aiStatusLabels] || row.status }}</el-tag></template></el-table-column>
+        <el-table-column prop="model" label="模型" min-width="140" />
+        <el-table-column label="业务关联" min-width="180"><template #default="{ row }">{{ row.submissionId ? `${row.submissionId} · 版本 ${row.sourceVersion ?? '—'}` : '个人任务 / 资料任务' }}</template></el-table-column>
+        <el-table-column label="完成时间" min-width="190"><template #default="{ row }">{{ row.completedAt || '—' }}</template></el-table-column>
+        <el-table-column label="错误码" min-width="170"><template #default="{ row }">{{ row.error?.code || '—' }}</template></el-table-column>
+      </el-table>
+      <p class="table-tools muted">共 {{ filteredTasks.length }} 条实际任务。此处不展示用户输入、生成正文或文件内容；稿件分析结果请在相应稿件详情中查看。</p>
+    </template>
     <template v-else-if="tab === 'records'"
       ><el-table :data="visibleRecords" row-key="id"
         ><el-table-column label="记录编号 / 时间" min-width="185"
@@ -300,7 +396,7 @@ async function toggleWord(item: DictionaryWord) {
     <template v-else
       ><el-alert
         class="dictionary-note"
-        title="词条仅用于配置讨论，保存或启用不会触发真实审核与拦截。"
+        :title="modeText('启用的词条用于后续审核辅助提示；保存词条不会自动作出审核决定或重新分析历史稿件。', '词条仅用于配置讨论，保存或启用不会触发真实审核与拦截。')"
         type="info"
         :closable="false"
         show-icon
@@ -363,14 +459,34 @@ async function toggleWord(item: DictionaryWord) {
           selectedBase.updated
         }}</el-descriptions-item
         ><el-descriptions-item label="当前状态">{{
-          selectedBase.status
+          knowledgeStatus(selectedBase)
         }}</el-descriptions-item
-        ><el-descriptions-item label="接入方式"
-          >待建设 · 私有化知识服务适配</el-descriptions-item
+        ><el-descriptions-item label="检索范围">{{ selectedBase.audience === 'public' ? '用户端知识问答' : '仅授权后台审核辅助' }}</el-descriptions-item
+        ><el-descriptions-item v-if="isHttpMode" label="数据版本">{{ selectedBase.lockVersion ?? '未返回' }}</el-descriptions-item
         ></el-descriptions
       >
-      <h3 class="drawer-subtitle">后续文档字段</h3>
-      <div class="field-tags">
+      <template v-if="isHttpMode">
+        <h3 class="drawer-subtitle">资料检索范围</h3>
+        <el-radio-group v-model="audience" :disabled="knowledgeBusy" aria-label="资料检索范围">
+          <el-radio value="staff">仅后台辅助</el-radio><el-radio value="public">用户端可检索</el-radio>
+        </el-radio-group>
+        <h3 class="drawer-subtitle">资料语言</h3>
+        <el-radio-group v-model="knowledgeLanguage" :disabled="knowledgeBusy" aria-label="资料语言">
+          <el-radio value="zh">简体中文</el-radio><el-radio value="en">English</el-radio>
+        </el-radio-group>
+        <p class="drawer-text">请选择资料正文的语言。问答按所选语言检索资料；改变语言后需重新建立索引。</p>
+        <p class="drawer-text">公开资料需事先完成授权与审校。改变使用范围后，重新建立索引才会生效；上传文件本身不会进入知识问答。</p>
+        <el-alert v-if="knowledgeError" :title="knowledgeError" type="error" :closable="false" />
+        <div class="knowledge-actions">
+          <el-button v-has-permi="'ai:write'" type="primary" :loading="knowledgeBusy" :disabled="selectedBase.lockVersion === undefined" @click="buildIndex()">建立 / 更新索引</el-button>
+          <el-button v-has-permi="'ai:write'" :disabled="knowledgeBusy || selectedBase.lockVersion === undefined" @click="withdrawIndex">撤回检索</el-button>
+          <el-button v-if="knowledgeTask && ['queued', 'running'].includes(knowledgeTask.status)" :disabled="knowledgeBusy" @click="buildIndex(true)">刷新索引任务</el-button>
+          <el-button :disabled="knowledgeBusy" @click="refreshKnowledge">刷新资料</el-button>
+        </div>
+        <AiTaskResult v-if="knowledgeTask" :task="knowledgeTask" />
+      </template>
+      <h3 v-else class="drawer-subtitle">后续文档字段</h3>
+      <div v-if="!isHttpMode" class="field-tags">
         <el-tag
           v-for="field in [
             '资料标题',
@@ -389,6 +505,7 @@ async function toggleWord(item: DictionaryWord) {
       </div>
       <el-alert
         class="drawer-note"
+        v-if="!isHttpMode"
         title="本页尚无真实资料文件、上传处理或知识检索。"
         type="info"
         :closable="false" /></template
@@ -509,6 +626,9 @@ async function toggleWord(item: DictionaryWord) {
   >
 </template>
 <style scoped>
+.service-note { margin-bottom: 18px; }
+.knowledge-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+.knowledge-actions :deep(.el-button) { margin-left: 0; }
 .ai-banner {
   display: flex;
   align-items: center;

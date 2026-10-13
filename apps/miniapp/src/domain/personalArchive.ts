@@ -1,3 +1,4 @@
+import type { AiCitation } from './aiTasks'
 import type { DemoStorage } from './types'
 export type AssistantMode =
   | 'letter'
@@ -17,6 +18,10 @@ export interface Excerpt {
   createdAt: string
 }
 export interface AiArchive {
+  source?: 'preset' | 'rules' | 'model'
+  taskId?: string
+  model?: string
+  citations?: AiCitation[]
   id: string
   mode: AssistantMode
   prompt: string

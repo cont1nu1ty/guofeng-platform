@@ -2,6 +2,11 @@
 import { computed, reactive, ref, watch } from 'vue'
 import SectionHeading from './SectionHeading.vue'
 import ConversationPanel from './ConversationPanel.vue'
+import OcrWorkbench from './OcrWorkbench.vue'
+import AiCitations from './AiCitations.vue'
+import { isHttpMode } from '../config/dataMode'
+import { remoteUser, currentSessionEpoch } from '../services/api'
+import type { AiCitation } from '../domain/aiTasks'
 import type { ConversationReply } from '../domain/localConversation'
 import { t, locale } from '../composables/useLocale'
 import { useRouteParams } from '../composables/useNavigation'
@@ -24,7 +29,10 @@ interface ModeState {
   resultLanguage: 'zh' | 'en'
   restoredId: string
   savedError: boolean
-  source: 'preset' | 'rules'
+  source: 'preset' | 'rules' | 'model'
+  taskId?: string
+  model?: string
+  citations?: AiCitation[]
 }
 const local = (value: LocalizedText) => t(value.zh, value.en)
 const params = useRouteParams()
@@ -90,6 +98,9 @@ function finishEditor(event: unknown, editor: EditorBinding) {
   resetEditors(editor.owner, [editor.field])
 }
 const tool = computed(() => getAssistantTool(mode.value))
+const visibleTools = computed(() =>
+  isHttpMode ? assistantTools.filter((item) => item.id !== 'storyboard') : assistantTools,
+)
 const current = computed(() => forms[mode.value])
 const example = computed(() => getAssistantExample(mode.value, current.value.exampleId))
 const hasResult = computed(() => !!current.value.resultPrompt)
@@ -142,11 +153,16 @@ function useConversationReply(reply: ConversationReply) {
     resultPrompt:
       reply.source === 'preset'
         ? chosen.input[reply.language]
-        : (reply.language === 'zh' ? '本机对话：' : 'Local conversation: ') + reply.prompt,
+        : reply.source === 'model'
+          ? reply.prompt
+          : (reply.language === 'zh' ? '本机对话：' : 'Local conversation: ') + reply.prompt,
     resultLanguage: reply.language,
     restoredId: '',
     savedError: false,
-    source: reply.source === 'preset' ? 'preset' : 'rules',
+    source: reply.source === 'model' ? 'model' : reply.source === 'preset' ? 'preset' : 'rules',
+    taskId: reply.taskId,
+    model: reply.model,
+    citations: reply.citations,
   })
   copyFailed.value = false
   transferFailed.value = false
@@ -166,7 +182,7 @@ function copyResult() {
     uni.setClipboardData({
       data: current.value.result,
       showToast: false,
-      success: () => notify(t('示例内容已复制', 'Sample copied')),
+      success: () => notify(t('内容已复制', 'Text copied')),
       fail: () => {
         copyFailed.value = true
       },
@@ -181,14 +197,21 @@ function copyResult() {
 }
 async function saveResult(message?: string): Promise<boolean> {
   if (!canUseResult.value) return false
+  const owner = current.value
+  const epoch = currentSessionEpoch()
   const result = await saveAiArchive({
     mode: mode.value,
-    prompt: current.value.resultPrompt,
-    result: current.value.result,
+    prompt: owner.resultPrompt,
+    result: owner.result,
+    source: owner.source,
+    taskId: owner.taskId,
+    model: owner.model,
+    citations: owner.citations,
   })
-  current.value.savedError = !result
+  if (epoch !== currentSessionEpoch()) return false
+  owner.savedError = !result
   if (result) {
-    notify(message ?? t('示例已存档，可在个人中心查看。', 'Sample saved. Find it in My account.'))
+    notify(message ?? t('内容已存档，可在个人中心查看。', 'Saved. Find it in My account.'))
     return true
   }
   return false
@@ -196,7 +219,7 @@ async function saveResult(message?: string): Promise<boolean> {
 async function keepAndArchive() {
   if (
     await saveResult(
-      t('示例已另存，原投稿草稿未改动。', 'Sample archived. Your contribution draft is unchanged.'),
+      t('内容已另存，原投稿草稿未改动。', 'Text archived. Your contribution draft is unchanged.'),
     )
   )
     conflictVisible.value = false
@@ -204,12 +227,14 @@ async function keepAndArchive() {
 async function attemptTransfer(replace = false) {
   if (!candidateDraft.value) return
   transferFailed.value = false
+  const epoch = currentSessionEpoch()
   const result = await safely(async () => {
     const existing = repo.getDraft()
-    if (existing && !replace)
+    if (existing && (!replace || existing.editingWorkId))
       return { status: 'conflict' as const, existing, candidate: candidateDraft.value! }
     return { status: 'saved' as const, draft: await repo.saveDraft(candidateDraft.value!) }
   })
+  if (epoch !== currentSessionEpoch()) return
   if (!result) {
     transferFailed.value = true
     return
@@ -232,7 +257,13 @@ async function attemptTransfer(replace = false) {
 async function startTransfer() {
   if (!canUseResult.value || isReference.value) return
   const candidate = await safely(() =>
-    createAssistantDraft(mode.value, current.value.result, region.value, locale.value),
+    createAssistantDraft(
+      mode.value,
+      current.value.result,
+      region.value,
+      locale.value,
+      current.value.source,
+    ),
   )
   if (!candidate) return
   candidateDraft.value = candidate
@@ -266,7 +297,10 @@ watch(
       resultLanguage: language,
       restoredId: saved.id,
       savedError: false,
-      source: match ? 'preset' : 'rules',
+      source: saved.source ?? (match ? 'preset' : 'rules'),
+      taskId: saved.taskId,
+      model: saved.model,
+      citations: saved.citations,
     })
   },
   { immediate: true },
@@ -278,6 +312,28 @@ watch(
       chooseMode(value as AssistantMode)
   },
   { immediate: true },
+)
+watch(
+  () => remoteUser.value?.id,
+  () => {
+    if (!isHttpMode) return
+    for (const key of Object.keys(forms) as AssistantMode[]) {
+      resetEditors(key)
+      Object.assign(forms[key], {
+        result: '',
+        resultPrompt: '',
+        restoredId: '',
+        savedError: false,
+        taskId: undefined,
+        model: undefined,
+        citations: undefined,
+      })
+    }
+    editorExpanded.value = false
+    conflictVisible.value = false
+    candidateDraft.value = null
+    existingDraft.value = null
+  },
 )
 </script>
 <template>
@@ -310,18 +366,31 @@ watch(
     </view>
     <view class="assistant-mode-tabs">
       <button
-        v-for="item in assistantTools"
+        v-for="item in visibleTools"
         :key="item.id"
         :class="['assistant-mode-button', { active: mode === item.id }]"
         @click="chooseMode(item.id)"
       >
         <text class="assistant-mode-symbol">{{ item.symbol }}</text>
-        <text>{{ local(item.label) }}</text>
+        <text>
+          {{
+            isHttpMode && item.id === 'compliance'
+              ? t('内容自检辅助', 'Content review assistance')
+              : local(item.label)
+          }}
+        </text>
       </button>
     </view>
     <view class="assistant-layout assistant-chat-layout">
       <view class="assistant-chat-primary">
-        <ConversationPanel :mode="mode" @use="useConversationReply" />
+        <OcrWorkbench v-if="isHttpMode && mode === 'ocr'" @use="useConversationReply" />
+        <ConversationPanel
+          v-else
+          :mode="mode"
+          :initial-prompt="params.prompt"
+          @use="useConversationReply"
+          @handoff="navigate('submit', { support: $event || 'help' })"
+        />
       </view>
       <view v-if="hasResult" class="assistant-editor-toggle">
         <view class="assistant-editor-summary">
@@ -370,12 +439,17 @@ watch(
               {{
                 current.restoredId
                   ? t('已恢复存档 · 保留原文', 'Archive restored · Original text retained')
-                  : current.source === 'preset'
-                    ? t('预设样例', 'Prepared example')
-                    : t('本机规则式写作框架／节选', 'Local writing frame / excerpt')
+                  : current.source === 'model'
+                    ? t('AI 处理结果 · 请人工核对', 'AI result · Please verify')
+                    : current.source === 'preset'
+                      ? t('预设样例', 'Prepared example')
+                      : t('本机规则式写作框架／节选', 'Local writing frame / excerpt')
               }}
             </text>
-            <text>{{ resultCount }} {{ t('字', 'characters') }}</text>
+            <text>
+              {{ resultCount }} {{ t('字', 'characters') }}
+              <text v-if="current.model">· {{ current.model }}</text>
+            </text>
           </view>
           <view v-if="mode === 'ocr' && current.source === 'preset'" class="assistant-manuscript">
             <text class="assistant-manuscript-label">
@@ -394,13 +468,15 @@ watch(
           </view>
           <text class="field-label">
             {{
-              mode === 'polish'
-                ? t('润色示例，可继续改写', 'Polished sample — editable')
-                : mode === 'ocr'
-                  ? t('待校文本，可手动更正', 'Text to proofread — editable')
-                  : isReference
-                    ? t('预设参考资料', 'Preset reference material')
-                    : t('示例正文，可继续改写', 'Sample text — editable')
+              current.source === 'model'
+                ? t('待确认的处理结果', 'Result for your review')
+                : mode === 'polish'
+                  ? t('润色示例，可继续改写', 'Polished sample — editable')
+                  : mode === 'ocr'
+                    ? t('待校文本，可手动更正', 'Text to proofread — editable')
+                    : isReference
+                      ? t('预设参考资料', 'Preset reference material')
+                      : t('示例正文，可继续改写', 'Sample text — editable')
             }}
           </text>
           <text v-if="isReference" class="assistant-help-answer">{{ current.result }}</text>
@@ -417,6 +493,7 @@ watch(
               :aria-label="t('助手示例结果', 'Assistant sample result')"
             />
           </template>
+          <AiCitations v-if="current.citations?.length" :items="current.citations" />
           <view v-if="mode === 'storyboard'" class="storyboard-preview">
             <text class="field-label">
               {{ t('分镜卡片 · 与上方文本同步', 'Scene cards · Synced with the text above') }}
@@ -435,13 +512,21 @@ watch(
           </view>
           <view v-if="mode === 'compliance'" class="assistant-compliance-status">
             <text class="assistant-compliance-copy">
-              {{ t('待人工复核 · 样例报告', 'Human review needed · Sample report') }}
+              {{
+                current.source === 'model'
+                  ? t('辅助意见 · 不代表审核通过', 'Assistance only · Not an approval')
+                  : t('待人工复核 · 样例报告', 'Human review needed · Sample report')
+              }}
             </text>
             <text class="assistant-compliance-copy">
               {{
                 t(
-                  '仅供查看审核交互。没有实际审查或放行你的输入。',
-                  'Demonstrates the review interface. Your input has not been assessed or approved.',
+                  current.source === 'model'
+                    ? '请结合原文与引用人工复核，最终处理由审核人员决定。'
+                    : '仅供查看审核交互。没有实际审查或放行你的输入。',
+                  current.source === 'model'
+                    ? 'Check the original text and sources. Final decisions are made by editors.'
+                    : 'Demonstrates the review interface. Your input has not been assessed or approved.',
                 )
               }}
             </text>
@@ -487,7 +572,7 @@ watch(
               :disabled="alreadySaved || archiveError || !canUseResult"
               @click="saveResult()"
             >
-              {{ alreadySaved ? t('已存档', 'Saved') : t('保存示例', 'Save sample') }}
+              {{ alreadySaved ? t('已存档', 'Saved') : t('保存内容', 'Save text') }}
             </wd-button>
             <wd-button v-if="!isReference" :disabled="!canUseResult" @click="startTransfer">
               {{ t('转入新投稿草稿', 'Use as a new contribution draft') }} →
@@ -512,8 +597,8 @@ watch(
           <text v-if="current.savedError" class="field-error">
             {{
               t(
-                '示例未保存，请检查本机存储后重试；结果仍保留在当前页面。',
-                'The sample was not saved. Check local storage and retry; the result remains on this page.',
+                '内容未保存，请检查连接后重试；结果仍保留在当前页面。',
+                'Not saved. Check your connection and retry; the result remains on this page.',
               )
             }}
           </text>
@@ -546,7 +631,7 @@ watch(
         }}
       </text>
       <button class="text-button" @click="navigate('profile', { tab: 'archive' })">
-        {{ t('查看我的示例存档', 'View my saved samples') }} ↗
+        {{ t('查看我的创作存档', 'View my saved writing') }} ↗
       </button>
     </view>
     <wd-popup
@@ -570,10 +655,10 @@ watch(
             revisionProtected
               ? t(
                   '助手不会覆盖带原作品编号的修改草稿。你可以保留它，并将本次示例单独存档。',
-                  'The assistant will not overwrite a revision draft tied to an existing work ID. Keep it and archive this sample separately.',
+                  'The assistant will not overwrite a revision draft tied to an existing work ID. Keep it and archive this text separately.',
                 )
               : t(
-                  '默认保留原稿。只有明确选择“替换为新稿”，才会替换本机这一份草稿。',
+                  '默认保留原稿。只有明确选择“替换为新稿”，才会替换当前这一份草稿。',
                   'The original draft is kept by default. It is replaced only if you explicitly choose Replace with new draft.',
                 )
           }}
@@ -612,7 +697,7 @@ watch(
             {{ t('保留原稿，返回查看', 'Keep original and return') }}
           </wd-button>
           <wd-button block variant="plain" :disabled="archiveError" @click="keepAndArchive">
-            {{ t('保留原稿，仅存档本次示例', 'Keep original and archive this sample') }}
+            {{ t('保留原稿，仅存档本次内容', 'Keep original and archive this text') }}
           </wd-button>
           <button
             v-if="!revisionProtected"

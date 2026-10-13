@@ -480,6 +480,7 @@ export function createAssistantDraft(
   result: string,
   region: RegionId,
   language: 'zh' | 'en' = 'zh',
+  source: 'preset' | 'rules' | 'model' = 'preset',
 ): SubmissionDraft {
   if (['help', 'knowledge', 'compliance'].includes(mode))
     throw new Error('帮助回答或审核资料不作为投稿作品，请选择创作模式。')
@@ -496,7 +497,13 @@ export function createAssistantDraft(
     compliance: text('', ''),
   }
   return {
-    title: titles[mode][language],
+    title:
+      source === 'model'
+        ? titles[mode][language].replace(
+            /（(?:校对)?示例）| \(sample\)| \(proofreading sample\)/g,
+            '',
+          )
+        : titles[mode][language],
     content: result.trim(),
     genre: mode === 'letter' ? 'letter' : mode === 'polish' ? 'essay' : 'family-rules',
     channel: 'community',

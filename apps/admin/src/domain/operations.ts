@@ -480,7 +480,22 @@ export function toggleCourse(id: string) {
   recordActivity("调整示例课程状态", course.title);
 }
 
-export const knowledgeBases = reactive([
+export interface KnowledgeBase {
+  id: string;
+  title: string;
+  category: string;
+  documents: number;
+  version: string;
+  updated: string;
+  status: string;
+  description: string;
+  lockVersion?: number;
+  fileId?: string;
+  audience?: "public" | "staff";
+  language?: "zh" | "en";
+  indexStatus?: string;
+}
+export const knowledgeBases = reactive<KnowledgeBase[]>([
   {
     id: "KB01",
     title: "家风典籍资料集",

@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { readInputValue } from '../composables/readInputValue'
 import { isHttpMode } from '../config/dataMode'
-import { loadRemoteDraft, remoteUser, ApiError, request } from '../services/api'
+import {
+  loadRemoteDraft,
+  remoteUser,
+  ApiError,
+  request,
+  currentSessionEpoch,
+} from '../services/api'
 import RemoteAccountPanel from './RemoteAccountPanel.vue'
 import { computed, reactive, ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import WritingEditor from './WritingEditor.vue'
@@ -28,6 +34,7 @@ import {
 } from '../composables/useSubmissionAttachments'
 
 const params = useRouteParams()
+const openingOcr = ref(false)
 const blank = (): SubmissionDraft => ({
   title: '',
   content: '',
@@ -223,6 +230,26 @@ function persistDraft() {
   const operation = saveQueue
   saveQueue = saveQueue.catch(() => {})
   return operation
+}
+async function openManuscriptTool() {
+  if (openingOcr.value || submitting.value || !draftReady.value) return
+  const epoch = currentSessionEpoch()
+  openingOcr.value = true
+  if (saveTimer) clearTimeout(saveTimer)
+  try {
+    await persistDraft()
+    if (epoch === currentSessionEpoch()) navigate('assistant', { mode: 'ocr' })
+  } catch {
+    if (epoch === currentSessionEpoch())
+      notify(
+        t(
+          '当前稿件尚未保存，请处理保存错误后再打开手稿识别。',
+          'The draft has not been saved. Resolve the save error before opening OCR.',
+        ),
+      )
+  } finally {
+    openingOcr.value = false
+  }
 }
 function scheduleSave() {
   if (
@@ -759,6 +786,16 @@ async function continueWriting() {
               @click="addAttachments('document')"
             >
               {{ t('选择 PDF / Word', 'Choose PDF / Word') }}
+            </wd-button>
+            <wd-button
+              v-if="isHttpMode"
+              variant="plain"
+              size="small"
+              :loading="openingOcr"
+              :disabled="openingOcr || submitting"
+              @click="openManuscriptTool"
+            >
+              {{ t('手稿识别与校对', 'Recognize and proofread manuscript') }}
             </wd-button>
             <text v-if="picking" class="submit-helper">
               {{ t('等待文件选择…', 'Waiting for file selection…') }}
