@@ -1,10 +1,11 @@
 # 家风中华行 · 后台建设项目
 
-更新：2026-09-26。按用户已确认计划，现已引入固定若依源码并实现家风模块；原 13 页后台保留，连接真实数据库、私有 S3 和会话。用户端相应基础流程同步接入。当前定位为本机试点业务系统，正式微信登录、AI 推理和全国生产验收另行迭代。
+更新：2026-10-13。按用户已确认计划，现已引入固定若依源码并实现家风模块；原 13 页后台保留，连接真实数据库、私有 S3 和会话。用户端相应基础流程同步接入。当前定位为本机试点业务系统，已补配置式 AI/OCR、资料索引与审核辅助，见 [AI 接入](../../docs/engineering/ai-applications.md)。既有岗位、版本评审/课程、人工证书、任务/报表与普通媒体功能保留。当前 V015 源码整合不表示运行环境已经升级；正式微信登录、本地模型部署及全国生产验收另行迭代。
 
 - [实际实现与数据模型](../../docs/engineering/backend-implementation.md)
 - [Docker Compose 启动、备份与恢复](../../deploy/README.md)
-- [本轮验证与证据](../../docs/verification/backend-runtime.md)
+- [本次 AI 与非 AI 整合检查](../../docs/verification/ai-sync-2026-10-13.md)
+- [各轮验证与证据索引](../../docs/verification/README.md)
 - [当前 API 契约](../../contracts/openapi.yaml)
 - [后台界面使用](../../docs/frontend/admin-demo.md)
 

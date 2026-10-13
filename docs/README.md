@@ -1,12 +1,14 @@
 # 项目文档导航
 
+更新：2026-10-13。当前新增**可配置 AI 应用、OCR、知识资料索引和审核辅助**，保留既有用户端和后台界面。先看 [实际实现与运行边界](engineering/backend-implementation.md)、[启动部署](../deploy/README.md) 和 [本次源码整合记录](verification/ai-sync-2026-10-13.md)。原 PDF 仍是完整需求基线，远期生产要求不混入本机完成状态。
+
+AI 与非 AI 功能正在统一到同一源码；当前源码采用 V015 AI 迁移。此前 AI V005 的模型与网页实联记录见[原 AI 验证](verification/ai-2026-10-13.md)，不能代替整合后的容器、数据库或网页重验。各运行环境以对应日期记录为准。
+
 2026-10-08 新增：[完整演示数据与非 AI 场景路线](frontend/non-ai-showcase-2026-10-08.md) · [安装与核验](verification/non-ai-showcase-2026-10-08.md)。19084 已切换到演示分支数据加本次场景增量，原18080不变。
 
 2026-10-07 新增：[非 AI 功能实施结果](engineering/non-ai-implementation-2026-10-07.md) · [本轮验证](verification/non-ai-2026-10-07.md)。岗位、版本评审与课程、人工证书、资源与导出、调度报表、地区咨询和普通媒体已接入独立 19084 验证环境；原展示环境保留，正式微信/生产验收另列。
 
 2026-09-30 新增：[评审时间窗口、站内预警与公开缓存](engineering/review-windows-cache.md) · [本轮验证](verification/review-cache-2026-09-30.md)。
-
-更新：2026-09-27。当前新增**个人云端记录、音频处理与 Elasticsearch 搜索**，保留既有用户端和后台界面。先看 [实际实现与运行边界](engineering/backend-implementation.md)、[启动部署](../deploy/README.md) 和 [本轮真实验证](verification/records-search-2026-09-27.md)。原 PDF 仍是完整需求基线，远期生产要求不混入本机完成状态。
 
 当前本机数据已重新整理为原创虚构场景，用于网页联动展示：[账号与演示路线](frontend/showcase-data.md) · [数据重建与网页验证](verification/demo-data-2026-09-26.md)。使用真实 HTTP、数据库与私有文件，不代表实际运营记录；原测试数据已备份。
 
@@ -29,6 +31,8 @@
 | 全国访问需要多少资源，私有模型/API 与云厂商如何选择？ | [部署与 AI 容量初评](engineering/deployment-assessment.md)                                                                              | PDF 部署约束、负载假设、算力/费用公式和官方价格来源；不等于已部署或压测通过  |
 
 本轮新增：[首页轮播与内容目录管理](frontend/catalog-management.md) · [联动验证](verification/catalog-2026-09-26.md)。轮播、媒体、阵地、名人馆、订阅和咨询接入真实服务；采用增量数据，不再次清空旧记录。
+
+AI 专题：[实现与边界](engineering/ai-applications.md) · [V015 整合检查](verification/ai-sync-2026-10-13.md) · [原 V005 实联证据](verification/ai-2026-10-13.md)。
 
 ## 目录分工
 

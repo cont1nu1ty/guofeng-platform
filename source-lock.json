@@ -29,7 +29,7 @@
     "font": "iconfont.ttf embedded in src/styles/icons.scss for local/offline display"
   },
   "dependencyLock": "apps/miniapp/package-lock.json",
-  "backendStatus": "Implemented local persistent backend in apps/server, HTTP adapters, MySQL, Redis and private S3-compatible storage in Docker Compose. Runtime and permission acceptance is recorded separately in docs/verification; formal WeChat login, model inference and production-scale deployment remain future work.",
+  "backendStatus": "Implemented local persistent backend, HTTP adapters, MySQL, Redis, private S3, Elasticsearch and configurable AI inference/OCR/knowledge/review services. Actual acceptance is recorded in docs/verification. Formal WeChat login, local model deployment, advanced multimodal features and production-scale deployment remain future work.",
   "fonts": {
     "manifest": "scripts/font-data/manifest.json",
     "families": [
@@ -602,11 +602,11 @@
       },
       {
         "path": "deploy/seed-showcase.py",
-        "sha256": "b29e2137cc009a525c8482de5b0e277d5488656a323e38fca38b2e379d1fbafe"
+        "sha256": "31642d22df153d22cac9ab38234f0808cc8672aa658f6c3a4520b85d2b01adb8"
       },
       {
         "path": "deploy/mysql/reset-demo.sql",
-        "sha256": "8a4f761a1368f026b3581baa32d6a67bb576ca786e8011d1d199902db00ffc71"
+        "sha256": "a6e544cf1f701ce0a7b9146cb43880962a32e001105ff64bb0b5bbec573fdfea"
       },
       {
         "path": "deploy/fixtures/files/匿名评审工作说明.pdf",
@@ -622,7 +622,7 @@
       },
       {
         "path": "deploy/dev",
-        "sha256": "3177695fc505a7754b9a8ead9bff611eb6fbdcf877e047a0ffc460131138f199"
+        "sha256": "0ff416b1a717746165ca00c6335145279d5a4c88a5c671e357824f3a30ebf602"
       },
       {
         "path": "deploy/demo_state.py",
@@ -630,7 +630,7 @@
       },
       {
         "path": "deploy/tests/test_demo_seed.py",
-        "sha256": "9933102c9e68935c3014667a2add59428388abf039fa590c5c251ad087a3d893"
+        "sha256": "0507a8a1f85c0d186abbac80fce2b6333d2f0fceb7363c45f03587d1b6f652d1"
       },
       {
         "path": "deploy/tests/demo_bootstrap_probe.py",
@@ -709,7 +709,7 @@
       },
       {
         "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfSearch.java",
-        "sha256": "39d367fc8f345b19dcc9ab92ce812ed681f983abc840bfd023ff3bceffebf460"
+        "sha256": "e88099ceff985a16565e46b9cf39804b73f713f22892d0d8e551daefdee77b64"
       },
       {
         "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfSearchController.java",
@@ -788,5 +788,99 @@
       "retrieval": "External HTTPS reference; provider SHA1 from response header, not a locally computed hash",
       "scope": "Park photography for H5 viewer demonstration; not a historic-person venue photograph"
     }
+  },
+  "aiApplications": {
+    "checkedAt": "2026-10-13",
+    "code": "apps/ai",
+    "dependencies": "apps/ai/requirements.lock",
+    "licenseInventory": "licenses/ai/inventory.json",
+    "image": "deploy/Dockerfile.ai",
+    "reuse": [
+      "FastAPI ASGI service",
+      "Uvicorn server",
+      "pypdf local PDF parsing",
+      "existing Java authentication and storage",
+      "existing Elasticsearch public search"
+    ],
+    "implementation": "Original task-specific provider adapter and prompts; configurable OpenAI-compatible endpoints or Zhipu layout OCR; no model weights bundled. Development permits external API explicitly authorized by user. MySQL stores durable tasks and revocable knowledge chunks.",
+    "providerDocs": [
+      "https://docs.bigmodel.cn/cn/guide/models/text/glm-5.2",
+      "https://docs.bigmodel.cn/api-reference/模型-api/文档解析"
+    ],
+    "files": [
+      {
+        "path": "apps/admin/src/services/ai.ts",
+        "sha256": "11dfdd1cf61e361e381fca838f23341ddaae73238023b7c7e011258097d47227"
+      },
+      {
+        "path": "apps/ai/parse_document.py",
+        "sha256": "e8eeaac43248cdea371d9e01b4cdf28a062bbccd4e1bac8b464726027b1b6d17"
+      },
+      {
+        "path": "apps/ai/requirements.lock",
+        "sha256": "25be265edc06a7c362d2fa85c7ef2d7af2fc9e0839633c89d7a1fc0f27695b63"
+      },
+      {
+        "path": "apps/ai/service.py",
+        "sha256": "de2fa468b29e88628cade45a222a88ac7bc3a33eefcad27f8cafbf336f0f4570"
+      },
+      {
+        "path": "apps/miniapp/src/domain/aiTasks.ts",
+        "sha256": "ea708f2f3dcb624160099d8e67e6cde2179e27c2c89890795ed609d8c66088c3"
+      },
+      {
+        "path": "apps/miniapp/src/services/ai.ts",
+        "sha256": "c4f8086a2fe247b72c765e0a2a5f355c4d365aa0406d563e99d720a34403b722"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfAi.java",
+        "sha256": "fe0ee6a28b46bf260c7cfd3a013633821c3eb733044de613d176d8c3ebd46762"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfAiClient.java",
+        "sha256": "80397adec08abe44fdf26a914ed9a66361a2d67dce80b3a4a84d6960e0ca789e"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfAiController.java",
+        "sha256": "e9afbac07fd66e346b7049d7fcd5755b2b2a78c59162d4998b05e8fe55bcbddf"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfAiKnowledge.java",
+        "sha256": "9d477d6cfb49849adb9ad9ee0bf700c644ba6f84011d438742be67c9530261d9"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/resources/db/jiafeng/V015__ai_tasks.sql",
+        "sha256": "485be2de150ead724a2508f6f534b0d92911e3bd8861ffe67bd41a0a6424db13"
+      },
+      {
+        "path": "contracts/openapi.yaml",
+        "sha256": "998121488705c5fca3e4f7ddec2fcd2b7b2825f94092ae0aedec4f952f5a3fb2"
+      },
+      {
+        "path": "deploy/Dockerfile.ai",
+        "sha256": "d2e6491bafbb6ed58e95143d6ec21224c282123f4aac1394de1465a5cc8a34e7"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfSchema.java",
+        "sha256": "1af60103a062c8c1ee35fd28b3c8a612d9a356650241a684a59673be46a29585"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfQueries.java",
+        "sha256": "d40aa5399ca962426c1f70f880bceea78f468ea060a2e00f55bd8f3e2a661cdd"
+      }
+    ],
+    "modifiedExistingModules": [
+      "JfController",
+      "JfFiles",
+      "JfMember",
+      "JfProjection",
+      "JfQueries",
+      "JfSchema",
+      "JfSearch",
+      "admin AI/submission views",
+      "miniapp assistant/OCR/support/archives/library/hall",
+      "Compose and deployment lifecycle"
+    ],
+    "migrationCompatibility": "AI tables now use V015 without changing the original SQL bytes. Only the exact known historical AI V005 checksum may be relocated under the migration lock and a metadata transaction, preserving applied_at; unknown checksums or conflicting V015 records fail closed. Actual database upgrade of the integrated branch is not part of the source synchronization checks."
   }
 }

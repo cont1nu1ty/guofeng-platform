@@ -1,6 +1,8 @@
 # 家风中华行 · 本机真实业务平台
 
-根据《小程序制做要求.pdf》（2026-08-13 内部讨论稿）建设。保留 Uni-app 用户端和独立运营后台，使用若依 Java 后端、MySQL、Redis、私有 S3、Elasticsearch 及 Docker Compose。本机 HTTP 模式使用真实会话与持久业务记录，原演示模式仍可独立运行。完整生产平台边界见 [实际实现](docs/engineering/backend-implementation.md)。
+根据《小程序制做要求.pdf》（2026-08-13 内部讨论稿）建设。保留 Uni-app 用户端和独立运营后台，使用若依 Java 后端、MySQL、Redis、私有 S3、Elasticsearch、独立 AI 适配服务及 Docker Compose。本机 HTTP 模式使用真实会话与持久业务记录，原演示模式仍可独立运行。完整生产平台边界见 [实际实现](docs/engineering/backend-implementation.md)。
+
+AI 新增能力、开发 API 和本地 URL 配置见 [AI 接入](docs/engineering/ai-applications.md) 与 [部署说明](deploy/README.md)。当前源码整合既有非 AI V014 与 AI V015，检查见[本次整合记录](docs/verification/ai-sync-2026-10-13.md)；原 AI V005 的实联证据保留日期，源码提交不代表运行环境已升级。
 
 **当前用户端完成情况与待补界面已经按PDF重新核对，统一从 [docs文档导航](docs/README.md) 进入。**
 
@@ -81,6 +83,7 @@ apps/miniapp/       Uni-app/Vue3/TypeScript用户端；Wot UI；H5与微信
   src/pkg-content/ 内容分包组件、私有domain/composables及音视频
 apps/admin/         Vue3/Element Plus运营后台；HTTP / 演示适配
 apps/server/        固定若依源码 + ruoyi-jiafeng 业务模块
+apps/ai/            可配置模型与 OCR 适配器、受限资料解析
 deploy/             Compose、版本镜像、备份恢复与真实接口验证
 contracts/          当前已实现的 /api/v1 OpenAPI
 projects/backend/   后台专项需求、选型证据与整合计划
@@ -89,8 +92,8 @@ licenses/           实际复用内容的许可证
 source-lock.json    上游版本、引入范围与改动记录
 ```
 
-用户端已有门户、投稿/进度、公示、典藏、传习、资讯、个人记录、视频、名人馆及助手页面。聊天/OCR/审核等仍有预设演示，地图/全景仍有示意；录音、文件播放、缓存、证书PNG等能力按各端已有实现和证据说明。当前完成范围以 [用户端对照](docs/frontend/user-status.md) 为准，不按入口数量推算生产完成率。
+用户端已有门户、投稿/进度、公示、典藏、传习、资讯、个人记录、视频、名人馆及助手页面。HTTP 模式已接真实聊天、OCR、知识问答和审核辅助，原 demo 模式仍保留预设演示。HTTP 已接市县目录、显式 H5 地图/球面全景、多章课程及人工 PDF 证书；真实地图素材、微信降级、录音、文件播放与缓存按各端已有实现和证据说明。当前完成范围以 [用户端对照](docs/frontend/user-status.md) 为准，不按入口数量推算生产完成率。
 
-当前已接开发账号真实会话、云稿/私有文件、站内消息与基础运营流程。正式微信登录与实名、版权存证、AI 推理、交易订单和正式证书仍待专项实现。手机字体/竖排、编辑器/权限、全量双语与适老等仍有待验证项；最新微信扫描主包及媒体总量建议也未全部通过。
+当前已接开发账号真实会话、云稿/私有文件、站内消息与基础运营流程。正式微信登录与实名、第三方正式版权存证、本地模型部署与高级多模态、交易订单及生产验收仍待专项实现。手机字体/竖排、编辑器/权限、全量双语与适老等仍有待验证项；最新微信扫描主包及媒体总量建议也未全部通过。
 
 优先复用已选组件和领域适配，第三方来源见 [声明](THIRD_PARTY_NOTICES.md)；版本检查点见 [迭代与回退](docs/history/iterations.md)。后续API通过适配层接入，身份与地区权限由真实服务端校验。
