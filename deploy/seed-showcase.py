@@ -207,7 +207,8 @@ def main():
                        "((kind='setting' AND id IN ('reviewFlow','platformConfig','homepageConfig') AND version=1) "
                        "OR (kind='expert' AND id='10004' AND version=1));"))
     business_rows = int(sql('SELECT (SELECT COUNT(*) FROM jf_file)+(SELECT COUNT(*) FROM jf_draft)'
-                            '+(SELECT COUNT(*) FROM jf_revision)+(SELECT COUNT(*) FROM jf_registration);'))
+                            '+(SELECT COUNT(*) FROM jf_revision)+(SELECT COUNT(*) FROM jf_registration)'
+                            '+(SELECT COUNT(*) FROM jf_ai_task)+(SELECT COUNT(*) FROM jf_ai_chunk);'))
     if occupied or business_rows:
         raise ValueError('Business data already exists without a matching import receipt; no data was changed. '
                          'Use a new empty demo environment, or explicitly reset-demo only if a backed-up rebuild is intended')

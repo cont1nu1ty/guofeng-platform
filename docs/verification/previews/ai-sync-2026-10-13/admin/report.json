@@ -1,0 +1,49 @@
+{
+  "evidence": "mocked API browser contract",
+  "checks": [
+    "administrative logs display metadata only",
+    "public knowledge confirmation with English language, asynchronous index, withdrawal use authoritative versions",
+    "status failure is shown and refresh recovers",
+    "review renders evidence without updating decisions or sending browser manuscript",
+    "outdated result hidden; failed task has actionable error and retry succeeds",
+    "390px mobile pages and drawer avoid horizontal document overflow",
+    "submission-only permissions restore own analysis without querying AI operations metadata"
+  ],
+  "commands": [
+    {
+      "action": "index",
+      "version": 3,
+      "audience": "public",
+      "language": "en"
+    },
+    {
+      "action": "withdraw",
+      "version": 4
+    },
+    {
+      "action": "analyse",
+      "mode": "review",
+      "submissionId": "work-one",
+      "version": 7,
+      "language": "zh",
+      "prompt": "请提供摘要、主题、需要人工核对的问题和相似内容证据。"
+    },
+    {
+      "action": "analyse",
+      "mode": "summary",
+      "submissionId": "work-one",
+      "version": 8,
+      "language": "zh",
+      "prompt": "请概括稿件内容和主题，保留原文事实。"
+    },
+    {
+      "action": "analyse",
+      "mode": "summary",
+      "submissionId": "work-one",
+      "version": 8,
+      "language": "zh",
+      "prompt": "请概括稿件内容和主题，保留原文事实。"
+    }
+  ],
+  "errors": []
+}

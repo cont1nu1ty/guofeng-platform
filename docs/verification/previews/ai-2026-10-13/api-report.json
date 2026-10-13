@@ -1,0 +1,39 @@
+{
+  "checks": [
+    "configured external text and OCR status",
+    "member and expert administrative logs denied",
+    "real writing, durable task and idempotent replay",
+    "private generated text is owner only, including national admin",
+    "admin task log removes private prompt, result and files",
+    "archive provenance derives from owned successful task",
+    "cannot archive another account task",
+    "real letter generation",
+    "real polish generation",
+    "support answer cites platform help",
+    "Chinese PDF OCR through S3 and durable task, owner isolation",
+    "real file parse and staff knowledge indexing",
+    "staff knowledge is excluded from member retrieval",
+    "authorized region staff can retrieve internal source",
+    "other region cannot retrieve internal source",
+    "public indexed file retrieved with traceable source",
+    "withdrawal prevents old answer and citations from replaying",
+    "withdrawal also suppresses saved archive",
+    "review uses authorized current manuscript and preserves decision",
+    "real management summary",
+    "changed manuscript version hides prior analysis",
+    "UI-configured blocking word causes honest failed task"
+  ],
+  "status": {
+    "enabled": true,
+    "provider": "zhipu",
+    "model": "glm-5.2",
+    "ocrEnabled": true,
+    "external": true,
+    "knowledgeCount": 0
+  },
+  "taskId": "ai_b56d47fd58c7454b8892dc7529608a6b",
+  "ocrTaskId": "ai_795ee119e1ff47d18b9516498ae9c279",
+  "knowledgeId": "knowledge_d35f73a71afe4102bb21c06bc227e65a",
+  "submissionId": "submission_cb92262902a94c3d8e34fd4b6e81a0ca",
+  "account": "member_zj"
+}

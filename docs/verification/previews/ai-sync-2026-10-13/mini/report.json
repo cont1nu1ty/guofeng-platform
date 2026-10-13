@@ -1,0 +1,309 @@
+{
+  "evidence": "Controlled API browser fixtures; no live model, backend or physical WeChat validation",
+  "checks": [
+    {
+      "name": "hall-panorama-and-ai",
+      "width": 1440,
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "hall-prefilled-knowledge-question",
+      "width": 1440,
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "profile-ai-and-preset-archives",
+      "width": 1440,
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "profile-certificates-and-rights",
+      "width": 1440,
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "profile-certificate-pagination",
+      "width": 1440,
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "hall-panorama-and-ai",
+      "width": 390,
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "hall-prefilled-knowledge-question",
+      "width": 390,
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "profile-ai-and-preset-archives",
+      "width": 390,
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "profile-certificates-and-rights",
+      "width": 390,
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "profile-certificate-pagination",
+      "width": 390,
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "hall-without-panorama-retains-ai",
+      "width": 390,
+      "fonts": [
+        {
+          "family": "JiafengSans",
+          "status": "loaded"
+        },
+        {
+          "family": "JiafengSerif",
+          "status": "loaded"
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/workspace",
+      "query": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspace",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspace",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ai/status",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspace",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspace",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me/certificates",
+      "query": "?page=1&pageSize=10"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me/copyright-confirmations",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me/certificates",
+      "query": "?page=2&pageSize=10"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me/copyright-confirmations",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspace",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/ai/status",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspace",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspace",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me/certificates",
+      "query": "?page=1&pageSize=10"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me/copyright-confirmations",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me/certificates",
+      "query": "?page=2&pageSize=10"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/me/copyright-confirmations",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/me",
+      "query": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspace",
+      "query": ""
+    }
+  ],
+  "pageErrors": [],
+  "passed": true
+}

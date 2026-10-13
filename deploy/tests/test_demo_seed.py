@@ -151,6 +151,43 @@ class ScriptBoundaryTest(unittest.TestCase):
             http.open.assert_not_called()
             self.assertTrue(all(call.args[0].startswith('SELECT ') for call in sql.call_args_list))
 
+    def test_base_rejects_existing_ai_tasks_or_chunks_without_writes(self):
+        for occupied_table in ('jf_ai_task', 'jf_ai_chunk'):
+            with self.subTest(occupied_table=occupied_table):
+                base = self.script('seed-showcase')
+                def read(statement):
+                    if statement.startswith('SELECT payload'):
+                        return ''
+                    if f'(SELECT COUNT(*) FROM {occupied_table})' in statement:
+                        return '1'
+                    if statement.startswith('SELECT COUNT(*) FROM jf_entity'):
+                        return '0'
+                    raise AssertionError('Importer must check AI occupancy before any further operation: ' + statement)
+                with patch.object(base, 'sql', side_effect=read) as sql, \
+                        patch.object(base, 'bootstrap_accounts') as bootstrap, \
+                        patch.object(base, 'HTTP') as http, patch.object(base, 'Client') as client:
+                    with self.assertRaisesRegex(ValueError, 'Business data already exists'):
+                        base.main()
+                    bootstrap.assert_not_called()
+                    http.open.assert_not_called()
+                    client.assert_not_called()
+                    self.assertTrue(all(call.args[0].startswith('SELECT ') for call in sql.call_args_list))
+
+    def test_base_completed_receipt_skips_ai_occupancy_checks_and_preserves_edits(self):
+        base = self.script('seed-showcase')
+        receipt = {'project': 'jiafeng-demo-test', 'fingerprint': base.state_module.fingerprint(DEPLOY),
+                   'phase': 'complete'}
+        with patch.object(base, 'sql', return_value=json.dumps(receipt)) as sql, \
+                patch.object(base, 'bootstrap_accounts') as bootstrap, \
+                patch.object(base, 'HTTP') as http, patch.object(base, 'Client') as client, \
+                contextlib.redirect_stdout(io.StringIO()):
+            base.main()
+            sql.assert_called_once()
+            self.assertTrue(sql.call_args.args[0].startswith('SELECT payload'))
+            bootstrap.assert_not_called()
+            http.open.assert_not_called()
+            client.assert_not_called()
+
     def test_changed_account_cannot_start_import_or_write_receipt(self):
         base = self.script('seed-showcase')
         defaults = [{'id': uid, 'version': 1, 'enabled': 1, 'realm': realm,

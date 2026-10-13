@@ -1,0 +1,16 @@
+{
+  "evidence": "live deployed UI with real API; read-only after HTTP probe",
+  "checks": [
+    "Live API model/provider/ocr state is visible with external API notice",
+    "Real private task logs omit input, output, file identity, references and issues",
+    "Withdrawn real knowledge document and zh/en controls remain readable on desktop and 390px mobile",
+    "Existing real manuscript analysis restores with GET only and displays on desktop/mobile",
+    "No page errors, no business/model writes, no horizontal overflow"
+  ],
+  "privateTaskCount": 12,
+  "model": "glm-5.2",
+  "provider": "zhipu",
+  "external": true,
+  "errors": [],
+  "writes": []
+}

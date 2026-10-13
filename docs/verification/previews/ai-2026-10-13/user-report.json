@@ -1,0 +1,101 @@
+{
+  "checks": [
+    {
+      "name": "real-letter-result",
+      "taskId": "ai_5d00e40720aa407d890df0cc64cc538a",
+      "characters": 31,
+      "model": "glm-5.2"
+    },
+    {
+      "name": "assistant-desktop",
+      "measure": {
+        "width": 1440,
+        "document": 1440,
+        "body": 1440
+      }
+    },
+    {
+      "name": "my-history-visible"
+    },
+    {
+      "name": "assistant-mobile-history",
+      "measure": {
+        "width": 390,
+        "document": 390,
+        "body": 390
+      }
+    },
+    {
+      "name": "no-page-errors-assistant"
+    },
+    {
+      "name": "real-ocr-result",
+      "taskId": "ai_788043a6c8504d4c95a7e9181cec5543",
+      "characters": 421
+    },
+    {
+      "name": "ocr-desktop",
+      "measure": {
+        "width": 1440,
+        "document": 1440,
+        "body": 1440
+      }
+    },
+    {
+      "name": "ocr-confirmed-and-archived",
+      "archiveId": "archive_28d4000a4f35412ab31e86347c488317"
+    },
+    {
+      "name": "ocr-mobile-adopted",
+      "measure": {
+        "width": 390,
+        "document": 390,
+        "body": 390
+      }
+    },
+    {
+      "name": "no-page-errors-ocr"
+    },
+    {
+      "name": "human-support-created",
+      "ticketId": "supportTicket_d9d0204f12b24678bc553ba7a5c7765e"
+    },
+    {
+      "name": "support-desktop",
+      "measure": {
+        "width": 1440,
+        "document": 1440,
+        "body": 1440
+      }
+    },
+    {
+      "name": "support-mobile",
+      "measure": {
+        "width": 390,
+        "document": 390,
+        "body": 390
+      }
+    },
+    {
+      "name": "no-page-errors-support"
+    }
+  ],
+  "errors": [],
+  "tasks": {
+    "letter": "ai_5d00e40720aa407d890df0cc64cc538a",
+    "ocr": "ai_788043a6c8504d4c95a7e9181cec5543"
+  },
+  "archiveId": "archive_28d4000a4f35412ab31e86347c488317",
+  "ticketId": "supportTicket_d9d0204f12b24678bc553ba7a5c7765e",
+  "screenshots": [
+    "assistant-desktop.png",
+    "assistant-mobile-history.png",
+    "ocr-desktop.png",
+    "ocr-mobile-adopted.png",
+    "support-desktop.png",
+    "support-mobile.png"
+  ],
+  "visualReview": "All six screenshots inspected. Desktop 1440 px and mobile viewport 390 px; no horizontal overflow or page errors. This is Chromium browser evidence, not WeChat or physical device evidence.",
+  "sourceChangesDuringLiveVerification": false,
+  "paidTaskCount": 2
+}

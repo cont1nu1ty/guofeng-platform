@@ -1,0 +1,9 @@
+{
+  "checks": [
+    "AI outage does not stop business workspace",
+    "AI outage produces durable explicit failure without demo fallback",
+    "completed task and account session survive server restart",
+    "failed task stays failed after recovery and is not automatically charged again"
+  ],
+  "failedTaskId": "ai_8abf81395c93487596ec89bd698fb771"
+}
