@@ -1,0 +1,11 @@
+# syntax=docker/dockerfile:1
+FROM python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_DISABLE_PIP_VERSION_CHECK=1
+WORKDIR /app
+COPY apps/ai/requirements.lock ./requirements.lock
+RUN pip install --no-cache-dir --require-hashes -r requirements.lock && useradd --uid 10001 --create-home app
+COPY apps/ai/service.py apps/ai/parse_document.py ./
+COPY licenses/ai/ /usr/share/licenses/jiafeng-ai/
+USER app
+EXPOSE 8090
+CMD ["uvicorn", "service:app", "--host", "0.0.0.0", "--port", "8090", "--no-access-log", "--log-level", "warning", "--limit-concurrency", "8"]

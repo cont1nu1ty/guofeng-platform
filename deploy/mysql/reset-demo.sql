@@ -29,6 +29,32 @@ DELETE s FROM flow_skip s JOIN reset_jf_definitions d ON d.id=s.definition_id;
 DELETE n FROM flow_node n JOIN reset_jf_definitions d ON d.id=n.definition_id;
 DELETE d FROM flow_definition d JOIN reset_jf_definitions r ON r.id=d.id;
 
+-- Clear current business children before their source entities, revisions and accounts.
+-- Regional dictionary nodes and migration/bootstrap state remain available.
+DELETE FROM jf_engagement;
+DELETE FROM jf_media_accessibility;
+DELETE FROM jf_consultation_event;
+DELETE FROM jf_venue_area;
+DELETE FROM jf_resource;
+DELETE FROM jf_certificate;
+DELETE FROM jf_copyright_confirmation;
+DELETE FROM jf_scheduled_delivery;
+DELETE FROM jf_delivery_preference;
+DELETE FROM jf_report_period;
+DELETE FROM jf_notification_delivery;
+DELETE FROM jf_job;
+DELETE FROM jf_education_declaration;
+DELETE FROM jf_education_member;
+DELETE FROM jf_education_identity;
+DELETE FROM jf_education_group;
+DELETE FROM jf_course_attempt;
+DELETE FROM jf_course_learning;
+DELETE FROM jf_course_publication;
+DELETE FROM jf_submission_import;
+DELETE FROM jf_review_binding;
+DELETE FROM jf_account_review;
+DELETE FROM jf_account_name;
+
 DELETE FROM jf_revision_file;
 DELETE FROM jf_revision;
 DELETE FROM jf_registration;
@@ -36,6 +62,10 @@ DELETE FROM jf_draft;
 DELETE FROM jf_idempotency;
 DELETE FROM jf_audit;
 DELETE FROM jf_login_attempt;
+-- AI tasks retain file references in JSON; knowledge chunks reference jf_entity.
+-- Remove both before files/entities/accounts so no personal task or extracted text survives reset.
+DELETE FROM jf_ai_task;
+DELETE FROM jf_ai_chunk;
 DELETE FROM jf_file;
 DELETE FROM jf_review_delivery;
 DELETE FROM jf_review_window;

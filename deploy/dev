@@ -60,8 +60,10 @@ def initialize():
         write_env(ENV_FILE, values)
         print(f"Generated local credentials: {ENV_FILE} (mode 0600)")
     values = read_env(ENV_FILE)
-    if not values.get("JIAFENG_SEARCH_PASSWORD"):
-        values["JIAFENG_SEARCH_PASSWORD"] = secrets.token_hex(24)
+    if not values.get("JIAFENG_SEARCH_PASSWORD") or not values.get("JIAFENG_AI_SERVICE_KEY"):
+        for key in ("JIAFENG_SEARCH_PASSWORD", "JIAFENG_AI_SERVICE_KEY"):
+            if not values.get(key):
+                values[key] = secrets.token_hex(32)
         write_env(ENV_FILE, values)
     if not re.fullmatch(r"[a-z0-9][a-z0-9_-]+", values.get("COMPOSE_PROJECT_NAME", "")):
         raise ValueError("COMPOSE_PROJECT_NAME must contain only lowercase letters, digits, hyphens and underscores")
@@ -290,11 +292,52 @@ def demo_scope(values):
 def reset_scope(values):
     """Destructive reset additionally requires the exact audited table inventory."""
     volumes = demo_scope(values)
-    expected = {"jf_account", "jf_entity", "jf_revision", "jf_draft", "jf_file",
-        "jf_registration", "jf_idempotency", "jf_audit", "jf_login_attempt",
-        "jf_revision_file", "jf_schema_version", "jf_bootstrap_ready",
-        "jf_search_state", "jf_search_outbox", "jf_review_window", "jf_review_delivery",
-        "jf_review_reminder_state", "jf_public_cache_state"}
+    expected = {
+        'jf_account',
+        'jf_account_name',
+        'jf_account_review',
+        'jf_ai_chunk',
+        'jf_ai_task',
+        'jf_audit',
+        'jf_bootstrap_ready',
+        'jf_certificate',
+        'jf_consultation_event',
+        'jf_copyright_confirmation',
+        'jf_course_attempt',
+        'jf_course_learning',
+        'jf_course_publication',
+        'jf_delivery_preference',
+        'jf_draft',
+        'jf_education_declaration',
+        'jf_education_group',
+        'jf_education_identity',
+        'jf_education_member',
+        'jf_engagement',
+        'jf_entity',
+        'jf_file',
+        'jf_idempotency',
+        'jf_job',
+        'jf_login_attempt',
+        'jf_media_accessibility',
+        'jf_notification_delivery',
+        'jf_public_cache_state',
+        'jf_region_node',
+        'jf_registration',
+        'jf_report_period',
+        'jf_resource',
+        'jf_review_binding',
+        'jf_review_delivery',
+        'jf_review_reminder_state',
+        'jf_review_window',
+        'jf_revision',
+        'jf_revision_file',
+        'jf_scheduled_delivery',
+        'jf_schema_version',
+        'jf_search_outbox',
+        'jf_search_state',
+        'jf_submission_import',
+        'jf_venue_area',
+    }
     actual = set(query("SELECT table_name FROM information_schema.tables WHERE "
         "table_schema=DATABASE() AND LEFT(table_name,3)='jf_';").splitlines())
     if actual != expected:
@@ -341,7 +384,8 @@ def reset_demo(values, *, empty=False):
                 raise ValueError("Schema history unexpectedly changed; keep services stopped and restore the backup")
             compose("up", "-d", "--no-build", "--wait", "--wait-timeout", "240")
             accounts = int(query("SELECT COUNT(*) FROM jf_account;"))
-            if accounts != 6 or int(query("SELECT COUNT(*) FROM jf_file;")) != 0:
+            remaining_ai = int(query("SELECT (SELECT COUNT(*) FROM jf_ai_task)+(SELECT COUNT(*) FROM jf_ai_chunk);"))
+            if accounts != 6 or int(query("SELECT COUNT(*) FROM jf_file;")) != 0 or remaining_ai != 0:
                 raise ValueError("Reset did not produce the expected six-account empty development environment")
             report = {"resetAt": dt.datetime.now(dt.timezone.utc).isoformat(),
                 "project": values["COMPOSE_PROJECT_NAME"], "backupDirectory": str(saved),

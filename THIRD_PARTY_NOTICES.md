@@ -73,3 +73,9 @@
 ## 2026-10-08 · 演示分支全景来源
 
 演示分支使用 Greg Zaal 的 Autumn Hockey（Poly Haven，CC0）作为公园球面技术示例，不代表展馆实景；[具体来源与用途](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/deploy/fixtures/non_ai/education-media-sources.md)固定到本轮演示提交。main 不附带该演示素材或人物种子数据。
+
+## 2026-10-13 · AI 应用接入
+
+独立 `apps/ai` 服务复用 FastAPI 0.143.0（MIT）、Uvicorn 0.54.0（BSD-3-Clause）、pypdf 6.20.1（BSD-3-Clause）。直接及传递依赖的准确版本、发行包 SHA-256 在 `apps/ai/requirements.lock`，各发行包内原样提取的 LICENSE 在 `licenses/ai/`，索引为 `licenses/ai/inventory.json`。Python 3.12 的官方 Debian Bookworm 镜像按 digest 固定于 `deploy/images.lock.json`，Python 及 OS 组件许可在镜像中保留；不将整张镜像概括为 MIT。
+
+模型请求封装、任务与权限、知识分块、提示词和应用界面为本项目原创。通过 HTTP 对接 OpenAI-compatible Chat Completions 协议及智谱 `layout_parsing` OCR 协议，没有复制模型 SDK 或捆绑模型权重。智谱 API 是开发阶段外部服务（用户本轮明确授权），不因其模型有开放权重便将云 API 标为开源软件。未来本地模型的权重许可证、算力和质量需按实际选型登记。当前没有引入 PaddleOCR、向量模型或重排模型。
