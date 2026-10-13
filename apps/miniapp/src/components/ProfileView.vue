@@ -507,10 +507,14 @@ const rows = computed<PersonalRow[]>(() => {
           item.mode === 'knowledge'
             ? t('家风知识', 'Heritage knowledge')
             : item.mode === 'compliance'
-              ? t('审校样例', 'Review sample')
+              ? isHttpMode && item.source === 'model'
+                ? t('辅助审校', 'AI-assisted review')
+                : t('审校样例', 'Review sample')
               : item.mode === 'storyboard'
                 ? t('短剧分镜', 'Storyboards')
-                : t('AI 预设创作示例', 'Preset assistant sample'),
+                : item.source === 'model'
+                  ? t('AI 创作记录', 'AI writing')
+                  : t('预设创作示例', 'Prepared sample'),
         meta: dateLabel(item.createdAt),
         body: item.result,
         actions: [
@@ -595,10 +599,10 @@ const panelHelp = computed(
       ),
       archive: t(
         isHttpMode
-          ? '摘抄与创作记录保存到当前账号。预设助手文本不代表模型推理。'
+          ? '摘抄与创作记录保存到当前账号。AI 结果与旧预设示例分别标注，请核对后使用。'
           : '摘抄与创作示例保存在本机，可随时返回编辑。',
         isHttpMode
-          ? 'Excerpts and saved writing belong to your account. Prepared assistant text is not model inference.'
+          ? 'Excerpts and saved writing belong to your account. AI results and earlier prepared samples are labelled separately. Check them before use.'
           : 'Local excerpts and writing samples are ready to revisit.',
       ),
     })[tab.value] ?? '',

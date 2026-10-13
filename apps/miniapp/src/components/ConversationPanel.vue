@@ -1,6 +1,19 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance, nextTick, reactive, ref, watch } from 'vue'
+import { computed, getCurrentInstance, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { t, locale } from '../composables/useLocale'
+import AiCitations from './AiCitations.vue'
+import { isHttpMode } from '../config/dataMode'
+import { remoteUser } from '../services/api'
+import { aiMode, boundedAiHistory, type AiStatus, type AiTask } from '../domain/aiTasks'
+import {
+  createAiOperation,
+  getAiStatus,
+  listAiTasks,
+  readAiTask,
+  resumeAiTask,
+  runAiTask,
+  type AiOperation,
+} from '../services/ai'
 import { largeText } from '../composables/useDemo'
 import { readInputValue } from '../composables/readInputValue'
 import { getAssistantTool } from '../domain/assistantExamples'
@@ -20,19 +33,32 @@ const props = withDefaults(
     append?: boolean
     draftTitle?: string
     draftText?: string
+    initialPrompt?: string
   }>(),
   { compact: false, append: false },
 )
-const emit = defineEmits<{ use: [reply: ConversationReply] }>()
+const emit = defineEmits<{ use: [reply: ConversationReply]; handoff: [prompt: string] }>()
 interface Session {
   messages: ConversationMessage[]
   input: string
   version: number
   error: string
+  busy: boolean
+  taskStatus: string
 }
 const sessions = reactive<Partial<Record<AssistantMode, Session>>>({})
 function session(mode: AssistantMode): Session {
-  return sessions[mode] ?? (sessions[mode] = { messages: [], input: '', version: 0, error: '' })
+  return (
+    sessions[mode] ??
+    (sessions[mode] = {
+      messages: [],
+      input: '',
+      version: 0,
+      error: '',
+      busy: false,
+      taskStatus: '',
+    })
+  )
 }
 const current = computed(() => session(props.mode))
 const instance = getCurrentInstance()
@@ -47,6 +73,136 @@ const copied = ref('')
 const copyError = ref('')
 const used = ref('')
 let sequence = 0
+const operations = new Map<AssistantMode, AiOperation>()
+const status = ref<AiStatus | null>(null)
+const statusError = ref('')
+const history = ref<AiTask[]>([])
+const historyOpen = ref(false)
+const historyBusy = ref(false)
+const historyError = ref('')
+let historyOperation: AiOperation | undefined
+const supported = computed(() => Boolean(aiMode(props.mode)) && props.mode !== 'ocr')
+async function loadStatus() {
+  if (!isHttpMode) return
+  statusError.value = ''
+  try {
+    status.value = await getAiStatus()
+  } catch (e) {
+    statusError.value = e instanceof Error ? e.message : 'AI 服务状态无法读取'
+  }
+}
+function toggleHistory() {
+  historyOpen.value = !historyOpen.value
+  if (historyOpen.value) void loadHistory()
+}
+async function loadHistory() {
+  if (!isHttpMode || !remoteUser.value) return
+  historyOperation?.cancel()
+  const operation = createAiOperation()
+  historyOperation = operation
+  historyBusy.value = true
+  historyError.value = ''
+  try {
+    history.value = (await listAiTasks(operation)).filter(
+      (task) => task.mode === aiMode(props.mode),
+    )
+  } catch (e) {
+    if (operation.active()) historyError.value = e instanceof Error ? e.message : '加载失败'
+  } finally {
+    if (operation.active()) historyBusy.value = false
+  }
+}
+function stopWaiting() {
+  operations.get(props.mode)?.cancel()
+  current.value.busy = false
+  current.value.taskStatus = ''
+  current.value.error = t(
+    '已停止等待，可在历史记录继续查看；输入保留。',
+    'Stopped waiting. Your input remains; find the task in history.',
+  )
+}
+function modelReply(task: AiTask, prompt: string, mode: AssistantMode): ConversationReply {
+  const result = task.result ?? ''
+  return {
+    text: result,
+    content: result,
+    source: 'model',
+    mode,
+    prompt,
+    language: locale.value,
+    context: {},
+    citations: task.citations,
+    model: task.model,
+    taskId: task.id,
+    issues: task.issues,
+    similarities: task.similarities,
+  }
+}
+async function openHistory(task: AiTask) {
+  if (current.value.busy) return
+  const owner = current.value
+  const ownerMode = props.mode
+  const operation = createAiOperation()
+  operations.set(ownerMode, operation)
+  owner.busy = true
+  owner.error = ''
+  try {
+    const fresh = await readAiTask(task.id, operation)
+    const done = await resumeAiTask(fresh, operation, (value) => {
+      owner.taskStatus = value.status
+    })
+    if (!operation.active()) return
+    const reply = modelReply(
+      done,
+      done.prompt || t('从本人任务历史恢复', 'Restored from my history'),
+      ownerMode,
+    )
+    owner.messages.push({
+      id: `${prefix}-restored-${++sequence}`,
+      role: 'assistant',
+      text: reply.text,
+      reply,
+    })
+    historyOpen.value = false
+    void scrollLatest()
+  } catch (e) {
+    if (operation.active()) owner.error = e instanceof Error ? e.message : '读取失败'
+  } finally {
+    if (operation.active()) {
+      owner.busy = false
+      owner.taskStatus = ''
+    }
+  }
+}
+function cancelAll() {
+  operations.forEach((operation) => operation.cancel())
+  operations.clear()
+  historyOperation?.cancel()
+}
+watch(
+  () => remoteUser.value?.id,
+  () => {
+    cancelAll()
+    for (const key of Object.keys(sessions) as AssistantMode[]) delete sessions[key]
+    history.value = []
+    historyOpen.value = false
+    historyBusy.value = false
+    historyError.value = ''
+    used.value = ''
+    copied.value = ''
+    pendingUse.value = ''
+    clearing.value = false
+  },
+)
+watch(
+  () => props.initialPrompt,
+  (value) => {
+    if (value) current.value.input = value
+  },
+  { immediate: true },
+)
+onBeforeUnmount(cancelAll)
+void loadStatus()
 const bindings = computed(() => [
   {
     owner: props.mode,
@@ -82,9 +238,11 @@ function readLatestInput() {
   if (control) current.value.input = control.value
   // #endif
 }
-function send(exampleId?: string, prompt?: string) {
+async function send(exampleId?: string, prompt?: string) {
   readLatestInput()
   const owner = current.value
+  if (owner.busy) return
+  const ownerMode = props.mode
   const input = (prompt ?? owner.input).trim()
   if (!input) {
     owner.error = t(
@@ -100,6 +258,71 @@ function send(exampleId?: string, prompt?: string) {
       '当前对话已满20轮，请先复制或使用需要的内容，再开始新对话。',
       'This conversation has reached 20 turns. Copy or use the passages you need, then start a new conversation.',
     )
+    return
+  }
+  if (isHttpMode) {
+    const mode = aiMode(ownerMode)
+    if (!remoteUser.value) {
+      owner.error = t('请先登录，再使用 AI 助手。', 'Sign in to use the assistant.')
+      return
+    }
+    if (!mode || mode === 'ocr') {
+      owner.error = t('此功能尚未接入，请使用已开放的工具。', 'This tool is not available yet.')
+      return
+    }
+    if (status.value && !status.value.enabled) {
+      owner.error = t('AI 服务未启用，输入已保留。', 'AI is unavailable. Your input is retained.')
+      return
+    }
+    if ([...input].length > MAX_CHAT_INPUT) {
+      owner.error = t('请将问题控制在2000字内。', 'Keep the question within 2,000 characters.')
+      return
+    }
+    const operation = createAiOperation()
+    operations.set(ownerMode, operation)
+    owner.busy = true
+    owner.error = ''
+    if (prompt !== undefined) owner.input = input
+    const historyMessages = boundedAiHistory(owner.messages)
+    try {
+      const task = await runAiTask(
+        {
+          mode,
+          prompt: input,
+          language: locale.value,
+          ...(props.draftText?.trim()
+            ? { text: `${props.draftTitle || ''}\n${props.draftText}` }
+            : {}),
+          history: historyMessages,
+        },
+        operation,
+        (value) => {
+          owner.taskStatus = value.status
+        },
+      )
+      if (!operation.active()) return
+      const reply = modelReply(task, input, ownerMode)
+      owner.messages.push(
+        { id: `${prefix}-user-${++sequence}`, role: 'user', text: input },
+        { id: `${prefix}-assistant-${++sequence}`, role: 'assistant', text: reply.text, reply },
+      )
+      if (owner.input.trim() === input) owner.input = ''
+      owner.version++
+      pendingUse.value = ''
+      clearing.value = false
+      void scrollLatest()
+    } catch (e) {
+      if (operation.active())
+        owner.error =
+          e instanceof Error
+            ? e.message
+            : t('处理失败，输入已保留。', 'Request failed. Your input is retained.')
+    } finally {
+      if (operation.active()) {
+        owner.busy = false
+        owner.taskStatus = ''
+      }
+    }
     return
   }
   try {
@@ -166,6 +389,8 @@ function useMessage(message: ConversationMessage) {
   used.value = message.id
 }
 function clearConversation() {
+  operations.get(props.mode)?.cancel()
+  current.value.busy = false
   const owner = current.value
   owner.version++
   owner.messages = []
@@ -181,6 +406,12 @@ function clearConversation() {
 watch(
   () => props.mode,
   (next, previous) => {
+    operations.get(previous)?.cancel()
+    session(previous).busy = false
+    historyOperation?.cancel()
+    historyOpen.value = false
+    historyBusy.value = false
+    history.value = []
     session(previous).version++
     session(next).version++
     clearing.value = false
@@ -200,7 +431,13 @@ watch(locale, () => {
         <text class="conversation-title">
           {{ t('家风助手对话', 'Family-values conversation') }}
         </text>
-        <text class="conversation-mode">{{ t(tool.label.zh, tool.label.en) }}</text>
+        <text class="conversation-mode">
+          {{
+            isHttpMode && mode === 'compliance'
+              ? t('内容自检辅助', 'Content review assistance')
+              : t(tool.label.zh, tool.label.en)
+          }}
+        </text>
       </view>
       <button class="conversation-reset" @click="clearing = !clearing">
         {{ t('新对话', 'New conversation') }}
@@ -209,11 +446,65 @@ watch(locale, () => {
     <text class="conversation-disclosure">
       {{
         t(
-          '本地对话演示 · 未连接AI模型；消息只保留在本次页面会话。',
-          'Local conversation demo · No AI model. Messages remain only in this page session.',
+          isHttpMode
+            ? status?.external
+              ? '开发 API 模式 · 内容发送到配置的外部模型；任务仅本人可查。请核对生成内容与引用。'
+              : '服务端 AI 助手 · 任务仅本人可查，请核对生成内容与引用。'
+            : '本地对话演示 · 未连接AI模型；消息只保留在本次页面会话。',
+          isHttpMode
+            ? status?.external
+              ? 'Development API · Content is sent to the configured external model. Only you can access your tasks. Verify outputs and sources.'
+              : 'Server AI assistant · Only you can access your tasks. Verify outputs and sources.'
+            : 'Local conversation demo · No AI model. Messages remain only in this page session.',
         )
       }}
     </text>
+    <view v-if="isHttpMode" class="conversation-service-state">
+      <text v-if="statusError" class="conversation-error">{{ statusError }}</text>
+      <text v-if="status && !status.enabled">
+        {{ t('AI 服务当前不可用', 'AI service is currently unavailable') }}
+      </text>
+      <text v-if="!supported">
+        {{ t('此工具尚未接入真实服务，暂不可生成。', 'This tool is not connected yet.') }}
+      </text>
+      <wd-button
+        v-if="statusError || (status && !status.enabled)"
+        size="small"
+        variant="text"
+        @click="loadStatus"
+      >
+        {{ t('重新检查服务', 'Check again') }}
+      </wd-button>
+      <wd-button v-if="remoteUser && supported" size="small" variant="text" @click="toggleHistory">
+        {{ t('本人任务历史', 'My task history') }}
+      </wd-button>
+      <view v-if="historyOpen" class="conversation-task-history">
+        <text v-if="historyBusy">{{ t('加载中…', 'Loading…') }}</text>
+        <text v-if="historyError" class="conversation-error">{{ historyError }}</text>
+        <text v-if="!historyBusy && !history.length && !historyError">
+          {{ t('本工具暂无历史任务。', 'No task history for this tool.') }}
+        </text>
+        <button
+          v-for="task in history"
+          :key="task.id"
+          class="conversation-task-item"
+          :disabled="current.busy"
+          @click="openHistory(task)"
+        >
+          {{ task.prompt || task.createdAt }} ·
+          {{
+            task.status === 'succeeded'
+              ? t('已完成', 'Completed')
+              : task.status === 'failed'
+                ? t('失败', 'Failed')
+                : t('处理中', 'Processing')
+          }}
+        </button>
+        <wd-button size="small" variant="text" @click="loadHistory">
+          {{ t('刷新历史', 'Refresh') }}
+        </wd-button>
+      </view>
+    </view>
     <view v-if="clearing" class="conversation-clear-confirm">
       <text>
         {{
@@ -262,6 +553,42 @@ watch(locale, () => {
         </text>
         <view class="conversation-bubble">
           <text class="conversation-bubble-copy" selectable>{{ message.text }}</text>
+          <AiCitations v-if="message.reply?.citations?.length" :items="message.reply.citations" />
+          <view
+            v-if="message.reply?.issues?.length || message.reply?.similarities?.length"
+            class="conversation-analysis"
+          >
+            <view
+              v-for="(issue, index) in message.reply.issues"
+              :key="'issue-' + index"
+              class="conversation-analysis-item"
+            >
+              <text>{{ t('待核对：', 'Check: ') }}{{ issue.quote }}</text>
+              <text>{{ issue.reason }}</text>
+            </view>
+            <view
+              v-for="similar in message.reply.similarities"
+              :key="similar.id"
+              class="conversation-analysis-item"
+            >
+              <text>
+                {{ t('相似内容（仅供人工比对）：', 'Similar passage (for human comparison): ')
+                }}{{ similar.title }}
+              </text>
+              <text>{{ similar.excerpt }}</text>
+            </view>
+            <text>
+              {{
+                t(
+                  '辅助结果不构成审核通过或抄袭认定。',
+                  'Assistance is not approval or a plagiarism determination.',
+                )
+              }}
+            </text>
+          </view>
+          <text v-if="message.reply?.model" class="conversation-model">
+            {{ message.reply.model }}
+          </text>
           <view v-if="message.role === 'assistant'" class="conversation-message-actions">
             <button class="conversation-message-action" @click="copyMessage(message)">
               {{
@@ -345,6 +672,7 @@ watch(locale, () => {
         class="conversation-quick-question"
         v-for="(item, index) in suggestions"
         :key="index"
+        :disabled="current.busy || (isHttpMode && !supported)"
         @click="send(item.exampleId, item.prompt)"
       >
         {{ item.label }}
@@ -386,9 +714,41 @@ watch(locale, () => {
         <text class="conversation-input-count">
           {{ current.input.length }} / {{ MAX_CHAT_INPUT }}
         </text>
-        <wd-button size="small" @click="send()">{{ t('发送', 'Send') }} ↑</wd-button>
+        <wd-button v-if="current.busy" size="small" variant="plain" @click="stopWaiting">
+          {{ t('停止等待', 'Stop waiting') }}
+        </wd-button>
+        <wd-button
+          size="small"
+          :loading="current.busy"
+          :disabled="current.busy || (isHttpMode && !supported)"
+          @click="send()"
+        >
+          {{
+            current.busy
+              ? current.taskStatus === 'queued'
+                ? t('排队中…', 'Queued…')
+                : t('处理中…', 'Processing…')
+              : t('发送', 'Send')
+          }}
+          ↑
+        </wd-button>
       </view>
       <text v-if="current.error" class="conversation-error" role="alert">{{ current.error }}</text>
+      <wd-button
+        v-if="isHttpMode && mode === 'help'"
+        size="small"
+        variant="text"
+        @click="
+          emit(
+            'handoff',
+            current.input ||
+              [...current.messages].reverse().find((m) => m.role === 'user')?.text ||
+              '',
+          )
+        "
+      >
+        {{ t('需要人工帮助', 'Contact human support') }}
+      </wd-button>
     </view>
   </view>
 </template>
@@ -666,5 +1026,46 @@ watch(locale, () => {
   .conversation-history {
     height: 420px;
   }
+}
+</style>
+
+<style scoped>
+.conversation-service-state {
+  padding: 0 22px 12px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.conversation-task-history {
+  padding: 12px;
+  background: var(--jf-paper);
+}
+.conversation-task-item {
+  text-align: left;
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 8px 0;
+  padding: 8px;
+  overflow-wrap: anywhere;
+}
+.conversation-model {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--jf-muted);
+}
+</style>
+
+<style scoped>
+.conversation-analysis {
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.85;
+  border-top: 1px solid var(--jf-border);
+}
+.conversation-analysis-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 12px 0;
 }
 </style>

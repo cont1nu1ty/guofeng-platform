@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { isHttpMode } from '../config/dataMode'
-import { command, remoteWorkspace, remoteUser } from '../services/api'
-import { computed, ref } from 'vue'
+import { command, remoteWorkspace, remoteUser, currentSessionEpoch } from '../services/api'
+import { computed, ref, watch } from 'vue'
+import ConversationPanel from './ConversationPanel.vue'
+import { useRouteParams } from '../composables/useNavigation'
 import { t } from '../composables/useLocale'
 import { readInputValue } from '../composables/readInputValue'
+const params = useRouteParams()
 const open = ref(false)
 const input = ref('')
 const questionVersion = ref(0)
@@ -109,6 +112,7 @@ async function requestHandoff() {
     queued.value = true
     return
   }
+  const epoch = currentSessionEpoch()
   busy.value = true
   error.value = ''
   try {
@@ -119,15 +123,44 @@ async function requestHandoff() {
       body: handoffNote.value.trim(),
       category: ticketCategory.value,
     })
+    if (epoch !== currentSessionEpoch()) return
     handoffNote.value = ''
     handoff.value = false
   } catch (e) {
+    if (epoch !== currentSessionEpoch()) return
     error.value =
       e instanceof Error ? e.message : t('提交失败，请重试', 'Request failed. Please retry.')
   } finally {
-    busy.value = false
+    if (epoch === currentSessionEpoch()) busy.value = false
   }
 }
+function aiHandoff(prompt: string) {
+  handoffNote.value = prompt.slice(0, 500)
+  handoff.value = true
+}
+watch(
+  () => params.value.support,
+  (value) => {
+    if (!value) return
+    open.value = true
+    handoff.value = true
+    if (value !== 'help') handoffNote.value = value.slice(0, 500)
+  },
+  { immediate: true },
+)
+watch(
+  () => remoteUser.value?.id,
+  () => {
+    messages.value = []
+    input.value = ''
+    handoffNote.value = ''
+    handoff.value = false
+    queued.value = false
+    error.value = ''
+    busy.value = false
+    questionVersion.value++
+  },
+)
 </script>
 <template>
   <view class="submission-support">
@@ -135,43 +168,46 @@ async function requestHandoff() {
       {{ t('投稿客服与常见问题', 'Submission support and FAQs') }} {{ open ? '−' : '+' }}
     </button>
     <view v-if="open" class="support-content">
-      <text class="support-notice">
-        {{
-          t(
-            '本机会话 · 根据关键词匹配帮助条目，不是实时 AI 或人工客服。离开页面后会话不保存。',
-            'Local conversation · Help is matched by keyword, not live AI or a support agent. The conversation is not saved after leaving.',
-          )
-        }}
-      </text>
-      <view class="support-questions">
-        <button
-          class="support-question-option"
-          v-for="(item, index) in faq"
-          :key="index"
-          @click="ask(index)"
-        >
-          {{ t(item.zh, item.en) }}
-        </button>
-      </view>
-      <view v-for="(item, index) in messages" :key="index" class="support-exchange">
-        <text class="support-question">{{ item.question }}</text>
-        <text>{{ t(item.zh, item.en) }}</text>
-      </view>
-      <input
-        class="support-question-input"
-        v-for="editor in questionEditors"
-        :key="editor.version"
-        :value="input"
-        @input="questionInput($event, editor.version)"
-        maxlength="300"
-        :placeholder="
-          t('输入草稿、退回或投稿相关问题', 'Ask about drafts, revisions or submissions')
-        "
-        @blur="questionBlur($event, editor.version)"
-        @confirm="questionConfirm($event, editor.version)"
-      />
+      <ConversationPanel v-if="isHttpMode" mode="help" compact @handoff="aiHandoff" />
+      <template v-else>
+        <text class="support-notice">
+          {{
+            t(
+              '本机会话 · 根据关键词匹配帮助条目，不是实时 AI 或人工客服。离开页面后会话不保存。',
+              'Local conversation · Help is matched by keyword, not live AI or a support agent. The conversation is not saved after leaving.',
+            )
+          }}
+        </text>
+        <view class="support-questions">
+          <button
+            class="support-question-option"
+            v-for="(item, index) in faq"
+            :key="index"
+            @click="ask(index)"
+          >
+            {{ t(item.zh, item.en) }}
+          </button>
+        </view>
+        <view v-for="(item, index) in messages" :key="index" class="support-exchange">
+          <text class="support-question">{{ item.question }}</text>
+          <text>{{ t(item.zh, item.en) }}</text>
+        </view>
+        <input
+          class="support-question-input"
+          v-for="editor in questionEditors"
+          :key="editor.version"
+          :value="input"
+          @input="questionInput($event, editor.version)"
+          maxlength="300"
+          :placeholder="
+            t('输入草稿、退回或投稿相关问题', 'Ask about drafts, revisions or submissions')
+          "
+          @blur="questionBlur($event, editor.version)"
+          @confirm="questionConfirm($event, editor.version)"
+        />
+      </template>
       <view class="support-actions">
-        <wd-button size="small" :disabled="!input.trim()" @click="send">
+        <wd-button v-if="!isHttpMode" size="small" :disabled="!input.trim()" @click="send">
           {{ t('查看本机答复', 'Get a local answer') }}
         </wd-button>
         <wd-button variant="plain" size="small" @click="handoff = !handoff">

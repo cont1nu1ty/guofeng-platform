@@ -543,6 +543,22 @@ function exportDocument() {
       </view>
       <view class="library-reading-support">
         <view class="library-glossary-panel">
+          <wd-button
+            v-if="isHttpMode"
+            size="small"
+            variant="plain"
+            @click="
+              navigate('assistant', {
+                mode: 'knowledge',
+                prompt:
+                  t('请根据已发布资料，解释《', 'Using published sources, explain: ') +
+                  (document?.title || '') +
+                  t('》中的重点，并给出原文出处。', '. Cite the original sources.'),
+              })
+            "
+          >
+            {{ t('向 AI 提问（附来源）', 'Ask AI with sources') }}
+          </wd-button>
           <text class="library-panel-title">
             {{ t('词义导读 · 编辑注解', 'Reading notes · editorial guidance') }}
           </text>

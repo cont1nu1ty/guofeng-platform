@@ -515,7 +515,7 @@ export async function submitRemote(draft: SubmissionDraft) {
 export async function uploadRemoteFile<T extends string = 'image' | 'pdf' | 'word'>(
   path: string,
   name: string,
-  purpose?: 'media' | 'recitation',
+  purpose?: 'media' | 'recitation' | 'manuscript',
 ): Promise<{
   fileId: string
   name: string

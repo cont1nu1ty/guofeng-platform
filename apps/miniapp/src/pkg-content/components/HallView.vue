@@ -274,6 +274,26 @@ function copySource() {
               )
             }}
           </view>
+          <view v-if="isHttpMode" class="showcase-actions">
+            <wd-button
+              size="small"
+              variant="plain"
+              @click="
+                navigate('assistant', {
+                  mode: 'knowledge',
+                  prompt:
+                    t('请根据已发布资料，介绍', 'Using published sources, introduce ') +
+                    lt(current.name) +
+                    t(
+                      '的家风思想与相关家训，并标明出处。',
+                      ' and the related family precepts. Cite your sources.',
+                    ),
+                })
+              "
+            >
+              {{ t('人物知识问答（附出处）', 'Ask about this figure with sources') }}
+            </wd-button>
+          </view>
           <view class="showcase-panel hall-reflection">
             <text class="showcase-card-title">
               {{ t('把家训带回家', 'Bring the precept home') }}
@@ -440,8 +460,8 @@ function copySource() {
         {{
           isHttpMode
             ? t(
-                '人物介绍和资料来源由后台编辑发布。展陈与书册为文字示意；真实全景、文物扫描及AI讲解未配置。',
-                'Profiles and sources are published by editors. Exhibits and books are illustrations; real panoramas, artefact scans and AI narration are not configured.',
+                '人物资料由后台发布，可进入 AI 助手提问并核对出处。展陈为文字示意；已配置全景的展馆在网页提供球面查看、小程序显示平面图，素材来源见展馆说明。文物扫描与语音合成未配置。',
+                'Profiles are published by editors. Ask the assistant and verify its sources. Exhibits are illustrations; configured panoramas offer a spherical view on the web and a flat image in the miniapp, with sources in each hall. Artefact scans and speech synthesis are not configured.',
               )
             : t(
                 '本期提供图文导览、可拖动空间示意、家训描摹与预置讲解；720° 实景与文物扫描需另行提供授权素材。',
