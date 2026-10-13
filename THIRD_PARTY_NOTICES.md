@@ -73,3 +73,9 @@
 ## 2026-10-08 · 非 AI 场景全景素材
 
 演示人物沈守约使用 Greg Zaal 的 [Autumn Hockey](https://polyhaven.com/a/autumn_hockey) Tonemapped JPG 作为球面浏览技术示例，资产依据 [Poly Haven CC0 许可](https://polyhaven.com/license)。通过原站 HTTPS URL 引用，未将公园摄影说成展馆实景；人物和故事为项目原创虚构。来源/文件标识见 `source-lock.json` 的 `nonAiShowcase` 与 `deploy/fixtures/non_ai/education-media-sources.md`。本地几何书屋纹理为程序绘制的原创样例，没有引入第三方代码或新增运行库。
+
+## 2026-10-13 · AI 应用接入
+
+独立 `apps/ai` 服务复用 FastAPI 0.143.0（MIT）、Uvicorn 0.54.0（BSD-3-Clause）、pypdf 6.20.1（BSD-3-Clause）。直接及传递依赖的准确版本、发行包 SHA-256 在 `apps/ai/requirements.lock`，各发行包内原样提取的 LICENSE 在 `licenses/ai/`，索引为 `licenses/ai/inventory.json`。Python 3.12 的官方 Debian Bookworm 镜像按 digest 固定于 `deploy/images.lock.json`，Python 及 OS 组件许可在镜像中保留；不将整张镜像概括为 MIT。
+
+模型请求封装、任务与权限、知识分块、提示词和应用界面为本项目原创。通过 HTTP 对接 OpenAI-compatible Chat Completions 协议及智谱 `layout_parsing` OCR 协议，没有复制模型 SDK 或捆绑模型权重。智谱 API 是开发阶段外部服务（用户本轮明确授权），不因其模型有开放权重便将云 API 标为开源软件。未来本地模型的权重许可证、算力和质量需按实际选型登记。当前没有引入 PaddleOCR、向量模型或重排模型。

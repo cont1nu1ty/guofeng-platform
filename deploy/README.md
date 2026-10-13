@@ -175,3 +175,60 @@ SHA-256 清单；按含敏感业务数据的文件妥善保存。
 ## 公开业务缓存
 
 默认启用公开目录与统计缓存；配置 `JIAFENG_PUBLIC_CACHE_ENABLED=false` 后重建 server 容器可禁用。Compose 项目名隔离缓存键，发布/下架自动切换内容版本，不需要手工清空 Redis。目录最长300秒，统计最长30秒，私人工作区不缓存。详细规则见[评审窗口与缓存](../docs/engineering/review-windows-cache.md)。`JIAFENG_SERVER_IMAGE`、`JIAFENG_WEB_IMAGE` 可为隔离验证指定镜像标签，默认仍为本地构建标签。
+
+## AI 文本、知识问答、OCR 与审核辅助
+
+2026-10-13 新增内网 `ai` 容器；MySQL V015 保存任务和知识分块。`up` 会构建适配器，
+但新配置默认 `JIAFENG_AI_ENABLED=false`，不会自动调用付费模型。密钥只写本机
+`deploy/.env`（0600、Git忽略），不要放入前端环境变量、源码、截图或接口示例。
+开发阶段可以在同一文件配置以下非秘密选项，并另行填入 `JIAFENG_AI_API_KEY`：
+
+```dotenv
+JIAFENG_AI_ENABLED=true
+JIAFENG_AI_PROVIDER=zhipu
+JIAFENG_AI_EXTERNAL=true
+JIAFENG_AI_BASE_URL=https://open.bigmodel.cn/api/paas/v4
+JIAFENG_AI_MODEL=glm-5.2
+JIAFENG_AI_OCR_MODEL=glm-ocr
+JIAFENG_AI_OCR_PROTOCOL=layout
+JIAFENG_AI_TIMEOUT_SECONDS=110
+```
+
+修改后执行 `./deploy/dev up` 使容器配置生效。后台「AI 运维」显示服务与模型状态，
+用户端「助手」可发起任务；AI 开发接口实际会产生供应商调用费用。AI进程健康、模型已配置、
+一次真实任务成功是三个不同检查：无效密钥、限流、超时均明确返回失败，不使用预设回答替代。
+适配器不公开宿主机端口，不开放供应商代理给浏览器。
+
+本地兼容模型示例（本轮实现适配入口，尚未部署/验证具体本地模型）：
+
+```dotenv
+JIAFENG_AI_PROVIDER=openai-compatible
+JIAFENG_AI_EXTERNAL=false
+JIAFENG_AI_BASE_URL=http://host.docker.internal:8000/v1
+JIAFENG_AI_MODEL=your-local-model
+JIAFENG_AI_OCR_BASE_URL=http://host.docker.internal:8001/v1
+JIAFENG_AI_OCR_MODEL=your-local-vision-model
+JIAFENG_AI_OCR_PROTOCOL=chat
+```
+
+`BASE_URL` 是基础路径，适配器追加 `/chat/completions`；容器的 localhost 指向容器自身，
+宿主机模型用 `host.docker.internal`。同一 Compose 网络中的模型可用其服务名。
+文本模型和 OCR 可分别配置 `JIAFENG_AI_OCR_API_KEY`；未配置独立 OCR 地址/密钥时继承文本配置。
+本地 `chat` OCR 接口需支持图片 `image_url` 数据输入，目前仅 PNG/JPEG，PDF 需先转图片；
+`layout` 协议对接智谱文档解析，支持 PNG/JPEG/PDF。两种协议不会互相猜测或静默降级。
+
+知识资料支持 PDF、DOCX、PNG/JPEG（不支持旧二进制 DOC）。上传后选择公开/内部及语言，
+显式建立索引后才参与检索。PDF文本解析最多30页，扫描件会转OCR；不把“上传成功”当作
+“索引完成”。撤回、资料修改和稿件版本变化会使引用旧资料的结果停止展示。
+后台审核辅助只提供建议，不自动改变人工结果或公开状态。
+
+备份继续覆盖 MySQL 与完整 S3，包含任务和知识分块；不需要另备份 AI 容器。
+恢复时运行中的模型任务按超时规则失败，避免自动重放收费请求。已完成任务和文件保留。
+`./deploy/dev logs ai server` 可定位固定错误码；日志不应包含请求正文与密钥。
+
+显式模型集成验收脚本为 `python3 deploy/tests/ai_probe.py`：它会调用已配置 API、创建少量
+标有联调字样的原创虚构记录，不清空现有数据。它不是默认启动步骤，不作为模型质量基准。
+实现和限制见 [AI 应用接入](../docs/engineering/ai-applications.md)，依赖、锁定摘要和许可证
+见 `source-lock.json`、`deploy/images.lock.json`、`licenses/ai/inventory.json`。
+
+本机早期AI试装曾占用V005；整合版本仅对已知AI迁移校验和将记录重定位到V015（保留原应用时间），然后补齐正式V005–V014。未知校验或冲突记录会拒绝启动。升级前备份，原迁移内容不改写。此次整合未启动或迁移已停止的业务容器。
