@@ -70,7 +70,7 @@ public class JfController {
   public ResponseEntity<?> health() {
     if (!schema.ready()) return ResponseEntity.status(503).body(m("status", "starting"));
     store.db().queryForObject("SELECT 1", Integer.class);
-    return ResponseEntity.ok(m("status", "ok", "schemaVersion", 14));
+    return ResponseEntity.ok(m("status", "ok", "schemaVersion", JfSchema.VERSION));
   }
 
   @PostMapping("/auth/login")

@@ -25,7 +25,9 @@ public class JfQueries {
       Map.entry("supportTickets", new Resource("supportTicket", "consultations:read")),
       Map.entry("notificationDrafts", new Resource("notice", "notifications:read")),
       Map.entry("activityLog",new Resource("audit","audit:read")),
-      Map.entry("dictionaryWords", new Resource("dictionary", "ai:read")));
+      Map.entry("dictionaryWords", new Resource("dictionary", "ai:read")),
+      Map.entry("knowledgeBases", new Resource("knowledge", "ai:read")),
+      Map.entry("aiRecords", new Resource("aiLog", "ai:read")));
   private final JfStore store;
   private final JfProjection projection;
   private final JfReviewWindows windows;

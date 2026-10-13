@@ -229,6 +229,34 @@ public class JfSearch {
     return body;
   }
 
+  /** AI retrieval uses OR for natural questions and still rechecks committed publication state. */
+  List<JfStore.Entity> retrieveForAi(String question, String language) {
+    require(configured && schema.ready(), 503, "SEARCH_UPDATING", "知识检索暂不可用，请稍后重试");
+    var before = state();
+    requireReady(before);
+    requireIdentity(before, identity());
+    var body = query(truncate(question, 200), "all", "all", language, 6, List.of());
+    var match = obj(obj(list(obj(obj(body.get("query")).get("bool")).get("must")).getFirst()).get("multi_match"));
+    match.put("operator", "or");
+    var found = es("POST", "/" + before.name + "/_search?allow_partial_search_results=false", body);
+    require(!bool(found.get("timed_out")) && number(obj(found.get("_shards")).getOrDefault("failed", 0)) == 0,
+        503, "SEARCH_UPDATING", "知识检索暂不可用");
+    List<JfStore.Entity> entities = new ArrayList<>();
+    for (var hit : list(obj(found.get("hits")).get("hits"))) {
+      var source = obj(obj(hit).get("_source"));
+      int kind = KINDS.indexOf(str(source, "kind"));
+      if (kind < 0) continue;
+      var entity = store.find(ENTITY_KINDS.get(kind), str(source, "contentId"), false);
+      if (publicEntity(entity)) entities.add(entity);
+    }
+    var after = state();
+    requireReady(after);
+    requireIdentity(after, identity());
+    require(before.committed == after.committed && before.name.equals(after.name), 409,
+        "KNOWLEDGE_CHANGED", "公开资料已更新，请重新提问");
+    return entities;
+  }
+
   static void requireReady(State s) {
     require(!s.rebuild && s.committed == s.indexed && !s.name.isBlank() && !s.uuid.isBlank(),
         503, "SEARCH_UPDATING", "公开内容索引正在更新，请稍后重试");
