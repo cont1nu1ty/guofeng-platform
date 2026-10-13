@@ -4,3 +4,11 @@ dist/
 .env.local
 .DS_Store
 *.log
+/deploy/fixtures/non_ai/
+/deploy/scenarios/
+/deploy/seed-non-ai.py
+/deploy/tests/ai_probe.py
+/deploy/tests/ai_lifecycle_probe.py
+/apps/admin/tests/ai-live-browser.cjs
+/docs/verification/previews/ai-2026-10-13/
+/docs/verification/previews/ai-sync-2026-10-13/

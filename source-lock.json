@@ -29,7 +29,7 @@
     "font": "iconfont.ttf embedded in src/styles/icons.scss for local/offline display"
   },
   "dependencyLock": "apps/miniapp/package-lock.json",
-  "backendStatus": "Implemented local persistent backend in apps/server, HTTP adapters, MySQL, Redis and private S3-compatible storage in Docker Compose. Runtime and permission acceptance is recorded separately in docs/verification; formal WeChat login, model inference and production-scale deployment remain future work.",
+  "backendStatus": "Implemented local persistent backend, HTTP adapters, MySQL, Redis, private S3, Elasticsearch and configurable AI inference/OCR/knowledge/review services. Actual acceptance is recorded in docs/verification. Formal WeChat login, local model deployment, advanced multimodal features and production-scale deployment remain future work.",
   "fonts": {
     "manifest": "scripts/font-data/manifest.json",
     "families": [
@@ -598,11 +598,11 @@
     "files": [
       {
         "path": "deploy/mysql/reset-demo.sql",
-        "sha256": "8a4f761a1368f026b3581baa32d6a67bb576ca786e8011d1d199902db00ffc71"
+        "sha256": "a6e544cf1f701ce0a7b9146cb43880962a32e001105ff64bb0b5bbec573fdfea"
       },
       {
         "path": "deploy/dev",
-        "sha256": "8dbc7aa2b38a92193cc2cc86f4489efa317d013d0ca7e42aa8cb22df8052bf38"
+        "sha256": "f3a63915ac4dc1a882b02c1441268ab26b8faf123fabdde6d03cf621ab602a48"
       },
       {
         "path": "deploy/demo_state.py",
@@ -675,7 +675,7 @@
       },
       {
         "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfSearch.java",
-        "sha256": "39d367fc8f345b19dcc9ab92ce812ed681f983abc840bfd023ff3bceffebf460"
+        "sha256": "e88099ceff985a16565e46b9cf39804b73f713f22892d0d8e551daefdee77b64"
       },
       {
         "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfSearchController.java",
@@ -827,5 +827,291 @@
     ],
     "guide": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/frontend/non-ai-showcase-2026-10-08.md",
     "verification": "https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/verification/non-ai-showcase-2026-10-08.md"
+  },
+  "aiApplications": {
+    "checkedAt": "2026-10-13",
+    "code": "apps/ai",
+    "dependencies": "apps/ai/requirements.lock",
+    "licenseInventory": "licenses/ai/inventory.json",
+    "image": "deploy/Dockerfile.ai",
+    "reuse": [
+      "FastAPI ASGI service",
+      "Uvicorn server",
+      "pypdf local PDF parsing",
+      "existing Java authentication and storage",
+      "existing Elasticsearch public search"
+    ],
+    "implementation": "Original task-specific provider adapter and prompts; configurable OpenAI-compatible endpoints or Zhipu layout OCR; no model weights bundled. Development permits external API explicitly authorized by user. MySQL stores durable tasks and revocable knowledge chunks.",
+    "providerDocs": [
+      "https://docs.bigmodel.cn/cn/guide/models/text/glm-5.2",
+      "https://docs.bigmodel.cn/api-reference/模型-api/文档解析"
+    ],
+    "files": [
+      {
+        "path": "apps/admin/src/services/ai.ts",
+        "sha256": "11dfdd1cf61e361e381fca838f23341ddaae73238023b7c7e011258097d47227"
+      },
+      {
+        "path": "apps/ai/parse_document.py",
+        "sha256": "e8eeaac43248cdea371d9e01b4cdf28a062bbccd4e1bac8b464726027b1b6d17"
+      },
+      {
+        "path": "apps/ai/requirements.lock",
+        "sha256": "25be265edc06a7c362d2fa85c7ef2d7af2fc9e0839633c89d7a1fc0f27695b63"
+      },
+      {
+        "path": "apps/ai/service.py",
+        "sha256": "de2fa468b29e88628cade45a222a88ac7bc3a33eefcad27f8cafbf336f0f4570"
+      },
+      {
+        "path": "apps/miniapp/src/domain/aiTasks.ts",
+        "sha256": "ea708f2f3dcb624160099d8e67e6cde2179e27c2c89890795ed609d8c66088c3"
+      },
+      {
+        "path": "apps/miniapp/src/services/ai.ts",
+        "sha256": "c4f8086a2fe247b72c765e0a2a5f355c4d365aa0406d563e99d720a34403b722"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfAi.java",
+        "sha256": "fe0ee6a28b46bf260c7cfd3a013633821c3eb733044de613d176d8c3ebd46762"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfAiClient.java",
+        "sha256": "80397adec08abe44fdf26a914ed9a66361a2d67dce80b3a4a84d6960e0ca789e"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfAiController.java",
+        "sha256": "e9afbac07fd66e346b7049d7fcd5755b2b2a78c59162d4998b05e8fe55bcbddf"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfAiKnowledge.java",
+        "sha256": "9d477d6cfb49849adb9ad9ee0bf700c644ba6f84011d438742be67c9530261d9"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/resources/db/jiafeng/V015__ai_tasks.sql",
+        "sha256": "485be2de150ead724a2508f6f534b0d92911e3bd8861ffe67bd41a0a6424db13"
+      },
+      {
+        "path": "contracts/openapi.yaml",
+        "sha256": "998121488705c5fca3e4f7ddec2fcd2b7b2825f94092ae0aedec4f952f5a3fb2"
+      },
+      {
+        "path": "deploy/Dockerfile.ai",
+        "sha256": "d2e6491bafbb6ed58e95143d6ec21224c282123f4aac1394de1465a5cc8a34e7"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfSchema.java",
+        "sha256": "1af60103a062c8c1ee35fd28b3c8a612d9a356650241a684a59673be46a29585"
+      },
+      {
+        "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfQueries.java",
+        "sha256": "d40aa5399ca962426c1f70f880bceea78f468ea060a2e00f55bd8f3e2a661cdd"
+      }
+    ],
+    "modifiedExistingModules": [
+      "JfController",
+      "JfFiles",
+      "JfMember",
+      "JfProjection",
+      "JfQueries",
+      "JfSchema",
+      "JfSearch",
+      "admin AI/submission views",
+      "miniapp assistant/OCR/support/archives/library/hall",
+      "Compose and deployment lifecycle"
+    ],
+    "migrationCompatibility": "AI tables now use V015 without changing the original SQL bytes. Only the exact known historical AI V005 checksum may be relocated under the migration lock and a metadata transaction, preserving applied_at; unknown checksums or conflicting V015 records fail closed. Actual database upgrade of the integrated branch is not part of the source synchronization checks."
+  },
+  "externalAiVerification": {
+    "includedOnMain": false,
+    "commit": "32131f59d221c38124b49ca7060252184092afe2",
+    "scope": "Fixture-dependent optional probes, historical AI V005 live checks and V015 integrated mocked browser evidence remain on the demo branch; no business datasets are bundled on main.",
+    "resources": [
+      {
+        "resource": "apps/admin/tests/ai-live-browser.cjs",
+        "sha256": "f1779b57ba4374587f2cf87ed856e9a985cae8757ba43240a770c164d38606ff",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/apps/admin/tests/ai-live-browser.cjs"
+      },
+      {
+        "resource": "deploy/tests/ai_lifecycle_probe.py",
+        "sha256": "5947dd1855dbdb3ac5027089123bf779ea7b6ad5555765eeadd41f40b8f257e5",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/deploy/tests/ai_lifecycle_probe.py"
+      },
+      {
+        "resource": "deploy/tests/ai_probe.py",
+        "sha256": "6e68e4517e6784896188628697eca27f1c76b9844c2c8d3647288889dc643880",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/deploy/tests/ai_probe.py"
+      },
+      {
+        "resource": "docs/verification/ai-2026-10-13.md",
+        "sha256": "ec41abc34855543a691979a51b66e329e41faf222ef93c33ff0b573316e1e4c4",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/ai-2026-10-13.md"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/admin-ai-desktop.png",
+        "sha256": "911504955a864ab039309e0aa6cd7996634944ce18a73b4de962997da58de2d9",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/admin-ai-desktop.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/admin-knowledge-mobile.png",
+        "sha256": "597128fa10199988a8f28ef0fe2e268ec780cf738979935121912358884b462f",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/admin-knowledge-mobile.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/admin-report.json",
+        "sha256": "ee8fb242a2fe48132b2c70deb94d353c8f99494b3e14460263709fb3ac115406",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/admin-report.json"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/admin-review-desktop.png",
+        "sha256": "281021db3fd2f0dbc6d3d01f6bc55f542f863c48866e5553aa4cd933acb6133a",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/admin-review-desktop.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/admin-review-mobile-result.png",
+        "sha256": "1790e526bab8d6860037ea7ab06e5c805b3a8e8512e03c3694643ef017b545da",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/admin-review-mobile-result.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/api-report.json",
+        "sha256": "491e5d732dba7e6441277468dc460aa90e5153ed8f8a51d444fe8b52bae632e1",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/api-report.json"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/lifecycle-report.json",
+        "sha256": "b238691f97bc2f346e4695925dd2c9d1b73938d1085584ee1a0ad6b123cc7d1f",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/lifecycle-report.json"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/user-assistant-desktop.png",
+        "sha256": "f400c695dae59f9a738bff8d3bdc532ee3d3d01b828d0e209e861511dd358a40",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/user-assistant-desktop.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/user-assistant-mobile-history.png",
+        "sha256": "6b85a4fe53733e8b0df5f4f5f0129d0de99123b6f8fb44b50fafba3b92a417f4",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/user-assistant-mobile-history.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/user-ocr-desktop.png",
+        "sha256": "537cb7d17b61b3a49b2505694b137dbcad408ccf19f6313f31e41935a856e81e",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/user-ocr-desktop.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/user-ocr-mobile-adopted.png",
+        "sha256": "d1af3e891eea01159744656631fed34fcabffc8ad79b160e204e14f877aa7220",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/user-ocr-mobile-adopted.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/user-report.json",
+        "sha256": "e466f7013564117ec6b5f71e1c85ee3e4bfe31123e4601342a5f0731318cb650",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/user-report.json"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/user-support-desktop.png",
+        "sha256": "e1af384ff8fc54400ccca7574509dcaf316cbc89ba8615107b8d0a280bd63201",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/user-support-desktop.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-2026-10-13/user-support-mobile.png",
+        "sha256": "d54f91f95b15128393031dc5569288ba4720d98818ed739af928cda1ced0688c",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-2026-10-13/user-support-mobile.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/admin/ai-desktop.png",
+        "sha256": "2209f6973306dd7795be7863102e7d7cc3a80aa22a9d9daa999ffe2585b3659f",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/admin/ai-desktop.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/admin/ai-mobile.png",
+        "sha256": "07fac9bf3167f1a962db5d53b95eb2d67f377f70a829c90fbebc9c56f379a878",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/admin/ai-mobile.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/admin/knowledge-language-desktop.png",
+        "sha256": "2a4b64f62aa76778dacc86d8e4fea22b11c2ea67221ad124b5cc871dac2d9858",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/admin/knowledge-language-desktop.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/admin/report.json",
+        "sha256": "14afa0853a5706edb44631fbf5b4bce4d6b1171be40ee5aa88aeb6d66f5f4920",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/admin/report.json"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/admin/review-desktop.png",
+        "sha256": "af7fbd4290c52f178abb39bf0e4518b3eb5f5194ec532b2cd6c3816441943932",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/admin/review-desktop.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/admin/review-mobile.png",
+        "sha256": "b2e6fbef2289beef2654126ee52e43c123d23cdceab823f15ba46d32bc490e38",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/admin/review-mobile.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/admin/submission-only-permissions-mobile.png",
+        "sha256": "6bf18d0e66999659e2116efe3cc973d7c48b8e076f6d4e46a049ffd9aeecae99",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/admin/submission-only-permissions-mobile.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/mini/hall-panorama-and-ai-1440.png",
+        "sha256": "63071db770cf84836bb68524a9ec8376b7743593a95a1d6734973130acc109c3",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/mini/hall-panorama-and-ai-1440.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/mini/hall-panorama-and-ai-390.png",
+        "sha256": "d14e7f58b667f2c8acdad3323204cbe25ac4d70b9168f5d245df870d41d6ee93",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/mini/hall-panorama-and-ai-390.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/mini/hall-prefilled-knowledge-question-1440.png",
+        "sha256": "91f7072e237754c6b0c509b6db4f30d38c88406e5f6f7e9f735fc4b7efb60213",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/mini/hall-prefilled-knowledge-question-1440.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/mini/hall-prefilled-knowledge-question-390.png",
+        "sha256": "d91f6e9e76bf173184b4e75ee41281976bece020152030dbde5eae480e4a4539",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/mini/hall-prefilled-knowledge-question-390.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/mini/hall-without-panorama-retains-ai-390.png",
+        "sha256": "1addcce86bf399aa18f938edd4911f1cc7923ae22490928c0dbaccab7a4235fc",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/mini/hall-without-panorama-retains-ai-390.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/mini/profile-ai-and-preset-archives-1440.png",
+        "sha256": "9b70763663ccf1743cf63a578e8fe4de608a1370daec22ca8594fb621455e172",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/mini/profile-ai-and-preset-archives-1440.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/mini/profile-ai-and-preset-archives-390.png",
+        "sha256": "001add3c68557e1bf4f3000a8baade1353aaa590546a65bc07691c40fa7e7e70",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/mini/profile-ai-and-preset-archives-390.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/mini/profile-certificate-pagination-1440.png",
+        "sha256": "72705deec4b3ac45c2b5ca98efadc3bb72fcc2d3192c8c29e25d913f5864cd48",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/mini/profile-certificate-pagination-1440.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/mini/profile-certificate-pagination-390.png",
+        "sha256": "e403c412ff76d95a3252ee10c47f62940bb3e55973157a6879bc1be4e0457204",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/mini/profile-certificate-pagination-390.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/mini/profile-certificates-and-rights-1440.png",
+        "sha256": "bdbc56a6b8b8f63d7edb55699a781fc68f693a50f1016a734ccbfcdefa72387b",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/mini/profile-certificates-and-rights-1440.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/mini/profile-certificates-and-rights-390.png",
+        "sha256": "fb7b5a283dcd0384f84fe06d9939897eee7e7fabcfc259ff4be32919ff9c7e02",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/mini/profile-certificates-and-rights-390.png"
+      },
+      {
+        "resource": "docs/verification/previews/ai-sync-2026-10-13/mini/report.json",
+        "sha256": "b792030ad5aca789f8f4460e1aa66d15c81cc21909d2726856e0045adb5e8f97",
+        "url": "https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/docs/verification/previews/ai-sync-2026-10-13/mini/report.json"
+      }
+    ]
   }
 }
