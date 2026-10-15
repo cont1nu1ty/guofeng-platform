@@ -1,5 +1,17 @@
 {
   "checkedAt": "2026-09-27",
+  "projectLicense": {
+    "declaredAt": "2026-10-15",
+    "name": "Guofeng Platform Noncommercial Source License 1.0",
+    "identifier": "LicenseRef-Guofeng-Noncommercial-1.0",
+    "licenseFile": "LICENSE",
+    "licensor": "cont1nu1ty",
+    "contact": "808535fm@gmail.com",
+    "commercialTerms": "COMMERCIAL-LICENSE.txt",
+    "scope": "Licensor-owned or authorized original software, engineering configuration, scripts and technical documentation in this version; third-party content, requirements originals, user content, business data and trademarks are excluded. Third-party licenses remain unchanged.",
+    "classification": "Source-available with noncommercial restrictions; not an OSI-approved open-source license.",
+    "distributionReview": "Not cleared for combined distribution: the packaged MySQL Connector/J GPLv2 Universal FOSS Exception does not cover this noncommercial license. Resolve the actual driver licensing/combination or validate a replacement before distributing application packages or images; other third-party obligations also remain."
+  },
   "frontendTemplate": {
     "repository": "https://github.com/wot-ui/wot-starter",
     "commit": "c9813573b73f45fc08b0eb249f0f28c5ca0fe401",

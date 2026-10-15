@@ -1,5 +1,7 @@
 # 家风中华行 · 本机真实业务平台
 
+**许可：源码可用，个人学习与非商业使用免费，商业用途须事先书面授权。** 本项目原创软件采用[家风中华行非商业源码许可证 1.0](LICENSE)，授权方为 [cont1nu1ty](https://github.com/cont1nu1ty)，商业联系：[808535fm@gmail.com](mailto:808535fm@gmail.com)，详见[商业授权说明](COMMERCIAL-LICENSE.txt)。企业内部业务、收费交付、SaaS、广告等商业用途均须授权，机构性质不自动豁免。此定制许可含商业限制，不属于 OSI 定义的开源许可；若依、Wot、plus-ui 等第三方部分继续保留原许可，见[第三方声明](THIRD_PARTY_NOTICES.md)。当前 MySQL JDBC 驱动的组合分发兼容性仍待处理，不能将本次许可声明视为整套安装包可直接对外商业分发的结论。
+
 根据《小程序制做要求.pdf》（2026-08-13 内部讨论稿）建设。保留 Uni-app 用户端和独立运营后台，使用若依 Java 后端、MySQL、Redis、私有 S3、Elasticsearch、独立 AI 适配服务及 Docker Compose。本机 HTTP 模式使用真实会话与持久业务记录，原演示模式仍可独立运行。完整生产平台边界见 [实际实现](docs/engineering/backend-implementation.md)。
 
 AI 新增能力、开发 API 和本地 URL 配置见 [AI 接入](docs/engineering/ai-applications.md) 与 [部署说明](deploy/README.md)。当前源码整合既有非 AI V014 与 AI V015，检查见[本次整合记录](docs/verification/ai-sync-2026-10-13.md)；原 AI V005 的实联证据保留日期，源码提交不代表运行环境已升级。
