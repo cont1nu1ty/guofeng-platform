@@ -1,0 +1,223 @@
+{
+  "date": "2026-10-15",
+  "scope": "isolated deployment and local synthetic crypto; no active environment restart",
+  "deploymentUnitTests": {
+    "command": "python3 -m unittest discover -s deploy/tests -p 'test_*.py'",
+    "passed": 55,
+    "failed": 0,
+    "finalRunAfterAllChanges": true
+  },
+  "nginxConfiguration": {
+    "lockedImage": "nginx:1.29.6-alpine@sha256:f46cb72c7df02710e693e863a983ac42f6a9579058a59a35f1ae36c9958e4ce0",
+    "httpNginxTest": true,
+    "httpsNginxTestWithTemporarySelfSignedCertificate": true,
+    "publicTlsOrFirewallVerified": false,
+    "finalHttpsNginxTestAfterErrorLogFix": true
+  },
+  "encryption": {
+    "syntheticGpgRoundTrip": true,
+    "wrongKeyRejectedWithoutOutput": true,
+    "damagedCiphertextRejectedWithoutOutput": true,
+    "plaintextBackupAutomaticallyDeleted": false,
+    "keyAndCiphertextDirectoriesMustDiffer": true,
+    "fullIsolatedSnapshotEncryptedRoundTrip": true,
+    "snapshotRawBytes": 500421,
+    "encryptedBytes": 153218,
+    "temporaryKeyCiphertextAndDecryptedOutputRemoved": true,
+    "permanentIndependentCopyCreated": false
+  },
+  "restore": {
+    "submissionId": "submission_edaf50a87ad840ff92589690f056b10f",
+    "fileId": "file_c563538b36b74a8dbbf848221e3490a3",
+    "submissionSurvivesRestore": true,
+    "fileSurvivesRestore": true,
+    "fileSha256": "40e2acf76ae7f5ad2cbe6d0371a7af1f028401bd9dd8293bad99cfde3900625d",
+    "freshLoginWorks": true,
+    "backupChecksumsVerified": true,
+    "oldSourceSessionRejectedByFreshRedis": true,
+    "isolatedProject": "jiafeng-restore-20261015083820-e0b5",
+    "sourceProject": "jiafeng-demo-security-20261015",
+    "restoreSeconds": 149.141,
+    "recoveryPointUtc": "2026-10-15T08:37:28.494821+00:00",
+    "searchRebuiltByRestore": true,
+    "status": "passed",
+    "restoredProjectDown": true,
+    "restoredVolumeCount": 5,
+    "backupDirectory": "deploy/backups/20261015T083725Z-13ae"
+  },
+  "productionChangesApplied": false,
+  "runtimeContainerConfiguration": {
+    "mysql": {
+      "memoryBytes": 1610612736,
+      "nanoCpus": 2000000000,
+      "pids": 256,
+      "logConfig": {
+        "Config": {
+          "max-file": "5",
+          "max-size": "10m"
+        },
+        "Type": "local"
+      }
+    },
+    "redis": {
+      "memoryBytes": 536870912,
+      "nanoCpus": 1000000000,
+      "pids": 128,
+      "logConfig": {
+        "Config": {
+          "max-file": "5",
+          "max-size": "10m"
+        },
+        "Type": "local"
+      }
+    },
+    "storage": {
+      "memoryBytes": 1073741824,
+      "nanoCpus": 2000000000,
+      "pids": 256,
+      "logConfig": {
+        "Config": {
+          "max-file": "5",
+          "max-size": "10m"
+        },
+        "Type": "local"
+      }
+    },
+    "server": {
+      "memoryBytes": 2147483648,
+      "nanoCpus": 2000000000,
+      "pids": 256,
+      "logConfig": {
+        "Config": {
+          "max-file": "5",
+          "max-size": "10m"
+        },
+        "Type": "local"
+      },
+      "readOnly": true,
+      "user": "jiafeng",
+      "capDrop": [
+        "ALL"
+      ],
+      "tmpfs": {
+        "/tmp": "size=256m,mode=1777"
+      },
+      "logVolumePresent": true
+    },
+    "ai": {
+      "memoryBytes": 805306368,
+      "nanoCpus": 1000000000,
+      "pids": 128,
+      "logConfig": {
+        "Config": {
+          "max-file": "5",
+          "max-size": "10m"
+        },
+        "Type": "local"
+      }
+    },
+    "search": {
+      "memoryBytes": 2147483648,
+      "nanoCpus": 2000000000,
+      "pids": 512,
+      "logConfig": {
+        "Config": {
+          "max-file": "5",
+          "max-size": "10m"
+        },
+        "Type": "local"
+      }
+    },
+    "web": {
+      "memoryBytes": 134217728,
+      "nanoCpus": 1000000000,
+      "pids": 128,
+      "logConfig": {
+        "Config": {
+          "max-file": "5",
+          "max-size": "10m"
+        },
+        "Type": "local"
+      }
+    }
+  },
+  "nginxErrorQueryRegression": {
+    "beforeFix": {
+      "rateLimitedStatus": 429,
+      "syntheticQueryMarkerPresentInErrorLog": true,
+      "syntheticQueryMarkerPresentInSafeAccessLog": false
+    },
+    "afterFix": {
+      "rateLimitedStatus": 429,
+      "syntheticQueryMarkerPresentInLogs": false,
+      "safeAccessAndBackendFailureCorrelationPreserved": true
+    }
+  },
+  "storage": {
+    "sourceProject": "jiafeng-demo-security-20261015",
+    "checks": {
+      "signedUploadChineseFilename": true,
+      "anonymousDenied": true,
+      "anonymousHeadDenied": true,
+      "anonymousBucketListingDenied": true,
+      "anonymousWriteDenied": true,
+      "signedDownload": true,
+      "expiredSignatureDenied": true
+    }
+  },
+  "nginxRuntime": {
+    "sourceProject": "jiafeng-demo-security-20261015",
+    "isolatedEnvSelected": true,
+    "homeAccessible": true,
+    "nosniff": true,
+    "framingDenied": true,
+    "referrerPolicy": true,
+    "upstreamRoutesBlocked": true,
+    "validLoginWorks": true,
+    "validAuthenticatedReadWorks": true,
+    "businessHealthAccessible": true,
+    "serverRequestIdReturned": true,
+    "loginRateLimitedDespiteForgedForwardingHeaders": true,
+    "loginBurstStatusCounts": {
+      "422": 10,
+      "429": 30
+    },
+    "rateLimitedErrorPathChecked": true,
+    "uploadCreationRateLimited": true,
+    "uploadUnauthenticatedRequestsRejected": true,
+    "uploadCreationBurstStatusCounts": {
+      "401": 4,
+      "429": 4
+    },
+    "exportCreationRateLimited": true,
+    "exportUnauthenticatedRequestsRejected": true,
+    "exportCreationBurstStatusCounts": {
+      "401": 4,
+      "429": 4
+    },
+    "aiCreationRateLimited": true,
+    "aiUnauthenticatedRequestsRejected": true,
+    "aiCreationBurstStatusCounts": {
+      "401": 6,
+      "429": 6
+    },
+    "aiPollingDoesNotUseCreationQuota": true,
+    "querySecretAbsentFromAccessLogs": true,
+    "errorQuerySecretAbsentFromLogs": true,
+    "proxyAndApplicationRequestIdsCorrelate": true,
+    "mysqlRuntimeLimitsAndLogRotation": true,
+    "redisRuntimeLimitsAndLogRotation": true,
+    "storageRuntimeLimitsAndLogRotation": true,
+    "serverRuntimeLimitsAndLogRotation": true,
+    "aiRuntimeLimitsAndLogRotation": true,
+    "searchRuntimeLimitsAndLogRotation": true,
+    "webRuntimeLimitsAndLogRotation": true
+  },
+  "runtimeChecksComplete": true,
+  "isolationCleanup": {
+    "restoredProjectDown": true,
+    "restoredVolumesRetained": 5,
+    "isolatedSourceDownByParentAfterFinalHealthyCheck": true,
+    "activeShowcaseNotRebuiltOrStopped": true
+  }
+}

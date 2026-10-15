@@ -1,0 +1,421 @@
+{
+  "baseCommit": "5095ed70dbd3f505290f2581db16d34fbbc783e1",
+  "sharedPreexistingFile": "docs/verification/README.md, original content retained and one security row added",
+  "excludedUntouchedUserFiles": [
+    "docs/verification/demo-deployment-2026-09-29.md",
+    "docs/verification/deployment-2026-09-29.md"
+  ],
+  "files": [
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "status": "modified",
+      "sha256": "72b1ea217e2936b36835d7aa69c07d11a13636b6d18d1c3488784cfda0c637fe"
+    },
+    {
+      "path": "apps/admin/src/App.vue",
+      "status": "modified",
+      "sha256": "60ed1ce580e7648c770507f2524356c7024163ec236102e393fee007e4722a74"
+    },
+    {
+      "path": "apps/admin/src/services/http.ts",
+      "status": "modified",
+      "sha256": "e9b15d94aa26146ad6bc68329970d01dc306ef6e9407704cedd103e80eb2065e"
+    },
+    {
+      "path": "apps/admin/src/services/session.ts",
+      "status": "modified",
+      "sha256": "ab40a9488e1ef62b8f7aaa96c54a93e1c87231cd11a4a3696277cbfa496c32a5"
+    },
+    {
+      "path": "apps/admin/src/utils/auth.ts",
+      "status": "modified",
+      "sha256": "3cfcac7a24757bd3d6a522119281d612443d4682f2e59b21377cbe8cd65a59eb"
+    },
+    {
+      "path": "apps/admin/tests/session-isolation.test.ts",
+      "status": "new",
+      "sha256": "7b5575bd0537d54070410b645fc51d67877152121177ba03b7f29af386245cfe"
+    },
+    {
+      "path": "apps/ai/service.py",
+      "status": "modified",
+      "sha256": "284824c5d8613b889afdfbdc08c82eb979b3f3deded3337d7a53d14f03b51d26"
+    },
+    {
+      "path": "apps/ai/test_service.py",
+      "status": "modified",
+      "sha256": "5c40b61d1a801fd6ea88674e7064b5ddd7712e76895eb5ea79b07873a63feedb"
+    },
+    {
+      "path": "apps/server/UPSTREAM.lock.json",
+      "status": "modified",
+      "sha256": "8dd3b2506ad9212ae5b7d4a34a5efde790563e20ae2751415284a7859a851fe3"
+    },
+    {
+      "path": "apps/server/ruoyi-admin/src/main/resources/logback-plus.xml",
+      "status": "modified",
+      "sha256": "93d41471cd1d8c6cd6c11c8a3d0a6851cca5beefaa5a44b1faf53d3f434e262e"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfAccess.java",
+      "status": "modified",
+      "sha256": "40900b9559f593924afd948874812f0bfea56a029302a3ac47ed7a358a51f812"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfErrors.java",
+      "status": "modified",
+      "sha256": "a370b278ff2fb7fcbcd1cde9865a3ef33aa56268fea2a96e5ae5c5dc5a2bba34"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfProjection.java",
+      "status": "modified",
+      "sha256": "730ccb9a2544ea7ee935d7f4716d85f09f1a9cc3cf51f67e3ea6f6f620dcb463"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfQueries.java",
+      "status": "modified",
+      "sha256": "571e46393977b804342abcc80bc1590757745f454e105d174371117b1e464696"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfRequestAuditFilter.java",
+      "status": "new",
+      "sha256": "35ca10b61afdfc29002cf284f9a3659c2e49b373e2e8305884f048db7fd92523"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfReview.java",
+      "status": "modified",
+      "sha256": "d8a3bc7ea1b4f35ccfbe2d483a675c503724ede637f9b47e92a4fde1cf025a25"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfReviewWindows.java",
+      "status": "modified",
+      "sha256": "3d6a2604c05fb2d93c7ae61f5936a882c51a191057dd23a5a4776712df5f2f5e"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/main/java/org/dromara/jiafeng/JfStore.java",
+      "status": "modified",
+      "sha256": "63873967c796c93fbab2437c7afc8bda1e6cdc7e9c09b9f0eca6ab9e7c1f8eca"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/test/java/org/dromara/jiafeng/JfAccessTest.java",
+      "status": "modified",
+      "sha256": "fa43ef8e6c904a4019c05d0127cfe519523c5148b36d5bf3303cace2a4ad9491"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/test/java/org/dromara/jiafeng/JfRequestAuditTest.java",
+      "status": "new",
+      "sha256": "cd45dd8538c80a21b77e42f6696e9ce0af31080e2cd6d8258580ac127f39fa1d"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/test/java/org/dromara/jiafeng/JfReviewAuthorizationTest.java",
+      "status": "new",
+      "sha256": "9efc2922b67e58ba78c030290e735c17191aa0106d0f6f0a21c6972fe67b44d5"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/test/java/org/dromara/jiafeng/JfReviewWindowsTest.java",
+      "status": "modified",
+      "sha256": "c026c113e3b8bcfcd06194a74fc02927676e6545453c8cbd837afedf22587249"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-jiafeng/src/test/java/org/dromara/jiafeng/JfSocialAuthorizationTest.java",
+      "status": "new",
+      "sha256": "6081a21cccc4b6b32ca47715f59892225977d8d7ea7b35755f4cd3833bbefccf"
+    },
+    {
+      "path": "apps/server/ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/service/impl/SysSocialServiceImpl.java",
+      "status": "modified",
+      "sha256": "444c77c7786e63eb4dae01f250501b10af5ba32ad2fcf3d04778995475967ae0"
+    },
+    {
+      "path": "deploy/.env.example",
+      "status": "modified",
+      "sha256": "fa346fbbd05d1a65a1feb90764235ee7ba348f9c5c6e3f03b7119a13dce122e3"
+    },
+    {
+      "path": "deploy/README.md",
+      "status": "modified",
+      "sha256": "6195d8f5ee7fc32a75f363b7b4582342b89a969c312732525355959d6af37f0f"
+    },
+    {
+      "path": "deploy/backup_crypto.py",
+      "status": "new",
+      "sha256": "b5529bcf245860d92b597d8418dc6b506b11d85eadded156b4690017d38899e9"
+    },
+    {
+      "path": "deploy/compose.https.yaml",
+      "status": "new",
+      "sha256": "c1dff16d53272dbf5b243a0525fc954a32705d0dcbbd149dc867e9d4760b51de"
+    },
+    {
+      "path": "deploy/compose.yaml",
+      "status": "modified",
+      "sha256": "81efdf6e894918c60094578c98d1fe6990c738006910e1f6aee4a6c589695493"
+    },
+    {
+      "path": "deploy/dev",
+      "status": "modified",
+      "sha256": "ad5a7253bdc87b73ff61bebd05e34dc907071c2206afe7531212ebb14e17b486"
+    },
+    {
+      "path": "deploy/nginx-tls.conf.template",
+      "status": "new",
+      "sha256": "587c3328cb5b7a3a918165354b1932a2b04c814eec4737719b24c1976367221e"
+    },
+    {
+      "path": "deploy/nginx.conf",
+      "status": "modified",
+      "sha256": "d475a01fbfea9b44e99800d903b1174ad33b632b65b869d204e052929e1615b6"
+    },
+    {
+      "path": "deploy/tests/ai_security_probe.py",
+      "status": "new",
+      "sha256": "2aef67b2b0d4e28e5fac4387b3c85246c13c3f57164bd95203185b4dd6da218c"
+    },
+    {
+      "path": "deploy/tests/backup_restore.py",
+      "status": "modified",
+      "sha256": "83e7b84d84bce2940192bcf0cb100a7e4275cbf2d50fc56e980d53f79b681eab"
+    },
+    {
+      "path": "deploy/tests/nginx_security_probe.py",
+      "status": "new",
+      "sha256": "91a65e718224b39d4880d42f2801bfe35cc5fff6cf69d3901b3c98766fcba320"
+    },
+    {
+      "path": "deploy/tests/non_ai_probe.py",
+      "status": "modified",
+      "sha256": "57fc0f08c22223e00f52cc47411eff797c37de114f9b7e47280526b2e0e5f2db"
+    },
+    {
+      "path": "deploy/tests/probe_scope.py",
+      "status": "new",
+      "sha256": "0c6e661740a00210801f9bebe6f48140b03d1206fdd719d8457269aa50558fe0"
+    },
+    {
+      "path": "deploy/tests/restart_probe.py",
+      "status": "modified",
+      "sha256": "caafb0d6a2f46be43e42d3ab71c3b90e2fc7db462ddc895ef956078edae102cc"
+    },
+    {
+      "path": "deploy/tests/security_auth_probe.py",
+      "status": "new",
+      "sha256": "da035b1f35b4aeb2cdb738f6979ef0b5d0867c797bbc74296d65f07af3b59baf"
+    },
+    {
+      "path": "deploy/tests/security_data_probe.py",
+      "status": "new",
+      "sha256": "afb1945779390c66d7d274a35e0cad2d62ea45e39304f717fdc53cf687d7963f"
+    },
+    {
+      "path": "deploy/tests/security_multi_role_probe.py",
+      "status": "new",
+      "sha256": "914313d389b8030f991ba21b26badcd2d06ca1518066b13a6e3b0e1ca6178bc3"
+    },
+    {
+      "path": "deploy/tests/storage_probe.py",
+      "status": "modified",
+      "sha256": "6b645b6fda2511ac642d694c66ea3561baf979afb60cf8b05e1ba79bd1267f63"
+    },
+    {
+      "path": "deploy/tests/test_deployment_security.py",
+      "status": "new",
+      "sha256": "717e09ebbe51e2231c6e570d3bbef9d258eb110306372f7e65124515d3d00b6c"
+    },
+    {
+      "path": "deploy/tests/test_ipv6_deployment.py",
+      "status": "modified",
+      "sha256": "2e9c1a4e4d1d1699b713c8a8abc9aad131333c013694cfeeb5130a50a411f876"
+    },
+    {
+      "path": "docs/README.md",
+      "status": "modified",
+      "sha256": "7b405ae6830126814ef38a467ead2c5ceef71ad03fe3a4d2dbc0feec197102fc"
+    },
+    {
+      "path": "docs/engineering/backend-implementation.md",
+      "status": "modified",
+      "sha256": "7cc2218eb00607cf382cb08ced54930a1283b15cb6e3b95dd9d22b3f6c25eafc"
+    },
+    {
+      "path": "docs/frontend/admin-demo.md",
+      "status": "modified",
+      "sha256": "45b7fefe949e43a0b1ce6973dd66480504cf5b126a18e1d2b0ac6d1a23ad3046"
+    },
+    {
+      "path": "docs/frontend/user-backlog.md",
+      "status": "modified",
+      "sha256": "5f47c38a04e6ecde26a9353f84a26c700dcc875ae824bf4c5fae5855db1a6bcc"
+    },
+    {
+      "path": "docs/verification/README.md",
+      "status": "modified",
+      "sha256": "42442f484c497cd2cb64fef32cda63228351f0e48a069252a43194d39dfed92c"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/admin-desktop.png",
+      "status": "new",
+      "sha256": "b902c72935589273acadc9e66a884e7c2c18a3ee7f5c6ea76091756b49420e33"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/admin-mobile.png",
+      "status": "new",
+      "sha256": "c5ad60b25028ddcb6879f0718ee4a44c0c0ceec2fec9963900f53ac841803fb3"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/admin-switched-desktop.png",
+      "status": "new",
+      "sha256": "d3297f7f579f9d59c53c34b59f8d88936e9de16795fb378d0988d68aa196f820"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/admin-switched-mobile.png",
+      "status": "new",
+      "sha256": "ed4d9a90cfb99ebefafa2cb8f82723710e926fc5976f823d0f801eed0b1504c3"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/ai-api.json",
+      "status": "new",
+      "sha256": "4f4969f514ade09d54d1410b21ce6c060e59551da51deb623441d1d62be87b26"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/ai-internal-boundary.json",
+      "status": "new",
+      "sha256": "448b298535ac86d449e2b94de7cd673add736e8b43ae3c15873e86f75558e34c"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/auth.json",
+      "status": "new",
+      "sha256": "cdf1d871f0a5461f00c67fdb65a5f23435d162c34a3cb41f67f484bb3f6a9aa9"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/backup-restore-events.txt",
+      "status": "new",
+      "sha256": "fba08ba1c22912056dedfe52fba4534aca2e02e51f31488c15fd5ee80888cc09"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/backup-restore.json",
+      "status": "new",
+      "sha256": "104ea9cff8bc1291477946766dadaf126a9961b086f357cd0bbae14813799908"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/browser.json",
+      "status": "new",
+      "sha256": "11174a852f2ea8a7146ada0eb03138b8c717b88353412e9961d446cb3ad6a5bc"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/business.json",
+      "status": "new",
+      "sha256": "5edda1cfa77930836e264fe39adcc4e25cb304e851e0e295725c2282d8f81d29"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/data-faults.json",
+      "status": "new",
+      "sha256": "4b1d512ec0efb6daf28d8dd26739b8edccad8e2ab2ec64e2345a46263f5f6b7a"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/dependency-audit.json",
+      "status": "new",
+      "sha256": "dfcb98c426749cf41a845e4fac6f10337b56658f4870c82716875da7f0a9ee52"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/deployment-summary.json",
+      "status": "new",
+      "sha256": "4c5404e05571c40f3dd4492b76249acc043060f86b7f78a7ae003816bb4c61ce"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/final-runtime.json",
+      "status": "new",
+      "sha256": "3ea2445fccf3742d2f256ab1dd37a8473389b7cf006aafd4ed7b4de27b8afbe8"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/final-secrets-scan.json",
+      "status": "new",
+      "sha256": "3b6d59b412368cad5fc23fe038b641f921460f7c9d61ce04b029dd3b279aabf7"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/java-results.json",
+      "status": "new",
+      "sha256": "33723dbd1e64d0446ac16f6bb5319518b7b13db3f64a5ae89ab3bf4c08b399bc"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/multi-role-after.json",
+      "status": "new",
+      "sha256": "0f0ce90d2729359ab67757209a320ab0ac35308afa372a2f1b9d35e5db272d5f"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/multi-role-before.json",
+      "status": "new",
+      "sha256": "182eebb31ecaab3796553627d7863d8e62651677378b434835a3064273f688a5"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/multi-role-results.json",
+      "status": "new",
+      "sha256": "0f0ce90d2729359ab67757209a320ab0ac35308afa372a2f1b9d35e5db272d5f"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/nginx-before-log-fix.json",
+      "status": "new",
+      "sha256": "c18b4cad6d916b095b321c0f27c80f0afad21917b47625b0be8855a363ac0cc5"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/nginx.json",
+      "status": "new",
+      "sha256": "894081918e1920564d9ff9b8055468970035b96dbeb2f3e75e1f80dc406c8efd"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/non-ai.json",
+      "status": "new",
+      "sha256": "e92440b418b76f31854ee1f709c49aa68b495df911172723204d7c9f05e4d713"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/protection.json",
+      "status": "new",
+      "sha256": "a354902fa65db965a3149137a9ceeb717a84b5b44ea8d32d5174ad2c1eac39f2"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/runtime-log-boundary.json",
+      "status": "new",
+      "sha256": "2c46cca349fbcf7b3b6212659a0f02850874b87b781399b01e016d791b64bb45"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/secrets-scan.json",
+      "status": "new",
+      "sha256": "39d3b11cfeb580d66b0fdd35dc1d2a93860a31d8db9b98ca9f4862047c2bfa30"
+    },
+    {
+      "path": "docs/verification/previews/security-2026-10-15/storage.json",
+      "status": "new",
+      "sha256": "234da74b15fc130d1a6986f87f5443707cc701a734b46bde07972ef9e1b764c1"
+    },
+    {
+      "path": "docs/verification/security-2026-10-15.md",
+      "status": "new",
+      "sha256": "257117e26d1c43e256de87350e97c4e492c0f6c11c145894423c64370c7d5585"
+    },
+    {
+      "path": "docs/verification/security-ai-files-2026-10-15.md",
+      "status": "new",
+      "sha256": "9c284039fbcdcd7a74ac5ffbc019c8ed6b21a74af982b20a8939fcc4b27e36b7"
+    },
+    {
+      "path": "docs/verification/security-dependencies-2026-10-15.md",
+      "status": "new",
+      "sha256": "87faf906da10cfb589f8df945cf7124835f2e71eed4c623f4f2ef1c7933c58e5"
+    },
+    {
+      "path": "docs/verification/security-deploy-2026-10-15.md",
+      "status": "new",
+      "sha256": "f5d1afb597a2e898085af0822725566fa5fe4be9729808a6e2d64c0c99750174"
+    },
+    {
+      "path": "docs/verification/security-routes-2026-10-15.md",
+      "status": "new",
+      "sha256": "627fa2928cc851ee2a8f64c2bee5b05e8f52d7654217033b48658cb0e82a34ba"
+    },
+    {
+      "path": "source-lock.json",
+      "status": "modified",
+      "sha256": "a9d1ee5d664ceb4e9964053edd803140a78583c02f881802014f89677b8d0d8a"
+    }
+  ],
+  "note": "manifest excludes its own hash; no environment secrets or raw backup files included"
+}

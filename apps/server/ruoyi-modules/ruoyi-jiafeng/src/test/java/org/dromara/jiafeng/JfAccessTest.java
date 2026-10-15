@@ -30,6 +30,30 @@ class JfAccessTest {
     assertThrows(ApiException.class, () -> JfAccess.authorizeCommand(actor("review_manager", "reviews:configure"), "configureReviewFlow"));
   }
 
+  @Test void unrelatedOperationalRoleDoesNotWidenAnExpertsAssignedTaskScope() {
+    var actor = new JfAuth.Actor(m("user_id", 7, "version", 1,
+        "roles", List.of("expert", "content_operator"), "region_ids", List.of("zhejiang"),
+        "permissions", List.of("reviews:read", "reviews:score", "content:read", "content:write")));
+    assertTrue(actor.operator());
+    assertFalse(JfAccess.reviewOperator(actor));
+    var filter = JfQueries.filter(actor, "task", "all", "", "");
+    assertTrue(filter.sql().contains("owner_id=?"));
+    assertFalse(filter.sql().contains("region_id IN"));
+    assertEquals(List.of(7L), filter.args());
+  }
+
+  @Test void reviewManagementPostKeepsRegionalReadWhenWritePermissionIsRevoked() {
+    for (String role : List.of("national_admin", "regional_admin", "review_manager")) {
+      var actor = actor(role, "reviews:read");
+      assertTrue(JfAccess.reviewOperator(actor));
+      assertFalse(JfAccess.can(actor, "reviews:manage"));
+      var filter = JfQueries.filter(actor, "task", "all", "", "");
+      assertFalse(filter.sql().contains("owner_id=?"));
+      if (!actor.national()) assertTrue(filter.sql().contains("region_id IN"));
+    }
+    assertFalse(JfAccess.reviewOperator(actor("review_manager")));
+  }
+
   @Test void projectionDropsUnauthorizedDataButPreservesExpertBlindTasks() {
     var result = m("users", List.of("private"), "submissions", List.of("private"), "tasks", List.of("task"),
         "contents", List.of("public"), "privateRecordStats", m("recitations", 9));

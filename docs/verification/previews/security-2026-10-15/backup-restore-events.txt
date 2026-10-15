@@ -1,0 +1,14 @@
+2026-10-15 独立恢复去敏关键事件摘录（非完整控制台逐行转储）
+Command: JIAFENG_ENV_FILE=deploy/.local/security-2026-10-15/audit.env JIAFENG_RESTORE_HTTP_PORT=19186 JIAFENG_RESTORE_S3_PORT=19342 python3 deploy/tests/backup_restore.py
+Source project: jiafeng-demo-security-20261015 (container and volume ownership verified before fixture/API writes)
+Backup complete: deploy/backups/20261015T083725Z-13ae
+Database dump completed UTC: 2026-10-15T08:37:28.494821+00:00
+Source web/server/storage resumed and seven services healthy.
+Restored into new project: jiafeng-restore-20261015083820-e0b5
+New project MySQL/Redis/storage/search/AI/server/web reached healthy state.
+Business services and public search index ready after rebuild from MySQL.
+Restore elapsed: 149.141 seconds
+Submission content and private file SHA-256 matched; fresh login worked; source token rejected by fresh Redis (401).
+Restored project containers and network removed by down; five named data/log volumes retained.
+Original source project remained running. No active showcase environment was stopped.
+Machine result: backup-restore-check.json; summary: deploy-summary.json

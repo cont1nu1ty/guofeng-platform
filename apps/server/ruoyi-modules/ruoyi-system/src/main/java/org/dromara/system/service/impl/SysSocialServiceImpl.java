@@ -2,6 +2,7 @@ package org.dromara.system.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
+import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.SysSocial;
 import org.dromara.system.domain.bo.SysSocialBo;
 import org.dromara.system.domain.vo.SysSocialVo;
@@ -114,7 +115,10 @@ public class SysSocialServiceImpl implements ISysSocialService {
      */
     @Override
     public Boolean deleteWithValidById(Long id) {
-        return socialMapper.deleteById(id) > 0;
+        return socialMapper.lambda()
+            .eq(SysSocial::getId, id)
+            .eq(SysSocial::getUserId, LoginHelper.getUserId())
+            .delete();
     }
 
 

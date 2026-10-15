@@ -1,0 +1,16 @@
+{
+  "checks": [
+    "desktop: real permitted regional login",
+    "desktop: no horizontal overflow",
+    "desktop: offline logout clears local token and hides workspace",
+    "desktop: subsequent Beijing login confirms new account scope",
+    "desktop: no page errors",
+    "mobile: real permitted regional login",
+    "mobile: no horizontal overflow",
+    "mobile: offline logout clears local token and hides workspace",
+    "mobile: subsequent Beijing login confirms new account scope",
+    "mobile: no page errors"
+  ],
+  "passed": 10,
+  "scope": "real isolated backend; logout network interception only; browser Chromium, no WeChat device"
+}

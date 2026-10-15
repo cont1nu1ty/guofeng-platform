@@ -42,9 +42,9 @@ public class JfProjection {
         store.all("task").stream()
             .filter(
                 e ->
-                    a.operator()
+                    JfAccess.reviewOperator(a)
                         ? a.region(e.region())
-                        : Objects.equals(a.id, e.owner()) && !e.status().equals("已取消"))
+                        : a.roles.contains("expert") && Objects.equals(a.id, e.owner()) && !e.status().equals("已取消"))
             .toList();
     List<Map<String, Object>> works = new ArrayList<>();
     if (a.operator()) {
@@ -102,7 +102,9 @@ public class JfProjection {
                 e -> {
                   var d = store.dto(e);
                   d.putAll(reviewWindows.projection(e, a));
-                  if (!a.operator()) d.remove("windowHistory");
+                  if (!JfAccess.reviewOperator(a)) {
+                    d.remove("windowHistory"); d.remove("managerId"); d.remove("expertName");
+                  }
                   return d;
                 })
             .toList());
@@ -568,7 +570,7 @@ public class JfProjection {
                           e.status().equals("待评分") ? "pending" : "submitted"));
                   d.remove("managerId");
                   d.putAll(reviewWindows.projection(e, a));
-                  if (!a.operator()) d.remove("windowHistory");
+                  if (!JfAccess.reviewOperator(a)) d.remove("windowHistory");
                   return d;
                 })
             .toList());

@@ -1,0 +1,21 @@
+{
+  "passed": [
+    "compact bootstrap excludes business arrays",
+    "content operator has content access but cannot read manuscripts/accounts/statistics or review",
+    "SQL page contract bounded and validated",
+    "real author sees six immutable review stages before processing",
+    "published multi-chapter course withholds server answer keys",
+    "server marks course complete only after lessons and passing quiz",
+    "draft is private and publication creates separate learning version",
+    "manual certificate creates private real PDF and denies other owner",
+    "certificate verification discloses no holder identity",
+    "revoked certificate cannot generate a new download URL",
+    "durable report executor produces PDF and generic file URL cannot bypass authorization",
+    "scheduling preferences round-trip with explicit report periods",
+    "role change invalidates old session rather than preserving old grants"
+  ],
+  "courseId": "course_f53da1f594e84f6cac7adacfb47be017",
+  "submissionId": "submission_56c2fda26f6c4613a749476f55cd9ddc",
+  "reportJobId": "job_792d927a341a46e6bf29df5566736240",
+  "testAccount": "content_1015083006"
+}

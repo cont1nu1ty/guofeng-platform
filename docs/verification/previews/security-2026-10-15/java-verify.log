@@ -1,0 +1,1521 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.server
+#1 transferring dockerfile: 1.39kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.9s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#3 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/maven:3.9.11-eclipse-temurin-21@sha256:6fdc855a6ed81d288ca7ca37ac6ff5e9308b612485c0801d70b25a858c83d237
+#4 ...
+
+#5 [auth] library/maven:pull token for registry-1.docker.io
+#5 DONE 0.0s
+
+#4 [internal] load metadata for docker.io/library/maven:3.9.11-eclipse-temurin-21@sha256:6fdc855a6ed81d288ca7ca37ac6ff5e9308b612485c0801d70b25a858c83d237
+#4 DONE 2.0s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 306B done
+#6 DONE 0.0s
+
+#7 [build 1/4] FROM docker.io/library/maven:3.9.11-eclipse-temurin-21@sha256:6fdc855a6ed81d288ca7ca37ac6ff5e9308b612485c0801d70b25a858c83d237
+#7 resolve docker.io/library/maven:3.9.11-eclipse-temurin-21@sha256:6fdc855a6ed81d288ca7ca37ac6ff5e9308b612485c0801d70b25a858c83d237 0.0s done
+#7 DONE 0.1s
+
+#8 [internal] load build context
+#8 transferring context: 26.36MB 0.5s done
+#8 DONE 0.6s
+
+#9 [build 2/4] WORKDIR /build
+#9 CACHED
+
+#10 [build 3/4] COPY apps/server/ ./
+#10 DONE 1.5s
+
+#11 [build 4/4] RUN --mount=type=cache,target=/root/.m2 mvn -B -ntp -pl ruoyi-admin -am package -Dmaven.test.skip=true
+#11 2.083 [INFO] Scanning for projects...
+#11 2.630 [INFO] ------------------------------------------------------------------------
+#11 2.630 [INFO] Reactor Build Order:
+#11 2.630 [INFO] 
+#11 2.631 [INFO] RuoYi-Vue-Plus                                                     [pom]
+#11 2.631 [INFO] ruoyi-common                                                       [pom]
+#11 2.631 [INFO] ruoyi-common-core                                                  [jar]
+#11 2.631 [INFO] ruoyi-common-doc                                                   [jar]
+#11 2.631 [INFO] ruoyi-common-json                                                  [jar]
+#11 2.632 [INFO] ruoyi-common-redis                                                 [jar]
+#11 2.632 [INFO] ruoyi-common-social                                                [jar]
+#11 2.632 [INFO] ruoyi-common-mail                                                  [jar]
+#11 2.632 [INFO] ruoyi-api                                                          [jar]
+#11 2.632 [INFO] ruoyi-common-satoken                                               [jar]
+#11 2.632 [INFO] ruoyi-common-mybatis                                               [jar]
+#11 2.632 [INFO] ruoyi-common-translation                                           [jar]
+#11 2.632 [INFO] ruoyi-common-oss                                                   [jar]
+#11 2.632 [INFO] ruoyi-common-log                                                   [jar]
+#11 2.632 [INFO] ruoyi-common-excel                                                 [jar]
+#11 2.632 [INFO] ruoyi-common-sms                                                   [jar]
+#11 2.632 [INFO] ruoyi-common-security                                              [jar]
+#11 2.632 [INFO] ruoyi-common-web                                                   [jar]
+#11 2.632 [INFO] ruoyi-common-sensitive                                             [jar]
+#11 2.632 [INFO] ruoyi-common-encrypt                                               [jar]
+#11 2.632 [INFO] ruoyi-common-push                                                  [jar]
+#11 2.632 [INFO] ruoyi-modules                                                      [pom]
+#11 2.633 [INFO] ruoyi-system                                                       [jar]
+#11 2.633 [INFO] ruoyi-common-liteflow                                              [jar]
+#11 2.633 [INFO] ruoyi-workflow                                                     [jar]
+#11 2.633 [INFO] ruoyi-jiafeng                                                      [jar]
+#11 2.633 [INFO] ruoyi-admin                                                        [jar]
+#11 2.648 [INFO] 
+#11 2.648 [INFO] ---------------------< org.dromara:ruoyi-vue-plus >---------------------
+#11 2.648 [INFO] Building RuoYi-Vue-Plus 6.0.0                                     [1/27]
+#11 2.649 [INFO]   from pom.xml
+#11 2.649 [INFO] --------------------------------[ pom ]---------------------------------
+#11 2.929 [INFO] 
+#11 2.929 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-vue-plus ---
+#11 3.041 [INFO] Generating flattened POM of project org.dromara:ruoyi-vue-plus:pom:6.0.0...
+#11 3.173 [INFO] 
+#11 3.173 [INFO] ----------------------< org.dromara:ruoyi-common >----------------------
+#11 3.173 [INFO] Building ruoyi-common 6.0.0                                       [2/27]
+#11 3.173 [INFO]   from ruoyi-common/pom.xml
+#11 3.173 [INFO] --------------------------------[ pom ]---------------------------------
+#11 3.194 [INFO] 
+#11 3.194 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common ---
+#11 3.196 [INFO] Generating flattened POM of project org.dromara:ruoyi-common:pom:6.0.0...
+#11 3.308 [INFO] 
+#11 3.308 [INFO] -------------------< org.dromara:ruoyi-common-core >--------------------
+#11 3.308 [INFO] Building ruoyi-common-core 6.0.0                                  [3/27]
+#11 3.308 [INFO]   from ruoyi-common/ruoyi-common-core/pom.xml
+#11 3.308 [INFO] --------------------------------[ jar ]---------------------------------
+#11 3.565 [INFO] 
+#11 3.565 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-core ---
+#11 3.661 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 3.667 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 3.667 [INFO] 
+#11 3.667 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-core ---
+#11 3.669 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-core:jar:6.0.0...
+#11 3.746 [INFO] 
+#11 3.746 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-core ---
+#11 3.914 [INFO] Recompiling the module because of changed source code.
+#11 3.924 [INFO] Compiling 65 source files with javac [debug release 21] to target/classes
+#11 7.539 [INFO] /build/ruoyi-common/ruoyi-common-core/src/main/java/org/dromara/common/core/utils/StringUtils.java: /build/ruoyi-common/ruoyi-common-core/src/main/java/org/dromara/common/core/utils/StringUtils.java uses or overrides a deprecated API.
+#11 7.539 [INFO] /build/ruoyi-common/ruoyi-common-core/src/main/java/org/dromara/common/core/utils/StringUtils.java: Recompile with -Xlint:deprecation for details.
+#11 7.540 [INFO] 
+#11 7.540 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-core ---
+#11 7.545 [INFO] Not copying test resources
+#11 7.545 [INFO] 
+#11 7.545 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-core ---
+#11 7.553 [INFO] Not compiling test sources
+#11 7.553 [INFO] 
+#11 7.553 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-core ---
+#11 7.723 [INFO] Tests are skipped.
+#11 7.723 [INFO] 
+#11 7.723 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-core ---
+#11 8.375 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-core/target/ruoyi-common-core-6.0.0.jar
+#11 8.457 [INFO] 
+#11 8.457 [INFO] --------------------< org.dromara:ruoyi-common-doc >--------------------
+#11 8.457 [INFO] Building ruoyi-common-doc 6.0.0                                   [4/27]
+#11 8.457 [INFO]   from ruoyi-common/ruoyi-common-doc/pom.xml
+#11 8.457 [INFO] --------------------------------[ jar ]---------------------------------
+#11 8.586 [INFO] 
+#11 8.586 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-doc ---
+#11 8.590 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 8.591 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 8.591 [INFO] 
+#11 8.591 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-doc ---
+#11 8.592 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-doc:jar:6.0.0...
+#11 8.655 [INFO] 
+#11 8.655 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-doc ---
+#11 8.674 [INFO] Recompiling the module because of changed dependency.
+#11 8.676 [INFO] Compiling 8 source files with javac [debug release 21] to target/classes
+#11 9.756 [INFO] 
+#11 9.756 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-doc ---
+#11 9.758 [INFO] Not copying test resources
+#11 9.758 [INFO] 
+#11 9.758 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-doc ---
+#11 9.761 [INFO] Not compiling test sources
+#11 9.761 [INFO] 
+#11 9.762 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-doc ---
+#11 9.764 [INFO] Tests are skipped.
+#11 9.764 [INFO] 
+#11 9.764 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-doc ---
+#11 9.776 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-doc/target/ruoyi-common-doc-6.0.0.jar
+#11 9.798 [INFO] 
+#11 9.798 [INFO] -------------------< org.dromara:ruoyi-common-json >--------------------
+#11 9.798 [INFO] Building ruoyi-common-json 6.0.0                                  [5/27]
+#11 9.799 [INFO]   from ruoyi-common/ruoyi-common-json/pom.xml
+#11 9.799 [INFO] --------------------------------[ jar ]---------------------------------
+#11 9.823 [INFO] 
+#11 9.823 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-json ---
+#11 9.827 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 9.832 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 9.832 [INFO] 
+#11 9.832 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-json ---
+#11 9.833 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-json:jar:6.0.0...
+#11 9.900 [INFO] 
+#11 9.901 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-json ---
+#11 9.911 [INFO] Recompiling the module because of changed dependency.
+#11 9.912 [INFO] Compiling 13 source files with javac [debug release 21] to target/classes
+#11 10.73 [INFO] 
+#11 10.73 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-json ---
+#11 10.73 [INFO] Not copying test resources
+#11 10.73 [INFO] 
+#11 10.73 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-json ---
+#11 10.74 [INFO] Not compiling test sources
+#11 10.74 [INFO] 
+#11 10.74 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-json ---
+#11 10.74 [INFO] Tests are skipped.
+#11 10.74 [INFO] 
+#11 10.74 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-json ---
+#11 10.75 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-json/target/ruoyi-common-json-6.0.0.jar
+#11 10.77 [INFO] 
+#11 10.77 [INFO] -------------------< org.dromara:ruoyi-common-redis >-------------------
+#11 10.77 [INFO] Building ruoyi-common-redis 6.0.0                                 [6/27]
+#11 10.77 [INFO]   from ruoyi-common/ruoyi-common-redis/pom.xml
+#11 10.77 [INFO] --------------------------------[ jar ]---------------------------------
+#11 10.91 [INFO] 
+#11 10.91 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-redis ---
+#11 10.91 [INFO] Copying 2 resources from src/main/resources to target/classes
+#11 10.92 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 10.92 [INFO] 
+#11 10.92 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-redis ---
+#11 10.92 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-redis:jar:6.0.0...
+#11 10.97 [INFO] 
+#11 10.97 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-redis ---
+#11 10.98 [INFO] Recompiling the module because of changed dependency.
+#11 10.98 [INFO] Compiling 19 source files with javac [debug release 21] to target/classes
+#11 12.01 [INFO] 
+#11 12.01 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-redis ---
+#11 12.01 [INFO] Not copying test resources
+#11 12.02 [INFO] 
+#11 12.02 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-redis ---
+#11 12.02 [INFO] Not compiling test sources
+#11 12.02 [INFO] 
+#11 12.02 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-redis ---
+#11 12.02 [INFO] Tests are skipped.
+#11 12.02 [INFO] 
+#11 12.02 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-redis ---
+#11 12.04 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-redis/target/ruoyi-common-redis-6.0.0.jar
+#11 12.06 [INFO] 
+#11 12.06 [INFO] ------------------< org.dromara:ruoyi-common-social >-------------------
+#11 12.06 [INFO] Building ruoyi-common-social 6.0.0                                [7/27]
+#11 12.06 [INFO]   from ruoyi-common/ruoyi-common-social/pom.xml
+#11 12.06 [INFO] --------------------------------[ jar ]---------------------------------
+#11 12.09 [INFO] 
+#11 12.09 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-social ---
+#11 12.09 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 12.09 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 12.09 [INFO] 
+#11 12.09 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-social ---
+#11 12.10 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-social:jar:6.0.0...
+#11 12.15 [INFO] 
+#11 12.15 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-social ---
+#11 12.16 [INFO] Recompiling the module because of changed dependency.
+#11 12.16 [INFO] Compiling 5 source files with javac [debug release 21] to target/classes
+#11 12.76 [INFO] 
+#11 12.76 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-social ---
+#11 12.77 [INFO] Not copying test resources
+#11 12.77 [INFO] 
+#11 12.77 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-social ---
+#11 12.77 [INFO] Not compiling test sources
+#11 12.77 [INFO] 
+#11 12.77 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-social ---
+#11 12.77 [INFO] Tests are skipped.
+#11 12.77 [INFO] 
+#11 12.77 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-social ---
+#11 12.78 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-social/target/ruoyi-common-social-6.0.0.jar
+#11 12.79 [INFO] 
+#11 12.79 [INFO] -------------------< org.dromara:ruoyi-common-mail >--------------------
+#11 12.79 [INFO] Building ruoyi-common-mail 6.0.0                                  [8/27]
+#11 12.79 [INFO]   from ruoyi-common/ruoyi-common-mail/pom.xml
+#11 12.79 [INFO] --------------------------------[ jar ]---------------------------------
+#11 12.82 [INFO] 
+#11 12.82 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-mail ---
+#11 12.82 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 12.82 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 12.82 [INFO] 
+#11 12.82 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-mail ---
+#11 12.82 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-mail:jar:6.0.0...
+#11 12.88 [INFO] 
+#11 12.88 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-mail ---
+#11 12.89 [INFO] Recompiling the module because of changed dependency.
+#11 12.89 [INFO] Compiling 3 source files with javac [debug release 21] to target/classes
+#11 13.44 [INFO] 
+#11 13.44 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-mail ---
+#11 13.45 [INFO] Not copying test resources
+#11 13.45 [INFO] 
+#11 13.45 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-mail ---
+#11 13.45 [INFO] Not compiling test sources
+#11 13.45 [INFO] 
+#11 13.45 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-mail ---
+#11 13.45 [INFO] Tests are skipped.
+#11 13.45 [INFO] 
+#11 13.45 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-mail ---
+#11 13.46 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-mail/target/ruoyi-common-mail-6.0.0.jar
+#11 13.47 [INFO] 
+#11 13.47 [INFO] -----------------------< org.dromara:ruoyi-api >------------------------
+#11 13.47 [INFO] Building ruoyi-api 6.0.0                                          [9/27]
+#11 13.47 [INFO]   from ruoyi-api/pom.xml
+#11 13.47 [INFO] --------------------------------[ jar ]---------------------------------
+#11 13.49 [INFO] 
+#11 13.49 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-api ---
+#11 13.49 [INFO] skip non existing resourceDirectory /build/ruoyi-api/src/main/resources
+#11 13.49 [INFO] skip non existing resourceDirectory /build/ruoyi-api/src/main/resources
+#11 13.49 [INFO] 
+#11 13.49 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-api ---
+#11 13.49 [INFO] Generating flattened POM of project org.dromara:ruoyi-api:jar:6.0.0...
+#11 13.55 [INFO] 
+#11 13.55 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-api ---
+#11 13.56 [INFO] Recompiling the module because of changed dependency.
+#11 13.56 [INFO] Compiling 34 source files with javac [debug release 21] to target/classes
+#11 14.72 [INFO] 
+#11 14.72 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-api ---
+#11 14.72 [INFO] Not copying test resources
+#11 14.72 [INFO] 
+#11 14.72 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-api ---
+#11 14.73 [INFO] Not compiling test sources
+#11 14.73 [INFO] 
+#11 14.73 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-api ---
+#11 14.73 [INFO] Tests are skipped.
+#11 14.73 [INFO] 
+#11 14.73 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-api ---
+#11 14.75 [INFO] Building jar: /build/ruoyi-api/target/ruoyi-api-6.0.0.jar
+#11 14.76 [INFO] 
+#11 14.76 [INFO] ------------------< org.dromara:ruoyi-common-satoken >------------------
+#11 14.76 [INFO] Building ruoyi-common-satoken 6.0.0                              [10/27]
+#11 14.76 [INFO]   from ruoyi-common/ruoyi-common-satoken/pom.xml
+#11 14.76 [INFO] --------------------------------[ jar ]---------------------------------
+#11 14.81 [INFO] 
+#11 14.81 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-satoken ---
+#11 14.81 [INFO] Copying 2 resources from src/main/resources to target/classes
+#11 14.81 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 14.81 [INFO] 
+#11 14.81 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-satoken ---
+#11 14.81 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-satoken:jar:6.0.0...
+#11 14.87 [INFO] 
+#11 14.87 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-satoken ---
+#11 14.88 [INFO] Recompiling the module because of changed dependency.
+#11 14.88 [INFO] Compiling 5 source files with javac [debug release 21] to target/classes
+#11 15.53 [INFO] 
+#11 15.53 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-satoken ---
+#11 15.53 [INFO] Not copying test resources
+#11 15.53 [INFO] 
+#11 15.53 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-satoken ---
+#11 15.54 [INFO] Not compiling test sources
+#11 15.54 [INFO] 
+#11 15.54 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-satoken ---
+#11 15.54 [INFO] Tests are skipped.
+#11 15.54 [INFO] 
+#11 15.54 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-satoken ---
+#11 15.55 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-satoken/target/ruoyi-common-satoken-6.0.0.jar
+#11 15.56 [INFO] 
+#11 15.56 [INFO] ------------------< org.dromara:ruoyi-common-mybatis >------------------
+#11 15.56 [INFO] Building ruoyi-common-mybatis 6.0.0                              [11/27]
+#11 15.56 [INFO]   from ruoyi-common/ruoyi-common-mybatis/pom.xml
+#11 15.56 [INFO] --------------------------------[ jar ]---------------------------------
+#11 15.76 [INFO] 
+#11 15.76 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-mybatis ---
+#11 15.76 [INFO] Copying 2 resources from src/main/resources to target/classes
+#11 15.76 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 15.76 [INFO] 
+#11 15.76 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-mybatis ---
+#11 15.76 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-mybatis:jar:6.0.0...
+#11 15.82 [INFO] 
+#11 15.82 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-mybatis ---
+#11 15.83 [INFO] Recompiling the module because of changed dependency.
+#11 15.83 [INFO] Compiling 34 source files with javac [debug release 21] to target/classes
+#11 17.53 [INFO] /build/ruoyi-common/ruoyi-common-mybatis/src/main/java/org/dromara/common/mybatis/core/query/LambdaQueryBuilder.java: /build/ruoyi-common/ruoyi-common-mybatis/src/main/java/org/dromara/common/mybatis/core/query/LambdaQueryBuilder.java uses unchecked or unsafe operations.
+#11 17.53 [INFO] /build/ruoyi-common/ruoyi-common-mybatis/src/main/java/org/dromara/common/mybatis/core/query/LambdaQueryBuilder.java: Recompile with -Xlint:unchecked for details.
+#11 17.53 [INFO] 
+#11 17.53 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-mybatis ---
+#11 17.53 [INFO] Not copying test resources
+#11 17.53 [INFO] 
+#11 17.53 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-mybatis ---
+#11 17.54 [INFO] Not compiling test sources
+#11 17.54 [INFO] 
+#11 17.54 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-mybatis ---
+#11 17.55 [INFO] Tests are skipped.
+#11 17.55 [INFO] 
+#11 17.55 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-mybatis ---
+#11 17.57 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-mybatis/target/ruoyi-common-mybatis-6.0.0.jar
+#11 17.58 [INFO] 
+#11 17.58 [INFO] ----------------< org.dromara:ruoyi-common-translation >----------------
+#11 17.58 [INFO] Building ruoyi-common-translation 6.0.0                          [12/27]
+#11 17.58 [INFO]   from ruoyi-common/ruoyi-common-translation/pom.xml
+#11 17.58 [INFO] --------------------------------[ jar ]---------------------------------
+#11 17.60 [INFO] 
+#11 17.60 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-translation ---
+#11 17.60 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 17.60 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 17.60 [INFO] 
+#11 17.60 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-translation ---
+#11 17.60 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-translation:jar:6.0.0...
+#11 17.66 [INFO] 
+#11 17.66 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-translation ---
+#11 17.67 [INFO] Recompiling the module because of changed dependency.
+#11 17.67 [INFO] Compiling 11 source files with javac [debug release 21] to target/classes
+#11 18.19 [INFO] 
+#11 18.19 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-translation ---
+#11 18.19 [INFO] Not copying test resources
+#11 18.19 [INFO] 
+#11 18.19 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-translation ---
+#11 18.19 [INFO] Not compiling test sources
+#11 18.19 [INFO] 
+#11 18.19 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-translation ---
+#11 18.19 [INFO] Tests are skipped.
+#11 18.19 [INFO] 
+#11 18.19 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-translation ---
+#11 18.20 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-translation/target/ruoyi-common-translation-6.0.0.jar
+#11 18.21 [INFO] 
+#11 18.21 [INFO] --------------------< org.dromara:ruoyi-common-oss >--------------------
+#11 18.21 [INFO] Building ruoyi-common-oss 6.0.0                                  [13/27]
+#11 18.21 [INFO]   from ruoyi-common/ruoyi-common-oss/pom.xml
+#11 18.21 [INFO] --------------------------------[ jar ]---------------------------------
+#11 18.30 [INFO] 
+#11 18.30 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-oss ---
+#11 18.30 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-oss/src/main/resources
+#11 18.30 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-oss/src/main/resources
+#11 18.30 [INFO] 
+#11 18.30 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-oss ---
+#11 18.30 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-oss:jar:6.0.0...
+#11 18.34 [INFO] 
+#11 18.34 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-oss ---
+#11 18.35 [INFO] Recompiling the module because of changed dependency.
+#11 18.35 [INFO] Compiling 18 source files with javac [debug release 21] to target/classes
+#11 19.31 [INFO] 
+#11 19.31 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-oss ---
+#11 19.31 [INFO] Not copying test resources
+#11 19.31 [INFO] 
+#11 19.31 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-oss ---
+#11 19.32 [INFO] Not compiling test sources
+#11 19.32 [INFO] 
+#11 19.32 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-oss ---
+#11 19.32 [INFO] Tests are skipped.
+#11 19.32 [INFO] 
+#11 19.32 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-oss ---
+#11 19.34 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-oss/target/ruoyi-common-oss-6.0.0.jar
+#11 19.34 [INFO] 
+#11 19.34 [INFO] --------------------< org.dromara:ruoyi-common-log >--------------------
+#11 19.34 [INFO] Building ruoyi-common-log 6.0.0                                  [14/27]
+#11 19.34 [INFO]   from ruoyi-common/ruoyi-common-log/pom.xml
+#11 19.34 [INFO] --------------------------------[ jar ]---------------------------------
+#11 19.37 [INFO] 
+#11 19.37 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-log ---
+#11 19.38 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 19.38 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 19.38 [INFO] 
+#11 19.38 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-log ---
+#11 19.38 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-log:jar:6.0.0...
+#11 19.46 [INFO] 
+#11 19.46 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-log ---
+#11 19.46 [INFO] Recompiling the module because of changed dependency.
+#11 19.46 [INFO] Compiling 7 source files with javac [debug release 21] to target/classes
+#11 20.17 [INFO] 
+#11 20.17 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-log ---
+#11 20.17 [INFO] Not copying test resources
+#11 20.17 [INFO] 
+#11 20.17 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-log ---
+#11 20.18 [INFO] Not compiling test sources
+#11 20.18 [INFO] 
+#11 20.18 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-log ---
+#11 20.18 [INFO] Tests are skipped.
+#11 20.18 [INFO] 
+#11 20.18 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-log ---
+#11 20.18 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-log/target/ruoyi-common-log-6.0.0.jar
+#11 20.19 [INFO] 
+#11 20.19 [INFO] -------------------< org.dromara:ruoyi-common-excel >-------------------
+#11 20.19 [INFO] Building ruoyi-common-excel 6.0.0                                [15/27]
+#11 20.19 [INFO]   from ruoyi-common/ruoyi-common-excel/pom.xml
+#11 20.19 [INFO] --------------------------------[ jar ]---------------------------------
+#11 20.28 [INFO] 
+#11 20.28 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-excel ---
+#11 20.28 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-excel/src/main/resources
+#11 20.28 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-excel/src/main/resources
+#11 20.28 [INFO] 
+#11 20.28 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-excel ---
+#11 20.28 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-excel:jar:6.0.0...
+#11 20.34 [INFO] 
+#11 20.34 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-excel ---
+#11 20.35 [INFO] Recompiling the module because of changed dependency.
+#11 20.35 [INFO] Compiling 21 source files with javac [debug release 21] to target/classes
+#11 21.23 [INFO] 
+#11 21.23 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-excel ---
+#11 21.24 [INFO] Not copying test resources
+#11 21.24 [INFO] 
+#11 21.24 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-excel ---
+#11 21.24 [INFO] Not compiling test sources
+#11 21.24 [INFO] 
+#11 21.24 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-excel ---
+#11 21.24 [INFO] Tests are skipped.
+#11 21.24 [INFO] 
+#11 21.24 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-excel ---
+#11 21.25 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-excel/target/ruoyi-common-excel-6.0.0.jar
+#11 21.26 [INFO] 
+#11 21.26 [INFO] --------------------< org.dromara:ruoyi-common-sms >--------------------
+#11 21.26 [INFO] Building ruoyi-common-sms 6.0.0                                  [16/27]
+#11 21.26 [INFO]   from ruoyi-common/ruoyi-common-sms/pom.xml
+#11 21.26 [INFO] --------------------------------[ jar ]---------------------------------
+#11 21.31 [INFO] 
+#11 21.31 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-sms ---
+#11 21.31 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 21.31 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 21.31 [INFO] 
+#11 21.31 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-sms ---
+#11 21.31 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-sms:jar:6.0.0...
+#11 21.37 [INFO] 
+#11 21.37 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-sms ---
+#11 21.37 [INFO] Recompiling the module because of changed dependency.
+#11 21.37 [INFO] Compiling 3 source files with javac [debug release 21] to target/classes
+#11 21.81 [INFO] 
+#11 21.81 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-sms ---
+#11 21.82 [INFO] Not copying test resources
+#11 21.82 [INFO] 
+#11 21.82 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-sms ---
+#11 21.82 [INFO] Not compiling test sources
+#11 21.82 [INFO] 
+#11 21.82 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-sms ---
+#11 21.82 [INFO] Tests are skipped.
+#11 21.82 [INFO] 
+#11 21.82 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-sms ---
+#11 21.83 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-sms/target/ruoyi-common-sms-6.0.0.jar
+#11 21.83 [INFO] 
+#11 21.83 [INFO] -----------------< org.dromara:ruoyi-common-security >------------------
+#11 21.83 [INFO] Building ruoyi-common-security 6.0.0                             [17/27]
+#11 21.83 [INFO]   from ruoyi-common/ruoyi-common-security/pom.xml
+#11 21.83 [INFO] --------------------------------[ jar ]---------------------------------
+#11 21.85 [INFO] 
+#11 21.85 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-security ---
+#11 21.86 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 21.86 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 21.86 [INFO] 
+#11 21.86 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-security ---
+#11 21.86 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-security:jar:6.0.0...
+#11 21.94 [INFO] 
+#11 21.94 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-security ---
+#11 21.94 [INFO] Recompiling the module because of changed dependency.
+#11 21.94 [INFO] Compiling 3 source files with javac [debug release 21] to target/classes
+#11 22.53 [INFO] 
+#11 22.53 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-security ---
+#11 22.54 [INFO] Not copying test resources
+#11 22.54 [INFO] 
+#11 22.54 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-security ---
+#11 22.54 [INFO] Not compiling test sources
+#11 22.54 [INFO] 
+#11 22.54 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-security ---
+#11 22.54 [INFO] Tests are skipped.
+#11 22.54 [INFO] 
+#11 22.54 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-security ---
+#11 22.55 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-security/target/ruoyi-common-security-6.0.0.jar
+#11 22.55 [INFO] 
+#11 22.55 [INFO] --------------------< org.dromara:ruoyi-common-web >--------------------
+#11 22.55 [INFO] Building ruoyi-common-web 6.0.0                                  [18/27]
+#11 22.55 [INFO]   from ruoyi-common/ruoyi-common-web/pom.xml
+#11 22.55 [INFO] --------------------------------[ jar ]---------------------------------
+#11 22.74 [INFO] 
+#11 22.74 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-web ---
+#11 22.75 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 22.75 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 22.75 [INFO] 
+#11 22.75 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-web ---
+#11 22.75 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-web:jar:6.0.0...
+#11 22.80 [INFO] 
+#11 22.80 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-web ---
+#11 22.81 [INFO] Recompiling the module because of changed dependency.
+#11 22.81 [INFO] Compiling 17 source files with javac [debug release 21] to target/classes
+#11 23.48 [INFO] 
+#11 23.48 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-web ---
+#11 23.48 [INFO] Not copying test resources
+#11 23.48 [INFO] 
+#11 23.48 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-web ---
+#11 23.49 [INFO] Not compiling test sources
+#11 23.49 [INFO] 
+#11 23.49 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-web ---
+#11 23.50 [INFO] Tests are skipped.
+#11 23.50 [INFO] 
+#11 23.50 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-web ---
+#11 23.51 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-web/target/ruoyi-common-web-6.0.0.jar
+#11 23.52 [INFO] 
+#11 23.52 [INFO] -----------------< org.dromara:ruoyi-common-sensitive >-----------------
+#11 23.52 [INFO] Building ruoyi-common-sensitive 6.0.0                            [19/27]
+#11 23.52 [INFO]   from ruoyi-common/ruoyi-common-sensitive/pom.xml
+#11 23.52 [INFO] --------------------------------[ jar ]---------------------------------
+#11 23.53 [INFO] 
+#11 23.53 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-sensitive ---
+#11 23.53 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 23.53 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 23.53 [INFO] 
+#11 23.53 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-sensitive ---
+#11 23.53 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-sensitive:jar:6.0.0...
+#11 23.58 [INFO] 
+#11 23.58 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-sensitive ---
+#11 23.58 [INFO] Recompiling the module because of changed dependency.
+#11 23.58 [INFO] Compiling 5 source files with javac [debug release 21] to target/classes
+#11 24.05 [INFO] 
+#11 24.05 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-sensitive ---
+#11 24.06 [INFO] Not copying test resources
+#11 24.06 [INFO] 
+#11 24.06 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-sensitive ---
+#11 24.06 [INFO] Not compiling test sources
+#11 24.06 [INFO] 
+#11 24.06 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-sensitive ---
+#11 24.06 [INFO] Tests are skipped.
+#11 24.06 [INFO] 
+#11 24.06 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-sensitive ---
+#11 24.06 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-sensitive/target/ruoyi-common-sensitive-6.0.0.jar
+#11 24.07 [INFO] 
+#11 24.07 [INFO] ------------------< org.dromara:ruoyi-common-encrypt >------------------
+#11 24.07 [INFO] Building ruoyi-common-encrypt 6.0.0                              [20/27]
+#11 24.07 [INFO]   from ruoyi-common/ruoyi-common-encrypt/pom.xml
+#11 24.07 [INFO] --------------------------------[ jar ]---------------------------------
+#11 24.10 [INFO] 
+#11 24.10 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-encrypt ---
+#11 24.10 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 24.10 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 24.10 [INFO] 
+#11 24.10 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-encrypt ---
+#11 24.10 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-encrypt:jar:6.0.0...
+#11 24.15 [INFO] 
+#11 24.15 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-encrypt ---
+#11 24.16 [INFO] Recompiling the module because of changed dependency.
+#11 24.16 [INFO] Compiling 25 source files with javac [debug release 21] to target/classes
+#11 24.92 [INFO] 
+#11 24.92 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-encrypt ---
+#11 24.92 [INFO] Not copying test resources
+#11 24.92 [INFO] 
+#11 24.92 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-encrypt ---
+#11 24.92 [INFO] Not compiling test sources
+#11 24.92 [INFO] 
+#11 24.92 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-encrypt ---
+#11 24.93 [INFO] Tests are skipped.
+#11 24.93 [INFO] 
+#11 24.93 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-encrypt ---
+#11 24.94 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-encrypt/target/ruoyi-common-encrypt-6.0.0.jar
+#11 24.95 [INFO] 
+#11 24.95 [INFO] -------------------< org.dromara:ruoyi-common-push >--------------------
+#11 24.95 [INFO] Building ruoyi-common-push 6.0.0                                 [21/27]
+#11 24.95 [INFO]   from ruoyi-common/ruoyi-common-push/pom.xml
+#11 24.95 [INFO] --------------------------------[ jar ]---------------------------------
+#11 24.99 [INFO] 
+#11 24.99 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-push ---
+#11 24.99 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 24.99 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 24.99 [INFO] 
+#11 24.99 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-push ---
+#11 24.99 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-push:jar:6.0.0...
+#11 25.04 [INFO] 
+#11 25.04 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-push ---
+#11 25.04 [INFO] Recompiling the module because of changed dependency.
+#11 25.04 [INFO] Compiling 17 source files with javac [debug release 21] to target/classes
+#11 25.70 [INFO] 
+#11 25.70 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-push ---
+#11 25.70 [INFO] Not copying test resources
+#11 25.70 [INFO] 
+#11 25.70 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-push ---
+#11 25.70 [INFO] Not compiling test sources
+#11 25.70 [INFO] 
+#11 25.70 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-push ---
+#11 25.71 [INFO] Tests are skipped.
+#11 25.71 [INFO] 
+#11 25.71 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-push ---
+#11 25.72 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-push/target/ruoyi-common-push-6.0.0.jar
+#11 25.73 [INFO] 
+#11 25.73 [INFO] ---------------------< org.dromara:ruoyi-modules >----------------------
+#11 25.73 [INFO] Building ruoyi-modules 6.0.0                                     [22/27]
+#11 25.73 [INFO]   from ruoyi-modules/pom.xml
+#11 25.73 [INFO] --------------------------------[ pom ]---------------------------------
+#11 25.73 [INFO] 
+#11 25.73 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-modules ---
+#11 25.73 [INFO] Generating flattened POM of project org.dromara:ruoyi-modules:pom:6.0.0...
+#11 25.80 [INFO] 
+#11 25.80 [INFO] ----------------------< org.dromara:ruoyi-system >----------------------
+#11 25.80 [INFO] Building ruoyi-system 6.0.0                                      [23/27]
+#11 25.80 [INFO]   from ruoyi-modules/ruoyi-system/pom.xml
+#11 25.80 [INFO] --------------------------------[ jar ]---------------------------------
+#11 25.94 [INFO] 
+#11 25.94 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-system ---
+#11 25.95 [INFO] Copying 21 resources from src/main/resources to target/classes
+#11 25.95 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 25.95 [INFO] 
+#11 25.95 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-system ---
+#11 25.95 [INFO] Generating flattened POM of project org.dromara:ruoyi-system:jar:6.0.0...
+#11 26.00 [INFO] 
+#11 26.00 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-system ---
+#11 26.02 [INFO] Recompiling the module because of changed dependency.
+#11 26.02 [INFO] Compiling 148 source files with javac [debug release 21] to target/classes
+#11 33.49 [INFO] 
+#11 33.49 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-system ---
+#11 33.49 [INFO] Not copying test resources
+#11 33.49 [INFO] 
+#11 33.49 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-system ---
+#11 33.50 [INFO] Not compiling test sources
+#11 33.50 [INFO] 
+#11 33.50 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-system ---
+#11 33.50 [INFO] Tests are skipped.
+#11 33.50 [INFO] 
+#11 33.50 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-system ---
+#11 33.56 [INFO] Building jar: /build/ruoyi-modules/ruoyi-system/target/ruoyi-system-6.0.0.jar
+#11 33.59 [INFO] 
+#11 33.59 [INFO] -----------------< org.dromara:ruoyi-common-liteflow >------------------
+#11 33.59 [INFO] Building ruoyi-common-liteflow 6.0.0                             [24/27]
+#11 33.59 [INFO]   from ruoyi-common/ruoyi-common-liteflow/pom.xml
+#11 33.59 [INFO] --------------------------------[ jar ]---------------------------------
+#11 33.66 [INFO] 
+#11 33.66 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-liteflow ---
+#11 33.66 [INFO] Copying 1 resource from src/main/resources to target/classes
+#11 33.66 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 33.66 [INFO] 
+#11 33.66 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-liteflow ---
+#11 33.66 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-liteflow:jar:6.0.0...
+#11 33.72 [INFO] 
+#11 33.72 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-liteflow ---
+#11 33.73 [INFO] Recompiling the module because of changed dependency.
+#11 33.73 [INFO] Compiling 8 source files with javac [debug release 21] to target/classes
+#11 34.27 [INFO] 
+#11 34.27 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-liteflow ---
+#11 34.27 [INFO] Not copying test resources
+#11 34.27 [INFO] 
+#11 34.27 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-liteflow ---
+#11 34.27 [INFO] Not compiling test sources
+#11 34.27 [INFO] 
+#11 34.27 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-liteflow ---
+#11 34.27 [INFO] Tests are skipped.
+#11 34.27 [INFO] 
+#11 34.27 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-common-liteflow ---
+#11 34.28 [INFO] Building jar: /build/ruoyi-common/ruoyi-common-liteflow/target/ruoyi-common-liteflow-6.0.0.jar
+#11 34.29 [INFO] 
+#11 34.29 [INFO] ---------------------< org.dromara:ruoyi-workflow >---------------------
+#11 34.29 [INFO] Building ruoyi-workflow 6.0.0                                    [25/27]
+#11 34.29 [INFO]   from ruoyi-modules/ruoyi-workflow/pom.xml
+#11 34.29 [INFO] --------------------------------[ jar ]---------------------------------
+#11 34.42 [INFO] 
+#11 34.42 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-workflow ---
+#11 34.43 [INFO] Copying 11 resources from src/main/resources to target/classes
+#11 34.43 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 34.43 [INFO] 
+#11 34.43 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-workflow ---
+#11 34.43 [INFO] Generating flattened POM of project org.dromara:ruoyi-workflow:jar:6.0.0...
+#11 34.49 [INFO] 
+#11 34.49 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-workflow ---
+#11 34.51 [INFO] Recompiling the module because of changed dependency.
+#11 34.51 [INFO] Compiling 108 source files with javac [debug release 21] to target/classes
+#11 40.12 [INFO] 
+#11 40.12 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-workflow ---
+#11 40.12 [INFO] Not copying test resources
+#11 40.12 [INFO] 
+#11 40.12 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-workflow ---
+#11 40.12 [INFO] Not compiling test sources
+#11 40.12 [INFO] 
+#11 40.12 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-workflow ---
+#11 40.13 [INFO] Tests are skipped.
+#11 40.13 [INFO] 
+#11 40.13 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-workflow ---
+#11 40.17 [INFO] Building jar: /build/ruoyi-modules/ruoyi-workflow/target/ruoyi-workflow-6.0.0.jar
+#11 40.20 [INFO] 
+#11 40.20 [INFO] ---------------------< org.dromara:ruoyi-jiafeng >----------------------
+#11 40.20 [INFO] Building ruoyi-jiafeng 6.0.0                                     [26/27]
+#11 40.20 [INFO]   from ruoyi-modules/ruoyi-jiafeng/pom.xml
+#11 40.20 [INFO] --------------------------------[ jar ]---------------------------------
+#11 40.33 [INFO] 
+#11 40.33 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-jiafeng ---
+#11 40.33 [INFO] Copying 16 resources from src/main/resources to target/classes
+#11 40.35 [INFO] Copying 0 resource from src/main/resources to target/classes
+#11 40.35 [INFO] 
+#11 40.35 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-jiafeng ---
+#11 40.35 [INFO] Generating flattened POM of project org.dromara:ruoyi-jiafeng:jar:6.0.0...
+#11 40.46 [INFO] 
+#11 40.46 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-jiafeng ---
+#11 40.47 [INFO] Recompiling the module because of changed dependency.
+#11 40.47 [INFO] Compiling 61 source files with javac [debug release 21] to target/classes
+#11 43.79 [INFO] 
+#11 43.79 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-jiafeng ---
+#11 43.80 [INFO] Not copying test resources
+#11 43.80 [INFO] 
+#11 43.80 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-jiafeng ---
+#11 43.80 [INFO] Not compiling test sources
+#11 43.80 [INFO] 
+#11 43.80 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-jiafeng ---
+#11 43.80 [INFO] Tests are skipped.
+#11 43.80 [INFO] 
+#11 43.80 [INFO] --- jar:3.4.1:jar (default-jar) @ ruoyi-jiafeng ---
+#11 43.82 [INFO] Building jar: /build/ruoyi-modules/ruoyi-jiafeng/target/ruoyi-jiafeng-6.0.0.jar
+#11 44.48 [INFO] 
+#11 44.48 [INFO] ----------------------< org.dromara:ruoyi-admin >-----------------------
+#11 44.48 [INFO] Building ruoyi-admin 6.0.0                                       [27/27]
+#11 44.48 [INFO]   from ruoyi-admin/pom.xml
+#11 44.48 [INFO] --------------------------------[ jar ]---------------------------------
+#11 44.58 [INFO] 
+#11 44.58 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-admin ---
+#11 44.59 [INFO] Copying 10 resources from src/main/resources to target/classes
+#11 44.59 [INFO] Copying 5 resources from src/main/resources to target/classes
+#11 44.67 [INFO] 
+#11 44.67 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-admin ---
+#11 44.67 [INFO] Generating flattened POM of project org.dromara:ruoyi-admin:jar:6.0.0...
+#11 44.72 [INFO] 
+#11 44.72 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-admin ---
+#11 44.73 [INFO] Recompiling the module because of changed dependency.
+#11 44.73 [INFO] Compiling 17 source files with javac [debug release 21] to target/classes
+#11 45.65 [INFO] 
+#11 45.65 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-admin ---
+#11 45.65 [INFO] Not copying test resources
+#11 45.65 [INFO] 
+#11 45.65 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-admin ---
+#11 45.65 [INFO] Not compiling test sources
+#11 45.65 [INFO] 
+#11 45.65 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-admin ---
+#11 45.66 [INFO] Tests are skipped.
+#11 45.66 [INFO] 
+#11 45.66 [INFO] --- jar:3.5.0:jar (default-jar) @ ruoyi-admin ---
+#11 45.89 [INFO] Building jar: /build/ruoyi-admin/target/ruoyi-admin.jar
+#11 46.62 [INFO] 
+#11 46.62 [INFO] --- spring-boot:4.1.0:repackage (default) @ ruoyi-admin ---
+#11 48.34 [INFO] Replacing main artifact /build/ruoyi-admin/target/ruoyi-admin.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+#11 48.34 [INFO] The original artifact has been renamed to /build/ruoyi-admin/target/ruoyi-admin.jar.original
+#11 48.34 [INFO] ------------------------------------------------------------------------
+#11 48.34 [INFO] Reactor Summary for RuoYi-Vue-Plus 6.0.0:
+#11 48.34 [INFO] 
+#11 48.34 [INFO] RuoYi-Vue-Plus ..................................... SUCCESS [  0.525 s]
+#11 48.34 [INFO] ruoyi-common ....................................... SUCCESS [  0.135 s]
+#11 48.34 [INFO] ruoyi-common-core .................................. SUCCESS [  5.149 s]
+#11 48.34 [INFO] ruoyi-common-doc ................................... SUCCESS [  1.341 s]
+#11 48.34 [INFO] ruoyi-common-json .................................. SUCCESS [  0.974 s]
+#11 48.34 [INFO] ruoyi-common-redis ................................. SUCCESS [  1.284 s]
+#11 48.34 [INFO] ruoyi-common-social ................................ SUCCESS [  0.736 s]
+#11 48.34 [INFO] ruoyi-common-mail .................................. SUCCESS [  0.680 s]
+#11 48.34 [INFO] ruoyi-api .......................................... SUCCESS [  1.287 s]
+#11 48.34 [INFO] ruoyi-common-satoken ............................... SUCCESS [  0.800 s]
+#11 48.34 [INFO] ruoyi-common-mybatis ............................... SUCCESS [  2.024 s]
+#11 48.34 [INFO] ruoyi-common-translation ........................... SUCCESS [  0.623 s]
+#11 48.34 [INFO] ruoyi-common-oss ................................... SUCCESS [  1.138 s]
+#11 48.34 [INFO] ruoyi-common-log ................................... SUCCESS [  0.846 s]
+#11 48.34 [INFO] ruoyi-common-excel ................................. SUCCESS [  1.070 s]
+#11 48.34 [INFO] ruoyi-common-sms ................................... SUCCESS [  0.570 s]
+#11 48.34 [INFO] ruoyi-common-security .............................. SUCCESS [  0.721 s]
+#11 48.34 [INFO] ruoyi-common-web ................................... SUCCESS [  0.964 s]
+#11 48.34 [INFO] ruoyi-common-sensitive ............................. SUCCESS [  0.554 s]
+#11 48.34 [INFO] ruoyi-common-encrypt ............................... SUCCESS [  0.877 s]
+#11 48.34 [INFO] ruoyi-common-push .................................. SUCCESS [  0.780 s]
+#11 48.34 [INFO] ruoyi-modules ...................................... SUCCESS [  0.079 s]
+#11 48.34 [INFO] ruoyi-system ....................................... SUCCESS [  7.781 s]
+#11 48.34 [INFO] ruoyi-common-liteflow .............................. SUCCESS [  0.701 s]
+#11 48.34 [INFO] ruoyi-workflow ..................................... SUCCESS [  5.917 s]
+#11 48.34 [INFO] ruoyi-jiafeng ...................................... SUCCESS [  4.276 s]
+#11 48.34 [INFO] ruoyi-admin ........................................ SUCCESS [  3.856 s]
+#11 48.34 [INFO] ------------------------------------------------------------------------
+#11 48.34 [INFO] BUILD SUCCESS
+#11 48.34 [INFO] ------------------------------------------------------------------------
+#11 48.34 [INFO] Total time:  46.282 s
+#11 48.34 [INFO] Finished at: 2026-10-15T08:31:24Z
+#11 48.34 [INFO] ------------------------------------------------------------------------
+#11 DONE 52.4s
+
+#12 [verify 1/1] RUN --mount=type=cache,target=/root/.m2 mvn -B -ntp -pl ruoyi-modules/ruoyi-jiafeng -am test -Dmaven.test.skip=false -DskipTests=false -Dgroups= -Dtest=Jf*Test -Dsurefire.failIfNoSpecifiedTests=false
+#12 1.991 [INFO] Scanning for projects...
+#12 2.509 [INFO] ------------------------------------------------------------------------
+#12 2.509 [INFO] Reactor Build Order:
+#12 2.509 [INFO] 
+#12 2.511 [INFO] RuoYi-Vue-Plus                                                     [pom]
+#12 2.511 [INFO] ruoyi-common                                                       [pom]
+#12 2.511 [INFO] ruoyi-common-core                                                  [jar]
+#12 2.511 [INFO] ruoyi-common-doc                                                   [jar]
+#12 2.511 [INFO] ruoyi-common-json                                                  [jar]
+#12 2.511 [INFO] ruoyi-common-redis                                                 [jar]
+#12 2.511 [INFO] ruoyi-common-mail                                                  [jar]
+#12 2.512 [INFO] ruoyi-api                                                          [jar]
+#12 2.512 [INFO] ruoyi-common-satoken                                               [jar]
+#12 2.512 [INFO] ruoyi-common-mybatis                                               [jar]
+#12 2.512 [INFO] ruoyi-common-translation                                           [jar]
+#12 2.512 [INFO] ruoyi-common-oss                                                   [jar]
+#12 2.512 [INFO] ruoyi-common-log                                                   [jar]
+#12 2.512 [INFO] ruoyi-common-excel                                                 [jar]
+#12 2.512 [INFO] ruoyi-common-sms                                                   [jar]
+#12 2.512 [INFO] ruoyi-common-security                                              [jar]
+#12 2.512 [INFO] ruoyi-common-web                                                   [jar]
+#12 2.512 [INFO] ruoyi-common-sensitive                                             [jar]
+#12 2.512 [INFO] ruoyi-common-encrypt                                               [jar]
+#12 2.512 [INFO] ruoyi-common-push                                                  [jar]
+#12 2.513 [INFO] ruoyi-modules                                                      [pom]
+#12 2.513 [INFO] ruoyi-system                                                       [jar]
+#12 2.513 [INFO] ruoyi-common-liteflow                                              [jar]
+#12 2.513 [INFO] ruoyi-workflow                                                     [jar]
+#12 2.513 [INFO] ruoyi-jiafeng                                                      [jar]
+#12 2.526 [INFO] 
+#12 2.526 [INFO] ---------------------< org.dromara:ruoyi-vue-plus >---------------------
+#12 2.526 [INFO] Building RuoYi-Vue-Plus 6.0.0                                     [1/25]
+#12 2.527 [INFO]   from pom.xml
+#12 2.527 [INFO] --------------------------------[ pom ]---------------------------------
+#12 2.954 [INFO] 
+#12 2.954 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-vue-plus ---
+#12 3.072 [INFO] Generating flattened POM of project org.dromara:ruoyi-vue-plus:pom:6.0.0...
+#12 3.219 [INFO] 
+#12 3.219 [INFO] ----------------------< org.dromara:ruoyi-common >----------------------
+#12 3.219 [INFO] Building ruoyi-common 6.0.0                                       [2/25]
+#12 3.219 [INFO]   from ruoyi-common/pom.xml
+#12 3.219 [INFO] --------------------------------[ pom ]---------------------------------
+#12 3.242 [INFO] 
+#12 3.242 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common ---
+#12 3.244 [INFO] Generating flattened POM of project org.dromara:ruoyi-common:pom:6.0.0...
+#12 3.389 [INFO] 
+#12 3.389 [INFO] -------------------< org.dromara:ruoyi-common-core >--------------------
+#12 3.389 [INFO] Building ruoyi-common-core 6.0.0                                  [3/25]
+#12 3.389 [INFO]   from ruoyi-common/ruoyi-common-core/pom.xml
+#12 3.389 [INFO] --------------------------------[ jar ]---------------------------------
+#12 3.675 [INFO] 
+#12 3.675 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-core ---
+#12 3.788 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 3.800 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 3.800 [INFO] 
+#12 3.800 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-core ---
+#12 3.803 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-core:jar:6.0.0...
+#12 3.913 [INFO] 
+#12 3.913 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-core ---
+#12 4.089 [INFO] Nothing to compile - all classes are up to date.
+#12 4.091 [INFO] 
+#12 4.091 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-core ---
+#12 4.095 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-core/src/test/resources
+#12 4.096 [INFO] 
+#12 4.096 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-core ---
+#12 4.134 [INFO] Recompiling the module because of changed source code.
+#12 4.143 [INFO] Compiling 12 source files with javac [debug release 21] to target/test-classes
+#12 6.952 [INFO] 
+#12 6.952 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-core ---
+#12 7.143 [INFO] 
+#12 7.143 [INFO] --------------------< org.dromara:ruoyi-common-doc >--------------------
+#12 7.143 [INFO] Building ruoyi-common-doc 6.0.0                                   [4/25]
+#12 7.143 [INFO]   from ruoyi-common/ruoyi-common-doc/pom.xml
+#12 7.143 [INFO] --------------------------------[ jar ]---------------------------------
+#12 7.344 [INFO] 
+#12 7.344 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-doc ---
+#12 7.349 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 7.357 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 7.357 [INFO] 
+#12 7.357 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-doc ---
+#12 7.359 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-doc:jar:6.0.0...
+#12 7.449 [INFO] 
+#12 7.449 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-doc ---
+#12 7.469 [INFO] Nothing to compile - all classes are up to date.
+#12 7.470 [INFO] 
+#12 7.470 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-doc ---
+#12 7.472 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-doc/src/test/resources
+#12 7.472 [INFO] 
+#12 7.472 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-doc ---
+#12 7.502 [INFO] Recompiling the module because of changed source code.
+#12 7.503 [INFO] Compiling 1 source file with javac [debug release 21] to target/test-classes
+#12 8.143 [INFO] 
+#12 8.143 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-doc ---
+#12 8.152 [INFO] 
+#12 8.152 [INFO] -------------------< org.dromara:ruoyi-common-json >--------------------
+#12 8.152 [INFO] Building ruoyi-common-json 6.0.0                                  [5/25]
+#12 8.152 [INFO]   from ruoyi-common/ruoyi-common-json/pom.xml
+#12 8.152 [INFO] --------------------------------[ jar ]---------------------------------
+#12 8.177 [INFO] 
+#12 8.177 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-json ---
+#12 8.179 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 8.187 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 8.187 [INFO] 
+#12 8.187 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-json ---
+#12 8.190 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-json:jar:6.0.0...
+#12 8.293 [INFO] 
+#12 8.293 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-json ---
+#12 8.313 [INFO] Nothing to compile - all classes are up to date.
+#12 8.313 [INFO] 
+#12 8.313 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-json ---
+#12 8.316 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-json/src/test/resources
+#12 8.316 [INFO] 
+#12 8.316 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-json ---
+#12 8.334 [INFO] Recompiling the module because of changed source code.
+#12 8.335 [INFO] Compiling 6 source files with javac [debug release 21] to target/test-classes
+#12 9.103 [INFO] 
+#12 9.103 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-json ---
+#12 9.113 [INFO] 
+#12 9.113 [INFO] -------------------< org.dromara:ruoyi-common-redis >-------------------
+#12 9.113 [INFO] Building ruoyi-common-redis 6.0.0                                 [6/25]
+#12 9.113 [INFO]   from ruoyi-common/ruoyi-common-redis/pom.xml
+#12 9.113 [INFO] --------------------------------[ jar ]---------------------------------
+#12 9.538 [INFO] 
+#12 9.538 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-redis ---
+#12 9.541 [INFO] Copying 2 resources from src/main/resources to target/classes
+#12 9.818 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 9.818 [INFO] 
+#12 9.818 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-redis ---
+#12 9.820 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-redis:jar:6.0.0...
+#12 9.893 [INFO] 
+#12 9.893 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-redis ---
+#12 9.913 [INFO] Nothing to compile - all classes are up to date.
+#12 9.914 [INFO] 
+#12 9.914 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-redis ---
+#12 9.915 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-redis/src/test/resources
+#12 9.915 [INFO] 
+#12 9.915 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-redis ---
+#12 9.933 [INFO] Recompiling the module because of changed source code.
+#12 9.933 [INFO] Compiling 5 source files with javac [debug release 21] to target/test-classes
+#12 11.40 [INFO] /build/ruoyi-common/ruoyi-common-redis/src/test/java/org/dromara/common/redis/RedisAspectContractTest.java: /build/ruoyi-common/ruoyi-common-redis/src/test/java/org/dromara/common/redis/RedisAspectContractTest.java uses unchecked or unsafe operations.
+#12 11.40 [INFO] /build/ruoyi-common/ruoyi-common-redis/src/test/java/org/dromara/common/redis/RedisAspectContractTest.java: Recompile with -Xlint:unchecked for details.
+#12 11.41 [INFO] 
+#12 11.41 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-redis ---
+#12 11.42 [INFO] 
+#12 11.42 [INFO] -------------------< org.dromara:ruoyi-common-mail >--------------------
+#12 11.42 [INFO] Building ruoyi-common-mail 6.0.0                                  [7/25]
+#12 11.42 [INFO]   from ruoyi-common/ruoyi-common-mail/pom.xml
+#12 11.42 [INFO] --------------------------------[ jar ]---------------------------------
+#12 11.46 [INFO] 
+#12 11.46 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-mail ---
+#12 11.46 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 11.47 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 11.47 [INFO] 
+#12 11.47 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-mail ---
+#12 11.47 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-mail:jar:6.0.0...
+#12 11.54 [INFO] 
+#12 11.54 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-mail ---
+#12 11.56 [INFO] Nothing to compile - all classes are up to date.
+#12 11.56 [INFO] 
+#12 11.56 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-mail ---
+#12 11.57 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-mail/src/test/resources
+#12 11.57 [INFO] 
+#12 11.57 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-mail ---
+#12 11.58 [INFO] Recompiling the module because of changed source code.
+#12 11.58 [INFO] Compiling 1 source file with javac [debug release 21] to target/test-classes
+#12 12.15 [INFO] 
+#12 12.15 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-mail ---
+#12 12.16 [INFO] 
+#12 12.16 [INFO] -----------------------< org.dromara:ruoyi-api >------------------------
+#12 12.16 [INFO] Building ruoyi-api 6.0.0                                          [8/25]
+#12 12.16 [INFO]   from ruoyi-api/pom.xml
+#12 12.16 [INFO] --------------------------------[ jar ]---------------------------------
+#12 12.17 [INFO] 
+#12 12.17 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-api ---
+#12 12.18 [INFO] skip non existing resourceDirectory /build/ruoyi-api/src/main/resources
+#12 12.18 [INFO] skip non existing resourceDirectory /build/ruoyi-api/src/main/resources
+#12 12.18 [INFO] 
+#12 12.18 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-api ---
+#12 12.18 [INFO] Generating flattened POM of project org.dromara:ruoyi-api:jar:6.0.0...
+#12 12.25 [INFO] 
+#12 12.25 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-api ---
+#12 12.26 [INFO] Nothing to compile - all classes are up to date.
+#12 12.26 [INFO] 
+#12 12.26 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-api ---
+#12 12.27 [INFO] skip non existing resourceDirectory /build/ruoyi-api/src/test/resources
+#12 12.27 [INFO] 
+#12 12.27 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-api ---
+#12 12.27 [INFO] No sources to compile
+#12 12.27 [INFO] 
+#12 12.27 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-api ---
+#12 12.28 [INFO] No tests to run.
+#12 12.28 [INFO] 
+#12 12.28 [INFO] ------------------< org.dromara:ruoyi-common-satoken >------------------
+#12 12.28 [INFO] Building ruoyi-common-satoken 6.0.0                               [9/25]
+#12 12.28 [INFO]   from ruoyi-common/ruoyi-common-satoken/pom.xml
+#12 12.28 [INFO] --------------------------------[ jar ]---------------------------------
+#12 12.35 [INFO] 
+#12 12.35 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-satoken ---
+#12 12.36 [INFO] Copying 2 resources from src/main/resources to target/classes
+#12 12.37 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 12.37 [INFO] 
+#12 12.37 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-satoken ---
+#12 12.37 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-satoken:jar:6.0.0...
+#12 12.46 [INFO] 
+#12 12.46 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-satoken ---
+#12 12.48 [INFO] Nothing to compile - all classes are up to date.
+#12 12.48 [INFO] 
+#12 12.48 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-satoken ---
+#12 12.48 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-satoken/src/test/resources
+#12 12.48 [INFO] 
+#12 12.48 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-satoken ---
+#12 12.51 [INFO] Recompiling the module because of changed source code.
+#12 12.51 [INFO] Compiling 1 source file with javac [debug release 21] to target/test-classes
+#12 13.24 [INFO] 
+#12 13.24 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-satoken ---
+#12 13.24 [INFO] 
+#12 13.24 [INFO] ------------------< org.dromara:ruoyi-common-mybatis >------------------
+#12 13.24 [INFO] Building ruoyi-common-mybatis 6.0.0                              [10/25]
+#12 13.24 [INFO]   from ruoyi-common/ruoyi-common-mybatis/pom.xml
+#12 13.24 [INFO] --------------------------------[ jar ]---------------------------------
+#12 13.52 [INFO] 
+#12 13.52 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-mybatis ---
+#12 13.52 [INFO] Copying 2 resources from src/main/resources to target/classes
+#12 13.81 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 13.82 [INFO] 
+#12 13.82 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-mybatis ---
+#12 13.82 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-mybatis:jar:6.0.0...
+#12 13.86 [INFO] 
+#12 13.86 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-mybatis ---
+#12 13.88 [INFO] Nothing to compile - all classes are up to date.
+#12 13.88 [INFO] 
+#12 13.88 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-mybatis ---
+#12 13.88 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-mybatis/src/test/resources
+#12 13.88 [INFO] 
+#12 13.88 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-mybatis ---
+#12 13.91 [INFO] Recompiling the module because of changed source code.
+#12 13.91 [INFO] Compiling 7 source files with javac [debug release 21] to target/test-classes
+#12 15.27 [INFO] 
+#12 15.27 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-mybatis ---
+#12 15.28 [INFO] 
+#12 15.28 [INFO] ----------------< org.dromara:ruoyi-common-translation >----------------
+#12 15.28 [INFO] Building ruoyi-common-translation 6.0.0                          [11/25]
+#12 15.28 [INFO]   from ruoyi-common/ruoyi-common-translation/pom.xml
+#12 15.28 [INFO] --------------------------------[ jar ]---------------------------------
+#12 15.29 [INFO] 
+#12 15.29 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-translation ---
+#12 15.29 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 15.30 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 15.30 [INFO] 
+#12 15.30 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-translation ---
+#12 15.30 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-translation:jar:6.0.0...
+#12 15.36 [INFO] 
+#12 15.36 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-translation ---
+#12 15.37 [INFO] Nothing to compile - all classes are up to date.
+#12 15.37 [INFO] 
+#12 15.38 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-translation ---
+#12 15.38 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-translation/src/test/resources
+#12 15.38 [INFO] 
+#12 15.38 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-translation ---
+#12 15.39 [INFO] Recompiling the module because of changed source code.
+#12 15.39 [INFO] Compiling 3 source files with javac [debug release 21] to target/test-classes
+#12 16.04 [INFO] 
+#12 16.04 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-translation ---
+#12 16.05 [INFO] 
+#12 16.05 [INFO] --------------------< org.dromara:ruoyi-common-oss >--------------------
+#12 16.05 [INFO] Building ruoyi-common-oss 6.0.0                                  [12/25]
+#12 16.05 [INFO]   from ruoyi-common/ruoyi-common-oss/pom.xml
+#12 16.05 [INFO] --------------------------------[ jar ]---------------------------------
+#12 16.19 [INFO] 
+#12 16.19 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-oss ---
+#12 16.20 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-oss/src/main/resources
+#12 16.20 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-oss/src/main/resources
+#12 16.20 [INFO] 
+#12 16.20 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-oss ---
+#12 16.20 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-oss:jar:6.0.0...
+#12 16.25 [INFO] 
+#12 16.25 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-oss ---
+#12 16.27 [INFO] Nothing to compile - all classes are up to date.
+#12 16.27 [INFO] 
+#12 16.27 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-oss ---
+#12 16.27 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-oss/src/test/resources
+#12 16.27 [INFO] 
+#12 16.27 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-oss ---
+#12 16.29 [INFO] Recompiling the module because of changed source code.
+#12 16.29 [INFO] Compiling 1 source file with javac [debug release 21] to target/test-classes
+#12 16.87 [INFO] 
+#12 16.87 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-oss ---
+#12 16.88 [INFO] 
+#12 16.88 [INFO] --------------------< org.dromara:ruoyi-common-log >--------------------
+#12 16.88 [INFO] Building ruoyi-common-log 6.0.0                                  [13/25]
+#12 16.88 [INFO]   from ruoyi-common/ruoyi-common-log/pom.xml
+#12 16.88 [INFO] --------------------------------[ jar ]---------------------------------
+#12 16.91 [INFO] 
+#12 16.91 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-log ---
+#12 16.91 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 16.92 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 16.92 [INFO] 
+#12 16.92 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-log ---
+#12 16.92 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-log:jar:6.0.0...
+#12 16.99 [INFO] 
+#12 16.99 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-log ---
+#12 17.02 [INFO] Nothing to compile - all classes are up to date.
+#12 17.02 [INFO] 
+#12 17.02 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-log ---
+#12 17.02 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-log/src/test/resources
+#12 17.02 [INFO] 
+#12 17.02 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-log ---
+#12 17.04 [INFO] Recompiling the module because of changed source code.
+#12 17.04 [INFO] Compiling 1 source file with javac [debug release 21] to target/test-classes
+#12 17.69 [INFO] 
+#12 17.69 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-log ---
+#12 17.69 [INFO] 
+#12 17.69 [INFO] -------------------< org.dromara:ruoyi-common-excel >-------------------
+#12 17.69 [INFO] Building ruoyi-common-excel 6.0.0                                [14/25]
+#12 17.69 [INFO]   from ruoyi-common/ruoyi-common-excel/pom.xml
+#12 17.69 [INFO] --------------------------------[ jar ]---------------------------------
+#12 17.91 [INFO] 
+#12 17.91 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-excel ---
+#12 17.91 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-excel/src/main/resources
+#12 17.91 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-excel/src/main/resources
+#12 17.91 [INFO] 
+#12 17.91 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-excel ---
+#12 17.91 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-excel:jar:6.0.0...
+#12 17.98 [INFO] 
+#12 17.98 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-excel ---
+#12 18.01 [INFO] Nothing to compile - all classes are up to date.
+#12 18.01 [INFO] 
+#12 18.01 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-excel ---
+#12 18.01 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-excel/src/test/resources
+#12 18.01 [INFO] 
+#12 18.01 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-excel ---
+#12 18.02 [INFO] Recompiling the module because of changed source code.
+#12 18.02 [INFO] Compiling 4 source files with javac [debug release 21] to target/test-classes
+#12 18.63 [INFO] 
+#12 18.63 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-excel ---
+#12 18.63 [INFO] 
+#12 18.63 [INFO] --------------------< org.dromara:ruoyi-common-sms >--------------------
+#12 18.63 [INFO] Building ruoyi-common-sms 6.0.0                                  [15/25]
+#12 18.63 [INFO]   from ruoyi-common/ruoyi-common-sms/pom.xml
+#12 18.63 [INFO] --------------------------------[ jar ]---------------------------------
+#12 18.69 [INFO] 
+#12 18.69 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-sms ---
+#12 18.70 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 19.54 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 19.54 [INFO] 
+#12 19.54 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-sms ---
+#12 19.54 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-sms:jar:6.0.0...
+#12 19.59 [INFO] 
+#12 19.59 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-sms ---
+#12 19.60 [INFO] Nothing to compile - all classes are up to date.
+#12 19.60 [INFO] 
+#12 19.60 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-sms ---
+#12 19.60 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-sms/src/test/resources
+#12 19.60 [INFO] 
+#12 19.60 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-sms ---
+#12 19.62 [INFO] Recompiling the module because of changed source code.
+#12 19.62 [INFO] Compiling 1 source file with javac [debug release 21] to target/test-classes
+#12 19.99 [INFO] 
+#12 19.99 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-sms ---
+#12 19.99 [INFO] 
+#12 19.99 [INFO] -----------------< org.dromara:ruoyi-common-security >------------------
+#12 19.99 [INFO] Building ruoyi-common-security 6.0.0                             [16/25]
+#12 19.99 [INFO]   from ruoyi-common/ruoyi-common-security/pom.xml
+#12 19.99 [INFO] --------------------------------[ jar ]---------------------------------
+#12 20.02 [INFO] 
+#12 20.02 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-security ---
+#12 20.02 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 20.34 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 20.34 [INFO] 
+#12 20.34 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-security ---
+#12 20.34 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-security:jar:6.0.0...
+#12 20.39 [INFO] 
+#12 20.39 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-security ---
+#12 20.40 [INFO] Nothing to compile - all classes are up to date.
+#12 20.40 [INFO] 
+#12 20.40 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-security ---
+#12 20.40 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-security/src/test/resources
+#12 20.40 [INFO] 
+#12 20.40 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-security ---
+#12 20.42 [INFO] Recompiling the module because of changed source code.
+#12 20.42 [INFO] Compiling 1 source file with javac [debug release 21] to target/test-classes
+#12 20.86 [INFO] 
+#12 20.86 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-security ---
+#12 20.86 [INFO] 
+#12 20.86 [INFO] --------------------< org.dromara:ruoyi-common-web >--------------------
+#12 20.86 [INFO] Building ruoyi-common-web 6.0.0                                  [17/25]
+#12 20.86 [INFO]   from ruoyi-common/ruoyi-common-web/pom.xml
+#12 20.86 [INFO] --------------------------------[ jar ]---------------------------------
+#12 21.01 [INFO] 
+#12 21.01 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-web ---
+#12 21.01 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 21.02 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 21.02 [INFO] 
+#12 21.02 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-web ---
+#12 21.02 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-web:jar:6.0.0...
+#12 21.07 [INFO] 
+#12 21.08 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-web ---
+#12 21.09 [INFO] Nothing to compile - all classes are up to date.
+#12 21.09 [INFO] 
+#12 21.09 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-web ---
+#12 21.09 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-web/src/test/resources
+#12 21.09 [INFO] 
+#12 21.09 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-web ---
+#12 21.10 [INFO] Recompiling the module because of changed source code.
+#12 21.10 [INFO] Compiling 2 source files with javac [debug release 21] to target/test-classes
+#12 21.59 [INFO] 
+#12 21.59 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-web ---
+#12 21.60 [INFO] 
+#12 21.60 [INFO] -----------------< org.dromara:ruoyi-common-sensitive >-----------------
+#12 21.60 [INFO] Building ruoyi-common-sensitive 6.0.0                            [18/25]
+#12 21.60 [INFO]   from ruoyi-common/ruoyi-common-sensitive/pom.xml
+#12 21.60 [INFO] --------------------------------[ jar ]---------------------------------
+#12 21.61 [INFO] 
+#12 21.61 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-sensitive ---
+#12 21.61 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 21.62 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 21.62 [INFO] 
+#12 21.62 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-sensitive ---
+#12 21.62 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-sensitive:jar:6.0.0...
+#12 21.66 [INFO] 
+#12 21.66 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-sensitive ---
+#12 21.68 [INFO] Nothing to compile - all classes are up to date.
+#12 21.68 [INFO] 
+#12 21.68 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-sensitive ---
+#12 21.68 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-sensitive/src/test/resources
+#12 21.68 [INFO] 
+#12 21.68 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-sensitive ---
+#12 21.70 [INFO] Recompiling the module because of changed source code.
+#12 21.70 [INFO] Compiling 1 source file with javac [debug release 21] to target/test-classes
+#12 22.03 [INFO] 
+#12 22.03 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-sensitive ---
+#12 22.04 [INFO] 
+#12 22.04 [INFO] ------------------< org.dromara:ruoyi-common-encrypt >------------------
+#12 22.04 [INFO] Building ruoyi-common-encrypt 6.0.0                              [19/25]
+#12 22.04 [INFO]   from ruoyi-common/ruoyi-common-encrypt/pom.xml
+#12 22.04 [INFO] --------------------------------[ jar ]---------------------------------
+#12 22.07 [INFO] 
+#12 22.07 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-encrypt ---
+#12 22.07 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 22.08 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 22.08 [INFO] 
+#12 22.08 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-encrypt ---
+#12 22.08 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-encrypt:jar:6.0.0...
+#12 22.16 [INFO] 
+#12 22.16 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-encrypt ---
+#12 22.18 [INFO] Nothing to compile - all classes are up to date.
+#12 22.18 [INFO] 
+#12 22.18 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-encrypt ---
+#12 22.18 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-encrypt/src/test/resources
+#12 22.18 [INFO] 
+#12 22.18 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-encrypt ---
+#12 22.20 [INFO] Recompiling the module because of changed source code.
+#12 22.20 [INFO] Compiling 2 source files with javac [debug release 21] to target/test-classes
+#12 22.74 [INFO] 
+#12 22.74 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-encrypt ---
+#12 22.75 [INFO] 
+#12 22.75 [INFO] -------------------< org.dromara:ruoyi-common-push >--------------------
+#12 22.75 [INFO] Building ruoyi-common-push 6.0.0                                 [20/25]
+#12 22.75 [INFO]   from ruoyi-common/ruoyi-common-push/pom.xml
+#12 22.75 [INFO] --------------------------------[ jar ]---------------------------------
+#12 22.77 [INFO] 
+#12 22.77 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-push ---
+#12 22.78 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 22.83 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 22.83 [INFO] 
+#12 22.83 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-push ---
+#12 22.83 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-push:jar:6.0.0...
+#12 22.88 [INFO] 
+#12 22.88 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-push ---
+#12 22.90 [INFO] Nothing to compile - all classes are up to date.
+#12 22.90 [INFO] 
+#12 22.90 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-push ---
+#12 22.90 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-push/src/test/resources
+#12 22.90 [INFO] 
+#12 22.90 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-push ---
+#12 22.92 [INFO] Recompiling the module because of changed source code.
+#12 22.92 [INFO] Compiling 1 source file with javac [debug release 21] to target/test-classes
+#12 23.30 [INFO] 
+#12 23.30 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-push ---
+#12 23.30 [INFO] 
+#12 23.30 [INFO] ---------------------< org.dromara:ruoyi-modules >----------------------
+#12 23.30 [INFO] Building ruoyi-modules 6.0.0                                     [21/25]
+#12 23.30 [INFO]   from ruoyi-modules/pom.xml
+#12 23.30 [INFO] --------------------------------[ pom ]---------------------------------
+#12 23.31 [INFO] 
+#12 23.31 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-modules ---
+#12 23.31 [INFO] Generating flattened POM of project org.dromara:ruoyi-modules:pom:6.0.0...
+#12 23.37 [INFO] 
+#12 23.37 [INFO] ----------------------< org.dromara:ruoyi-system >----------------------
+#12 23.37 [INFO] Building ruoyi-system 6.0.0                                      [22/25]
+#12 23.37 [INFO]   from ruoyi-modules/ruoyi-system/pom.xml
+#12 23.37 [INFO] --------------------------------[ jar ]---------------------------------
+#12 23.47 [INFO] 
+#12 23.47 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-system ---
+#12 23.47 [INFO] Copying 21 resources from src/main/resources to target/classes
+#12 23.61 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 23.61 [INFO] 
+#12 23.61 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-system ---
+#12 23.61 [INFO] Generating flattened POM of project org.dromara:ruoyi-system:jar:6.0.0...
+#12 23.65 [INFO] 
+#12 23.65 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-system ---
+#12 23.69 [INFO] Nothing to compile - all classes are up to date.
+#12 23.69 [INFO] 
+#12 23.69 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-system ---
+#12 23.69 [INFO] skip non existing resourceDirectory /build/ruoyi-modules/ruoyi-system/src/test/resources
+#12 23.69 [INFO] 
+#12 23.70 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-system ---
+#12 23.70 [INFO] No sources to compile
+#12 23.70 [INFO] 
+#12 23.70 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-system ---
+#12 23.70 [INFO] No tests to run.
+#12 23.70 [INFO] 
+#12 23.70 [INFO] -----------------< org.dromara:ruoyi-common-liteflow >------------------
+#12 23.70 [INFO] Building ruoyi-common-liteflow 6.0.0                             [23/25]
+#12 23.70 [INFO]   from ruoyi-common/ruoyi-common-liteflow/pom.xml
+#12 23.70 [INFO] --------------------------------[ jar ]---------------------------------
+#12 23.75 [INFO] 
+#12 23.75 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-common-liteflow ---
+#12 23.75 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 23.76 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 23.76 [INFO] 
+#12 23.76 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-common-liteflow ---
+#12 23.76 [INFO] Generating flattened POM of project org.dromara:ruoyi-common-liteflow:jar:6.0.0...
+#12 23.81 [INFO] 
+#12 23.81 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-common-liteflow ---
+#12 23.82 [INFO] Nothing to compile - all classes are up to date.
+#12 23.82 [INFO] 
+#12 23.82 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-common-liteflow ---
+#12 23.82 [INFO] skip non existing resourceDirectory /build/ruoyi-common/ruoyi-common-liteflow/src/test/resources
+#12 23.82 [INFO] 
+#12 23.82 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-common-liteflow ---
+#12 23.83 [INFO] Recompiling the module because of changed source code.
+#12 23.83 [INFO] Compiling 2 source files with javac [debug release 21] to target/test-classes
+#12 24.29 [INFO] 
+#12 24.29 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-common-liteflow ---
+#12 24.30 [INFO] 
+#12 24.30 [INFO] ---------------------< org.dromara:ruoyi-workflow >---------------------
+#12 24.30 [INFO] Building ruoyi-workflow 6.0.0                                    [24/25]
+#12 24.30 [INFO]   from ruoyi-modules/ruoyi-workflow/pom.xml
+#12 24.30 [INFO] --------------------------------[ jar ]---------------------------------
+#12 24.41 [INFO] 
+#12 24.41 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-workflow ---
+#12 24.41 [INFO] Copying 11 resources from src/main/resources to target/classes
+#12 24.48 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 24.48 [INFO] 
+#12 24.48 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-workflow ---
+#12 24.48 [INFO] Generating flattened POM of project org.dromara:ruoyi-workflow:jar:6.0.0...
+#12 24.53 [INFO] 
+#12 24.53 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-workflow ---
+#12 24.56 [INFO] Nothing to compile - all classes are up to date.
+#12 24.56 [INFO] 
+#12 24.56 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-workflow ---
+#12 24.57 [INFO] skip non existing resourceDirectory /build/ruoyi-modules/ruoyi-workflow/src/test/resources
+#12 24.57 [INFO] 
+#12 24.57 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-workflow ---
+#12 24.57 [INFO] No sources to compile
+#12 24.57 [INFO] 
+#12 24.57 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-workflow ---
+#12 24.58 [INFO] No tests to run.
+#12 24.58 [INFO] 
+#12 24.58 [INFO] ---------------------< org.dromara:ruoyi-jiafeng >----------------------
+#12 24.58 [INFO] Building ruoyi-jiafeng 6.0.0                                     [25/25]
+#12 24.58 [INFO]   from ruoyi-modules/ruoyi-jiafeng/pom.xml
+#12 24.58 [INFO] --------------------------------[ jar ]---------------------------------
+#12 24.64 [INFO] 
+#12 24.64 [INFO] --- resources:3.3.1:resources (default-resources) @ ruoyi-jiafeng ---
+#12 24.64 [INFO] Copying 16 resources from src/main/resources to target/classes
+#12 24.76 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 24.76 [INFO] 
+#12 24.76 [INFO] --- flatten:1.7.3:flatten (flatten) @ ruoyi-jiafeng ---
+#12 24.76 [INFO] Generating flattened POM of project org.dromara:ruoyi-jiafeng:jar:6.0.0...
+#12 24.80 [INFO] 
+#12 24.80 [INFO] --- compiler:3.15.0:compile (default-compile) @ ruoyi-jiafeng ---
+#12 24.85 [INFO] Nothing to compile - all classes are up to date.
+#12 24.85 [INFO] 
+#12 24.85 [INFO] --- resources:3.3.1:testResources (default-testResources) @ ruoyi-jiafeng ---
+#12 24.86 [INFO] skip non existing resourceDirectory /build/ruoyi-modules/ruoyi-jiafeng/src/test/resources
+#12 24.86 [INFO] 
+#12 24.86 [INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ ruoyi-jiafeng ---
+#12 24.90 [INFO] Recompiling the module because of changed source code.
+#12 24.90 [INFO] Compiling 27 source files with javac [debug release 21] to target/test-classes
+#12 26.93 [INFO] /build/ruoyi-modules/ruoyi-jiafeng/src/test/java/org/dromara/jiafeng/JfAccessTest.java: Some input files use unchecked or unsafe operations.
+#12 26.93 [INFO] /build/ruoyi-modules/ruoyi-jiafeng/src/test/java/org/dromara/jiafeng/JfAccessTest.java: Recompile with -Xlint:unchecked for details.
+#12 26.93 [INFO] 
+#12 26.93 [INFO] --- surefire:3.5.5:test (default-test) @ ruoyi-jiafeng ---
+#12 26.94 [INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+#12 26.99 [INFO] 
+#12 26.99 [INFO] -------------------------------------------------------
+#12 26.99 [INFO]  T E S T S
+#12 26.99 [INFO] -------------------------------------------------------
+#12 28.63 [INFO] Running org.dromara.jiafeng.JfSchemaTest
+#12 28.75 Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+#12 29.12 OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+#12 29.15 WARNING: A Java agent has been loaded dynamically (/root/.m2/repository/net/bytebuddy/byte-buddy-agent/1.18.10/byte-buddy-agent-1.18.10.jar)
+#12 29.15 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+#12 29.15 WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+#12 29.15 WARNING: Dynamic loading of agents will be disallowed by default in a future release
+#12 30.88 [INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.199 s -- in org.dromara.jiafeng.JfSchemaTest
+#12 30.88 [INFO] Running org.dromara.jiafeng.JfSocialAuthorizationTest
+#12 31.23 [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.384 s -- in org.dromara.jiafeng.JfSocialAuthorizationTest
+#12 31.23 [INFO] Running org.dromara.jiafeng.JfDownloadLinksTest
+#12 31.74 [INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.520 s -- in org.dromara.jiafeng.JfDownloadLinksTest
+#12 31.74 [INFO] Running org.dromara.jiafeng.JfSearchTest
+#12 34.39 [INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.642 s -- in org.dromara.jiafeng.JfSearchTest
+#12 34.39 [INFO] Running org.dromara.jiafeng.JfReviewWindowsTest
+#12 34.50 [INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.102 s -- in org.dromara.jiafeng.JfReviewWindowsTest
+#12 34.51 [INFO] Running org.dromara.jiafeng.JfRequestAuditTest
+#12 34.54 08:32:03.022 [main] WARN org.dromara.jiafeng.JfRequestAuditFilter -- security_request requestId=req_93bae789ec4f4d8d8657851dc240362d subject=unavailable method=POST route=/api/v1/auth/login target=- status=401
+#12 34.54 08:32:03.028 [main] ERROR org.dromara.jiafeng.JfErrors -- Jiafeng API failure requestId= exceptionType=java.lang.IllegalStateException
+#12 34.55 [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.056 s -- in org.dromara.jiafeng.JfRequestAuditTest
+#12 34.55 [INFO] Running org.dromara.jiafeng.JfAiTest
+#12 34.86 [INFO] Tests run: 24, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.290 s -- in org.dromara.jiafeng.JfAiTest
+#12 34.86 [INFO] Running org.dromara.jiafeng.JfAccessTest
+#12 34.88 [INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.035 s -- in org.dromara.jiafeng.JfAccessTest
+#12 34.88 [INFO] Running org.dromara.jiafeng.JfSchemaMigrationTest
+#12 35.35 [INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.467 s -- in org.dromara.jiafeng.JfSchemaMigrationTest
+#12 35.35 [INFO] Running org.dromara.jiafeng.JfAiQueriesTest
+#12 35.49 [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.145 s -- in org.dromara.jiafeng.JfAiQueriesTest
+#12 35.49 [INFO] Running org.dromara.jiafeng.JfCredentialsTest
+#12 35.51 [INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in org.dromara.jiafeng.JfCredentialsTest
+#12 35.51 [INFO] Running org.dromara.jiafeng.JfMediaAccessibilityTest
+#12 35.54 [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.016 s -- in org.dromara.jiafeng.JfMediaAccessibilityTest
+#12 35.54 [INFO] Running org.dromara.jiafeng.JfMultipartErrorsTest
+#12 35.60 [INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.050 s -- in org.dromara.jiafeng.JfMultipartErrorsTest
+#12 35.60 [INFO] Running org.dromara.jiafeng.JfConsultationsTest
+#12 35.61 [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.018 s -- in org.dromara.jiafeng.JfConsultationsTest
+#12 35.61 [INFO] Running org.dromara.jiafeng.JfExportAuthorizationTest
+#12 35.69 [INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.072 s -- in org.dromara.jiafeng.JfExportAuthorizationTest
+#12 35.69 [INFO] Running org.dromara.jiafeng.JfAudioTest
+#12 35.70 [INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.015 s -- in org.dromara.jiafeng.JfAudioTest
+#12 35.70 [INFO] Running org.dromara.jiafeng.JfPublicCacheTest
+#12 36.53 [INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.827 s -- in org.dromara.jiafeng.JfPublicCacheTest
+#12 36.53 [INFO] Running org.dromara.jiafeng.JfAiClientTest
+#12 36.57 [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.042 s -- in org.dromara.jiafeng.JfAiClientTest
+#12 36.57 [INFO] Running org.dromara.jiafeng.JfAccountsTest
+#12 36.70 [INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.129 s -- in org.dromara.jiafeng.JfAccountsTest
+#12 36.70 [INFO] Running org.dromara.jiafeng.JfReviewAuthorizationTest
+#12 36.94 [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.237 s -- in org.dromara.jiafeng.JfReviewAuthorizationTest
+#12 36.94 [INFO] Running org.dromara.jiafeng.JfJobsTest
+#12 37.25 08:32:05.712 [main] WARN org.apache.fontbox.ttf.CmapSubtable -- Format 14 cmap table is not supported and will be ignored
+#12 38.36 [INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.401 s -- in org.dromara.jiafeng.JfJobsTest
+#12 38.36 [INFO] Running org.dromara.jiafeng.JfPublicProjectionTest
+#12 38.86 [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.511 s -- in org.dromara.jiafeng.JfPublicProjectionTest
+#12 38.86 [INFO] Running org.dromara.jiafeng.JfReviewVersionsTest
+#12 38.94 [INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.081 s -- in org.dromara.jiafeng.JfReviewVersionsTest
+#12 38.94 [INFO] Running org.dromara.jiafeng.JfPersonalRecordsTest
+#12 38.98 [INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.036 s -- in org.dromara.jiafeng.JfPersonalRecordsTest
+#12 38.98 [INFO] Running org.dromara.jiafeng.JfReplayScopeTest
+#12 39.26 [INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.276 s -- in org.dromara.jiafeng.JfReplayScopeTest
+#12 39.26 [INFO] Running org.dromara.jiafeng.JfAiKnowledgeTest
+#12 39.30 [INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.038 s -- in org.dromara.jiafeng.JfAiKnowledgeTest
+#12 39.30 [INFO] Running org.dromara.jiafeng.JfEducationTest
+#12 39.35 [INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.040 s -- in org.dromara.jiafeng.JfEducationTest
+#12 39.45 [INFO] 
+#12 39.45 [INFO] Results:
+#12 39.45 [INFO] 
+#12 39.45 [INFO] Tests run: 179, Failures: 0, Errors: 0, Skipped: 0
+#12 39.45 [INFO] 
+#12 39.46 [INFO] ------------------------------------------------------------------------
+#12 39.46 [INFO] Reactor Summary for RuoYi-Vue-Plus 6.0.0:
+#12 39.46 [INFO] 
+#12 39.46 [INFO] RuoYi-Vue-Plus ..................................... SUCCESS [  0.693 s]
+#12 39.46 [INFO] ruoyi-common ....................................... SUCCESS [  0.170 s]
+#12 39.46 [INFO] ruoyi-common-core .................................. SUCCESS [  3.753 s]
+#12 39.46 [INFO] ruoyi-common-doc ................................... SUCCESS [  1.009 s]
+#12 39.46 [INFO] ruoyi-common-json .................................. SUCCESS [  0.962 s]
+#12 39.46 [INFO] ruoyi-common-redis ................................. SUCCESS [  2.304 s]
+#12 39.46 [INFO] ruoyi-common-mail .................................. SUCCESS [  0.738 s]
+#12 39.46 [INFO] ruoyi-api .......................................... SUCCESS [  0.121 s]
+#12 39.46 [INFO] ruoyi-common-satoken ............................... SUCCESS [  0.968 s]
+#12 39.46 [INFO] ruoyi-common-mybatis ............................... SUCCESS [  2.032 s]
+#12 39.46 [INFO] ruoyi-common-translation ........................... SUCCESS [  0.775 s]
+#12 39.46 [INFO] ruoyi-common-oss ................................... SUCCESS [  0.826 s]
+#12 39.46 [INFO] ruoyi-common-log ................................... SUCCESS [  0.815 s]
+#12 39.46 [INFO] ruoyi-common-excel ................................. SUCCESS [  0.941 s]
+#12 39.46 [INFO] ruoyi-common-sms ................................... SUCCESS [  1.359 s]
+#12 39.46 [INFO] ruoyi-common-security .............................. SUCCESS [  0.869 s]
+#12 39.46 [INFO] ruoyi-common-web ................................... SUCCESS [  0.734 s]
+#12 39.46 [INFO] ruoyi-common-sensitive ............................. SUCCESS [  0.440 s]
+#12 39.46 [INFO] ruoyi-common-encrypt ............................... SUCCESS [  0.712 s]
+#12 39.46 [INFO] ruoyi-common-push .................................. SUCCESS [  0.554 s]
+#12 39.46 [INFO] ruoyi-modules ...................................... SUCCESS [  0.068 s]
+#12 39.46 [INFO] ruoyi-system ....................................... SUCCESS [  0.332 s]
+#12 39.46 [INFO] ruoyi-common-liteflow .............................. SUCCESS [  0.597 s]
+#12 39.46 [INFO] ruoyi-workflow ..................................... SUCCESS [  0.278 s]
+#12 39.46 [INFO] ruoyi-jiafeng ...................................... SUCCESS [ 14.882 s]
+#12 39.46 [INFO] ------------------------------------------------------------------------
+#12 39.46 [INFO] BUILD SUCCESS
+#12 39.46 [INFO] ------------------------------------------------------------------------
+#12 39.46 [INFO] Total time:  37.499 s
+#12 39.46 [INFO] Finished at: 2026-10-15T08:32:07Z
+#12 39.46 [INFO] ------------------------------------------------------------------------
+#12 DONE 41.5s
+
+#13 exporting to image
+#13 exporting layers
+#13 exporting layers 8.5s done
+#13 exporting manifest sha256:3df0a0cd4e5881b1c82ffc8315035470920a6a03ac5e20f54678e6d8bbd8cf94 0.0s done
+#13 exporting config sha256:63315f203f9a94cba722ca328ee507913fd4d790ec910db7e4ec82b4ccd360b8 0.0s done
+#13 exporting attestation manifest sha256:9d0d5ac4e67c3e8841974157c615e8a12117fa6367ebae1555f680a419b3b304
+#13 exporting attestation manifest sha256:9d0d5ac4e67c3e8841974157c615e8a12117fa6367ebae1555f680a419b3b304 0.1s done
+#13 exporting manifest list sha256:08167ca4052f84d729148fd04099a831c4d165bffc85392695db81483294ffc0 0.0s done
+#13 naming to docker.io/library/jiafeng-server:security-verify-20261015 done
+#13 unpacking to docker.io/library/jiafeng-server:security-verify-20261015
+#13 unpacking to docker.io/library/jiafeng-server:security-verify-20261015 2.3s done
+#13 DONE 11.0s

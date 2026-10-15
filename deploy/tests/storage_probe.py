@@ -12,15 +12,12 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from probe_scope import isolated_deployment
 
 urlopen = urllib.request.build_opener(urllib.request.ProxyHandler({})).open
 
 ROOT = Path(__file__).resolve().parents[2]
-values = {}
-for line in (ROOT / "deploy/.env").read_text().splitlines():
-    if line and not line.startswith("#"):
-        key, value = line.split("=", 1)
-        values[key] = value
+ENV_PATH, values, lifecycle = isolated_deployment()
 endpoint = values["JIAFENG_S3_PUBLIC_ENDPOINT"].rstrip("/")
 key = "verification/中文文件-" + secrets.token_hex(6) + ".txt"
 path = "/jiafeng-private/" + urllib.parse.quote(key, safe="/")
@@ -76,6 +73,20 @@ try:
         results["anonymousDenied"] = False
     except urllib.error.HTTPError as error:
         results["anonymousDenied"] = error.code == 403
+    for label, anonymous in (
+        ("anonymousHeadDenied", urllib.request.Request(endpoint + path, method="HEAD")),
+        ("anonymousBucketListingDenied", urllib.request.Request(endpoint + "/jiafeng-private?list-type=2")),
+        ("anonymousWriteDenied", urllib.request.Request(endpoint + path, data=b"synthetic anonymous write probe", method="PUT")),
+    ):
+        try:
+            with urlopen(anonymous, timeout=10):
+                results[label] = False
+        except urllib.error.HTTPError as error:
+            results[label] = error.code == 403
+    # If the negative write check unexpectedly succeeded, repair only our own
+    # random fixture so positive signed operations can still be assessed.
+    if not results["anonymousWriteDenied"]:
+        signed("PUT", content)
     url = signed("GET", expires=1)
     results["signedDownload"] = urlopen(url).read() == content
     time.sleep(2)
@@ -85,7 +96,7 @@ try:
     except urllib.error.HTTPError as error:
         results["expiredSignatureDenied"] = error.code == 403
     if os.environ.get("CHECK_STORAGE_RESTART") == "1":
-        subprocess.run(["docker", "compose", "--env-file", str(ROOT / "deploy/.env"), "-f", str(ROOT / "deploy/compose.yaml"), "restart", "storage"], check=True, stdout=subprocess.DEVNULL)
+        lifecycle.compose("restart", "storage", stdout=subprocess.DEVNULL)
         for attempt in range(30):
             try:
                 results["restartKeepsBytes"] = signed("GET") == content
@@ -97,5 +108,7 @@ try:
 finally:
     signed("DELETE")
 print(json.dumps(results, ensure_ascii=False, indent=2))
+(ENV_PATH.parent / "storage-security-check.json").write_text(json.dumps({
+    "sourceProject": values["COMPOSE_PROJECT_NAME"], "checks": results}, ensure_ascii=False, indent=2) + "\n")
 if not all(results.values()):
     raise SystemExit(1)

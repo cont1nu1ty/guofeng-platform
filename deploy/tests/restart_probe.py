@@ -12,14 +12,15 @@ from pathlib import Path
 import re
 import subprocess
 import urllib.request
+from probe_scope import isolated_deployment
 
 ROOT = Path(__file__).resolve().parents[2]
-ENV_PATH = Path(os.environ.get("JIAFENG_ENV_FILE", ROOT / "deploy/.env"))
-values = dict(line.split("=", 1) for line in ENV_PATH.read_text().splitlines()
-              if line and not line.startswith("#"))
+ENV_PATH, values, lifecycle = isolated_deployment()
 origin = "http://127.0.0.1:" + values["JIAFENG_HTTP_PORT"]
 opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 fixture = json.loads((ROOT / "deploy/.local/backup-check.json").read_text())
+if fixture.get("sourceProject") != values["COMPOSE_PROJECT_NAME"]:
+    raise ValueError("Backup fixture belongs to another project; run backup_restore.py in this isolated project first")
 compose = ["docker", "compose", "--env-file", str(ENV_PATH),
            "-f", str(ROOT / "deploy/compose.yaml")]
 runtime_env = {key: value for key, value in os.environ.items()

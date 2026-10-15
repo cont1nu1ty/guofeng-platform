@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import { getToken, removeToken } from "../utils/auth";
+import { currentSessionEpoch, getToken, removeToken } from "../utils/auth";
 import { apiBase } from "./mode";
 export const connection = reactive({
   loading: false,
@@ -27,6 +27,7 @@ export async function api<T>(
   const timeout = setTimeout(() => controller.abort(), 30000);
   const headers = new Headers(options.headers);
   const token = getToken();
+  const epoch = currentSessionEpoch();
   if (token) headers.set("Authorization", `Bearer ${token}`);
   if (options.body && !(options.body instanceof FormData))
     headers.set("Content-Type", "application/json");
@@ -39,6 +40,10 @@ export async function api<T>(
     });
     const contentType = response.headers.get("content-type") || "";
     const body = contentType.includes("json") ? await response.json() : null;
+    // Check after consuming the body as it can arrive after a new login too.
+    // Never return another account's payload or expire the current token.
+    if (epoch !== currentSessionEpoch() || token !== getToken())
+      throw new ApiError("账户已改变，本次响应未应用，请重新操作。", "SESSION_CHANGED");
     if (!response.ok) {
       if (response.status === 401) {
         removeToken();

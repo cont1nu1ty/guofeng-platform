@@ -10,7 +10,9 @@
     "pom.xml",
     "ruoyi-admin/pom.xml",
     "ruoyi-common/pom.xml",
-    "ruoyi-modules/pom.xml"
+    "ruoyi-modules/pom.xml",
+    "ruoyi-admin/src/main/resources/logback-plus.xml",
+    "ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/service/impl/SysSocialServiceImpl.java"
   ],
   "additions": [
     "ruoyi-modules/ruoyi-jiafeng",

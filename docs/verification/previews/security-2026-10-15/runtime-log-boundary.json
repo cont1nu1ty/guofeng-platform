@@ -1,0 +1,17 @@
+{
+  "server": {
+    "lastLines": 500,
+    "containsPresignedQuery": false,
+    "containsBearerHeader": false
+  },
+  "ai": {
+    "lastLines": 500,
+    "containsPresignedQuery": false,
+    "containsBearerHeader": false
+  },
+  "storage": {
+    "lastLines": 500,
+    "containsPresignedQuery": false,
+    "containsBearerHeader": false
+  }
+}

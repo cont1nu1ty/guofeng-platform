@@ -1,0 +1,35 @@
+Command: docker run --rm --network none --read-only --tmpfs /tmp:rw,noexec,nosuid,size=64m --cap-drop ALL --security-opt no-new-privileges:true --memory 768m --pids-limit 128 -v /home/bull/Documents/guofeng-platform/apps/ai/test_service.py:/app/test_service.py:ro jiafeng-ai:security-20261015 python -m unittest -v test_service
+
+test_bad_review_response_is_explicit_failure (test_service.AdapterTests.test_bad_review_response_is_explicit_failure) ... ok
+test_compressed_oversize_and_external_entity_docx_fail_closed (test_service.AdapterTests.test_compressed_oversize_and_external_entity_docx_fail_closed) ... ok
+test_concurrency_limit (test_service.AdapterTests.test_concurrency_limit) ... ok
+test_conversation_rejects_system_message (test_service.AdapterTests.test_conversation_rejects_system_message) ... ok
+test_disabled_fails_without_demo_fallback (test_service.AdapterTests.test_disabled_fails_without_demo_fallback) ... ok
+test_empty_or_truncated_output_fails (test_service.AdapterTests.test_empty_or_truncated_output_fails) ... ok
+test_encrypted_and_damaged_pdf_fail_before_ocr (test_service.AdapterTests.test_encrypted_and_damaged_pdf_fail_before_ocr) ... ok
+test_generation_passes_sources_as_data (test_service.AdapterTests.test_generation_passes_sources_as_data) ... ok
+test_input_word_block_does_not_call_provider (test_service.AdapterTests.test_input_word_block_does_not_call_provider) ... ok
+test_internal_auth_and_redirect_are_closed (test_service.AdapterTests.test_internal_auth_and_redirect_are_closed) ... ok
+test_local_vision_endpoint_uses_compatible_chat (test_service.AdapterTests.test_local_vision_endpoint_uses_compatible_chat) ... ok
+test_no_evidence_never_calls_model (test_service.AdapterTests.test_no_evidence_never_calls_model) ... ok
+test_ocr_uses_base64_and_chinese_filename_not_public_url (test_service.AdapterTests.test_ocr_uses_base64_and_chinese_filename_not_public_url) ... ok
+test_old_doc_and_damaged_docx_have_explicit_failure (test_service.AdapterTests.test_old_doc_and_damaged_docx_have_explicit_failure) ... ok
+test_output_word_block_is_not_saved_as_success (test_service.AdapterTests.test_output_word_block_is_not_saved_as_success) ... ok
+test_oversize_file_and_bad_base64_rejected (test_service.AdapterTests.test_oversize_file_and_bad_base64_rejected) ... ok
+test_pdf_parser_resource_policy (test_service.AdapterTests.test_pdf_parser_resource_policy) ... ok
+test_review_allows_flagged_input_and_filters_invented_quotes (test_service.AdapterTests.test_review_allows_flagged_input_and_filters_invented_quotes) ... ok
+test_spoofed_file_rejected (test_service.AdapterTests.test_spoofed_file_rejected) ... ok
+test_text_and_docx_extract_locally (test_service.AdapterTests.test_text_and_docx_extract_locally) ... ok
+test_http_auth_and_no_credentials_in_status (test_service.HttpBoundaryTests.test_http_auth_and_no_credentials_in_status) ... ok
+test_real_concurrent_requests_are_bounded_and_slots_recover (test_service.HttpBoundaryTests.test_real_concurrent_requests_are_bounded_and_slots_recover) ... ok
+test_regular_and_chunked_oversize_bodies_are_refused_before_parsing (test_service.HttpBoundaryTests.test_regular_and_chunked_oversize_bodies_are_refused_before_parsing) ... ok
+test_validation_does_not_echo_input (test_service.HttpBoundaryTests.test_validation_does_not_echo_input) ... ok
+test_external_plaintext_provider_is_rejected_before_http (test_service.ProviderTransportTests.test_external_plaintext_provider_is_rejected_before_http) ... ok
+test_oversize_and_malformed_model_responses_are_rejected (test_service.ProviderTransportTests.test_oversize_and_malformed_model_responses_are_rejected) ... ok
+test_redirect_does_not_forward_credentials (test_service.ProviderTransportTests.test_redirect_does_not_forward_credentials) ... ok
+test_success_and_error_redaction_over_http (test_service.ProviderTransportTests.test_success_and_error_redaction_over_http) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 9.950s
+
+OK

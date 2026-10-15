@@ -7,6 +7,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+import tarfile
 import unittest
 from unittest.mock import patch
 
@@ -91,8 +92,10 @@ class Ipv6DeploymentTest(unittest.TestCase):
                           "JIAFENG_IPV6_BIND_ADDRESS": "::",
                           "JIAFENG_S3_PUBLIC_IPV6_ENDPOINT": "http://[2001:db8::1]:19340"}
             deploy.write_env(source / "secrets.env", old_values)
-            for name in ("database.sql", "storage.tar.gz", "images.lock.json"):
+            for name in ("database.sql", "images.lock.json"):
                 (source / name).write_text("test backup placeholder")
+            with tarfile.open(source / "storage.tar.gz", "w:gz"):
+                pass
             (source / "sha256.json").write_text(json.dumps({
                 name: deploy.file_digest(source / name) for name in
                 ("database.sql", "storage.tar.gz", "images.lock.json", "secrets.env")}))

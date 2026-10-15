@@ -1,0 +1,12 @@
+{
+  "sourceProject": "jiafeng-demo-security-20261015",
+  "checks": {
+    "signedUploadChineseFilename": true,
+    "anonymousDenied": true,
+    "anonymousHeadDenied": true,
+    "anonymousBucketListingDenied": true,
+    "anonymousWriteDenied": true,
+    "signedDownload": true,
+    "expiredSignatureDenied": true
+  }
+}

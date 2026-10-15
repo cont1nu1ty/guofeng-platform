@@ -3,7 +3,7 @@ import { reactive } from "vue";
 import type { Directive } from "vue";
 import { api } from "./http";
 import { isHttpMode } from "./mode";
-import { getToken, setToken, removeToken } from "../utils/auth";
+import { currentSessionEpoch, getToken, setToken, removeToken } from "../utils/auth";
 import { canOpenSettings } from "../domain/settingsAccess";
 export interface SessionUser {
   id: string;
@@ -39,10 +39,15 @@ export async function restoreSession() {
   session.user = "user" in result ? result.user : result;
 }
 export async function logout() {
-  await api("/auth/logout", { method: "POST" });
-  removeToken();
-  session.user = null;
-  session.permissions = [];
+  const epoch = currentSessionEpoch(), token = getToken();
+  try {
+    await api("/auth/logout", { method: "POST" });
+  } finally {
+    if (epoch === currentSessionEpoch() && token === getToken()) {
+      removeToken();
+      expireSession();
+    }
+  }
 }
 export function expireSession() {
   session.user = null;

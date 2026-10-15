@@ -1,0 +1,9 @@
+{
+  "fixture": "security_other_task_9a615656075b",
+  "notice": "synthetic other-owner read fixture; no external model or real data",
+  "singleExpertDetailStatus": 404,
+  "combinedDetailStatus": 200,
+  "combinedDetailExposesBlindContent": true,
+  "combinedListContainsOtherTask": true,
+  "combinedWorkspaceContainsOtherTask": true
+}

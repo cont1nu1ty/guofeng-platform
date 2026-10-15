@@ -1,0 +1,23 @@
+# Optional standalone HTTPS entry. Requires Docker Compose >= 2.24.4 (!override).
+# Local loopback remains the safe default; review both address families before
+# setting the two binds to 0.0.0.0 / ::. The bucket has no separate public port.
+services:
+  web:
+    ports: !override
+      - target: 443
+        published: "${JIAFENG_HTTPS_PORT:-443}"
+        host_ip: "${JIAFENG_TLS_BIND_ADDRESS:-127.0.0.1}"
+        protocol: tcp
+      - target: 443
+        published: "${JIAFENG_HTTPS_PORT:-443}"
+        host_ip: "${JIAFENG_TLS_IPV6_BIND_ADDRESS:-::1}"
+        protocol: tcp
+    environment:
+      JIAFENG_PUBLIC_HOST: ${JIAFENG_PUBLIC_HOST:?set the certificate domain}
+      NGINX_ENVSUBST_FILTER: ^JIAFENG_PUBLIC_HOST$
+    volumes:
+      - ./nginx-tls.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ${JIAFENG_TLS_CERT_FILE:?set certificate chain file}:/etc/nginx/tls/fullchain.pem:ro
+      - ${JIAFENG_TLS_KEY_FILE:?set separate private key file}:/etc/nginx/tls/privkey.pem:ro
+  storage:
+    ports: !reset []

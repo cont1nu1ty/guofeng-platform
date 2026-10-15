@@ -1,0 +1,48 @@
+{
+  "sourceProject": "jiafeng-demo-security-20261015",
+  "isolatedEnvSelected": true,
+  "homeAccessible": true,
+  "nosniff": true,
+  "framingDenied": true,
+  "referrerPolicy": true,
+  "upstreamRoutesBlocked": true,
+  "validLoginWorks": true,
+  "validAuthenticatedReadWorks": true,
+  "businessHealthAccessible": true,
+  "serverRequestIdReturned": true,
+  "loginRateLimitedDespiteForgedForwardingHeaders": true,
+  "loginBurstStatusCounts": {
+    "422": 10,
+    "429": 30
+  },
+  "rateLimitedErrorPathChecked": true,
+  "uploadCreationRateLimited": true,
+  "uploadUnauthenticatedRequestsRejected": true,
+  "uploadCreationBurstStatusCounts": {
+    "401": 4,
+    "429": 4
+  },
+  "exportCreationRateLimited": true,
+  "exportUnauthenticatedRequestsRejected": true,
+  "exportCreationBurstStatusCounts": {
+    "401": 4,
+    "429": 4
+  },
+  "aiCreationRateLimited": true,
+  "aiUnauthenticatedRequestsRejected": true,
+  "aiCreationBurstStatusCounts": {
+    "401": 6,
+    "429": 6
+  },
+  "aiPollingDoesNotUseCreationQuota": true,
+  "querySecretAbsentFromAccessLogs": true,
+  "errorQuerySecretAbsentFromLogs": true,
+  "proxyAndApplicationRequestIdsCorrelate": true,
+  "mysqlRuntimeLimitsAndLogRotation": true,
+  "redisRuntimeLimitsAndLogRotation": true,
+  "storageRuntimeLimitsAndLogRotation": true,
+  "serverRuntimeLimitsAndLogRotation": true,
+  "aiRuntimeLimitsAndLogRotation": true,
+  "searchRuntimeLimitsAndLogRotation": true,
+  "webRuntimeLimitsAndLogRotation": true
+}
