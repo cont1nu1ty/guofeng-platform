@@ -602,7 +602,7 @@
       },
       {
         "path": "deploy/dev",
-        "sha256": "f3a63915ac4dc1a882b02c1441268ab26b8faf123fabdde6d03cf621ab602a48"
+        "sha256": "b0a7bd02235c2a7892f1fae3e51f27706ff7d23b4e38bf67da109d58ef9b7d4d"
       },
       {
         "path": "deploy/demo_state.py",

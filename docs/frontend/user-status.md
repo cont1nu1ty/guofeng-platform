@@ -1,5 +1,7 @@
 # 用户端需求与当前界面对照
 
+2026-10-15：本机展示环境已启用 IPv4/IPv6 双栈；用户端、后台、登录和附件下载分别验证，原账号及数据保留。服务端按访问地址族选择固定的附件签名地址，未改变业务权限。验证范围见[双栈访问记录](../verification/ipv6-access-2026-10-15.md)。
+
 更新：2026-10-13。用户端现在保留两种数据模式：默认 `demo` 继续本机演示；`VITE_DATA_MODE=http` 连接本次试点后端。原 PDF 的界面对照基线来自 2026-09-21，本次按实际代码补充 HTTP 接入状态；没有重新进行 PDF 全文、微信真机或全国容量验收。独立后台另见 [后台说明](admin-demo.md)。当前源码已整合非 AI V014 与 AI V015；[本次整合检查](../verification/ai-sync-2026-10-13.md)与[原 AI V005 实联](../verification/ai-2026-10-13.md)分开记录，尚未据整合推定运行环境升级。
 
 2026-10-08：非 AI 业务源码已同步。完整数据与新增场景保留在演示分支，见[账号与查看路线](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/frontend/non-ai-showcase-2026-10-08.md)及[演示环境核验](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/verification/non-ai-showcase-2026-10-08.md)；main 不包含专用数据包，也不会在启动时导入。

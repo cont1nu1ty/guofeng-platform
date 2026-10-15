@@ -1,5 +1,7 @@
 # 用户端演示操作
 
+2026-10-15：当前展示环境同时提供 IPv4/IPv6 入口；两个地址使用原账号，附件链接随访问地址族切换。具体地址、实测范围及保留数据见[双栈访问记录](../verification/ipv6-access-2026-10-15.md)。
+
 更新：2026-10-13。保留原用户端 v0.5.1 界面和默认本机演示，新增 `http` 试点模式；两种模式的行为不能混用。完成情况见 [用户端状态](user-status.md)，后续任务见 [前端待办](user-backlog.md)。本次 AI V015 与非 AI V014 仅按[整合记录](../verification/ai-sync-2026-10-13.md)确认源码与检查；下列各日期端口和路线是对应环境的记录，不表示本次已经重启部署。
 
 2026-10-08：非 AI 业务源码已同步。完整数据与新增场景保留在演示分支，见[账号与查看路线](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/frontend/non-ai-showcase-2026-10-08.md)及[演示环境核验](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/verification/non-ai-showcase-2026-10-08.md)；main 不包含专用数据包，也不会在启动时导入。

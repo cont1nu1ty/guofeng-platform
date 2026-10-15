@@ -1,5 +1,7 @@
 # 运营后台界面演示
 
+2026-10-15：后台现支持当前环境的 IPv4/IPv6 访问，保留岗位与地区权限；登录、已有附件签名和私有文件拒绝匿名访问已验证。入口与检查记录见[双栈访问记录](../verification/ipv6-access-2026-10-15.md)。
+
 更新：2026-10-13。AI 与非 AI 源码整合、执行范围见[本次检查](../verification/ai-sync-2026-10-13.md)；原 AI V005 的模型与网页证据见[原验证](../verification/ai-2026-10-13.md)。下列日期对应各次运行环境，整合源码不自动改变现有端口或部署状态。
 
 2026-10-08：非 AI 业务源码已同步。完整数据与新增场景保留在演示分支，见[账号与查看路线](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/frontend/non-ai-showcase-2026-10-08.md)及[演示环境核验](https://github.com/cont1nu1ty/guofeng-platform/blob/152e886ffc0518c44120bd4029e574f90194365f/docs/verification/non-ai-showcase-2026-10-08.md)；main 不包含专用数据包，也不会在启动时导入。
