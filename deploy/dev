@@ -49,6 +49,7 @@ def initialize():
         values = {
             "COMPOSE_PROJECT_NAME": "jiafeng-dev",
             "JIAFENG_BIND_ADDRESS": "127.0.0.1",
+            "JIAFENG_IPV6_ENABLED": "false",
             "JIAFENG_HTTP_PORT": "18080",
             "JIAFENG_S3_PORT": "18333",
             "JIAFENG_S3_PUBLIC_ENDPOINT": "http://127.0.0.1:18333",
@@ -76,12 +77,23 @@ def initialize():
     return values
 
 
+def compose_files(values):
+    enabled = values.get("JIAFENG_IPV6_ENABLED", "false")
+    if enabled not in ("true", "false"):
+        raise ValueError("JIAFENG_IPV6_ENABLED must be true or false")
+    files = [HERE / "compose.yaml"]
+    if enabled == "true":
+        files.append(HERE / "compose.ipv6.yaml")
+    return files
+
+
 def compose(*args, env_file=ENV_FILE, **kwargs):
     # Do not inherit another project's COMPOSE_* interpolation settings.
     clean_env = {k: v for k, v in os.environ.items() if not k.startswith("COMPOSE_")}
     values = read_env(env_file)
     clean_env.update(values)
-    return run(["docker", "compose", "--env-file", env_file, "-f", HERE / "compose.yaml", "-p", values["COMPOSE_PROJECT_NAME"], *args], env=clean_env, **kwargs)
+    files = [part for path in compose_files(values) for part in ("-f", path)]
+    return run(["docker", "compose", "--env-file", env_file, *files, "-p", values["COMPOSE_PROJECT_NAME"], *args], env=clean_env, **kwargs)
 
 
 def file_digest(path):
@@ -210,6 +222,12 @@ def demo_scope(values):
         raise ValueError("reset-demo only supports jiafeng-dev or jiafeng-demo-* development projects")
     if values.get("JIAFENG_DEV_ACCOUNTS_ENABLED") != "true":
         raise ValueError("reset-demo requires JIAFENG_DEV_ACCOUNTS_ENABLED=true")
+    # A port-only update may retain old containers for unchanged services. Both
+    # exact repository configurations are owned; arbitrary overrides are not.
+    owned_configs = {
+        ",".join(str(path) for path in compose_files({"JIAFENG_IPV6_ENABLED": enabled}))
+        for enabled in ("false", "true")
+    }
     volumes = {}
     for service, destination, logical_name in (
         ("mysql", "/var/lib/mysql", "mysql-data"),
@@ -225,7 +243,7 @@ def demo_scope(values):
         labels, mounts, state = [json.loads(line) for line in raw]
         if (labels.get("com.docker.compose.project") != project
                 or labels.get("com.docker.compose.service") != service
-                or labels.get("com.docker.compose.project.config_files") != str(HERE / "compose.yaml")):
+                or labels.get("com.docker.compose.project.config_files") not in owned_configs):
             raise ValueError(f"Refusing {service}: container does not belong to this deployment")
         if service in ("mysql", "redis") and state != "running":
             raise ValueError(f"reset-demo requires {service} running; run ./deploy/dev up first")
@@ -376,6 +394,9 @@ def restore(source):
     values.update({
         "COMPOSE_PROJECT_NAME": "jiafeng-restore-" + stamp + "-" + secrets.token_hex(2),
         "JIAFENG_BIND_ADDRESS": "127.0.0.1",
+        "JIAFENG_IPV6_ENABLED": "false",
+        "JIAFENG_IPV6_BIND_ADDRESS": "::1",
+        "JIAFENG_S3_PUBLIC_IPV6_ENDPOINT": "",
         "JIAFENG_HTTP_PORT": os.environ.get("JIAFENG_RESTORE_HTTP_PORT", "18081"),
         "JIAFENG_S3_PORT": os.environ.get("JIAFENG_RESTORE_S3_PORT", "18334"),
     })

@@ -7,7 +7,6 @@ import java.io.*;
 import java.nio.file.*;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
-import java.time.Duration;
 import java.util.*;
 import java.util.zip.ZipFile;
 import org.dromara.common.oss.client.DefaultOssClientImpl;
@@ -16,6 +15,8 @@ import org.dromara.common.oss.config.OssClientConfig;
 import org.dromara.common.oss.properties.OssProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -23,7 +24,7 @@ public class JfFiles {
   private final JfStore store;
   private final JfAuth auth;
   private final OssClient oss;
-  private final software.amazon.awssdk.services.s3.presigner.S3Presigner downloads;
+  private final JfDownloadLinks downloads;
   private final String bucket;
   private final JfAudio audio;
   private final JfVideo video;
@@ -37,6 +38,7 @@ public class JfFiles {
       org.springframework.transaction.PlatformTransactionManager transactions,
       @Value("${JIAFENG_S3_ENDPOINT:http://storage:8333}") String endpoint,
       @Value("${JIAFENG_S3_PUBLIC_ENDPOINT:http://127.0.0.1:18333}") String publicEndpoint,
+      @Value("${JIAFENG_S3_PUBLIC_IPV6_ENDPOINT:}") String publicIpv6Endpoint,
       @Value("${JIAFENG_S3_ACCESS_KEY:}") String key,
       @Value("${JIAFENG_S3_SECRET_KEY:}") String secret,
       @Value("${JIAFENG_S3_BUCKET:jiafeng-private}") String bucket) {
@@ -60,19 +62,7 @@ public class JfFiles {
             OssClientConfig.formProperties(p).toBuilder().usePathStyleAccess(true).build());
     // The upstream custom-domain mode means bucket-bound CDN. Our public endpoint is
     // an S3 gateway, so sign its complete path with the same AWS SDK, including bucket.
-    downloads =
-        software.amazon.awssdk.services.s3.presigner.S3Presigner.builder()
-            .endpointOverride(java.net.URI.create(publicEndpoint))
-            .region(software.amazon.awssdk.regions.Region.US_EAST_1)
-            .credentialsProvider(
-                software.amazon.awssdk.auth.credentials.StaticCredentialsProvider.create(
-                    software.amazon.awssdk.auth.credentials.AwsBasicCredentials.create(
-                        key, secret)))
-            .serviceConfiguration(
-                software.amazon.awssdk.services.s3.S3Configuration.builder()
-                    .pathStyleAccessEnabled(true)
-                    .build())
-            .build();
+    downloads = new JfDownloadLinks(publicEndpoint, publicIpv6Endpoint, key, secret);
   }
 
   @PreDestroy
@@ -375,15 +365,11 @@ public class JfFiles {
   }
 
   private Map<String, Object> signed(Map<String, Object> f) {
+    var context = RequestContextHolder.getRequestAttributes();
+    var request = context instanceof ServletRequestAttributes servlet ? servlet.getRequest() : null;
     return m(
         "url",
-        downloads
-            .presignGetObject(
-                r ->
-                    r.signatureDuration(Duration.ofMinutes(5))
-                        .getObjectRequest(o -> o.bucket(bucket).key(str(f, "object_key"))))
-            .url()
-            .toExternalForm(),
+        downloads.url(bucket, str(f, "object_key"), request),
         "expiresIn",
         300,
         "name",

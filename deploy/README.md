@@ -111,6 +111,38 @@ JIAFENG_S3_PUBLIC_ENDPOINT=http://192.168.1.20:18333
 MySQL、Redis、SeaweedFS 管理端口不发布到宿主机。正式公网需另配 HTTPS，
 关闭开发登录并配置真实身份提供方，不应直接使用本机测试配置。
 
+### 同时保留 IPv4 与 IPv6
+
+已有 IPv4 环境可以在同一份本机环境文件追加：
+
+```dotenv
+JIAFENG_BIND_ADDRESS=0.0.0.0
+JIAFENG_IPV6_ENABLED=true
+JIAFENG_IPV6_BIND_ADDRESS=::
+JIAFENG_S3_PUBLIC_ENDPOINT=http://192.168.1.20:18333
+JIAFENG_S3_PUBLIC_IPV6_ENDPOINT=http://[你的全局IPv6地址]:18333
+```
+
+替换为实际地址和附件端口，再使用原 `JIAFENG_ENV_FILE` 执行 `./deploy/dev up`。
+生命周期工具自动合并 `compose.ipv6.yaml`，保留原 IPv4 映射，仅给网页和 S3 增加
+IPv6 端口；默认仍关闭 IPv6，启用后未指定绑定地址时只监听 `::1`。
+直接调用 Docker Compose 时也需显式包含这两个配置文件。
+
+IPv6 页面 URL 使用 `http://[地址]:网页端口/`，后台加 `admin/`。浏览器以 IPv6
+地址请求时，文件签名使用配置的 IPv6 S3 地址；IPv4和域名请求仍使用原地址。
+请求 Host 只选择固定配置，不成为签名目标；Forwarded/X-Forwarded-Host 不参与选择。
+两类下载保留同样的权限和五分钟有效期。修改绑定端口时也要同步两种 S3 公开地址。
+
+使用 firewalld 的机器需允许网页和 S3 对应的 IPv6 TCP 入站端口；仅修改本机实际使用的
+区域和端口，不关闭防火墙。Docker 默认 userland proxy 可将宿主 IPv6 发布端口转到
+容器 IPv4，无需给数据库或 Docker 内部网络新增外部入口。
+完整验证同时包括两个地址族的页面、登录、公开媒体和私有附件实际下载，
+本机访问不能代替另一台校园设备或校外网络的入站验证。
+
+关闭 `JIAFENG_IPV6_ENABLED` 后再次 `up` 可取消 IPv6 发布，原 IPv4与数据保留；
+不再使用时单独移除本次添加的防火墙规则。隔离恢复会关闭继承的外部 IPv6，避免与原环境争用端口。
+本机实际执行见 [2026-10-15 双栈验证](../docs/verification/ipv6-access-2026-10-15.md)。
+
 ## 备份与隔离恢复
 
 ```bash

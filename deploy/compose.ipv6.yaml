@@ -1,0 +1,15 @@
+# Loaded by deploy/dev only when JIAFENG_IPV6_ENABLED=true. IPv4 mappings from
+# compose.yaml are retained. The default IPv6 bind remains local to this host.
+services:
+  web:
+    ports:
+      - target: 80
+        published: "${JIAFENG_HTTP_PORT:-18080}"
+        host_ip: "${JIAFENG_IPV6_BIND_ADDRESS:-::1}"
+        protocol: tcp
+  storage:
+    ports:
+      - target: 8333
+        published: "${JIAFENG_S3_PORT:-18333}"
+        host_ip: "${JIAFENG_IPV6_BIND_ADDRESS:-::1}"
+        protocol: tcp
