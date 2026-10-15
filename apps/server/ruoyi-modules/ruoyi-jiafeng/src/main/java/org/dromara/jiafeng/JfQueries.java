@@ -40,7 +40,11 @@ public class JfQueries {
     List<Object> args = new ArrayList<>();
     String sql = "1=1";
     if (!actor.national()) {
-      if (actor.operator()) {
+      if (kind.equals("task") && !JfAccess.reviewOperator(actor)) {
+        if (actor.roles.contains("expert")) {
+          sql += " AND owner_id=? AND status<>'已取消'"; args.add(actor.id);
+        } else sql += " AND 1=0";
+      } else if (actor.operator()) {
         if (actor.regions.isEmpty()) sql += " AND 1=0";
         else { sql += " AND region_id IN (" + String.join(",", Collections.nCopies(actor.regions.size(), "?")) + ")"; args.addAll(actor.regions); }
       } else if (kind.equals("task") && actor.roles.contains("expert")) {
@@ -96,7 +100,7 @@ public class JfQueries {
     var d = e.kind().equals("submission") ? projection.adminWork(e) : store.dto(e);
     if (e.kind().equals("task")) {
       d.putAll(windows.projection(e, actor));
-      if (!actor.operator()) { d.remove("windowHistory"); d.remove("managerId"); d.remove("expertName"); }
+      if (!JfAccess.reviewOperator(actor)) { d.remove("windowHistory"); d.remove("managerId"); d.remove("expertName"); }
     }
     if (e.kind().equals("activity")) {
       d.put("registrations",List.of());

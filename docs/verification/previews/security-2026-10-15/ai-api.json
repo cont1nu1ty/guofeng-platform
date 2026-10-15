@@ -1,0 +1,18 @@
+{
+  "project": "jiafeng-demo-security-20261015",
+  "base": "http://127.0.0.1:19185/api/v1",
+  "checks": [
+    "isolated AI is disabled; no external model is requested",
+    "anonymous AI task access and member/expert administrative access are refused",
+    "real simultaneous AI task replay creates one task and rejects changed payload/forged result",
+    "private task detail/list remain owner scoped including national administrator",
+    "administrative task metadata does not expose private input, file IDs or output",
+    "disabled adapter produces durable explicit failure with no demo fallback",
+    "synthetic WAV decodes to private MP3; other member/expert original download is refused",
+    "damaged WAV/MP4 and a playlist disguised as MP3 are refused",
+    "synthetic MP4 still normalizes successfully after malformed media refusals"
+  ],
+  "taskStatus": "failed",
+  "errorCode": "AI_NOT_CONFIGURED",
+  "fixtures": "fictional prompt, synthetic silence/black frames, controlled corrupt files"
+}

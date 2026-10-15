@@ -263,6 +263,9 @@ public class JfReview {
   }
 
   private Object score(JfAuth.Actor a, String id, Object version, Map<String, Object> input) {
+    // Both /admin/commands and the member-compatible review.submit route reach this method.
+    require(a.roles.contains("expert"), 404, "NOT_FOUND", "任务不存在或未分配给当前专家");
+    JfAccess.require(a, "reviews:score");
     // All manuscript/task mutations lock in this order, including the reminder worker.
     var preliminary = store.find("task", id, false);
     var e = store.find("submission", str(preliminary.data(), "submissionId"), true);

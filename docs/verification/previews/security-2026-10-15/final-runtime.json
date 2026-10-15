@@ -1,0 +1,7 @@
+{
+  "securityProject": "jiafeng-demo-security-20261015",
+  "beforeCleanupServiceCount": 7,
+  "allSecurityServicesHealthy": true,
+  "existingShowcase19084BusinessHealthy": true,
+  "cleanupPolicy": "stop only new security project, retain volumes and backup; no original deployment change"
+}

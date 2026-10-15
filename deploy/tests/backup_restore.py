@@ -8,11 +8,14 @@ import subprocess
 import time
 import urllib.parse
 import urllib.request
+import urllib.error
 import uuid
+import datetime
+from probe_scope import isolated_deployment
 
 ROOT = Path(__file__).resolve().parents[2]
 opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
-values = dict(line.split("=", 1) for line in (ROOT / "deploy/.env").read_text().splitlines() if line and not line.startswith("#"))
+ENV_PATH, values, lifecycle = isolated_deployment()
 origin = "http://127.0.0.1:" + values["JIAFENG_HTTP_PORT"]
 
 
@@ -65,12 +68,19 @@ created = set((ROOT / "deploy/backups").glob("*")) - before
 assert len(created) == 1
 backup = created.pop()
 existing_envs = set((ROOT / "deploy/.local").glob("jiafeng-restore-*.env"))
+restore_started = time.monotonic()
 subprocess.run([str(ROOT / "deploy/dev"), "restore", str(backup)], check=True)
+restore_seconds = time.monotonic() - restore_started
 restored_envs = set((ROOT / "deploy/.local").glob("jiafeng-restore-*.env")) - existing_envs
 assert len(restored_envs) == 1
 restored_env = restored_envs.pop()
 restored_values = dict(line.split("=", 1) for line in restored_env.read_text().splitlines() if line and not line.startswith("#"))
 restored_origin = "http://127.0.0.1:" + restored_values["JIAFENG_HTTP_PORT"]
+try:
+    api(restored_origin, "/auth/me", token=token)
+    old_session_rejected = False
+except urllib.error.HTTPError as error:
+    old_session_rejected = error.code == 401
 restored_token = login(restored_origin)
 restored_work = api(restored_origin, "/submissions/" + work["id"] + "/progress", token=restored_token)["work"]
 restored_bytes = download(restored_origin, restored_token, file["fileId"])
@@ -80,10 +90,14 @@ result = {
     "fileSurvivesRestore": hashlib.sha256(restored_bytes).digest() == hashlib.sha256(payload).digest(),
     "fileSha256": hashlib.sha256(payload).hexdigest(),
     "freshLoginWorks": True, "backupChecksumsVerified": True,
+    "oldSourceSessionRejectedByFreshRedis": old_session_rejected,
     "isolatedProject": restored_values["COMPOSE_PROJECT_NAME"],
     "sourceProject": values["COMPOSE_PROJECT_NAME"],
+    "restoreSeconds": round(restore_seconds, 3),
+    "recoveryPointUtc": datetime.datetime.fromtimestamp((backup / "database.sql").stat().st_mtime, datetime.timezone.utc).isoformat(),
+    "searchRebuiltByRestore": True,
 }
-assert result["submissionSurvivesRestore"] and result["fileSurvivesRestore"]
+assert result["submissionSurvivesRestore"] and result["fileSurvivesRestore"] and old_session_rejected
 (ROOT / "deploy/.local/backup-check.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
 print(json.dumps(result, ensure_ascii=False, indent=2))
 # Keep data volumes for inspection, release additional restored service ports.

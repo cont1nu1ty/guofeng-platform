@@ -1,0 +1,14 @@
+{
+  "fixture": "security_other_task_da7025f854f7",
+  "notice": "synthetic other-owner read fixture; no external model or real data",
+  "singleExpertDetailStatus": 404,
+  "combinedDetailStatus": 404,
+  "combinedDetailExposesBlindContent": false,
+  "combinedListContainsOtherTask": false,
+  "combinedWorkspaceContainsOtherTask": false,
+  "combinedAlertsContainOtherTask": false,
+  "readOnlyReviewManagerDetailStatus": 200,
+  "readOnlyReviewManagerReadsAuthorizedRegion": true,
+  "readOnlyReviewManagerAlertsContainTask": true,
+  "requestedOtherRegionContainsTask": false
+}

@@ -71,6 +71,12 @@ public final class JfAccess {
     Jf.require(can(actor, permission), 403, "FORBIDDEN", "当前岗位没有此项操作权限");
   }
 
+  /** An unrelated operational post must not widen an expert's assigned-task read grant. */
+  public static boolean reviewOperator(JfAuth.Actor actor) {
+    return can(actor, "reviews:read") && actor.roles.stream()
+        .anyMatch(Set.of("national_admin", "regional_admin", "review_manager")::contains);
+  }
+
   public static String commandPermission(String command) {
     return switch (command) {
       case "approveSubmission", "batchApproveSubmissions", "returnSubmission", "prepareBlindMaterial" -> "submissions:write";

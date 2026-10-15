@@ -1,0 +1,28 @@
+{
+  "project": "jiafeng-demo-security-20261015",
+  "checks": [
+    "another account does not receive the private cloud draft",
+    "cold/warm anonymous workspace excludes private records and draft text",
+    "unpublished content and private cloud draft are absent from search counts",
+    "legitimately published content is searchable",
+    "withdrawal never returns stale title or count",
+    "withdrawn content leaves the next public cache response",
+    "denial body and response header share the server request ID",
+    "successful database audit keeps the same request correlation ID",
+    "all filter stays in authorized scope and another-region filter returns no records/count",
+    "search outage returns explicit unavailable without cached counts or text",
+    "business health remains ready while search is offline",
+    "business publish/withdraw still commits while search is offline",
+    "search rebuilds/replays and restricted content stays absent after recovery",
+    "anonymous public cache falls back to database when Redis is unavailable",
+    "authenticated Redis outage never falls back to anonymous/demo success",
+    "Redis session and public reads recover",
+    "database outage makes business health fail without ready/demo response",
+    "business database health recovers without resetting data"
+  ],
+  "passed": 18,
+  "faults": {
+    "redisPublicFallbackSeconds": 0.128
+  },
+  "scope": "only this isolated project services stopped/started; no external models or live data"
+}

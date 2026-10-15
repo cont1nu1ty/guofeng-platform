@@ -1,0 +1,15 @@
+{
+  "submissionId": "submission_edaf50a87ad840ff92589690f056b10f",
+  "fileId": "file_c563538b36b74a8dbbf848221e3490a3",
+  "submissionSurvivesRestore": true,
+  "fileSurvivesRestore": true,
+  "fileSha256": "40e2acf76ae7f5ad2cbe6d0371a7af1f028401bd9dd8293bad99cfde3900625d",
+  "freshLoginWorks": true,
+  "backupChecksumsVerified": true,
+  "oldSourceSessionRejectedByFreshRedis": true,
+  "isolatedProject": "jiafeng-restore-20261015083820-e0b5",
+  "sourceProject": "jiafeng-demo-security-20261015",
+  "restoreSeconds": 149.141,
+  "recoveryPointUtc": "2026-10-15T08:37:28.494821+00:00",
+  "searchRebuiltByRestore": true
+}

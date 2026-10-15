@@ -111,7 +111,7 @@ JIAFENG_S3_PUBLIC_ENDPOINT=http://192.168.1.20:18333
 再次运行 `./deploy/dev up`。两端共用 `18080` 入口；下载链接使用 `18333`。
 电脑防火墙和校园网的设备隔离仍会影响访问。本脚本不修改防火墙。
 MySQL、Redis、SeaweedFS 管理端口不发布到宿主机。正式公网需另配 HTTPS，
-关闭开发登录并配置真实身份提供方，不应直接使用本机测试配置。
+关闭开发账号登录并配置实际账号流程，不应直接使用本机测试配置。
 
 ### 同时保留 IPv4 与 IPv6
 
@@ -259,7 +259,10 @@ JIAFENG_AI_OCR_PROTOCOL=chat
 后台审核辅助只提供建议，不自动改变人工结果或公开状态。
 
 备份继续覆盖 MySQL 与完整 S3，包含任务和知识分块；不需要另备份 AI 容器。
-恢复时运行中的模型任务按超时规则失败，避免自动重放收费请求。已完成任务和文件保留。
+恢复时快照内 `running` 的模型任务按超时规则失败；这不能保证所有待处理任务不重放。
+快照内 `queued` 任务恢复后仍可能继续执行，如果源环境已在快照之后执行该任务，可能重复调用。
+真实模型启用的环境应在恢复前离线审查队列与对外调用策略；不能直接启动继承配置后再检查。
+本轮仅恢复AI关闭的独立环境，未验证收费模型恢复或自动去重。已完成任务和文件保留。
 `./deploy/dev logs ai server` 可定位固定错误码；日志不应包含请求正文与密钥。
 
 显式模型集成验收脚本保留在[演示分支固定提交](https://github.com/cont1nu1ty/guofeng-platform/blob/32131f59d221c38124b49ca7060252184092afe2/deploy/tests/ai_probe.py)，main 不携带。仅在单独的演示检出中执行 `python3 deploy/tests/ai_probe.py`：它会调用已配置 API、创建少量
@@ -268,3 +271,100 @@ JIAFENG_AI_OCR_PROTOCOL=chat
 见 `source-lock.json`、`deploy/images.lock.json`、`licenses/ai/inventory.json`。
 
 本机早期AI试装曾占用V005；整合版本仅对已知AI迁移校验和将记录重定位到V015（保留原应用时间），然后补齐正式V005–V014。未知校验或冲突记录会拒绝启动。升级前备份，原迁移内容不改写。此次整合未启动或迁移已停止的业务容器。
+
+## 独立部署安全配置（2026-10-15）
+
+### 可选 HTTPS 入口
+
+`compose.https.yaml` 与 `nginx-tls.conf.template` 复用现有 Nginx；需 Docker Compose
+2.24.4 以上。部署方先准备域名与证书，再在**目标环境自己的配置文件**设置：
+
+```dotenv
+JIAFENG_HTTPS_ENABLED=true
+JIAFENG_IPV6_ENABLED=false
+JIAFENG_PUBLIC_HOST=你的证书域名
+JIAFENG_TLS_CERT_FILE=/etc/jiafeng/tls/fullchain.pem
+JIAFENG_TLS_KEY_FILE=/etc/jiafeng/tls/privkey.pem
+JIAFENG_TLS_BIND_ADDRESS=0.0.0.0
+JIAFENG_TLS_IPV6_BIND_ADDRESS=::
+JIAFENG_HTTPS_PORT=443
+JIAFENG_S3_PUBLIC_ENDPOINT=https://你的证书域名
+JIAFENG_S3_PUBLIC_IPV6_ENDPOINT=
+JIAFENG_DEV_ACCOUNTS_ENABLED=false
+```
+
+证书域名不要带协议、路径或端口；私钥仅部署管理者可读，与公开证书分开保管。
+运行 `JIAFENG_ENV_FILE=目标配置 ./deploy/dev up` 前，先审查
+`docker compose --env-file 目标配置 -f deploy/compose.yaml -f deploy/compose.https.yaml config --quiet`。
+不要将会展开秘密的完整 `config` 输出粘贴到日志或工单。覆盖层仅发布 IPv4/IPv6 HTTPS
+443，数据库、Redis、搜索、AI 和 S3 不单独发布；签名下载走同域
+`/jiafeng-private/`，只允许 GET/HEAD。HTTP模式默认不加载覆盖层。
+
+域名解析、证书签发/续期、宿主机两个地址族的防火墙、外部入站与实际证书链由部署方核验。
+上线前分别从外部 IPv4/IPv6 检查页面、登录、签名附件、匿名附件拒绝，并确认证书有效；
+不要使用关闭证书验证的请求作为验收。容器 `/healthz` 只表示入口存活，
+业务健康、搜索就绪、模型可用仍是独立检查。本轮临时自签名证书只用于本地配置验证，
+不代表已配置公网域名、可信证书或生产环境。
+
+### 入口限流、容器与日志
+
+默认关闭 `/auth`、`/system`、`/resource`、`/workflow`、`/warm-flow` 上游保留入口，
+用户端与后台仅通过 `/api/v1/` 使用家风身份和权限。Nginx 按连接来源地址限制登录
+30次/分钟（短时突发10）与普通 API 20次/秒（短时突发60），同来源最多30条连接。
+高成本POST另限：附件上传6次/分钟（突发3）、导出创建6次/分钟（突发3）、
+AI任务创建12次/分钟（突发5）。GET列表与轮询不占创建限额，仍受普通API限额。
+这些是试点默认值，应按实际NAT用户数与资源预算审查调参；每账号累计存储字节、
+长期保留与费用配额尚未实现，需运营规则，不将入口速率限制当作完整存储配额。
+客户端自带 `X-Forwarded-For`/`X-Real-IP` 会被覆盖，`Forwarded`/`X-Forwarded-Host` 被清除。
+Java既有失败计数仍按用户名与直连代理地址组合，不能当作真实客户端IP计数。
+同一NAT后用户共用入口限额；额外前置代理需要先将 `set_real_ip_from` 精确限制到其地址，
+再核验两个地址族，不能使用 `0.0.0.0/0` 或 `::/0` 信任任意头。
+Docker的IPv6到IPv4转发或其他NAT可能使Nginx只看到网关地址；上线前用不同外部来源核对日志，
+若来源被合并则先调整保留来源的网络/精确可信代理配置，不能据本机回环请求宣称各用户独立限额。
+该措施约束单机请求，不是抗DDoS服务或全国容量保证。
+
+所有服务设置CPU、内存、PID上限和 `no-new-privileges`；服务端保留非root用户，
+只读根文件系统、256MiB临时目录与独立日志卷。上限是当前默认保护值，需按实际负载调整，
+不能作为容量压测结果。Docker日志使用 `local` 驱动，每服务10MiB×5轮转；
+Java日志另有10MiB单文件和50/200/100MiB归档上限，活动文件与轮转存在少量额外占用。
+Nginx默认错误日志会带完整请求query；本轮已用429合成请求复现。因此业务API与签名S3位置
+关闭该不可定制格式的请求错误日志，保留不含query的访问状态、自有requestID、上游requestID
+和后端安全错误日志；Nginx全局启动/配置错误日志仍保留。排障时按状态与关联ID检查后端，
+不要临时打开会记录签名URL或查询凭据的详细请求日志。
+日志卷仍可被本机Docker管理者管理，不构成防管理员删除或不可篡改存储。更新前的旧容器
+未自动迁移日志；在目标环境重建服务时才应用这些配置。
+
+### 备份加密、保留与独立副本
+
+原始备份包含明文凭据和私人数据；目录权限0700只限制本机普通账号，不抵抗磁盘遗失或
+宿主机管理员。`backup_crypto.py` 可复用本机已安装GnuPG CLI进行离线AES256加密，
+不联网、不新增服务、不自动删除原件。此可选命令要求Python 3.11以上：
+
+```bash
+# 只在首次生成密钥时运行这两行；与备份分开另存一份受控离线密钥副本。
+install -d -m 700 "$HOME/.config/jiafeng-backup"
+(umask 077; set -C; openssl rand -base64 48 > "$HOME/.config/jiafeng-backup/key")
+python3 deploy/backup_crypto.py encrypt deploy/backups/已验证备份 /独立磁盘/家风备份.gpg --key-file "$HOME/.config/jiafeng-backup/key"
+python3 deploy/backup_crypto.py decrypt /独立磁盘/家风备份.gpg /恢复暂存/新的目录 --key-file "$HOME/.config/jiafeng-backup/key"
+./deploy/dev restore /恢复暂存/新的目录
+```
+
+密钥轮换使用新路径并保留旧密钥以读取旧备份，不覆盖旧密钥；密钥不可与加密备份一起寄存，
+密钥遗失无法恢复。加密命令在私有临时目录暂存归档，需预留相应磁盘空间。
+解密先验证GnuPG密文完整性，再仅恢复固定文件清单并检查SHA；错误口令和损坏密文不会发布
+恢复目录。普通SHA清单只检测意外损坏，不能抗备份写权限者篡改。S3归档恢复在Docker写入前
+拒绝路径穿越、链接和设备项。
+
+备份只恢复到最近一次成功停写快照，无法提供连续时间点恢复。当前没有自动定时、过期删除或
+跨机器复制；由部署方确定恢复时间/丢失量目标、保留期限、独立副本位置、执行频率和告警责任。
+备份失败返回非零，应监控退出状态。确认独立加密副本可解密且隔离恢复完成后，再按已确定
+规则人工清理旧原件，不能只看到目录就删除唯一副本。本轮不自动删除已有备份。
+
+### 探针安全边界
+
+`storage_probe.py`、`backup_restore.py`、`restart_probe.py` 均要求显式
+`JIAFENG_ENV_FILE`、`jiafeng-demo-*` 项目、开发账号启用及容器/卷归属检查；
+拒绝默认或显式 `deploy/.env`。后两者会停写，不可对现用展示环境执行。
+恢复探针还应设置独立 `JIAFENG_RESTORE_HTTP_PORT` / `JIAFENG_RESTORE_S3_PORT`，避开已有环境。
+`JIAFENG_SERVER_IMAGE`、`JIAFENG_WEB_IMAGE`、`JIAFENG_AI_IMAGE` 可指定独立测试镜像，恢复继承
+源环境的镜像标签并禁用继承的外部IPv6与HTTPS入口，保留源项目和数据卷。

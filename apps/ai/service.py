@@ -150,7 +150,7 @@ def response_text(response: dict) -> str:
         if not isinstance(text, str) or not text.strip() or len(text) > MAX_OUTPUT:
             raise ValueError()
         return text.strip()
-    except (KeyError, IndexError, TypeError, ValueError):
+    except (AttributeError, KeyError, IndexError, TypeError, ValueError):
         raise Failure("AI_RESPONSE_INVALID", "模型没有返回有效正文，请重试") from None
 
 

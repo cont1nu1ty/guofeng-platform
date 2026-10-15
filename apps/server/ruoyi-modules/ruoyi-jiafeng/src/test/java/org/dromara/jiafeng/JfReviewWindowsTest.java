@@ -176,6 +176,14 @@ class JfReviewWindowsTest {
   }
 
   @Test
+  void reviewAlertsRejectAnOperatorWithoutReviewReadPermissionBeforeQuerying() {
+    var service = service();
+    assertEquals("FORBIDDEN", assertThrows(ApiException.class,
+        () -> service.alerts(actor(10002, "content_operator", "zhejiang"), "all", "all", false, 1, 20)).code);
+    verifyNoInteractions(db);
+  }
+
+  @Test
   void markingAnotherRecipientsNoticeReadIsDenied() {
     var service = service();
     var notice = new JfStore.Entity("notice-1", "notification", 10002L, "zhejiang", "unread", m("sourceType", "review-task"), 1, "", "");

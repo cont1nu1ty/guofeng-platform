@@ -16,6 +16,9 @@ import shutil
 import subprocess
 import sys
 import time
+import tarfile
+import tempfile
+from pathlib import PurePosixPath
 import urllib.error
 import urllib.request
 
@@ -40,8 +43,19 @@ def read_env(path):
 
 def write_env(path, values):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("# Local secrets. Do not commit or share.\n" + "".join(f"{k}={v}\n" for k, v in values.items()))
-    path.chmod(0o600)
+    # NamedTemporaryFile starts at 0600, even with a permissive host umask.
+    # Atomic replacement avoids a first-write exposure and partial secrets.env.
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile("w", dir=path.parent, prefix=".secrets-", delete=False) as handle:
+            temporary = Path(handle.name)
+            handle.write("# Local secrets. Do not commit or share.\n" + "".join(f"{k}={v}\n" for k, v in values.items()))
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
 
 
 def initialize():
@@ -84,6 +98,13 @@ def compose_files(values):
     files = [HERE / "compose.yaml"]
     if enabled == "true":
         files.append(HERE / "compose.ipv6.yaml")
+    https = values.get("JIAFENG_HTTPS_ENABLED", "false")
+    if https not in ("true", "false"):
+        raise ValueError("JIAFENG_HTTPS_ENABLED must be true or false")
+    if https == "true":
+        if enabled == "true":
+            raise ValueError("HTTPS publishes both address families itself; disable JIAFENG_IPV6_ENABLED")
+        files.append(HERE / "compose.https.yaml")
     return files
 
 
@@ -111,12 +132,21 @@ def wait_search(values, timeout=120):
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         try:
-            with opener.open(url, timeout=5) as response:
-                body = json.load(response)
-                if isinstance(body.get('items'), list):
-                    print('Business services and public search index are ready.')
-                    return
-        except (urllib.error.URLError, TimeoutError, ValueError):
+            if values.get("JIAFENG_HTTPS_ENABLED") == "true":
+                # Do not disable TLS verification to probe the public domain.
+                # Container readiness and a real public TLS handshake are
+                # separate deployment checks (see README).
+                response = compose("exec", "-T", "server", "wget", "-q", "-O", "-",
+                    "http://127.0.0.1:8080/api/v1/search?pageSize=1",
+                    capture_output=True, text=True, timeout=6)
+                body = json.loads(response.stdout)
+            else:
+                with opener.open(url, timeout=5) as response:
+                    body = json.load(response)
+            if isinstance(body.get('items'), list):
+                print('Business services and public search index are ready.')
+                return
+        except (urllib.error.URLError, TimeoutError, ValueError, subprocess.SubprocessError):
             pass
         time.sleep(2)
     raise ValueError('Business services started, but search is not ready; inspect ./deploy/dev logs server search and retry ./deploy/dev up. Existing data is retained.')
@@ -135,7 +165,7 @@ def backup(values, *, resume_services=True):
             compose("exec", "-T", "mysql", "sh", "-c", 'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mysqldump -u root --single-transaction --routines --triggers --set-gtid-purged=OFF --no-tablespaces --add-drop-table jiafeng', stdout=out)
         compose("stop", "storage")
         volume = values["COMPOSE_PROJECT_NAME"] + "_storage-data"
-        run(["docker", "run", "--rm", "--entrypoint", "sh", "-v", volume + ":/data:ro", "-v", str(target) + ":/backup", STORAGE_IMAGE, "-c", "tar -czf /backup/storage.tar.gz -C /data ."])
+        run(["docker", "run", "--rm", "--network", "none", "--memory", "256m", "--pids-limit", "64", "--cpus", "1", "--security-opt", "no-new-privileges:true", "--entrypoint", "sh", "-v", volume + ":/data:ro", "-v", str(target) + ":/backup", STORAGE_IMAGE, "-c", "tar -czf /backup/storage.tar.gz -C /data ."])
         shutil.copyfile(ENV_FILE, target / "secrets.env")
         (target / "secrets.env").chmod(0o600)
         shutil.copyfile(HERE / "images.lock.json", target / "images.lock.json")
@@ -433,12 +463,23 @@ def restore(source):
     for name in ("database.sql", "storage.tar.gz", "secrets.env", "images.lock.json"):
         if file_digest(source / name) != manifest.get(name):
             raise ValueError(f"Backup checksum mismatch: {name}")
+    # A co-located SHA manifest detects accidental corruption, not a malicious
+    # backup author. Refuse links/devices and traversal before any Docker write.
+    try:
+        with tarfile.open(source / "storage.tar.gz", "r:gz") as archive:
+            for member in archive:
+                path = PurePosixPath(member.name)
+                if path.is_absolute() or ".." in path.parts or not (member.isfile() or member.isdir()):
+                    raise ValueError("Storage backup contains an unsafe archive entry")
+    except tarfile.TarError as exc:
+        raise ValueError("Storage backup archive is invalid") from exc
     stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d%H%M%S")
     values = read_env(source / "secrets.env")
     values.update({
         "COMPOSE_PROJECT_NAME": "jiafeng-restore-" + stamp + "-" + secrets.token_hex(2),
         "JIAFENG_BIND_ADDRESS": "127.0.0.1",
         "JIAFENG_IPV6_ENABLED": "false",
+        "JIAFENG_HTTPS_ENABLED": "false",
         "JIAFENG_IPV6_BIND_ADDRESS": "::1",
         "JIAFENG_S3_PUBLIC_IPV6_ENDPOINT": "",
         "JIAFENG_HTTP_PORT": os.environ.get("JIAFENG_RESTORE_HTTP_PORT", "18081"),
@@ -462,7 +503,7 @@ def restore(source):
     compose("stop", "storage", env_file=restored_env)
     volume = values["COMPOSE_PROJECT_NAME"] + "_storage-data"
     # This is a newly generated project volume, never the source project's data.
-    run(["docker", "run", "--rm", "--entrypoint", "sh", "-v", volume + ":/data", "-v", str(source) + ":/backup:ro", STORAGE_IMAGE, "-c", "find /data -mindepth 1 -maxdepth 1 -exec rm -rf {} + && tar -xzf /backup/storage.tar.gz -C /data"])
+    run(["docker", "run", "--rm", "--network", "none", "--memory", "256m", "--pids-limit", "64", "--cpus", "1", "--security-opt", "no-new-privileges:true", "--entrypoint", "sh", "-v", volume + ":/data", "-v", str(source) + ":/backup:ro", STORAGE_IMAGE, "-c", "find /data -mindepth 1 -maxdepth 1 -exec rm -rf {} + && tar -xzf /backup/storage.tar.gz -C /data"])
     compose("up", "-d", "--wait", env_file=restored_env)
     wait_search(values)
     print(f"Restored into new project {values['COMPOSE_PROJECT_NAME']}; original deployment untouched.")
@@ -493,8 +534,11 @@ def main():
     elif command == "up":
         compose("up", "-d", "--build", "--wait", "--wait-timeout", "480")
         wait_search(values)
-        print(f"User UI: http://127.0.0.1:{values['JIAFENG_HTTP_PORT']}/")
-        print(f"Admin UI: http://127.0.0.1:{values['JIAFENG_HTTP_PORT']}/admin/")
+        if values.get("JIAFENG_HTTPS_ENABLED") == "true":
+            print(f"Configured HTTPS UI: https://{values['JIAFENG_PUBLIC_HOST']}:{values.get('JIAFENG_HTTPS_PORT', '443')}/ (verify domain, certificate and public ingress separately)")
+        else:
+            print(f"User UI: http://127.0.0.1:{values['JIAFENG_HTTP_PORT']}/")
+            print(f"Admin UI: http://127.0.0.1:{values['JIAFENG_HTTP_PORT']}/admin/")
         print(f"Development account password: JIAFENG_DEV_PASSWORD in {ENV_FILE}")
     elif command == "build":
         compose("build", *sys.argv[2:])

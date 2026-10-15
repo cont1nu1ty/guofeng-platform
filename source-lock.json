@@ -181,7 +181,7 @@
         "adaptedFiles": [
           {
             "path": "apps/admin/src/utils/auth.ts",
-            "sha256": "a982d786979fc9675296ad915171163fe87422d7f14198a8879b747046c958ae"
+            "sha256": "3cfcac7a24757bd3d6a522119281d612443d4682f2e59b21377cbe8cd65a59eb"
           }
         ]
       },
@@ -192,7 +192,7 @@
         "adaptedFiles": [
           {
             "path": "apps/admin/src/services/http.ts",
-            "sha256": "5f4917ae2fcac99dff194f096abd001d9c918f9d6b4d2129a2e807784cb317bd"
+            "sha256": "e9b15d94aa26146ad6bc68329970d01dc306ef6e9407704cedd103e80eb2065e"
           }
         ]
       },
@@ -203,7 +203,7 @@
         "adaptedFiles": [
           {
             "path": "apps/admin/src/services/session.ts",
-            "sha256": "9ce57ee09b8a194540788bdad391f8d70c96f580f938aa596c6b0fd3c32acd21"
+            "sha256": "ab40a9488e1ef62b8f7aaa96c54a93e1c87231cd11a4a3696277cbfa496c32a5"
           }
         ]
       },
@@ -214,7 +214,7 @@
         "adaptedFiles": [
           {
             "path": "apps/admin/src/services/session.ts",
-            "sha256": "9ce57ee09b8a194540788bdad391f8d70c96f580f938aa596c6b0fd3c32acd21"
+            "sha256": "ab40a9488e1ef62b8f7aaa96c54a93e1c87231cd11a4a3696277cbfa496c32a5"
           }
         ]
       },
@@ -225,7 +225,7 @@
         "adaptedFiles": [
           {
             "path": "apps/admin/src/services/session.ts",
-            "sha256": "9ce57ee09b8a194540788bdad391f8d70c96f580f938aa596c6b0fd3c32acd21"
+            "sha256": "ab40a9488e1ef62b8f7aaa96c54a93e1c87231cd11a4a3696277cbfa496c32a5"
           }
         ]
       },
@@ -254,7 +254,9 @@
       "pom.xml",
       "ruoyi-admin/pom.xml",
       "ruoyi-common/pom.xml",
-      "ruoyi-modules/pom.xml"
+      "ruoyi-modules/pom.xml",
+      "ruoyi-admin/src/main/resources/logback-plus.xml",
+      "ruoyi-modules/ruoyi-system/src/main/java/org/dromara/system/service/impl/SysSocialServiceImpl.java"
     ],
     "additions": [
       "ruoyi-modules/ruoyi-jiafeng",

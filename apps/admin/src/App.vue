@@ -71,11 +71,14 @@ async function boot() {
 async function signOut() {
   try {
     await logout();
-    clearWorkspace();
-    clearReviewNotices();
-    hasWorkspace.value = false;
   } catch (error) {
     reportError(error);
+  } finally {
+    if (!session.user) {
+      clearWorkspace();
+      clearReviewNotices();
+      hasWorkspace.value = false;
+    }
   }
 }
 async function openReviewNotice(item: ReviewNotice) {

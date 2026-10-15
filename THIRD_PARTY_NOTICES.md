@@ -79,3 +79,7 @@
 独立 `apps/ai` 服务复用 FastAPI 0.143.0（MIT）、Uvicorn 0.54.0（BSD-3-Clause）、pypdf 6.20.1（BSD-3-Clause）。直接及传递依赖的准确版本、发行包 SHA-256 在 `apps/ai/requirements.lock`，各发行包内原样提取的 LICENSE 在 `licenses/ai/`，索引为 `licenses/ai/inventory.json`。Python 3.12 的官方 Debian Bookworm 镜像按 digest 固定于 `deploy/images.lock.json`，Python 及 OS 组件许可在镜像中保留；不将整张镜像概括为 MIT。
 
 模型请求封装、任务与权限、知识分块、提示词和应用界面为本项目原创。通过 HTTP 对接 OpenAI-compatible Chat Completions 协议及智谱 `layout_parsing` OCR 协议，没有复制模型 SDK 或捆绑模型权重。智谱 API 是开发阶段外部服务（用户本轮明确授权），不因其模型有开放权重便将云 API 标为开源软件。未来本地模型的权重许可证、算力和质量需按实际选型登记。当前没有引入 PaddleOCR、向量模型或重排模型。
+
+## 2026-10-15 · 独立部署安全适配
+
+在既有若依MIT来源内修正`SysSocialServiceImpl`社交解绑的对象所有者约束、调整既有logback配置；在原plus-ui适配文件内增加会话切换响应守卫。原始源码快照、LICENSE与固定版本均保留，修改清单和适配哈希同步至`source-lock.json`及`apps/server/UPSTREAM.lock.json`。可选备份加密调用宿主已安装的GnuPG命令；没有复制、修改或随项目分发GnuPG程序，也未新增安全服务或npm/Maven/Python依赖。

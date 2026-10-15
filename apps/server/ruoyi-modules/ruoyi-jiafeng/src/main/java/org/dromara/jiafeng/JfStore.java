@@ -159,6 +159,8 @@ public class JfStore {
 
   public void audit(
       JfAuth.Actor actor, String action, String target, String region, Map<String, Object> detail) {
+    var recorded = new java.util.LinkedHashMap<>(detail);
+    recorded.put("requestId", JfRequestAuditFilter.currentRequestId());
     db.update(
         "INSERT INTO jf_audit(id,actor_id,region_id,action,target_id,detail) VALUES(?,?,?,?,?,?)",
         id("log_"),
@@ -166,7 +168,7 @@ public class JfStore {
         region,
         action,
         target,
-        json(detail));
+        json(recorded));
   }
 
   public void notifyUser(long owner, String region, String title, String content, String workId) {

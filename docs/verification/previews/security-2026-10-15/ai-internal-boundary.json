@@ -1,0 +1,13 @@
+{
+  "checks": [
+    "health returns 200",
+    "wrong service key returns 401",
+    "authorized status is disabled without secrets",
+    "unauthorized generation returns 401",
+    "authorized disabled generation returns AI_NOT_CONFIGURED without fallback",
+    "unauthorized extraction returns 401",
+    "authorized local DOCX extraction succeeds without any model call"
+  ],
+  "count": 7,
+  "modelsEnabled": false
+}

@@ -8,9 +8,13 @@ import time
 import uuid
 import urllib.request
 from business_probe import Client, ENV, ROOT, STAMP, draft, check, RESULTS
+from probe_scope import isolated_deployment
 
-assert ENV['COMPOSE_PROJECT_NAME'].startswith('jiafeng-demo-non-ai-'), 'Use the isolated non-AI test project'
-OUT=ROOT/'deploy/.local/non-ai-20261007'
+_, scoped, _ = isolated_deployment()
+assert ENV['COMPOSE_PROJECT_NAME'] == scoped['COMPOSE_PROJECT_NAME']
+assert ENV['COMPOSE_PROJECT_NAME'].startswith(('jiafeng-demo-non-ai-', 'jiafeng-demo-security-')), 'Use an explicit isolated non-AI or security test project'
+OUT=Path(os.environ.get('JIAFENG_NON_AI_OUTPUT', ROOT/'deploy/.local/non-ai-20261007'))
+OUT.mkdir(parents=True, exist_ok=True)
 
 def post(client,path,data):
     return client.call('POST',path,data,{'Idempotency-Key':str(uuid.uuid4())})[1]

@@ -19,19 +19,19 @@ public class JfErrors {
   @ExceptionHandler(Jf.ApiException.class)
   public ResponseEntity<Map<String, Object>> domain(Jf.ApiException e, HttpServletRequest request) {
     return ResponseEntity.status(e.status)
-        .body(m("code", e.code, "message", e.getMessage(), "requestId", id("req_")));
+        .body(m("code", e.code, "message", e.getMessage(), "requestId", JfRequestAuditFilter.requestId(request)));
   }
 
   @ExceptionHandler(cn.dev33.satoken.exception.NotLoginException.class)
   public ResponseEntity<Map<String, Object>> login(Exception e) {
     return ResponseEntity.status(401)
-        .body(m("code", "UNAUTHENTICATED", "message", "登录已失效，请重新登录", "requestId", id("req_")));
+        .body(m("code", "UNAUTHENTICATED", "message", "登录已失效，请重新登录", "requestId", JfRequestAuditFilter.currentRequestId()));
   }
 
   @ExceptionHandler(MaxUploadSizeExceededException.class)
   public ResponseEntity<Map<String, Object>> size(Exception e) {
     return ResponseEntity.status(413)
-        .body(m("code", "FILE_TOO_LARGE", "message", "文件超过允许大小", "requestId", id("req_")));
+        .body(m("code", "FILE_TOO_LARGE", "message", "文件超过允许大小", "requestId", JfRequestAuditFilter.currentRequestId()));
   }
 
   @ExceptionHandler({
@@ -41,19 +41,19 @@ public class JfErrors {
   })
   public ResponseEntity<Map<String, Object>> input(Exception e) {
     return ResponseEntity.status(400)
-        .body(m("code", "INVALID_REQUEST", "message", "请求格式不正确或缺少必填字段", "requestId", id("req_")));
+        .body(m("code", "INVALID_REQUEST", "message", "请求格式不正确或缺少必填字段", "requestId", JfRequestAuditFilter.currentRequestId()));
   }
 
   @ExceptionHandler(org.springframework.dao.ConcurrencyFailureException.class)
   public ResponseEntity<Map<String, Object>> conflict(Exception e) {
     return ResponseEntity.status(409)
-        .body(m("code", "CONCURRENT_UPDATE", "message", "同时有其他操作，请刷新后重试", "requestId", id("req_")));
+        .body(m("code", "CONCURRENT_UPDATE", "message", "同时有其他操作，请刷新后重试", "requestId", JfRequestAuditFilter.currentRequestId()));
   }
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Map<String, Object>> unexpected(Exception e) {
-    String requestId = id("req_");
-    LOG.error("Jiafeng API failure {}", requestId, e);
+    String requestId = JfRequestAuditFilter.currentRequestId();
+    LOG.error("Jiafeng API failure requestId={} exceptionType={}", requestId, e.getClass().getName());
     return ResponseEntity.status(500)
         .body(m("code", "INTERNAL_ERROR", "message", "操作未完成，请稍后重试或联系管理员", "requestId", requestId));
   }

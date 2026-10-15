@@ -221,6 +221,7 @@ public class JfReviewWindows {
   }
 
   public Map<String, Object> alerts(JfAuth.Actor actor, String phase, String scope, boolean unreadOnly, int page, int pageSize) {
+    JfAccess.require(actor, "reviews:read");
     require(Set.of("all", "due_soon", "overdue").contains(phase), 422, "INVALID_PHASE", "预警类型无效");
     require(Set.of("mine", "all").contains(scope), 422, "INVALID_SCOPE", "预警范围无效");
     require(page >= 1 && page <= 100000 && pageSize >= 1 && pageSize <= 100, 422, "INVALID_PAGE", "分页参数无效");
@@ -231,7 +232,7 @@ public class JfReviewWindows {
     if (phase.equals("overdue")) { filter += "w.due_at_ms<=?"; args.add(now); }
     else if (phase.equals("due_soon")) { filter += "w.starts_at_ms<=? AND w.due_at_ms>? AND w.due_at_ms<=?"; args.addAll(List.of(now, now, now + DAY_MS)); }
     else { filter += "(w.due_at_ms<=? OR (w.starts_at_ms<=? AND w.due_at_ms<=?))"; args.addAll(List.of(now, now, now + DAY_MS)); }
-    if (actor.operator()) {
+    if (JfAccess.reviewOperator(actor)) {
       if (!actor.national()) {
         if (actor.regions.isEmpty()) filter += " AND 1=0";
         else { filter += " AND w.region_id IN (" + String.join(",", Collections.nCopies(actor.regions.size(), "?")) + ")"; args.addAll(actor.regions); }
